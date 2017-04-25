@@ -28,6 +28,7 @@ community.
 References:
 
 [1] Shao, Wenguang, and Henry Lam. "Tandem mass spectral libraries of peptides and their roles in proteomics research." Mass spectrometry reviews (2016).
+
 [2] Griss, Johannes. "Spectral library searching in proteomics." Proteomics (2016).
 
 ## What is an Spectral Archive?
@@ -42,7 +43,9 @@ in areas such as proteogenomics or biomarker discovery.
 References:
 
 [1] Frank, Ari M., et al. "Spectral archives: extending spectral libraries to analyze both identified and unidentified spectra." Nature methods 8.7 (2011): 587-591.
+
 [2] Lam, Henry. "Spectral archives: a vision for future proteomics data repositories." Nature methods 8.7 (2011): 546.
+
 [3] Griss, Johannes, et al. "Recognizing millions of consistently unidentified spectra across hundreds of shotgun proteomics datasets." Nature methods (2016).
 
 ## Why Spectral Library Format?
