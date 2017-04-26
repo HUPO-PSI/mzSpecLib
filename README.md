@@ -50,9 +50,29 @@ References:
 
 ## Why Spectral Library Format?
 
-Over past yeas multiple file formats has been created to store and disseminate spectral libraries:
+Over past yeas several file formats has been created to store and disseminate spectral libraries:
    - MSP
    - X!Hunter binary MGF
    - BiblioSpec SQLite
+   - splib (SpectraST)
 
+Each database provides their spectral libraries using one of these formats (For example,
+PeptideAtlas (splib), PRIDE (MSP), GPMDB (X!Hunter binary MGF), NIST (MSP)). Some spectral search engines
+support multiple formats, and some do not, making it difficult to share libraries and
+compare spectral library searching tools. In the proteomics community, there has been
+a long-standing effort to standardize raw mass spectrometric data and the results of data
+analysis, primarily identification. But spectral libraries straddle the boundary between
+the two and cannot be adequately served by either efforts.
+
+As there remains much fluidity and disagreement in what information should go into a
+spectral library, the format must be flexible enough to fit all the potential use cases
+of spectral libraries, and yet retain sufficient structure for it to be a practically
+useful standard.
+
+## What is Spectral Library Format?
+
+The Spectral Library Format is a HUPO-PSI format to handle and exchange spectral libraries and
+archives. This **repository** contains the information about current spectral libraries formats,
+the Spectral Library Format Control Vocabulary, the Spectral Library specifications, examples and
+tools that export/validate and visualize those files.
 
