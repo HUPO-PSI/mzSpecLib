@@ -3,6 +3,8 @@ Spectral Library Format
 
 # Introduction
 
+https://docs.google.com/document/d/1LgSGtR_t5IcUS9rV7YtsLveDVX9X8KsOpU-5NJ4vuYI/edit?usp=sharing
+
 The **Spectral Library Format** is a formal [HUPO-PSI](www.psidev.info/) standard and file format to store
 and distribute Spectral Libraries/Archives. The target main target audience for this format
 are primarily spectral library search tools and resources such as ProteomeXchange Partners who generates the spectral libraries.
