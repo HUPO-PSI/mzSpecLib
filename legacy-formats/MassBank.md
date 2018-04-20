@@ -10,5 +10,11 @@ An example record would be https://github.com/MassBank/MassBank-data/blob/master
 
 There are some converters to/from MassBank in https://github.com/MassBank/MassBank2NIST
 
-E.g. the "Bruker Sumner MetaboBASE Plant Library" was converted to these records: https://github.com/MassBank/MassBank-data/tree/master/BS
+E.g. the "Bruker Sumner MetaboBASE Plant Library" was converted 
+from https://www.bruker.com/service/support-upgrades/software-downloads/mass-spectrometry/metabobase-plant-libraries.html (requires login) 
+to these records: https://github.com/MassBank/MassBank-data/tree/master/BS
+
+The Bruker `*.library` format is sortof derived from MSP, 
+the extended format is defined in `ASCII MS Spectrum File format.pdf` (no link available) by Bruker. 
+
 
