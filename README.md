@@ -50,6 +50,8 @@ References:
 
 [3] Griss, Johannes, et al. "Recognizing millions of consistently unidentified spectra across hundreds of shotgun proteomics datasets." Nature methods (2016).
 
+
+
 ## Why Spectral Library Format?
 
 Over past yeas several file formats has been created to store and disseminate spectral libraries:
@@ -57,6 +59,7 @@ Over past yeas several file formats has been created to store and disseminate sp
    - X!Hunter binary MGF
    - BiblioSpec SQLite
    - splib (SpectraST)
+   - MassBank (focus on Metabolomics) [Links and Examples](https://github.com/HUPO-PSI/SpectralLibraryFormat/blob/master/legacy-formats/MassBank.md)
 
 Each database provides their spectral libraries using one of these formats (For example,
 PeptideAtlas (splib), PRIDE (MSP), GPMDB (X!Hunter binary MGF), NIST (MSP)). Some spectral search engines
