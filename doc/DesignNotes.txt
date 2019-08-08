@@ -1,0 +1,100 @@
+Python .py files tend to be lower case, but the classes they contain are CamelCase
+
+SpectrumLibraryCollection
+  - filename
+  o create()
+  o show()
+  o get_libraries()
+  o get_library()
+  o add_library()
+  o create_index()
+  o find_spectra()
+
+SpectrumLibrary
+  - identifier
+  - name
+  - filename
+  - format
+  o read_header()
+  o read()
+  o write()
+  o create_index()
+  o transform()
+  o get_spectrum()
+
+SpectrumLibraryIndex
+  - version
+  - n_spectra
+  - library_datetime
+  - library_filename
+  - columns
+  o get_offset()
+  o find_offsets()
+  o create_index()
+  o add_spectrum()
+
+SpectrumLibraryMetadata
+  o parse()
+  o set_attribute()
+  o get_attribute()
+  o write()
+
+SpectrumLibraryMetadataDictionary
+  o 
+
+ControlledVocabularyCollection
+  - filename
+  - lazy_loading=false
+  o create()
+  o get_controlled_vocabularies()
+  o get_term()
+
+ControlledVocabulary
+  - namespace
+  - filename
+  - name
+  o read()
+  o get_term()
+
+ControlledVocabularyTerm
+  - namespace
+  - identifier
+  - name
+  - definition
+  - get_parents()
+  - get_children()
+  - get_type()
+  - get_attributes()
+
+spectrumLibraryIndex
+  o create()
+  o read()
+
+Spectrum
+  o parse()
+  o write()
+
+SpectrumMetadata
+  o parse()
+  o write()
+
+UniversalSpectrumIdentifier
+  - usi_string
+  - dataset_identifier
+  - dataset_subfolder
+  - msrun_name
+  - index_flag
+  - index
+  - interpretation
+  - peptidoform
+  - charge
+  - psm_provenance_key
+
+
+
+
+
+
+
+
+
