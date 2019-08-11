@@ -6,6 +6,8 @@ def eprint(*args, **kwargs):
 
 import re
 import timeit
+import os
+
 from SpectrumLibraryIndex import SpectrumLibraryIndex
 from Spectrum import Spectrum
 
@@ -149,6 +151,10 @@ class SpectrumLibrary:
                 self.index = SpectrumLibraryIndex( library_filename=self.filename )
                 self.index.create_index()
 
+        #### Determine the filesize
+        file_size = os.path.getsize(filename)
+        if debug: eprint(f"INFO: File size is {file_size}")
+
         with open(filename, 'r') as infile:
             state = 'header'
             spectrum_buffer = []
@@ -158,7 +164,7 @@ class SpectrumLibrary:
             line_beginning_file_offset = 0
             spectrum_file_offset = 0
             spectrum_name = ''
-            eprint("Now reading")
+            if debug: eprint("INFO: Reading..",end='',flush=True)
             for line in infile:
                 line_beginning_file_offset = file_offset
 
@@ -186,7 +192,8 @@ class SpectrumLibrary:
                             #### Commit every now and then
                             if int(n_spectra/1000) == n_spectra/1000:
                                 self.index.commit()
-                                eprint(str(n_spectra)+"..",end='',flush=True)
+                                percent_done = int(file_offset/file_size*100+0.5)
+                                eprint(str(percent_done)+"%..",end='',flush=True)
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match('Name:\s+(.+)',line).group(1)
@@ -201,7 +208,9 @@ class SpectrumLibrary:
                 self.index.add_spectrum( number=n_spectra + start_index, offset=spectrum_file_offset, name=spectrum_name, peptide_sequence=None )
                 self.index.commit()
             n_spectra += 1
-            if debug: eprint(f"INFO: Read {n_spectra} spectra from {filename}")
+            if debug:
+                eprint()
+                eprint(f"INFO: Read {n_spectra} spectra from {filename}")
 
             #### Flush the index
             #self.index.commit()
@@ -303,28 +312,7 @@ class SpectrumLibrary:
             Description of return value
         """
 
-        #### Begin functionality here
         self.read(create_index=True)
-        return()
-
-
-    def transform(self):
-        """
-        transform - Not quite sure what this is supposed to be
-
-        Extended description of function.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        int
-            Description of return value
-        """
-
-        #### Begin functionality here
-
         return()
 
 
@@ -389,30 +377,15 @@ def example():
     #### Create a new RTXFeedback object
     spectrum_library = SpectrumLibrary()
     spectrum_library.filename = "../refData/sigmaups1_consensus_final_true_lib.msp"
-    spectrum_library.filename = "../refData/cptac2_human_hcd_itraq_phospho_selected.msp"
     spectrum_library.read_header()
  
-    if True:
-        spectrum_buffer = spectrum_library.get_spectrum(spectrum_index_number=3000)
-        spectrum = Spectrum()
-        spectrum.parse(spectrum_buffer)
-        buffer = spectrum.write_as_SpecML()
-        for line in buffer:
-            print(line)
-        print()
-        return()
+    spectrum_buffer = spectrum_library.get_spectrum(spectrum_index_number=2000)
+    spectrum = Spectrum()
+    spectrum.parse(spectrum_buffer)
+    buffer = spectrum.write(format="text")
+    print(buffer)
+    print()
 
-
-    #spectrum_library.read()
-    t0 = timeit.default_timer()
-    spectrum_library.create_index()
-    t1 = timeit.default_timer()
-    print('INFO: Elapsed time: ' + str(t1-t0))
-
-    spectrum = spectrum_library.get_spectrum(spectrum_index_number=3000)
-    print(spectrum)
-    t2 = timeit.default_timer()
-    print('INFO: Elapsed time: ' + str(t2-t1))
     return()
 
 
