@@ -19,12 +19,14 @@ Base = declarative_base()
 
 debug = True
 
+
 #### Define the database tables as classes
 class SpectrumLibraryIndexAttribute(Base):
   __tablename__ = 'spectrum_library_index_attribute'
   id = Column(Integer, primary_key=True)
   name = Column(String(255), nullable=False)
   value = Column(String(1024), nullable=False)
+
 
 #### Define the database tables as classes
 class SpectrumLibraryIndexRecord(Base):
