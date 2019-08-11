@@ -1,0 +1,19 @@
+
+It would be useful to put together a script that can download the NIST libraries.
+Unfortunately there's no central list, just a double link thing at https://chemdata.nist.gov/dokuwiki/doku.php?id=peptidew:cdownload
+And the individual files are contained in tar and zip files, sometimes double contained.
+
+This might just be better done by hand, along with updating the metadata tsv file
+
+Note that for one file I even changed the filename because there was an errant space in it
+
+It would be very good to set up a web page monitoring system so that I could detect and get a
+diff whenever libraries change.
+
+wget ftp://chemdata.nist.gov/download/peptide_library/libraries/nistmab/NISTmAb_v20190711_msp.zip
+unzip NISTmAb_v20190711_msp.zip
+rm NISTmAb_v20190711_msp.zip
+
+Also note that redistribution would require an agreement. Which in principle we still have from
+ages ago.
+
