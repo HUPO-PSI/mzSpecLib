@@ -74,6 +74,25 @@ Spectrum
   o parse()
   o write()
 
+attributes = [
+	[ "MS:1009003|spectrum index", 1 ],
+	[ "MS:1001975|delta m/z", 3, "12" ],
+	[ "UO:0000000|unit", "UO:0000169|parts per million", "12" ]
+]
+
+attribute_dict = {
+	"MS:1001975|delta m/z": { "indexes": [ 2 ], "groups": [ "12" ] }
+}
+
+group_dict = {
+	"12": [2,3]
+}
+
+peak_list = [
+	[ mz, intensity, interpretations ]
+]
+
+
 SpectrumMetadata
   o parse()
   o write()
