@@ -24,7 +24,7 @@ class LibraryRecord(Base):
   __tablename__ = 'library_record'
   library_record_id = Column(Integer, primary_key=True)
   id_name = Column(String(255), nullable=False)
-  version = Column(Integer, nullable=False)
+  version = Column(String(255), nullable=False)
   status = Column(String(255), nullable=False)
   original_name = Column(String(255), nullable=False)
   original_checksum = Column(String(255), nullable=True)
@@ -207,7 +207,7 @@ class SpectrumLibraryCollection:
         return()
 
 
-    def add_library(self):
+    def add_library(self, original_name, version="1"):
         """
         add_library - Add a new library
 
@@ -225,7 +225,8 @@ class SpectrumLibraryCollection:
         #### Begin functionality here
         if debug: eprint("INFO: Adding a library entry")
         session = self.session
-        library_record = LibraryRecord(id_name="PXL000000",version=1,status="initial_add",original_name="sigmaups1_consensus_final_true_lib.msp",record_datetime=datetime.now())
+        library_record = LibraryRecord(id_name="PXL000000", version=version,
+            status="initial_add",original_name=original_name,record_datetime=datetime.now())
         session.add(library_record)
         session.flush()
         assert(library_record.library_record_id)
