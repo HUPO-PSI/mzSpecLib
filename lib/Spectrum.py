@@ -86,7 +86,7 @@ class Spectrum:
         #### Loop through each line in the buffered list
         for line in buffer:
 
-            print(line)
+            #print(line)
 
             #### If in the the header portion of the entry
             if in_header:
@@ -141,11 +141,11 @@ class Spectrum:
                         if item.count("=") > 0:
                             comment_key, comment_value = item.split("=", 1)
                             self.foreign_attributes[comment_key] = comment_value
-                            print(f"{comment_key}={comment_value}")
+                            #print(f"{comment_key}={comment_value}")
                         #### Otherwise just store the key with a null value
                         else:
                             self.foreign_attributes[item] = None
-                            print(f"{item}")
+                            #print(f"{item}")
 
             #### Else in the peaks section. Parse the peaks.
             else:
@@ -192,8 +192,8 @@ class Spectrum:
             "PrecursorMonoisoMZ": "MS:1009009|theoretical monoisotopic m/z",
             "Mz_exact": "MS:1009009|theoretical monoisotopic m/z",
             "Mz_av": "MS:1009009|theoretical average m/z",
-            "Inst": { "it": [ [ "MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation" ] ] },
-            "Inst": { "hcd": [ [ "MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation" ] ] },
+            "Inst": { "it": [ [ "MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation" ] ],
+                      "hcd": [ [ "MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation" ] ] },
             "Pep": { "Tryptic": [ [ "MS:1009040|number of enzymatic termini", 2 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
                     "Tryptic/miss_good_confirmed": [ [ "MS:1009040|number of enzymatic termini", 2 ],
                         [ "MS:1009100|missed cleavage count", "0" ],
