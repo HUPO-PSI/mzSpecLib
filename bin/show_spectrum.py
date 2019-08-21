@@ -9,7 +9,10 @@ import argparse
 import os.path
 import timeit
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/../lib")
+basedir = "some hard coded location"
+basedir = os.path.dirname(os.path.abspath(__file__))+"/.."
+
+sys.path.append(basedir+"/lib")
 from SpectrumLibraryCollection import SpectrumLibraryCollection
 from SpectrumLibrary import SpectrumLibrary
 from Spectrum import Spectrum
@@ -51,7 +54,7 @@ def main():
             print(f"ERROR: {usi.error_code}: {usi.error_message}")
             return()
         if usi.dataset_identifier.startswith("PXL"):
-            spec_lib_collection = SpectrumLibraryCollection(os.path.dirname(os.path.abspath(__file__))+"/../spectralLibraries/SpectrumLibraryCollection.sqlite")
+            spec_lib_collection = SpectrumLibraryCollection(basedir + "/spectralLibraries/SpectrumLibraryCollection.sqlite")
             #print(f"Looking up library for {usi.dataset_identifier}")
             try:
                 library = spec_lib_collection.get_library(identifier=usi.dataset_identifier, version=usi.ms_run_name)
@@ -59,7 +62,7 @@ def main():
                 print("ERROR:",error)
                 return()
             #print("Found record: " + "\t".join([str(library.library_record_id),library.id_name,library.version,library.original_name]))
-            library_file = os.path.dirname(os.path.abspath(__file__)) + "/../spectralLibraries/" + library.original_name
+            library_file = basedir + "/spectralLibraries/" + library.original_name
             index_number = usi.index
 
     if not os.path.isfile(library_file):
