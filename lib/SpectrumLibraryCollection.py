@@ -187,7 +187,7 @@ class SpectrumLibraryCollection:
         return(libraries)
 
 
-    def get_library(self):
+    def get_library(self,identifier=None,version=None,filename=None):
         """
         get_library - Return attributes of a specific library
 
@@ -202,7 +202,29 @@ class SpectrumLibraryCollection:
             Description of return value
         """
 
-        #### Begin functionality here
+        session = self.session
+        if identifier is not None and identifier > "":
+            libraries = session.query(LibraryRecord).filter(LibraryRecord.id_name==identifier).order_by(desc(LibraryRecord.version)).all()
+            if len(libraries) == 0:
+                raise Exception(f"No library with identifier {identifier} found")
+            else:
+                libraryListStr = ""
+                for library in libraries:
+                    libraryListStr += library.version+","
+                    if version is not None and version > "":
+                        if version == library.version:
+                            return(library)
+                if version is not None and version > "":
+                    raise Exception(f"Unable to find version {version} of library {identifier}")
+            if len(libraries) == 1:
+                return(library)
+            raise Exception(f"There are several version of this library ({libraryListStr}). Please specify a version")
+            return()
+
+        elif filename is not None and filename > "":
+            raise Exception("Search by filename not implemented")
+        else:
+            raise Exception("Not enough information to find library")
 
         return()
 
@@ -282,7 +304,6 @@ class SpectrumLibraryCollection:
         return()
 
 
-
 #### Example using this class
 def example():
 
@@ -303,11 +324,26 @@ def example():
     return()
 
 
+#### Example using this class
+def example2():
+
+    #### Create a new or attach to existing library collection
+    spec_lib_collection = SpectrumLibraryCollection("../spectralLibraries/SpectrumLibraryCollection.sqlite")
+
+    try:
+        library = spec_lib_collection.get_library(identifier="PXL000003", version="05-24-2011")
+    except Exception as error:
+        print("ERROR:",error)
+        return()
+    print("\t".join([str(library.library_record_id),library.id_name,library.version,library.original_name]))
+    return()
+
+
 #### If this class is run from the command line, perform a short little test to see if it is working correctly
 def main():
 
     #### Run an example
-    example()
+    example2()
     return()
 
 
