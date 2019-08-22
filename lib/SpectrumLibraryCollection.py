@@ -264,6 +264,35 @@ class SpectrumLibraryCollection:
         return()
 
 
+    def update_library_metadata(self, id, version=None):
+        """
+        update_library_metadata - Update the metadata associated with a library
+
+        Extended description of function.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        int
+            Description of return value
+        """
+
+        #### Begin functionality here
+        if debug: eprint(f"INFO: Updating the library entry with id {id}")
+        session = self.session
+        library = session.query(LibraryRecord).filter(LibraryRecord.library_record_id==id).first()
+        if library is not None:
+            if version is not None:
+                print(f"    Updating version to {version}")
+                library.version = version
+            session.flush()
+            session.commit()
+        else:
+            print(f"ERROR: Library entry with id {id} not found")
+
+
     def create_index(self):
         """
         create_index - Create a master index from all the constituent library indexes to be able to find spectra in any library
