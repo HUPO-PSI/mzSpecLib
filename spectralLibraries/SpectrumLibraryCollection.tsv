@@ -1,11 +1,47 @@
-source	species	keywords	version_tag	filename	Title
-NIST	Homo sapiens	"human,CPTAC2,HCD,iTRAQ,phospho"	"""02-14-2019"""	cptac2_human_hcd_itraq_phospho_selected.msp	NIST Human CPTAC2 HCD iTRAQ phosho library
+source	species	keywords	version_tag	filename	Title (Source Species otherAttrs labeling instr/dissoc library)
+NIST	Homo sapiens	"human,ion trap"	"""05-29-2014"""	human_consensus_final_true_lib.msp	NIST Human 
+NIST	Homo sapiens	"human,HCD"	"""09-23-2016"""	human_hcd_selected.msp.msp	NIST Human 
+NIST	Homo sapiens	"human,CPTAC2,HCD,iTRAQ"	"""11-26-2014"""	cptac2_human_hcd_itraq_selected.msp	NIST Human 
+NIST	Homo sapiens	"human,CPTAC2,HCD,iTRAQ,phospho"	"""11-26-2014"""	cptac2_human_hcd_itraq_phospho_selected.msp	NIST Human CPTAC2 HCD iTRAQ phosho library
+NIST	Homo sapiens	"human,HCD,reference sample"	"""05-30-2017"""	human_synthetic_hcd_selected.msp	NIST Human 
+NIST	Homo sapiens	"human,HCD,phospho"	"""02-14-2019"""	human_hcd_labelfree_phospho_selected_passed.msp	NIST Human 
+NIST	Mus musculus	"mouse,ion trap"	"""05-20-2013"""	mouse_consensus_final_true_lib.msp	NIST Mouse
+NIST	Mus musculus	"mouse,HCD"	"""11-24-2014"""	cptac2_mouse_hcd_selected.msp	NIST Mouse
+NIST	Mus musculus	"mouse,CPTAC2,HCD,iTRAQ"	"""11-24-2014"""	cptac2_mouse_hcd_itraq_selected.msp	NIST Mouse
 NIST	Mus musculus	"mouse,CPTAC2,HCD,iTRAQ,phospho"	"""11-26-2014"""	cptac2_mouse_hcd_itraq_phospho_selected.msp	NIST Mouse CPTAC2 HCD iTRAQ library
+NIST	C griseus	"chinese hamster,HCD"	"""02-23-2018"""	chinese_hamster_hcd_selected.msp	NIST Chinese Hamster
+NIST	Drosophila melanogaster	"fly,ion trap"	"""04-11-2012"""	drosophila_consensus_final_true_lib.msp	NIST Drosphila
+NIST	C elegans	"worm,ion trap"	"""05-24-2011"""	c_elegans_consensus_final_true_lib.msp	NIST C elegans
+NIST	S cerevisiae	"yeast,ion trap"	"""04-06-2012"""	yeast_consensus_final_true_lib.msp	NIST Yeast ion trap library
+NIST	S cerevisiae	"yeast,qtof"	"""04-17-2012"""	yeast_qtof_consensus_final_true_lib.msp	NIST Yeast QTOF library
+NIST	S pombe	"yeast,ion trap"	"""05-18-2013"""	yeast_pombe_consensus_final_true_lib.msp	NIST C pombe ion trap library
+NIST	E coli	"E coli,ion trap"	"""05-08-2013"""	e_coli_consensus_final_true_lib.msp	NIST E coli ion trap library
+NIST	Rattus norvegicus	"rat,ion trap"	"""05-30-2013"""	rat_consensus_final_true_lib.msp	NIST Rat ion trap library
+NIST	Rattus norvegicus	"rat,qtof"	"""06-05-2013"""	rat_qtof_consensus_final_true_lib.msp	NIST Rat qtof library
 NIST	Gallus gallus	"chicken,ion trap"	"""05-24-2011"""	chicken_consensus_final_true_lib.msp	NIST Chicken ion trap library
 NIST	reference sample	"UPS1,ion trap,reference sample"	"""04-01-2019"""	sigmaups1_consensus_final_true_lib.msp	NIST UPS1 reference sample ion trap library
-NIST	reference sample	"HSA,ion trap,reference sample"	"""04-22-2014"""	hsa20140422.msp	NIST Human serum albumin reference sample ion trap library
 NIST	reference sample	"BSA,ion trap,reference sample"	"""04-01-2011"""	bsa_consensus_final_true_lib.msp	NIST Bovine serum albumin reference sample ion trap library
+NIST	reference sample	"HSA,ion trap,reference sample"	"""04-22-2014"""	hsa20140422.msp	NIST Human serum albumin reference sample ion trap library
 NIST	Homo sapiens	"IgG,HCD,reference sample,glycopeptides"	"""11-06-2015"""	IgG_Glycopeptide_HCD_V1.msp	NIST Human glycopeptide IgG1 mAb drugs HCD library
 NIST	Danio rerio	"zebrafish,HCD"	"""01-09-2015"""	2015_01_09_zebrafish_it_consensus_final_true_lib.msp	NIST Zebra fish Q Exactive HCD library
 NIST	reference sample	"NISTmAb,HCD,reference sample"	"""07-11-2019"""	NISTmAb_v20190711.msp	NIST NISTmAb HCD library
-MassIVE-KB	reference sample	"human,reference sample,HCD,ProteomeTools"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-002e0dce-download_filtered_sptxt_library-main.sptxt	MassIVE-KB ProteomeTools HCD Spectral Library
+MassIVE-KB	reference sample	"human,reference sample,HCD,ProteomeTools"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-002e0dce-download_filtered_sptxt_library-main.sptxt	MassIVE-KB ProteomeTools HCD library
+MassIVE-KB	Homo sapiens	"human,HCD"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-daa7c2c2-download_filtered_sptxt_library-main.sptxt	MassIVE-KB Human natural sample HCD library
+MassIVE-KB	Homo sapiens+reference sample	"human,reference sample,HCD,ProteomeTools"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-82c0124b-download_filtered_sptxt_library-main.sptxt	MassIVE-KB Human + ProteomeTools HCD library
+PRIDE-Cluster	Arabidopsis thaliana	weed	"""2015-04"""	Arabidopsis thaliana.msp	PRIDE-Cluster Arabidopsis thaliana library
+PRIDE-Cluster	Bacillus cereus		"""2015-04"""	Bacillus cereus.msp	PRIDE-Cluster Bacillus cereus library
+PRIDE-Cluster	Bacillus subtilis		"""2015-04"""	Bacillus subtilis.msp	PRIDE-Cluster Bacillus subtilis library
+PRIDE-Cluster	Borrelia burgdorferi		"""2015-04"""	Borrelia burgdorferi.msp	PRIDE-Cluster Borrelia burgdorferi library
+PRIDE-Cluster	Caenorhabditis elegans	C elegans	"""2015-04"""	Caenorhabditis elegans.msp	PRIDE-Cluster Caenorhabditis elegans library
+PRIDE-Cluster	contaminants	crap	"""2015-04"""	crap.msp	PRIDE-Cluster contaminants library
+PRIDE-Cluster	Drosophila melanogaster	fly	"""2015-04"""	Drosophila melanogaster.msp	PRIDE-Cluster Drosophila melanogaster library
+PRIDE-Cluster	Escherichia coli	E coli	"""2015-04"""	Escherichia coli.msp	PRIDE-Cluster Escherichia coli library
+PRIDE-Cluster	Geobacter sulfurreducens		"""2015-04"""	Geobacter sulfurreducens.msp	PRIDE-Cluster Geobacter sulfurreducens library
+PRIDE-Cluster	Glycine max		"""2015-04"""	Glycine max.msp	PRIDE-Cluster Glycine max library
+PRIDE-Cluster	Homo sapiens	human	"""2015-04"""	Human.msp	PRIDE-Cluster Human library
+PRIDE-Cluster	Mus musculus	mouse	"""2015-04"""	Mouse.msp	PRIDE-Cluster Mouse library
+PRIDE-Cluster	Rattus norvegicus	rat	"""2015-04"""	Rat.msp	PRIDE-Cluster Rat library
+PRIDE-Cluster	Saccharomyces cerevisiae	yeast	"""2015-04"""	Saccharomyces cerevisiae.msp	PRIDE-Cluster Saccharomyces cerevisiae library
+PRIDE-Cluster	Salmonella typhimurium		"""2015-04"""	Salmonella typhimurium.msp	PRIDE-Cluster Salmonella typhimurium library
+PRIDE-Cluster	Synechococcus sp.		"""2015-04"""	Synechococcus sp..msp	PRIDE-Cluster Synechococcus sp. library
+PRIDE-Cluster	Synechocystis sp.		"""2015-04"""	Synechocystis sp..msp	PRIDE-Cluster Synechocystis sp. library
