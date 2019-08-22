@@ -74,7 +74,7 @@ def main():
 
     spectrum_buffer = spectrum_library.get_spectrum(spectrum_index_number=index_number)
     spectrum = Spectrum()
-    spectrum.parse(spectrum_buffer)
+    spectrum.parse(spectrum_buffer, spectrum_index=index_number)
     buffer = spectrum.write(format=params.output_format)
     print(buffer)
 

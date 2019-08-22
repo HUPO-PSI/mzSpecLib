@@ -74,7 +74,7 @@ class Spectrum:
 
     #### Parse a list buffer of lines from a MSP-style spectrum entry, creating
     #### a dict of attributes and a list of peaks
-    def parse(self, buffer):
+    def parse(self, buffer, spectrum_index=None):
 
         #### Start in the header section of the entry
         in_header = True
@@ -157,6 +157,8 @@ class Spectrum:
                 self.peak_list.append( [ mz, intensity, interpretations ] )
 
         #### Now convert the foreign attributes to standard ones
+        if spectrum_index is not None:
+            self.add_attribute("MS:1009001|spectrum index", spectrum_index)
         self.convert_foreign_attributes()
 
         return(self)
@@ -179,7 +181,7 @@ class Spectrum:
 
         #### Define the translation from keys to CV terms
         leader_terms = {
-            "Name": "MS:1009004|spectrum name",
+            "Name": "MS:1009003|spectrum name",
         }
         other_terms = {
             "MW": "MS:1009004|molecular weight",
