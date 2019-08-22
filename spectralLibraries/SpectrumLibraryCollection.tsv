@@ -8,3 +8,4 @@ NIST	reference sample	"BSA,ion trap,reference sample"	"""04-01-2011"""	bsa_conse
 NIST	Homo sapiens	"IgG,HCD,reference sample,glycopeptides"	"""11-06-2015"""	IgG_Glycopeptide_HCD_V1.msp	NIST Human glycopeptide IgG1 mAb drugs HCD library
 NIST	Danio rerio	"zebrafish,HCD"	"""01-09-2015"""	2015_01_09_zebrafish_it_consensus_final_true_lib.msp	NIST Zebra fish Q Exactive HCD library
 NIST	reference sample	"NISTmAb,HCD,reference sample"	"""07-11-2019"""	NISTmAb_v20190711.msp	NIST NISTmAb HCD library
+MassIVE-KB	reference sample	"human,reference sample,HCD,ProteomeTools"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-002e0dce-download_filtered_sptxt_library-main.sptxt	MassIVE-KB ProteomeTools HCD Spectral Library
