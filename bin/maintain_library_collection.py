@@ -75,6 +75,11 @@ def main():
                 #### Check to see if the file is already registered
                 if filename in libraries_dict:
                     print(f"  This library is already in the collection as {libraries[libraries_dict[filename]].id_name}")
+                    print(f"    (stored version={libraries[libraries_dict[filename]].version}")
+                    version = metadata_dict[filename][3].strip('"')
+                    print(f"    (metadata sheet version={version}")
+                    spectrum_library_collection.update_library_metadata(id=libraries[libraries_dict[filename]].library_record_id, version=version)
+
                 else:
                     print(f"  Need to create a record for filename")
                     if filename in metadata_dict:
