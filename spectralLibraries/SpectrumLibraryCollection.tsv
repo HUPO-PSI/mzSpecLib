@@ -1,6 +1,6 @@
 source	species	keywords	version_tag	filename	Title (Source Species otherAttrs labeling instr/dissoc library)
 NIST	Homo sapiens	"human,ion trap"	"""05-29-2014"""	human_consensus_final_true_lib.msp	NIST Human 
-NIST	Homo sapiens	"human,HCD"	"""09-23-2016"""	human_hcd_selected.msp.msp	NIST Human 
+NIST	Homo sapiens	"human,HCD"	"""09-23-2016"""	human_hcd_selected.msp	NIST Human 
 NIST	Homo sapiens	"human,CPTAC2,HCD,iTRAQ"	"""11-26-2014"""	cptac2_human_hcd_itraq_selected.msp	NIST Human 
 NIST	Homo sapiens	"human,CPTAC2,HCD,iTRAQ,phospho"	"""11-26-2014"""	cptac2_human_hcd_itraq_phospho_selected.msp	NIST Human CPTAC2 HCD iTRAQ phosho library
 NIST	Homo sapiens	"human,HCD,reference sample"	"""05-30-2017"""	human_synthetic_hcd_selected.msp	NIST Human 
@@ -28,20 +28,20 @@ NIST	reference sample	"NISTmAb,HCD,reference sample"	"""07-11-2019"""	NISTmAb_v2
 MassIVE-KB	reference sample	"human,reference sample,HCD,ProteomeTools"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-002e0dce-download_filtered_sptxt_library-main.sptxt	MassIVE-KB ProteomeTools HCD library
 MassIVE-KB	Homo sapiens	"human,HCD"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-daa7c2c2-download_filtered_sptxt_library-main.sptxt	MassIVE-KB Human natural sample HCD library
 MassIVE-KB	Homo sapiens+reference sample	"human,reference sample,HCD,ProteomeTools"	2018	LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-82c0124b-download_filtered_sptxt_library-main.sptxt	MassIVE-KB Human + ProteomeTools HCD library
-PRIDE-Cluster	Arabidopsis thaliana	weed	"""2015-04"""	Arabidopsis thaliana.msp	PRIDE-Cluster Arabidopsis thaliana library
-PRIDE-Cluster	Bacillus cereus		"""2015-04"""	Bacillus cereus.msp	PRIDE-Cluster Bacillus cereus library
-PRIDE-Cluster	Bacillus subtilis		"""2015-04"""	Bacillus subtilis.msp	PRIDE-Cluster Bacillus subtilis library
-PRIDE-Cluster	Borrelia burgdorferi		"""2015-04"""	Borrelia burgdorferi.msp	PRIDE-Cluster Borrelia burgdorferi library
-PRIDE-Cluster	Caenorhabditis elegans	C elegans	"""2015-04"""	Caenorhabditis elegans.msp	PRIDE-Cluster Caenorhabditis elegans library
+PRIDE-Cluster	Arabidopsis thaliana	weed	"""2015-04"""	Arabidopsis_thaliana.msp	PRIDE-Cluster Arabidopsis thaliana library
+PRIDE-Cluster	Bacillus cereus		"""2015-04"""	Bacillus_cereus.msp	PRIDE-Cluster Bacillus cereus library
+PRIDE-Cluster	Bacillus subtilis		"""2015-04"""	Bacillus_subtilis.msp	PRIDE-Cluster Bacillus subtilis library
+PRIDE-Cluster	Borrelia burgdorferi		"""2015-04"""	Borrelia_burgdorferi.msp	PRIDE-Cluster Borrelia burgdorferi library
+PRIDE-Cluster	Caenorhabditis elegans	C elegans	"""2015-04"""	Caenorhabditis_elegans.msp	PRIDE-Cluster Caenorhabditis elegans library
 PRIDE-Cluster	contaminants	crap	"""2015-04"""	crap.msp	PRIDE-Cluster contaminants library
-PRIDE-Cluster	Drosophila melanogaster	fly	"""2015-04"""	Drosophila melanogaster.msp	PRIDE-Cluster Drosophila melanogaster library
-PRIDE-Cluster	Escherichia coli	E coli	"""2015-04"""	Escherichia coli.msp	PRIDE-Cluster Escherichia coli library
-PRIDE-Cluster	Geobacter sulfurreducens		"""2015-04"""	Geobacter sulfurreducens.msp	PRIDE-Cluster Geobacter sulfurreducens library
-PRIDE-Cluster	Glycine max		"""2015-04"""	Glycine max.msp	PRIDE-Cluster Glycine max library
+PRIDE-Cluster	Drosophila melanogaster	fly	"""2015-04"""	Drosophila_melanogaster.msp	PRIDE-Cluster Drosophila melanogaster library
+PRIDE-Cluster	Escherichia coli	E coli	"""2015-04"""	Escherichia_coli.msp	PRIDE-Cluster Escherichia coli library
+PRIDE-Cluster	Geobacter sulfurreducens		"""2015-04"""	Geobacter_sulfurreducens.msp	PRIDE-Cluster Geobacter sulfurreducens library
+PRIDE-Cluster	Glycine max		"""2015-04"""	Glycine_max.msp	PRIDE-Cluster Glycine max library
 PRIDE-Cluster	Homo sapiens	human	"""2015-04"""	Human.msp	PRIDE-Cluster Human library
 PRIDE-Cluster	Mus musculus	mouse	"""2015-04"""	Mouse.msp	PRIDE-Cluster Mouse library
 PRIDE-Cluster	Rattus norvegicus	rat	"""2015-04"""	Rat.msp	PRIDE-Cluster Rat library
-PRIDE-Cluster	Saccharomyces cerevisiae	yeast	"""2015-04"""	Saccharomyces cerevisiae.msp	PRIDE-Cluster Saccharomyces cerevisiae library
-PRIDE-Cluster	Salmonella typhimurium		"""2015-04"""	Salmonella typhimurium.msp	PRIDE-Cluster Salmonella typhimurium library
-PRIDE-Cluster	Synechococcus sp.		"""2015-04"""	Synechococcus sp..msp	PRIDE-Cluster Synechococcus sp. library
-PRIDE-Cluster	Synechocystis sp.		"""2015-04"""	Synechocystis sp..msp	PRIDE-Cluster Synechocystis sp. library
+PRIDE-Cluster	Saccharomyces cerevisiae	yeast	"""2015-04"""	Saccharomyces_cerevisiae.msp	PRIDE-Cluster Saccharomyces cerevisiae library
+PRIDE-Cluster	Salmonella typhimurium		"""2015-04"""	Salmonella_typhimurium.msp	PRIDE-Cluster Salmonella typhimurium library
+PRIDE-Cluster	Synechococcus sp.		"""2015-04"""	Synechococcus_sp..msp	PRIDE-Cluster Synechococcus sp. library
+PRIDE-Cluster	Synechocystis sp.		"""2015-04"""	Synechocystis_sp..msp	PRIDE-Cluster Synechocystis sp. library
