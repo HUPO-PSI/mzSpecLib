@@ -59,13 +59,21 @@ def main():
             for line in infile:
                 line = line.rstrip()
                 columns = line.split("\t")
+                if columns[4] == "filename":
+                    continue
                 metadata_dict[columns[4]] = columns
                 metadata_files.append(columns[4])
 
-        #### Loop over all files in the directory and check against the database
+        #### Loop over all files in the directory and put them in a hash
+        local_file_dict = {}
         for filename in os.listdir(collection_dir):
-            match = re.fullmatch("(.+)\.msp",filename)
+            match = re.fullmatch("(.+)\.(msp|sptxt)",filename)
             if match is not None:
+                local_file_dict[filename] = 1
+
+        #### Loop over all files in the metadata files and check against the database
+        for filename in metadata_files:
+            if filename in local_file_dict:
                 print(f"Processing {filename}")
 
                 #### Check to see if there is an index file yet
@@ -90,6 +98,10 @@ def main():
                     else:
                         print(f"ERROR: There is no metadata entry for {filename} yet. Please create one and update again")
                         return()
+
+            else:
+                print(f"ERROR: filename '{filename}' in the metadata file not found locally")
+                return()
 
     #### If --list, then list existing libraries
     if params.list is True:
