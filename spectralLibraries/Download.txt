@@ -17,3 +17,90 @@ rm NISTmAb_v20190711_msp.zip
 Also note that redistribution would require an agreement. Which in principle we still have from
 ages ago.
 
+====================================================
+
+Notes downloading MassIVE-KB libraries
+ 
+Issues:
+- Automated download seems well thwarted with Javascript trickery
+- Version information is not present
+- Download filename very long but low info content: ProteoSAFe-LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-82c0124b-download_filtered_sptxt_library.zip
+  (guess which of the three libraries this is!)
+- Unzipping yields:
+  Archive:  ProteoSAFe-LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-daa7c2c2-download_filtered_sptxt_library.zip
+   inflating: LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-daa7c2c2-download_filtered_sptxt_library-main.sptxt  
+    inflating: params.xml              
+- Unzipping all three yields params.xml name collision
+ 
+ 
+-rw-rw-r--. 1 edeutsch sbeams 1291408713 Aug 21 21:20 LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-002e0dce-download_filtered_sptxt_library-main.sptxt
+-rw-rw-r--. 1 edeutsch sbeams      31497 Aug 21 21:22 LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-002e0dce-download_filtered_sptxt_library-main.sptxt.params.xml
+-rw-rw-r--. 1 edeutsch sbeams 9028141600 Aug 22 10:31 LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-82c0124b-download_filtered_sptxt_library-main.sptxt
+-rw-rw-r--. 1 edeutsch sbeams      31064 Aug 22 10:50 LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-82c0124b-download_filtered_sptxt_library-main.sptxt.params.xml
+-rw-rw-r--. 1 edeutsch sbeams 8377722896 Aug 22 10:31 LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-daa7c2c2-download_filtered_sptxt_library-main.sptxt
+-rw-rw-r--. 1 edeutsch sbeams      31080 Aug 22 10:49 LIBRARY_CREATION_AUGMENT_LIBRARY_TEST-daa7c2c2-download_filtered_sptxt_library-main.sptxt.params.xml
+ 
+ 
+Notes downloading PRIDE-Cluster spectral libraries
+ 
+cd /regis/sbeams/SpectralLibraries/2019-08-21/PRIDE-Cluster
+ 
+ftp://ftp.pride.ebi.ac.uk/pride/data/cluster/spectrum-libraries/
+ftp://ftp.pride.ebi.ac.uk/pride/data/cluster/spectrum-libraries/2015-04/
+ 
+wget 'ftp://ftp.pride.ebi.ac.uk/pride/data/cluster/spectrum-libraries/2015-04/*.msp.gz'
+ 
+PRIDE-Cluster Arabidopsis thaliana library
+PRIDE-Cluster Bacillus cereus library
+PRIDE-Cluster Bacillus subtilis library
+PRIDE-Cluster Borrelia burgdorferi library
+PRIDE-Cluster Caenorhabditis elegans library
+PRIDE-Cluster contaminants library
+PRIDE-Cluster Drosophila melanogaster library
+PRIDE-Cluster Escherichia coli library
+PRIDE-Cluster Geobacter sulfurreducens library
+PRIDE-Cluster Glycine max library
+PRIDE-Cluster Human library
+PRIDE-Cluster Mouse library
+PRIDE-Cluster Rat library
+PRIDE-Cluster Saccharomyces cerevisiae library
+PRIDE-Cluster Salmonella typhimurium library
+PRIDE-Cluster Synechococcus sp. library
+PRIDE-Cluster Synechocystis sp. library
+ 
+======================================
+
+Combining the 2-parter
+
+cd /regis/sbeams/SpectralLibraries/2019-08-21/NIST
+cat cptac2_human_hcd_itraq_selected_part1.msp cptac2_human_hcd_itraq_selected_part2.msp > cptac2_human_hcd_itraq_selected.msp
+
+cd /regis/sbeams/SpectralLibraries/2019-08-21/NIST
+foreach file ( *.msp )
+  ln -s /regis/sbeams/SpectralLibraries/2019-08-21/NIST/$file /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries/$file
+end
+
+cd /regis/sbeams/SpectralLibraries/2019-08-21/MassIVE-KB
+foreach file ( *.sptxt )
+  ln -s /regis/sbeams/SpectralLibraries/2019-08-21/MassIVE-KB/$file /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries/$file
+end
+
+cd /regis/sbeams/SpectralLibraries/2019-08-21/PRIDE-Cluster
+foreach file ( *.msp )
+  ln -s /regis/sbeams/SpectralLibraries/2019-08-21/PRIDE-Cluster/$file /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries/$file
+end
+
+cd /regis/sbeams/SpectralLibraries/2019-08-21/PRIDE-Cluster
+foreach file ( *.msp )
+  rm /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries/$file
+end
+
+cd /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries
+
+
+
+
+
+
+
+
