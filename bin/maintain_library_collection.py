@@ -53,12 +53,14 @@ def main():
         #### Read the metadata file for the collection
         metadatafile = collection_dir + "/SpectrumLibraryCollection.tsv"
         metadata_dict = {}
+        metadata_files = []
         with open(metadatafile, 'r') as infile:
             print(f"INFO: Reading {metadatafile}")
             for line in infile:
                 line = line.rstrip()
                 columns = line.split("\t")
                 metadata_dict[columns[4]] = columns
+                metadata_files.append(columns[4])
 
         #### Loop over all files in the directory and check against the database
         for filename in os.listdir(collection_dir):
