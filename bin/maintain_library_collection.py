@@ -81,7 +81,8 @@ def main():
                     print("  Index already exists")
                 else:
                     print("  Need to create an index")
-                    
+                    os.system(f"{collection_dir}/../bin/index_library.py --lib {filename}")
+
                 #### Check to see if the file is already registered
                 if filename in libraries_dict:
                     print(f"  This library is already in the collection as {libraries[libraries_dict[filename]].id_name}")
