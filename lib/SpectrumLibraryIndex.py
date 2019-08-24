@@ -17,7 +17,7 @@ from sqlalchemy import inspect
 
 Base = declarative_base()
 
-debug = True
+debug = False
 
 
 #### Define the database tables as classes

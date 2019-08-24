@@ -53,12 +53,14 @@ def main():
         #### Read the metadata file for the collection
         metadatafile = collection_dir + "/SpectrumLibraryCollection.tsv"
         metadata_dict = {}
+        metadata_files = []
         with open(metadatafile, 'r') as infile:
             print(f"INFO: Reading {metadatafile}")
             for line in infile:
                 line = line.rstrip()
                 columns = line.split("\t")
                 metadata_dict[columns[4]] = columns
+                metadata_files.append(columns[4])
 
         #### Loop over all files in the directory and check against the database
         for filename in os.listdir(collection_dir):
@@ -75,6 +77,11 @@ def main():
                 #### Check to see if the file is already registered
                 if filename in libraries_dict:
                     print(f"  This library is already in the collection as {libraries[libraries_dict[filename]].id_name}")
+                    print(f"    (stored version={libraries[libraries_dict[filename]].version}")
+                    version = metadata_dict[filename][3].strip('"')
+                    print(f"    (metadata sheet version={version}")
+                    spectrum_library_collection.update_library_metadata(id=libraries[libraries_dict[filename]].library_record_id, version=version)
+
                 else:
                     print(f"  Need to create a record for filename")
                     if filename in metadata_dict:

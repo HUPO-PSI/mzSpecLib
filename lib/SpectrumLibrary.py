@@ -12,7 +12,7 @@ from SpectrumLibraryIndex import SpectrumLibraryIndex
 from Spectrum import Spectrum
 
 
-debug = True
+debug = False
 
 class SpectrumLibrary:
     """
@@ -339,9 +339,9 @@ class SpectrumLibrary:
         if spectrum_index_number is not None:
             offset = self.index.get_offset(spectrum_index_number=spectrum_index_number)
             if offset is not None:
-                print(f'Found offset {offset} for spectrum {spectrum_index_number}')
+                if debug: print(f'Found offset {offset} for spectrum {spectrum_index_number}')
             else:
-                print(f'Unable to find offset for spectrum {spectrum_index_number}')
+                if debug: print(f'Unable to find offset for spectrum {spectrum_index_number}')
             spectrum_buffer = self.read_spectrum(offset=offset)
             return(spectrum_buffer)
         return()
