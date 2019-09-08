@@ -46,28 +46,29 @@ class Spectrum:
         if group_identifier is not None:
             items.append(group_identifier)
         self.attributes.append(items)
+        index = len(self.attributes)-1
 
         #### If there is already one of these, add it to the lists in attribute_dict
-        if key in self.attributes:
-            self.attribute_dict[key]["indexes"].append(len(self.attributes))
+        if key in self.attribute_dict:
+            self.attribute_dict[key]["indexes"].append(index)
             if group_identifier is not None:
                 self.attribute_dict[key]["groups"].append(group_identifier)
 
         #### Otherwise, create the entry in attribute_dict
         else:
             if group_identifier is not None:
-                self.attribute_dict[key] = { "indexes": [ len(self.attributes) ], "groups": [ group_identifier ] }
+                self.attribute_dict[key] = { "indexes": [ index ], "groups": [ group_identifier ] }
             else:
-                self.attribute_dict[key] = { "indexes": [ len(self.attributes) ], "groups": [ ] }
+                self.attribute_dict[key] = { "indexes": [ index ], "groups": [ ] }
 
         #### If there is a group_identifier, then update the group_dict
         if group_identifier is not None:
             #### If this group already has one or more entries, add to it
             if group_identifier in self.group_dict:
-                self.group_dict[group_identifier].append(len(self.attributes))
+                self.group_dict[group_identifier].append(index)
             #### Else create and entry for the group_identifier
             else:
-                self.group_dict[group_identifier] = [ len(self.attributes) ]
+                self.group_dict[group_identifier] = [ index ]
 
         return()
 
@@ -150,7 +151,21 @@ class Spectrum:
             #### Else in the peaks section. Parse the peaks.
             else:
                 #### Split into the expected three values
-                mz, intensity, interpretations = line.split( "\t" )
+                values = re.split(r'\s+',line)
+                interpretations = ""
+                if len(values) == 1:
+                    mz = values
+                    intensity = "1"
+                if len(values) == 2:
+                    mz, intensity = values
+                elif len(values) == 3:
+                    mz, intensity, interpretations = values
+                elif len(values) > 3:
+                    mz, intensity, interpretations = values[0:2]
+                else:
+                    mz = "1"
+                    intensity = "1"
+
                 interpretations = interpretations.strip('"')
 
                 #### Add to the peak list
@@ -400,8 +415,13 @@ class Spectrum:
                         self.add_attribute("MS:1009020|number of replicate spectra used", match.group(1))
                         self.add_attribute("MS:1009021|number of replicate spectra available", match.group(2))
                     else:
-                        self.add_attribute("ERROR", f"Unable to parse {self.foreign_attributes[attribute]} in {attribute} at E2455")
-                        unknown_terms.append(attribute)
+                        match = re.match("(\d+)", self.foreign_attributes[attribute])
+                        if match is not None:
+                            self.add_attribute("MS:1009020|number of replicate spectra used", match.group(1))
+                            self.add_attribute("MS:1009021|number of replicate spectra available", match.group(1))
+                        else:
+                            self.add_attribute("ERROR", f"Unable to parse {self.foreign_attributes[attribute]} in {attribute} at E2455")
+                            unknown_terms.append(attribute)
                 else:
                     self.add_attribute("ERROR", f"Attribute {attribute} must have a value")
                     unknown_terms.append(attribute)
@@ -438,6 +458,18 @@ class Spectrum:
             else:
                 unknown_terms.append(attribute)
 
+
+        #### Perform some cleanup for poorly annotated libraries
+        if "MS:1000888|unmodified peptide sequence" not in self.attribute_dict:
+            if "MS:1009003|spectrum name" in self.attribute_dict:
+                lookup = self.attribute_dict["MS:1009003|spectrum name"]
+                name = self.attributes[ lookup["indexes"][0] ][1]
+                match = re.match("(.+)/(\d+)",name)
+                if match:
+                    self.add_attribute("MS:1000888|unmodified peptide sequence", match.group(1))
+                    self.add_attribute("MS:1000041|charge state", match.group(2))
+
+        #### Handle the uninterpretable terms
         for attribute in unknown_terms:
             if self.foreign_attributes[attribute] is None:
                 self.add_attribute("OtherAttribute", attribute)
