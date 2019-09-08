@@ -191,7 +191,7 @@ class UniversalSpectrumIdentifier(object):
         # provenance identifier
         if offset < nElements:
             self.provenance_identifier = elements[offset]
-            print("Provenance Identifier = ".format(self.provenance_identifier))
+            verboseprint("Provenance Identifier = ".format(self.provenance_identifier))
         # returns count of errors found in usi. useful for checking if the entire identifier is valid.
 
         if self.error == 0:
