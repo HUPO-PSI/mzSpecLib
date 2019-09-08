@@ -165,12 +165,16 @@ class SpectrumLibrary:
             spectrum_file_offset = 0
             spectrum_name = ''
             if debug: eprint("INFO: Reading..",end='',flush=True)
-            for line in infile:
+            while 1:
+                line = infile.readline()
+                if len(line) == 0:
+                    break
+
                 line_beginning_file_offset = file_offset
 
-                #### FIXME. Opening as text seems to remove the \n. So add it in here. But what if \r\n?. tell() is twice as slow as counting it myself
-                file_offset += len(line) + 1
+                #### tell() is twice as slow as counting it myself
                 #file_offset = infile.tell()
+                file_offset += len(line)
 
                 line = line.rstrip()
                 if state == 'header':
