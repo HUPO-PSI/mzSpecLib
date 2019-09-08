@@ -98,6 +98,14 @@ end
 cd /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries
 
 
+=====================================
+
+cd /regis/sbeams/SpectralLibraries/2019-08-21/PRIDE-Cluster
+foreach file ( *.msp )
+  cd /net/dblocal/data/SpectralLibraries/python/devED/SpectralLibraries/spectralLibraries
+  echo $file
+  ../bin/index_library.py --lib $file
+end
 
 
 
