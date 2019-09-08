@@ -17,6 +17,20 @@ rm NISTmAb_v20190711_msp.zip
 Also note that redistribution would require an agreement. Which in principle we still have from
 ages ago.
 
+==============================================================
+
+Downloading the MassIVE-KB libraries
+
+https://massive.ucsd.edu/ProteoSAFe/static/massive-kb-libraries.jsp
+
+cd /regis/sbeams/SpectralLibraries
+mkdir 2019-08-21
+cd 2019-08-21
+mkdir MassIVE-KB
+cd MassIVE-KB
+wget 'https://massive.ucsd.edu/ProteoSAFe/result.jsp?task=82c0124b6053407fa41ba98f53fd8d89&view=download_filtered_sptxt_library&show=true'
+This fails. Seems like it needs to be done interactively. No automated download easily at least.
+
 ====================================================
 
 Notes downloading MassIVE-KB libraries
@@ -106,9 +120,3 @@ foreach file ( *.msp )
   echo $file
   ../bin/index_library.py --lib $file
 end
-
-
-
-
-
-
