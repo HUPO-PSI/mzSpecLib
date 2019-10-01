@@ -31,7 +31,7 @@ class UniversalSpectrumIdentifier(object):
         self.warning_message = None
 
         if usi:
-            self.parse(verbose=0)
+            self.parse(verbose=None)
         
 
     # Attributes:
@@ -51,7 +51,7 @@ class UniversalSpectrumIdentifier(object):
         self.error_code = error_code
         self.error_message = error_message
         self.is_valid = False
-        print(f"ERROR: {error_code}: {error_message}")
+        #print(f"ERROR: {error_code}: {error_message}")
 
     # parses USI string
     def parse(self, verbose):
@@ -198,9 +198,9 @@ class UniversalSpectrumIdentifier(object):
            self.is_valid = True
         # errors found in usi
         else:
-            print("Number of errors: " + str(self.error))
+            verboseprint("Number of errors: " + str(self.error))
             self.is_valid = False
-            print("ERROR: Invalid USI " + self.usi)
+            verboseprint("ERROR: Invalid USI " + self.usi)
 
     # prints out USI attributes
     def show(self):
