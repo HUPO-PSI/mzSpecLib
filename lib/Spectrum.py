@@ -212,10 +212,12 @@ class Spectrum:
             "Inst": { "it": [ [ "MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation" ] ],
                       "hcd": [ [ "MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation" ] ] },
             "Pep": { "Tryptic": [ [ "MS:1009040|number of enzymatic termini", 2 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
-                    "Tryptic/miss_good_confirmed": [ [ "MS:1009040|number of enzymatic termini", 2 ],
+                     "N-Semitryptic": [ [ "MS:1009040|number of enzymatic termini", 1 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
+                     "C-Semitryptic": [ [ "MS:1009040|number of enzymatic termini", 1 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
+                     "Tryptic/miss_good_confirmed": [ [ "MS:1009040|number of enzymatic termini", 2 ],
                         [ "MS:1009100|missed cleavage count", "0" ],
                         [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
-                    "Tryptic/miss_bad_confirmed": [ [ "MS:1009040|number of enzymatic termini", 2 ],
+                     "Tryptic/miss_bad_confirmed": [ [ "MS:1009040|number of enzymatic termini", 2 ],
                         [ "MS:1009100|missed cleavage count", ">0" ],
                         [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
                     },
@@ -234,6 +236,7 @@ class Spectrum:
             "Protein": "MS:1000885|protein accession",
             "Mods": "MS:1001471|peptide modification details",
             "BasePeak": "MS:1000505|base peak intensity",
+            "Naa": "MS:1009105|peptide length",
             "Num peaks": "MS:1009006|number of peaks",
         }
 
@@ -294,13 +297,21 @@ class Spectrum:
             #### Expand the HCD attribute
             elif attribute == "HCD":
                 self.add_attribute("MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation")
+                found_match = 0
                 if self.foreign_attributes[attribute] is not None:
                     match = re.match("([\d\.]+)\s*ev", self.foreign_attributes[attribute], flags=re.IGNORECASE)
                     if match is not None:
+                        found_match = 1
                         group_identifier = self.get_next_group_identifier()
                         self.add_attribute("MS:1000045|collision energy", match.group(1), group_identifier)
                         self.add_attribute("UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
-                    else:
+                    match = re.match("([\d\.]+)\s*%", self.foreign_attributes[attribute])
+                    if match is not None:
+                        found_match = 1
+                        group_identifier = self.get_next_group_identifier()
+                        self.add_attribute("MS:1000045|collision energy", match.group(1), group_identifier)
+                        self.add_attribute("UO:0000000|unit", "UO:0000187|percent", group_identifier)
+                    if found_match == 0:
                         self.add_attribute("ERROR", f"Unable to parse self.foreign_attributes[attribute] in attribute")
                         unknown_terms.append(attribute)
                 else:
@@ -472,9 +483,11 @@ class Spectrum:
         #### Handle the uninterpretable terms
         for attribute in unknown_terms:
             if self.foreign_attributes[attribute] is None:
-                self.add_attribute("OtherAttribute", attribute)
+                self.add_attribute("MS:1009900|other attribute name", attribute)
             else:
-                self.add_attribute("OtherAttribute", attribute + "=" + self.foreign_attributes[attribute])
+                group_identifier = self.get_next_group_identifier()
+                self.add_attribute("MS:1009900|other attribute name", attribute, group_identifier)
+                self.add_attribute("MS:1009902|other attribute value", self.foreign_attributes[attribute], group_identifier)
 
         return()
 
