@@ -246,6 +246,7 @@ class Ontology(object):
         match_term_list = []
         match_curies = {}
 
+        eprint(f"INFO: Executing fuzzy search for '{search_string}'")
         search_space = self.uc_names
         if children_of is not None:
             search_space = self.get_children(parent_curie=children_of, return_type='ucdict')
@@ -257,7 +258,7 @@ class Ontology(object):
             curie = curies[0]
             if curie in match_curies: continue
             match_curies[curie] = 1
-            print("--",curie)
+            #print("--",curie)
             term = { 'curie': curie, 'name': self.terms[curie].name, 'sort': 1 }
             match_term_list.append(term)
 
@@ -270,7 +271,7 @@ class Ontology(object):
                 curie = curies[0]
                 if curie in match_curies: continue
                 match_curies[curie] = 1
-                print("==",curie)
+                #print("==",curie)
                 term = { 'curie': curie, 'name': self.terms[curie].name, 'sort': 2 }
                 match_term_list.append(term)
 
