@@ -175,7 +175,7 @@ class Ontology(object):
                     self.terms[parent_curie].children.append( { 'type': new_type, 'curie': curie } )
                 else:
                     if parent_curie != 'UO:0000000':
-                        print(f"{curie} has parent {parent_curie}, but this curie is not found in this ontology")
+                        verboseprint(f"{curie} has parent {parent_curie}, but this curie is not found in this ontology")
 
 
     #########################################################################
@@ -190,6 +190,9 @@ class Ontology(object):
             for synonym in term.synonyms:
                 names.append(synonym['term'])
             for name in names:
+                if name is None:
+                    #print(f"WARNING: Term {curie} has no name!")
+                    name = curie
                 if name in self.names:
                     self.names[name].append(curie)
                 else:
@@ -365,9 +368,21 @@ def po_example():
 
 
 #########################################################################
+#### A very simple example of using this class
+def peco_example():
+    ontology = Ontology(filename='peco.obo',verbose=1)
+    ontology.show()
+    print("============================")
+    name = 'light'
+    result_list = ontology.fuzzy_search(search_string=name)
+    for item in result_list:
+        print(item)
+
+
+#########################################################################
 #### If class is run directly
 def main():
     #psims_example()
-    po_example()
+    peco_example()
 
 if __name__ == "__main__": main()
