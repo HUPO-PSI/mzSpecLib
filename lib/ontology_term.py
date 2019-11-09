@@ -76,8 +76,14 @@ class OntologyTerm(object):
                 match = re.search("^\s*id:\s*(\S+)\s*$",line)
                 if match:
                     self.curie = match.groups()[0]
-                    self.prefix,self.identifier = self.curie.split(":",1)
-                    has_match = True
+                    if ":" in self.curie:
+                        self.prefix,self.identifier = self.curie.split(":",1)
+                        has_match = True
+                    else:
+                        #print(f"ERROR: Unable to parse '{line}'")
+                        self.prefix = ''
+                        self.identifier = self.curie
+                        has_match = True
                 else:
                     self.set_error("TermIdError",f"Unable to parse id line '{line}'")
 
@@ -147,7 +153,7 @@ class OntologyTerm(object):
 
             #############################
             #### Process the part_of line
-            match = re.search("relationship: part_of",line)
+            match = re.search("^relationship: part_of",line)
             if match:
                 match = re.search("^\s*relationship:\s*part_of\s*(\S+)",line)
                 if match:
@@ -265,22 +271,22 @@ class OntologyTerm(object):
                     pass
                     has_match = True
                 else:
-                    self.set_error("TermAltIdError",f"Unable to parse alt_id line '{line}'")
+                    self.set_error("TermReplacedByError",f"Unable to parse replaced_by line '{line}'")
 
             #############################
             #### Process the property_value line
             match = re.search("^\s*property_value",line)
             if match:
-                match = re.search('^\s*property_value:\s*(.+)\s*$',line)
+                match = re.search('^\s*property_value:\s*(.+)$',line)
                 if match:
                     pass
                     has_match = True
                 else:
-                    self.set_error("TermAltIdError",f"Unable to parse alt_id line '{line}'")
+                    self.set_error("TermPropertyValueError",f"Unable to parse property_value line '{line}'")
 
             #############################
             #### Process the other uninteresting lines
-            match = re.search("^\s*(consider|disjoint_from|intersection_of|created_by|creation_date)",line)
+            match = re.search("^\s*(consider|disjoint_from|intersection_of|created_by|creation_date|equivalent_to|union_of)",line)
             if match:
                 pass
                 has_match = True
@@ -311,7 +317,7 @@ class OntologyTerm(object):
             #### Process an other kind of xref line
             match = re.search("^xref",line)
             if has_match is False and match:
-                match = re.search("^\s*xref: (\S+)\s*$",line)
+                match = re.search("^\s*xref:\s+(\S+)\s*.*$",line)
                 if match:
                     self.xrefs.append(match.groups()[0])
                     has_match = True
@@ -327,7 +333,7 @@ class OntologyTerm(object):
                     self.relationship_list.append(match.groups()[0])
                     has_match = True
                 else:
-                    self.set_error("TermRelationshipError",f"Unable to parse relatioship line '{line}'")
+                    self.set_error("TermRelationshipError",f"Unable to parse relationship line '{line}'")
 
             #############################
             #### If no match was found, add it to a pile of stuff we don't know how to deal with
