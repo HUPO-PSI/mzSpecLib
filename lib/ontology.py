@@ -378,11 +378,23 @@ def peco_example():
     for item in result_list:
         print(item)
 
+#########################################################################
+#### A very simple example of using this class
+def efo_example():
+    ontology = Ontology(filename='efo.obo',verbose=1)
+    ontology.show()
+    print("============================")
+    name = 'male'
+    result_list = ontology.fuzzy_search(search_string=name)
+    for item in result_list:
+        print(item)
+
+
 
 #########################################################################
 #### If class is run directly
 def main():
     #psims_example()
-    peco_example()
+    efo_example()
 
 if __name__ == "__main__": main()
