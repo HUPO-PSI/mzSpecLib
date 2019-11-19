@@ -1,7 +1,7 @@
 Spectral Library Format
 =======================
 
-![GitHub](https://img.shields.io/github/license/HUPO-PSI/SpectralLibraryFormat?style=flat-square)
+[![GitHub](https://img.shields.io/github/license/HUPO-PSI/SpectralLibraryFormat?style=flat)](https://github.com/HUPO-PSI/SpectralLibraryFormat/blob/master/LICENSE)
 
 - [Introduction](#Introduction)
 - [Development](#Development-of-the-standardized-spectral-library-format)
