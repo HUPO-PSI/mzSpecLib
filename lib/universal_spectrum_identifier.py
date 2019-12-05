@@ -226,14 +226,15 @@ def run_tests():
         ["invalid", "mzspec:"],
         ["invalid", "mzspec:PXD001234"],
         ["invalid", "mzspec:PXD001234:00261_A06_P001564_B00E_A00_R1:scan"],
-        ["invalid", "mzspec:PXD001234:00261_A06_P001564_B00E_A00_R1:index:10951"],
+        ["valid", "mzspec:PXD001234:00261_A06_P001564_B00E_A00_R1:index:10951"],
         ["valid", "mzspec:PXD002437:00261_A06_P001564_B00E_A00_R1:scan:10951:PEPT[Phospho]IDELVISK/2"],
         ["valid", "mzspec:PXD002437:00261_A06_P001564_B00E_A00_R1:scan:10951:PEPT[+79]IDELVISK/2"],
         ["valid", "mzspec:PXD001234:Dilution1:4:scan:10951"],
-        ["valid", "mzspec:PXD002437::00261_A06_P001564_B00E_A00_R1:test1:scan:10951:PEPT[Phospho]IDELVISK/2"],
-        ["valid", "mzspec:PXD002437::00261_A06_P001564_B00E_A00_R1\\:test1:scan:10951:PEPT[Phospho]IDELVISK/2"],
+        ["valid", "mzspec:PXD002437:00261_A06_P001564_B00E_A00_R1:test1:scan:10951:PEPT[Phospho]IDELVISK/2"],
+        ["valid", "mzspec:PXD002437:00261_A06_P001564_B00E_A00_R1\\:test1:scan:10951:PEPT[Phospho]IDELVISK/2"],
     ]
     testUSIsValid = []
+
     # Loop over each test USI, parse it, and determine if it is valid or not, and print the index number
     print("Testing example USIs:")
     for usiSet in testUSIs:
@@ -243,10 +244,21 @@ def run_tests():
         # Create a new UniversalSpectrumIdentifier object
         # made the USI object itself take a string so that parse does not need to be called explicitly
         usi = UniversalSpectrumIdentifier(usiStr)
-        response = usi.valid
+        expected_validity = True
+        if expectedStatus == 'invalid':
+            expected_validity = False
+        else:
+            expectedStatus = 'valid  '
+
+        status = 'PASS'
+        if usi.is_valid is not expected_validity:
+            status = 'FAIL'
+
+        response = usi.is_valid
         testUSIsValid.append(response)
+        print(f"{status}\texpected {expectedStatus}\t{usiStr}")
     # check to see if parsing is correct
-    print(testUSIsValid)
+    #print(testUSIsValid)
 
 
 #### A very simple example of using this class
@@ -261,7 +273,8 @@ def example():
 
 #### If class is run directly
 def main():
-    example()
+    #example()
+    run_tests()
 
 
 if __name__ == "__main__": main()
