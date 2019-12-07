@@ -3,6 +3,10 @@
 import os
 import yaml
 
+
+PROJECT_PATH = 'mzlib'
+
+
 def main():
     base_path = os.path.dirname(os.path.abspath(__file__))
     classes_yaml_file = base_path + "/../etc/classes.yaml"
@@ -20,7 +24,7 @@ def main():
     for class_name in classes:
         print(f"INFO: Generating code for class {class_name}")
         class_description = classes[class_name]["description"] if "description" in classes[class_name] else ""
-        with open(f"{base_path}/../lib/{class_name}.template.py", 'w') as outfile:
+        with open(f"{base_path}/../{PROJECT_PATH}/{class_name}.template.py", 'w') as outfile:
             outfile.write(f'''#!/usr/bin/env python3
 from __future__ import print_function
 import sys

@@ -13,10 +13,10 @@ basedir = "some hard coded location"
 basedir = os.path.dirname(os.path.abspath(__file__))+"/.."
 
 sys.path.append(basedir+"/lib")
-from SpectrumLibraryCollection import SpectrumLibraryCollection
-from SpectrumLibrary import SpectrumLibrary
-from Spectrum import Spectrum
-from universal_spectrum_identifier import UniversalSpectrumIdentifier
+from mzlib import SpectrumLibraryCollection
+from mzlib import SpectrumLibrary
+from mzlib import Spectrum
+from mzlib import UniversalSpectrumIdentifier
 
 
 def main():

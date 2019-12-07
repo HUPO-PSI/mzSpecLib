@@ -8,8 +8,8 @@ import re
 import timeit
 import os
 
-from SpectrumLibraryIndex import SpectrumLibraryIndex
-from Spectrum import Spectrum
+from mzlib.spectrum_library_index import SpectrumLibraryIndex
+from mzlib.spectrum import Spectrum
 
 
 debug = False

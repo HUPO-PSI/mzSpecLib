@@ -10,7 +10,7 @@ import os.path
 import timeit
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/../lib")
-from SpectrumLibrary import SpectrumLibrary
+from mzlib import SpectrumLibrary
 
 def main():
 

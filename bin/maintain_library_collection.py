@@ -10,7 +10,7 @@ import argparse
 import re
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/../lib")
-from SpectrumLibraryCollection import SpectrumLibraryCollection
+from mzlib import SpectrumLibraryCollection
 
 def main():
 
