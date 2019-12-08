@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-from __future__ import print_function
-import sys
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
 
+#from __future__ import print_function
+#import sys
+#def eprint(*args, **kwargs):
+#    print(*args, file=sys.stderr, **kwargs)
+
+import logging
 import re
 
 #############################################################################
@@ -55,6 +57,9 @@ class OntologyTerm(object):
     #### parse the line_list
     def parse(self, line_list=None, verbose=0):
         verboseprint = print if verbose>1 else lambda *a, **k: None
+        if verbose > 1:
+            logger = logging.getLogger()
+            logger.setLevel(logging.DEBUG)
 
         #### Make sure there is a line_list to parse
         if line_list is not None:
@@ -80,7 +85,7 @@ class OntologyTerm(object):
                         self.prefix,self.identifier = self.curie.split(":",1)
                         has_match = True
                     else:
-                        #print(f"ERROR: Unable to parse '{line}'")
+                        #logging.error("Unable to parse '%s'", line)
                         self.prefix = ''
                         self.identifier = self.curie
                         has_match = True
@@ -111,7 +116,7 @@ class OntologyTerm(object):
                         self.definition = match.groups()[0]
                         self.origin = match.groups()[1]
                     else:
-                        print(f"Unable to parse definition string '{self.definition}'")
+                        logging.error("Unable to parse definition string '%s'", self.definition)
                     has_match = True
                 else:
                     self.set_error("TermDefinitionError",f"Unable to parse def line '{line}'")
@@ -121,7 +126,7 @@ class OntologyTerm(object):
             match = re.search("^\s*xref: value-type",line)
             if match:
                 if self.value_type is not None:
-                    flag_error(f"This term already has a type at line '{line}'")
+                    logging.error("This term already has a type at line '%s'", line)
                 match = re.search("^\s*xref: value-type:(\S+)",line)
                 if match:
                     self.value_type = match.groups()[0]
@@ -248,7 +253,7 @@ class OntologyTerm(object):
                         has_match = True
                     else:
                         #self.set_error("TermSynonymError",f"Unable to parse synonym line '{line}'")
-                        print("TermSynonymError",f"Unable to parse synonym line '{line}'")
+                        logging.error("TermSynonymError, Unable to parse synonym line '%s'", line)
                         has_match = True
 
             #############################
@@ -346,7 +351,7 @@ class OntologyTerm(object):
 
         else:
             self.is_valid = False
-            verboseprint(f"Number of errors: {self.n_errors}")
+            logging.critical("Number of errors while parsing term '%s': %i", self.name, self.n_errors)
  
         if self.n_errors > 0 or len(self.unparsable_line_list) > 0:
             print("=====================")
@@ -360,7 +365,7 @@ class OntologyTerm(object):
         self.error_code = error_code
         self.error_message = error_message
         self.n_errors += 1
-        print(f"ERROR ({error_code}): {error_message}")
+        logging.error("(%s): %s", error_code, error_message)
 
 
     #########################################################################

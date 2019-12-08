@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-from __future__ import print_function
-import sys
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
 
+#from __future__ import print_function
+#import sys
+#def eprint(*args, **kwargs):
+#    print(*args, file=sys.stderr, **kwargs)
+
+import logging
 import re
-from ontology_term import OntologyTerm
+
+from mzlib.ontology_term import OntologyTerm
 
 
 #############################################################################
@@ -44,7 +47,10 @@ class Ontology(object):
     #########################################################################
     #### parse the file
     def read(self, filename=None, verbose=0):
-        verboseprint = print if verbose>0 else lambda *a, **k: None
+        # verboseprint = print if verbose>0 else lambda *a, **k: None
+        if verbose > 0:
+            logger = logging.getLogger()
+            logger.setLevel(logging.DEBUG)
 
         #### Determine the filename to read
         if filename is not None:
@@ -57,7 +63,7 @@ class Ontology(object):
         terms = {}
         current_term = []
 
-        verboseprint(f"INFO: Reading file '{filename}'")
+        logging.info("Reading file '%s'", filename)
         with open(filename, encoding="latin-1", errors="replace") as infile:
             for line in infile:
                 line = line.rstrip()
@@ -102,7 +108,7 @@ class Ontology(object):
                                 if term.is_obsolete is False:
                                     self.term_list.append(term.curie)
                                     if term.curie in self.terms:
-                                        set_error("Duplicate term!")
+                                        self.set_error("Duplicate term!")
                                     else:
                                         self.terms[term.curie] = term
                                         if term.prefix not in self.prefixes:
@@ -132,7 +138,7 @@ class Ontology(object):
             if term.is_obsolete is False:
                 self.term_list.append(term.curie)
                 if term.curie in self.terms:
-                    set_error("Duplicate term!")
+                    self.set_error("Duplicate term!")
                 else:
                     self.terms[term.curie] = term
                     if term.prefix not in self.prefixes:
@@ -153,15 +159,18 @@ class Ontology(object):
 
         else:
             self.is_valid = False
-            verboseprint(f"Number of errors: {self.n_error}")
+            logging.critical(f"Number of errors in file %s: %s", self.filename, self.n_error)
  
  
     #########################################################################
     #### Map all the parent relationships to child relationships for the parent
     def map_children(self, verbose=0):
-        verboseprint = print if verbose>0 else lambda *a, **k: None
+        # verboseprint = print if verbose>0 else lambda *a, **k: None
+        if verbose > 0:
+            logger = logging.getLogger()
+            logger.setLevel(logging.DEBUG)
 
-        verboseprint(f"INFO: Mapping parents to children")
+        logging.info("Mapping parents to children")
         for curie in self.term_list:
             term = self.terms[curie]
             parents = term.parents
@@ -175,15 +184,21 @@ class Ontology(object):
                     self.terms[parent_curie].children.append( { 'type': new_type, 'curie': curie } )
                 else:
                     if parent_curie != 'UO:0000000':
-                        verboseprint(f"{curie} has parent {parent_curie}, but this curie is not found in this ontology")
+                        logging.error(
+                            "'%s' has parent '%s', but this curie is not found in this ontology",
+                            curie, parent_curie
+                        )
 
 
     #########################################################################
     #### Create a dict of all the names and synonyms
     def create_name_map(self, verbose=0):
-        verboseprint = print if verbose>0 else lambda *a, **k: None
+        # verboseprint = print if verbose>0 else lambda *a, **k: None
+        if verbose > 0:
+            logger = logging.getLogger()
+            logger.setLevel(logging.DEBUG)
 
-        verboseprint(f"INFO: Creating a dict of all names and synonyms")
+        logging.info("Creating a dict of all names and synonyms")
         for curie in self.term_list:
             term = self.terms[curie]
             names = [ term.name ]
@@ -249,7 +264,7 @@ class Ontology(object):
         match_term_list = []
         match_curies = {}
 
-        eprint(f"INFO: Executing fuzzy search for '{search_string}'")
+        logging.info("Executing fuzzy search for '%s'", search_string)
         search_space = self.uc_names
         if children_of is not None:
             search_space = self.get_children(parent_curie=children_of, return_type='ucdict')
@@ -286,6 +301,15 @@ class Ontology(object):
             del match['sort']
 
         return(sorted_match_term_list)
+
+
+    #########################################################################
+    # Set the ontology to the error state
+    def set_error(self, error_code, error_message):
+        self.error_code = error_code
+        self.error_message = error_message
+        self.n_errors += 1
+        logging.error("(%s): %s", error_code, error_message)
 
 
     #########################################################################
@@ -329,8 +353,8 @@ def sort_by_relevance(x):
 
 #########################################################################
 #### A very simple example of using this class
-def psims_example():
-    ontology = Ontology(filename='psi-ms.obo',verbose=1)
+def psims_example(filename='psi-ms.obo'):
+    ontology = Ontology(filename=filename,verbose=1)
     ontology.show()
     print("============================")
     term = ontology.terms["MS:1002286"]
@@ -357,8 +381,8 @@ def psims_example():
 
 #########################################################################
 #### A very simple example of using this class
-def po_example():
-    ontology = Ontology(filename='plant-ontology.obo',verbose=1)
+def po_example(filename='plant-ontology.obo'):
+    ontology = Ontology(filename=filename,verbose=1)
     ontology.show()
     print("============================")
     name = 'xyl'
@@ -369,8 +393,8 @@ def po_example():
 
 #########################################################################
 #### A very simple example of using this class
-def peco_example():
-    ontology = Ontology(filename='peco.obo',verbose=1)
+def peco_example(filename='peco.obo'):
+    ontology = Ontology(filename=filename, verbose=1)
     ontology.show()
     print("============================")
     name = 'light'
@@ -380,8 +404,8 @@ def peco_example():
 
 #########################################################################
 #### A very simple example of using this class
-def efo_example():
-    ontology = Ontology(filename='efo.obo',verbose=1)
+def efo_example(filename='efo.obo'):
+    ontology = Ontology(filename=filename, verbose=1)
     ontology.show()
     print("============================")
     name = 'male'
@@ -394,7 +418,7 @@ def efo_example():
 #########################################################################
 #### If class is run directly
 def main():
-    #psims_example()
-    efo_example()
+    psims_example()
+    #efo_example()
 
 if __name__ == "__main__": main()
