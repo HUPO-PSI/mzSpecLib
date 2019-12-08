@@ -164,6 +164,12 @@ class SpectrumLibrary:
             line_beginning_file_offset = 0
             spectrum_file_offset = 0
             spectrum_name = ''
+
+            # Required for counting file_offset manually (LF vs CRLF)
+            infile.readline()
+            file_offset_line_ending = len(infile.newlines) - 1
+            infile.seek(0)
+
             if debug: eprint("INFO: Reading..",end='',flush=True)
             while 1:
                 line = infile.readline()
@@ -173,8 +179,8 @@ class SpectrumLibrary:
                 line_beginning_file_offset = file_offset
 
                 #### tell() is twice as slow as counting it myself
-                #file_offset = infile.tell()
-                file_offset += len(line)
+                # file_offset = infile.tell()
+                file_offset += len(line) + file_offset_line_ending
 
                 line = line.rstrip()
                 if state == 'header':
@@ -217,7 +223,9 @@ class SpectrumLibrary:
                 eprint(f"INFO: Read {n_spectra} spectra from {filename}")
 
             #### Flush the index
-            #self.index.commit()
+            if create_index:
+                self.index.commit()
+
         return(n_spectra)
 
 
