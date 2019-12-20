@@ -69,8 +69,10 @@ def main():
         eprint(f"ERROR: File '{library_file}' not found or not a file")
         return()
 
-    spectrum_library = SpectrumLibrary()
-    spectrum_library.filename = library_file
+    os.remove(library_file + '.splindex')
+
+    spectrum_library = SpectrumLibrary(filename=library_file)
+    spectrum_library.read(create_index=True)
 
     spectrum_buffer = spectrum_library.get_spectrum(spectrum_index_number=index_number)
     spectrum = Spectrum()

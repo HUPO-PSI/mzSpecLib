@@ -35,7 +35,7 @@ def main():
     spectrum_library.filename = params.library_file
 
     t0 = timeit.default_timer()
-    spectrum_library.create_index()
+    spectrum_library.read(create_index=True)
     t1 = timeit.default_timer()
     print('INFO: Elapsed time: ' + str(t1-t0))
 

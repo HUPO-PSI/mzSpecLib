@@ -239,6 +239,7 @@ class SpectrumLibraryIndex:
         """
 
         #### Begin functionality here
+        #TODO: Check if SpectrumLibrary is empty or not yet indexed.
         if spectrum_index_number is not None:
             try:
                 records = self.session.query(SpectrumLibraryIndexRecord).filter(SpectrumLibraryIndexRecord.number==spectrum_index_number).all()
