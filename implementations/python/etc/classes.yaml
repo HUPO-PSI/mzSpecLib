@@ -1,0 +1,176 @@
+components:
+  schemas:
+    SpectrumLibraryCollection:
+      type: object
+      description: >-
+        Class for a collection of spectrum libraries
+      properties:
+        filename:
+          type: string
+          example: spectralLibraryCollections.sqlite
+          description: >-
+            Filename of the SQLite database file that contains information about
+            the collection of libraries available.
+      methods:
+        create:
+          description: >-
+            Create a new spectral library collection
+          parameters:
+            overwrite_existing:
+              type: boolean
+              default: False
+              example: True
+              description: >-
+                Set to true in order to write over the previous file if it exists
+        show:
+          description: >-
+            Return a string that summarizes the state of the collection
+        get_libraries:
+          description: >-
+            Return a list of available libraries
+        get_library:
+          description: >-
+            Return attributes of a specific library
+        add_library:
+          description: >-
+            Add a new library
+        create_index:
+          description: >-
+            Create a master index from all the constituent library indexes to be able to find spectra in any library
+        get_spectrum:
+          description: >-
+            Extract a single spectrum by identifier
+        find_spectra:
+          description: >-
+            Return a list of spectra given query constraints
+
+    SpectrumLibrary:
+      type: object
+      description: >-
+        Class for a spectrum library
+      properties:
+        identifier:
+          type: string
+          example: PXL000001
+          description: >-
+            Identifier string of the library.
+        name:
+          type: string
+          example: Sigma UPS1 consensus library
+          description: >-
+            Tidy human readable name of the library.
+        filename:
+          type: string
+          example: sigmaups1_consensus_final_true_lib.msp
+          description: >-
+            Filename of the library as originally named by the provider.
+        format:
+          type: string
+          example: msp
+          description: >-
+            Name of the format for the current encoding of the library.
+      methods:
+        read_header:
+          description: >-
+            Read just the header of the whole library
+        read:
+          description: >-
+            Read the entire library into memory
+        write:
+          description: >-
+            Write the library to disk
+        create_index:
+          description: >-
+            Create an index file for this library
+        transform:
+          description: >-
+            Not quite sure what this is supposed to be
+        get_spectrum:
+          description: >-
+            Extract a single spectrum by identifier
+        find_spectra:
+          description: >-
+            Return a list of spectra given query constraints
+
+    SpectrumLibraryIndex:
+      type: object
+      description: >-
+        Class for a spectrum library index
+      properties:
+        library_filename:
+          type: string
+          example: ../refData/sigmaups1_consensus_final_true_lib.msp
+          description: >-
+            Relative or absolute filename of the library to which this index belongs
+        version:
+          type: string
+          example: 0.1
+          description: >-
+            Version tag of the spectrum library index. If the version is less
+            that the software's version number, then it should be rebuilt.
+        n_spectra:
+          type: integer
+          example: 3922
+          description: >-
+            Number of entries in the index and thus the library from which it was built
+        library_datetime:
+          type: string
+          example: ??
+          description: >-
+            Datetime stamp of the library file to serve as a quick check that the library
+            has not been altered since the creation of the index
+        columns:
+          type: array
+          description: >-
+            Names of the columns in the data matrix
+      methods:
+        get_offset:
+          description: >-
+            Get the offset for a spectrum in the library based on the spectrum_index or spectrum_name
+          parameters:
+            spectrum_index:
+              type: integer
+              default: None
+              example: 234
+              description: >-
+                Index number of the spectrum to select
+            spectrum_name:
+              type: string
+              default: None
+              example: AACLLPKLDELR/4_1(2,C,CAM)
+              description: >-
+                Name of the spectrum to select
+        find_offsets:
+          description: >-
+            Return an array of offsets of spectra that match the input parameters
+        create_index:
+          description: >-
+            Create a new index for a library
+        add_spectrum:
+          description: >-
+            Add a spectrum to the index
+          parameters:
+            number:
+              type: integer
+              default: None
+              example: 234
+              description: >-
+                Index number of the spectrum to add
+            offset:
+              type: integer
+              default: None
+              example: 234
+              description: >-
+                File offset of the spectrum to add
+            name:
+              type: string
+              default: None
+              example: AACLLPKLDELR/4_1(2,C,CAM)
+              description: >-
+                Name of the spectrum to add
+            peptide_sequence:
+              type: string
+              default: None
+              example: AACLLPKLDELR
+              description: >-
+                Unmodified peptide sequence of the spectrum to add
