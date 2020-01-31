@@ -173,7 +173,7 @@ class Spectrum:
 
         #### Now convert the foreign attributes to standard ones
         if spectrum_index is not None:
-            self.add_attribute("MS:1008014|spectrum index", spectrum_index)
+            self.add_attribute("MS:1003062|spectrum index", spectrum_index)
         self.convert_foreign_attributes()
 
         return(self)
@@ -196,33 +196,33 @@ class Spectrum:
 
         #### Define the translation from keys to CV terms
         leader_terms = {
-            "Name": "MS:1008013|spectrum name",
+            "Name": "MS:1003061|spectrum name",
         }
         other_terms = {
-            "MW": "MS:1008010|molecular mass",
-            "ExactMass": "MS:1008010|molecular mass",
+            "MW": "MS:1000224|molecular mass",
+            "ExactMass": "MS:1000224|molecular mass",
             "Charge": "MS:1000041|charge state",
             "Parent": "MS:1000744|selected ion m/z",
             "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
-            "Single": [ "MS:1008015|spectrum aggregation type", "MS:1008016|singleton spectrum" ],
-            "Consensus": [ "MS:1008015|spectrum aggregation type", "MS:1008017|consensus spectrum" ],
-            "PrecursorMonoisoMZ": "MS:1008032|theoretical monoisotopic m/z",
-            "Mz_exact": "MS:1008032|theoretical monoisotopic m/z",
-            "Mz_av": "MS:1008033|theoretical average m/z",
+            "Single": [ "MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum" ],
+            "Consensus": [ "MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum" ],
+            "PrecursorMonoisoMZ": "MS:1003053|theoretical monoisotopic m/z",
+            "Mz_exact": "MS:1003053|theoretical monoisotopic m/z",
+            "Mz_av": "MS:1003054|theoretical average m/z",
             "Inst": { "it": [ [ "MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation" ] ],
                       "hcd": [ [ "MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation" ] ] },
-            "Pep": { "Tryptic": [ [ "MS:1008030|number of enzymatic termini", 2 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
-                     "N-Semitryptic": [ [ "MS:1008030|number of enzymatic termini", 1 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
-                     "C-Semitryptic": [ [ "MS:1008030|number of enzymatic termini", 1 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
-                     "Tryptic/miss_good_confirmed": [ [ "MS:1008030|number of enzymatic termini", 2 ],
-                        [ "MS:1008034|number of missed cleavages", "0" ],
+            "Pep": { "Tryptic": [ [ "MS:1003048|number of enzymatic termini", 2 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
+                     "N-Semitryptic": [ [ "MS:1003048|number of enzymatic termini", 1 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
+                     "C-Semitryptic": [ [ "MS:1003048|number of enzymatic termini", 1 ], [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
+                     "Tryptic/miss_good_confirmed": [ [ "MS:1003048|number of enzymatic termini", 2 ],
+                        [ "MS:1003044|number of missed cleavages", "0" ],
                         [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
-                     "Tryptic/miss_bad_confirmed": [ [ "MS:1008030|number of enzymatic termini", 2 ],
-                        [ "MS:1008034|number of missed cleavages", ">0" ],
+                     "Tryptic/miss_bad_confirmed": [ [ "MS:1003048|number of enzymatic termini", 2 ],
+                        [ "MS:1003044|number of missed cleavages", ">0" ],
                         [ "MS:1001045|cleavage agent name", "MS:1001251|Trypsin" ] ],
                     },
-            "Spec": { "Consensus": [ [ "MS:1008015|spectrum aggregation type", "MS:1008017|consensus spectrum" ] ] },
-            "Scan": "MS:1008035|scan number",
+            "Spec": { "Consensus": [ [ "MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum" ] ] },
+            "Scan": "MS:1003057|scan number",
             "Origfile": "MS:1009008|source file",
             "Sample": "MS:1000002|sample name",
             "Filter": "MS:1000512|filter string",
@@ -231,13 +231,12 @@ class Spectrum:
             "ms1PrecursorAb": "MS:1009010|previous MS1 scan precursor intensity",
             "Precursor1MaxAb": "MS:1009011|precursor apex intensity",
             "Purity": "MS:1009013|isolation window precursor purity",
-            "Unassigned": "MS:1008027|top 20 peak unassigned intensity fraction",
-            "Unassign_all": "MS:1008025|total unassigned intensity fraction",
-            "Protein": "MS:1000885|protein accession",
+            "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
+            "Unassign_all": "MS:1003079|total unassigned intensity fraction",
             "Mods": "MS:1001471|peptide modification details",
             "BasePeak": "MS:1000505|base peak intensity",
-            "Naa": "MS:1008027|number of residues",
-            "Num peaks": "MS:1008040|number of peaks",
+            "Naa": "MS:1003043|number of residues",
+            "Num peaks": "MS:1003059|number of peaks",
         }
 
         #### Add special terms that we want to start off with
@@ -428,8 +427,8 @@ class Spectrum:
                     else:
                         match = re.match("(\d+)", self.foreign_attributes[attribute])
                         if match is not None:
-                            self.add_attribute("MS:1008020|number of replicate spectra used", match.group(1))
-                            self.add_attribute("MS:1008019|number of replicate spectra available", match.group(1))
+                            self.add_attribute("MS:1003070|number of replicate spectra used", match.group(1))
+                            self.add_attribute("MS:1003069|number of replicate spectra available", match.group(1))
                         else:
                             self.add_attribute("ERROR", f"Unable to parse {self.foreign_attributes[attribute]} in {attribute} at E2455")
                             unknown_terms.append(attribute)
@@ -472,8 +471,8 @@ class Spectrum:
 
         #### Perform some cleanup for poorly annotated libraries
         if "MS:1000888|unmodified peptide sequence" not in self.attribute_dict:
-            if "MS:1008013|spectrum name" in self.attribute_dict:
-                lookup = self.attribute_dict["MS:1008013|spectrum name"]
+            if "MS:1003061|spectrum name" in self.attribute_dict:
+                lookup = self.attribute_dict["MS:1003061|spectrum name"]
                 name = self.attributes[ lookup["indexes"][0] ][1]
                 match = re.match("(.+)/(\d+)",name)
                 if match:
