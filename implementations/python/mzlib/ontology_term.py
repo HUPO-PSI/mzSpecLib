@@ -44,6 +44,12 @@ class OntologyTerm(object):
         self.namespaces = []
         self.subsets = []
 
+        #### Mass modification-related properties
+        self.monoisotopic_mass = None
+        self.average_mass = None
+        self.sites = {}
+        self.extended_name = None
+
         self.n_errors = 0
         self.error_code = None
         self.error_message = None
@@ -252,9 +258,15 @@ class OntologyTerm(object):
                         self.synonyms,match.groups()[0]
                         has_match = True
                     else:
-                        #self.set_error("TermSynonymError",f"Unable to parse synonym line '{line}'")
-                        logging.error("TermSynonymError, Unable to parse synonym line '%s'", line)
-                        has_match = True
+                        match = re.search('^\s*synonym:\s*"(.+)"\s*\[(.*)\]\s*$',line)
+                        if match:
+                            self.synonyms.append( { "type": 'unspecified', "term": match.groups()[0], "origin": match.groups()[1] } )
+                            self.synonyms,match.groups()[0]
+                            has_match = True
+                        else:
+                            #self.set_error("TermSynonymError",f"Unable to parse synonym line '{line}'")
+                            logging.error("TermSynonymError, Unable to parse synonym line '%s'", line)
+                            has_match = True
 
             #############################
             #### Process the alt_id line
@@ -317,6 +329,41 @@ class OntologyTerm(object):
                     has_match = True
                 else:
                     self.set_error("TermSubsetError",f"Unable to parse subset line '{line}'")
+
+
+            ####################################################################################
+            #### Process mass modification data
+
+            #### Parse xref: delta_mono_mass
+            match = re.search(r"^xref:\s*delta_mono_mass",line)
+            if has_match is False and match:
+                match = re.search(r'^xref:\s*delta_mono_mass\s+\"\s*([\+\-\.\d]+)\s*\"',line)
+                if match:
+                    self.monoisotopic_mass = float(match.groups()[0])
+                    has_match = True
+                else:
+                    self.set_error("TermDeltaMonoMassError",f"Unable to parse xref line '{line}'")
+
+            #### Parse xref: delta_avge_mass
+            match = re.search(r"^xref:\s*delta_avge_mass",line)
+            if has_match is False and match:
+                match = re.search(r'^xref:\s*delta_avge_mass\s+\"\s*([\+\-\.\d]+)\s*\"',line)
+                if match:
+                    self.average_mass = float(match.groups()[0])
+                    has_match = True
+                else:
+                    self.set_error("TermDeltaAvgMassError",f"Unable to parse xref line '{line}'")
+
+            #### Parse xref spec_NN_site
+            match = re.search(r"^xref:\s+spec_\d+_site",line)
+            if has_match is False and match:
+                match = re.search(r'^xref:\s+spec_\d+_site\s+\"\s*(.+)\s*\"',line)
+                if match:
+                    self.sites[match.groups()[0]] = 1
+                    has_match = True
+                else:
+                    self.set_error("TermSpecSiteError",f"Unable to parse xref line '{line}'")
+
 
             #############################
             #### Process an other kind of xref line
@@ -384,6 +431,11 @@ class OntologyTerm(object):
         print(f"synonyms: {self.synonyms}")
         print(f"has_units: {self.has_units}")
         print(f"is_obsolete: {self.is_obsolete}")
+
+        if self.monoisotopic_mass is not None:
+            print(f"=monoisotopic_mass: {self.monoisotopic_mass}")
+            print(f"=average_mass: {self.average_mass}")
+            print(f"=sites: {self.sites}")
 
         print(f"Number of unparsable lines: {len(self.unparsable_line_list)}")
         if len(self.unparsable_line_list) > 0:

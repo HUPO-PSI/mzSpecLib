@@ -31,8 +31,13 @@ class Ontology(object):
         self.other_line_list = []
         self.term_list = []
         self.terms = {}
+
         self.names = {}
         self.uc_names = {}
+        self.mass_mod_names = {}
+        self.mass_mod_names_extended = {}
+        self.uc_mass_mod_names = {}
+
         self.n_errors = 0
         self.error_code = None
         self.error_message = None
@@ -150,8 +155,14 @@ class Ontology(object):
 
         #### Now map the parentage structure into children
         self.map_children(verbose=verbose)
+
         #### And create the map of names
         self.create_name_map(verbose=verbose)
+
+        #### If this is Unimod, create a special name_map that includes mass deltas
+        if 'UNIMOD' in self.prefixes:
+            print("Found UniMod")
+            self.create_mass_mod_map(verbose=verbose)
 
         #### Set the is_valid state
         if self.n_errors == 0:
@@ -218,6 +229,50 @@ class Ontology(object):
                 else:
                     self.uc_names[uc_name] = [ curie ]
 
+
+    #########################################################################
+    #### Create a dict of all the names and synonyms
+    def create_mass_mod_map(self, verbose=0):
+
+        logging.info("Creating a mass mod map")
+        for curie in self.term_list:
+            term = self.terms[curie]
+            name = term.name
+            if name is None:
+                print(f"WARNING: Term {curie} has no name!")
+                name = curie
+
+            #### Get a clean monoisotopic_mass
+            monoisotopic_mass = term.monoisotopic_mass
+            if monoisotopic_mass is None:
+                monoisotopic_mass = 0
+
+            #### Set a special string to make sure there is always a sign displayed
+            sign_str = ''
+            if monoisotopic_mass >= 0:
+                sign_str = '+'
+
+            sites = term.sites
+            if sites is None:
+                sites = [ '? ']
+
+            #### Loop over all possible sites and make names
+            for site in sites:
+                extended_name = f"{name} ({site}{sign_str}{monoisotopic_mass})"
+                extended_curie = f"{curie}-{site}"
+                if extended_name in self.mass_mod_names:
+                    self.mass_mod_names[extended_name].append(extended_curie)
+                else:
+                    self.mass_mod_names[extended_name] = [ extended_curie ]
+                    self.mass_mod_names_extended[extended_curie] = extended_name
+                term.extended_name = f"{name} ({sign_str}{monoisotopic_mass})"
+
+                #### Also save the upper-case versions
+                uc_name = extended_name.upper()
+                if uc_name in self.uc_mass_mod_names:
+                    self.uc_mass_mod_names[uc_name].append(extended_curie)
+                else:
+                    self.uc_mass_mod_names[uc_name] = [ extended_curie ]
 
     #########################################################################
     #### Get a list of all children of a term
@@ -291,6 +346,58 @@ class Ontology(object):
                 match_curies[curie] = 1
                 #print("==",curie)
                 term = { 'curie': curie, 'name': self.terms[curie].name, 'sort': 2 }
+                match_term_list.append(term)
+
+        sorted_match_term_list = sorted(match_term_list,key=sort_by_relevance)
+        if len(sorted_match_term_list) > max_hits:
+            del sorted_match_term_list[max_hits:]
+
+        for match in sorted_match_term_list:
+            del match['sort']
+
+        return(sorted_match_term_list)
+
+
+    #########################################################################
+    #### Fuzzy search for a string
+    def fuzzy_mass_mod_search(self, search_string, max_hits=25, children_of=None):
+
+        match_term_list = []
+        match_curies = {}
+
+        logging.info("Executing fuzzy search for '%s'", search_string)
+        search_space = self.uc_mass_mod_names
+        if children_of is not None:
+            search_space = self.get_children(parent_curie=children_of, return_type='ucdict')
+
+        #### Convert the search string to upper case (for case-insensitive search)
+        self.uc_search_string = search_string.upper()
+        #### Replace any + symbols with \+ for the regexp to work
+        self.uc_search_string = re.sub(r'\+','\+',self.uc_search_string)
+        #### Replace any . symbols with \. for the regexp to work
+        self.uc_search_string = re.sub(r'\.','\.',self.uc_search_string)
+
+        match_list = filter(self.filter_starts_with,search_space)
+        for match in match_list:
+            curies = search_space[match]
+            curie = curies[0]
+            if curie in match_curies: continue
+            match_curies[curie] = 1
+            trimmed_curie = re.sub(r'-.+$','',curie)
+            term = { 'curie': trimmed_curie, 'name': self.mass_mod_names_extended[curie], 'sort': 1 }
+            match_term_list.append(term)
+
+        count = len(match_term_list)
+
+        if count < max_hits:
+            matches = filter(self.filter_contains,search_space)
+            for match in matches:
+                curies = search_space[match]
+                curie = curies[0]
+                if curie in match_curies: continue
+                match_curies[curie] = 1
+                trimmed_curie = re.sub(r'-.+$','',curie)
+                term = { 'curie': trimmed_curie, 'name': self.mass_mod_names_extended[curie], 'sort': 2 }
                 match_term_list.append(term)
 
         sorted_match_term_list = sorted(match_term_list,key=sort_by_relevance)
@@ -413,12 +520,27 @@ def efo_example(filename='efo.obo'):
     for item in result_list:
         print(item)
 
+#########################################################################
+#### A simple example reading and accessing the UNIMOD ontology
+def unimod_example(filename='unimod.obo'):
+    ontology = Ontology(filename=filename,verbose=1)
+    ontology.show()
+    print("============================")
+    term = ontology.terms["UNIMOD:7"]
+    term.show()
+    print("============================")
+    name = 'S+79'
+    result_list = ontology.fuzzy_mass_mod_search(search_string=name)
+    for item in result_list:
+        print(item)
+    print("============================")
 
 
 #########################################################################
 #### If class is run directly
 def main():
-    psims_example()
+    #psims_example()
     #efo_example()
+    unimod_example()
 
 if __name__ == "__main__": main()
