@@ -3,7 +3,7 @@ import os
 
 from mzlib.index import MemoryIndex
 
-from .base import SpectralLibraryBackendBase
+from .base import _PlainTextSpectralLibraryBackendBase
 
 
 leader_terms = {
@@ -66,15 +66,8 @@ species_map = {
                 ["MS:1001468|taxonomy: common name", "chicken"]],
 }
 
-class MSPSpectralLibrary(SpectralLibraryBackendBase):
 
-    def __init__(self, filename, index_type=None):
-        if index_type is None:
-            index_type = MemoryIndex
-        super(MSPSpectralLibrary, self).__init__(filename)
-        self.index, was_initialized = index_type.from_filename(filename)
-        if not was_initialized:
-            self._build_index()
+class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _build_index(self):
         """
@@ -88,23 +81,9 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
 
         #### Check that the spectrum library filename isvalid
         filename = self.filename
-        # if debug:
-        #     eprint(f'INFO: Reading spectra from {filename}')
-        # if filename is None:
-        #     eprint("ERROR: Unable to read library with no filename")
-        #     return(False)
-
-        #### If an index hasn't been opened, open it now
-        # if create_index is not None:
-        #     if self.index is None:
-        #         self.index = SpectrumLibraryIndex(
-        #             library_filename=self.filename)
-        #         self.index.create_index()
 
         #### Determine the filesize
         file_size = os.path.getsize(filename)
-        # if debug:
-        #     eprint(f"INFO: File size is {file_size}")
 
         with open(filename, 'r') as infile:
             state = 'header'
@@ -184,8 +163,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
             infile.seek(offset)
             state = 'body'
             spectrum_buffer = []
-            n_spectra = 0
-            start_index = 0
+
             file_offset = 0
             line_beginning_file_offset = 0
             spectrum_file_offset = 0
@@ -613,11 +591,3 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
 
-    def search(self, specification, **query_keys):
-        records = self.index.search(specification, **query_keys)
-        spectra = []
-        for record in records:
-            buffer = self._get_lines_for(record.offset)
-            spectrum = self._parse(buffer, record.number)
-            spectra.append(spectrum)
-        return spectra
