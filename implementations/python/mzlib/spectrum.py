@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import print_function
+
 import sys
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 import re
 import json
+
+import itertools
 
 debug = True
 
@@ -521,18 +524,19 @@ class Spectrum:
                     print("-ERROR: attribute has wrong number of elements:")
                     print(attribute)
             for peak in self.peak_list:
-                buffer += "\t".join(peak)+"\n"
+                buffer += "\t".join(map(str, peak))+"\n"
 
         #### If the format is TSV
         elif format == "tsv" or format == "csv":
 
             #### Set the appropriate delimiter for format
             delimiter = "\t"
-            if format == "csv": delimiter = ","
+            if format == "csv":
+                delimiter = ","
 
             #### Create the header line and columns line
             buffer += "# Spectrum attributes\n"
-            buffer += "cv_param_group\taccession\tname\tvalue_accession\tvalue\n"
+            buffer += delimiter.join("cv_param_group", "accession", "name", "value_accession", "value\n")
 
             for attribute in self.attributes:
                 if len(attribute) == 2:
@@ -545,14 +549,15 @@ class Spectrum:
                 else:
                     print("ERROR: Unsupported number of items in attribute")
                     print(attribute)
-                    sys.exit(10)
+                    raise ValueError(
+                        f"Unsupported number of items in attribute: {attribute}")
                 components = key.split('|',1)
                 if len(components) == 2:
                     accession,name = components
                 else:
                     print("ERROR: Unsupported number of items in components")
                     print(components)
-                    sys.exit(10)
+                    raise ValueError(f"Unsupported number of items in components: {components}")
                 components = str(value).split('|',1)
                 if len(components) == 2:
                     value_accession,value = components
@@ -567,10 +572,11 @@ class Spectrum:
                 else:
                     print("ERROR: Unsupported number of items in components")
                     print(components)
-                    sys.exit(10)
+                    raise ValueError(
+                        f"Unsupported number of items in components: {components}")
 
                 #### Create the data line
-                buffer += delimiter.join([cv_param_group,accession,name,value_accession,value])+"\n"
+                buffer += delimiter.join(map(str, [cv_param_group,accession,name,value_accession,value]))+"\n"
 
             #### Create the header line and columns line
             buffer += "# Peak list\n"
@@ -581,7 +587,7 @@ class Spectrum:
                 mz,intensity,interpretation = peak
                 if format == "csv" and ',' in str(interpretation):
                     interpretation = '"' + interpretation + '"'
-                buffer += delimiter.join([mz,intensity,interpretation])+"\n"
+                buffer += delimiter.join(map(str, [mz,intensity,interpretation]))+"\n"
 
         #### If the format is JSON
         elif format == "json":
@@ -589,8 +595,8 @@ class Spectrum:
             intensities = []
             interpretations = []
             for peak in self.peak_list:
-                mzs.append(float(peak[0]))
-                intensities.append(float(peak[1]))
+                mzs.append(peak[0])
+                intensities.append(peak[1])
                 interpretations.append(peak[2])
 
             #### Organize the attributes from the simple list into the appropriate JSON format
@@ -605,7 +611,8 @@ class Spectrum:
                 else:
                     print("ERROR: Unsupported number of items in attribute")
                     print(attribute)
-                    sys.exit(10)
+                    raise ValueError(
+                        f"Unsupported number of items in attribute: {attribute}")
                 components = key.split('|',1)
                 if len(components) == 2:
                     accession,name = components
@@ -614,7 +621,8 @@ class Spectrum:
                 else:
                     print("ERROR: Unsupported number of items in components")
                     print(components)
-                    sys.exit(10)
+                    raise ValueError(
+                        f"Unsupported number of items in components: {components}")
                 components = str(value).split('|',1)
                 if len(components) == 2:
                     value_accession,value = components
@@ -625,7 +633,8 @@ class Spectrum:
                 else:
                     print("ERROR: Unsupported number of items in components")
                     print(components)
-                    sys.exit(10)
+                    raise ValueError(
+                        f"Unsupported number of items in components: {components}")
                 attributes.append(reformed_attribute)
 
             spectrum = { "attributes": attributes, "mzs": mzs, "intensities": intensities,

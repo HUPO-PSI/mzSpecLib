@@ -7,7 +7,7 @@ from .base import IndexBase
 
 
 class IndexRecord(object):
-    __slots__ = ('number', 'offset', 'name', 'analyte', '_attributes')
+    __slots__ = ('number', 'offset', 'name', 'analyte', 'attributes')
 
     def __init__(self, number, offset, name, analyte, attributes=None):
         self.number = number
@@ -43,8 +43,14 @@ class IndexRecord(object):
 
 
 class MemoryIndex(IndexBase):
+
+    @classmethod
+    def from_filename(cls, filename, library=None):
+        inst = cls()
+        return inst, False
+
     def __init__(self, records=None, metadata=None):
-        self.records = list(records)
+        self.records = list(records or [])
         self._by_name = defaultdict(list)
         self._by_attr = defaultdict(lambda: defaultdict(list))
         self.metadata = metadata or {}

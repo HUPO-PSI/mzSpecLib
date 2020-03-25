@@ -1,6 +1,10 @@
 import re
+import os
+
+from mzlib.index import MemoryIndex
 
 from .base import SpectralLibraryBackendBase
+
 
 leader_terms = {
     "Name": "MS:1003061|spectrum name",
@@ -64,23 +68,22 @@ species_map = {
 
 class MSPSpectralLibrary(SpectralLibraryBackendBase):
 
-    def __init__(self, filename):
+    def __init__(self, filename, index_type=None):
+        if index_type is None:
+            index_type = MemoryIndex
         super(MSPSpectralLibrary, self).__init__(filename)
-        self.index = None
+        self.index, was_initialized = index_type.from_filename(filename)
+        if not was_initialized:
+            self._build_index()
 
-    def read(self, create_index=None):
+    def _build_index(self):
         """
-        read - Read the entire library into memory
-
-        Extended description of function.
-
-        Parameters
-        ----------
+        Populate the spectrum index
 
         Returns
         -------
-        int
-            Description of return value
+        n_spectra: int
+            The number of entries read
         """
 
         #### Check that the spectrum library filename isvalid
@@ -143,14 +146,16 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                         continue
                     if re.match('Name: ', line):
                         if len(spectrum_buffer) > 0:
-                            if create_index is not None:
-                                self.index.add_spectrum(
-                                    number=n_spectra + start_index, offset=spectrum_file_offset, name=spectrum_name, peptide_sequence=None)
+                            self.index.add(
+                                number=n_spectra + start_index,
+                                offset=spectrum_file_offset,
+                                name=spectrum_name,
+                                analyte=None)
                             n_spectra += 1
                             spectrum_buffer = []
                             #### Commit every now and then
-                            # if int(n_spectra/1000) == n_spectra/1000:
-                            #     self.index.commit()
+                            if n_spectra % 1000 == 0:
+                                self.index.commit()
                             #     percent_done = int(
                             #         file_offset/file_size*100+0.5)
                             #     eprint(str(percent_done)+"%..",
@@ -161,17 +166,18 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
 
                     spectrum_buffer.append(line)
 
-            # if create_index is not None:
-            #     self.index.add_spectrum(
-            #         number=n_spectra + start_index, offset=spectrum_file_offset, name=spectrum_name, peptide_sequence=None)
-            #     self.index.commit()
+            self.index.add(
+                number=n_spectra + start_index,
+                offset=spectrum_file_offset,
+                name=spectrum_name,
+                analyte=None)
+            self.index.commit()
             n_spectra += 1
 
             #### Flush the index
-            # if create_index:
-            #     self.index.commit()
+            self.index.commit()
 
-        return(n_spectra)
+        return n_spectra
 
     def _get_lines_for(self, offset):
         with open(self.filename, 'r') as infile:
@@ -201,7 +207,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
             #### We will end up here if this is the last spectrum in the file
             return spectrum_buffer
 
-    def parse(self, buffer, spectrum_index=None):
+    def _parse(self, buffer, spectrum_index=None):
 
         #### Start in the header section of the entry
         in_header = True
@@ -268,13 +274,12 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                 interpretations = interpretations.strip('"')
 
                 #### Add to the peak list
-                peak_list.append([mz, intensity, interpretations])
+                peak_list.append([float(mz), float(intensity), interpretations])
 
         #### Now convert the format attributes to standard ones
+        spectrum = self._make_spectrum(peak_list, attributes)
         if spectrum_index is not None:
-            self.add_attribute("MS:1003062|spectrum index", spectrum_index)
-        spectrum = self.make_spectrum(peak_list, attributes)
-
+            spectrum.add_attribute("MS:1003062|spectrum index", spectrum_index)
         return spectrum
 
     def _parse_comment(self, value, attributes):
@@ -304,11 +309,9 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
             else:
                 attributes[item] = None
 
-    def make_spectrum(self, peak_list, attributes):
+    def _make_spectrum(self, peak_list, attributes):
         spectrum = self._new_spectrum()
         spectrum.peak_list = peak_list
-
-        group_counter = self._make_counter()
 
         #### Add special terms that we want to start off with
         for term in leader_terms:
@@ -330,7 +333,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
             if attribute in other_terms:
                                 #### If the original attribute has no value, if mapping permits this, go ahead
                 if attributes[attribute] is None:
-                    if type(other_terms[attribute]) is list:
+                    if isinstance(other_terms[attribute], list):
                         spectrum.add_attribute(
                             other_terms[attribute][0], other_terms[attribute][1])
                     else:
@@ -339,7 +342,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                         unknown_terms.append(attribute)
 
                 #### If the term mapping value is an ordinary string, then just substitute the key
-                elif type(other_terms[attribute]) is str:
+                elif isinstance(other_terms[attribute], str):
                     spectrum.add_attribute(
                         other_terms[attribute], attributes[attribute])
 
@@ -348,11 +351,11 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                     #### If the value of the original attribute is in the list of allowed values
                     if attributes[attribute] in other_terms[attribute]:
                         #### If the mapping is a plain string, add it
-                        if type(other_terms[attribute][attributes[attribute]]) is str:
+                        if isinstance(other_terms[attribute][attributes[attribute]], str):
                             spectrum.add_attribute(
                                 other_terms[attribute][attributes[attribute]].split("="))
                         #### Or if it is a list, then there are multiple terms to add within a group
-                        elif type(other_terms[attribute][attributes[attribute]]) is list:
+                        elif isinstance(other_terms[attribute][attributes[attribute]], list):
                             if len(other_terms[attribute][attributes[attribute]]) == 1:
                                 for item in other_terms[attribute][attributes[attribute]]:
                                     spectrum.add_attribute(item[0], item[1])
@@ -376,13 +379,13 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                     match = re.match("([\d\.]+)\s*ev", attributes[attribute], flags=re.IGNORECASE)
                     if match is not None:
                         found_match = 1
-                        group_identifier = next(group_counter)
+                        group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute("MS:1000045|collision energy", match.group(1), group_identifier)
                         spectrum.add_attribute("UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
                     match = re.match("([\d\.]+)\s*%", attributes[attribute])
                     if match is not None:
                         found_match = 1
-                        group_identifier = next(group_counter)
+                        group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute("MS:1000045|collision energy", match.group(1), group_identifier)
                         spectrum.add_attribute("UO:0000000|unit", "UO:0000187|percent", group_identifier)
                     if found_match == 0:
@@ -396,7 +399,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                     match = re.match(
                         "([\d\.]+)", attributes[attribute])
                     if match is not None:
-                        group_identifier = next(group_counter)
+                        group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
                             "MS:1000045|collision energy", match.group(1), group_identifier)
                         spectrum.add_attribute(
@@ -419,7 +422,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                                 "ERROR", f"Need more RT parsing code to handle this value")
                             unknown_terms.append(attribute)
                         else:
-                            group_identifier = next(group_counter)
+                            group_identifier = spectrum.get_next_group_identifier()
                             spectrum.add_attribute(
                                 "MS:1000894|retention time", match.group(1), group_identifier)
                             #### If the value is greater than 250, assume it must be seconds
@@ -441,12 +444,12 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
 
             elif attribute == "ms2IsolationWidth":
                 if attributes[attribute] is not None:
-                    group_identifier = next(group_counter)
+                    group_identifier = spectrum.get_next_group_identifier()
                     spectrum.add_attribute("MS:1000828|isolation window lower offset", str(
                         float(attributes[attribute])/2), group_identifier)
                     spectrum.add_attribute("UO:0000000|unit",
                                        "MS:1000040|m/z", group_identifier)
-                    group_identifier = next(group_counter)
+                    group_identifier = spectrum.get_next_group_identifier()
                     spectrum.add_attribute("MS:1000829|isolation window upper offset", str(
                         float(attributes[attribute])/2), group_identifier)
                     spectrum.add_attribute("UO:0000000|unit",
@@ -462,7 +465,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                     match = re.match(
                         "([\-\+e\d\.]+)\s*ppm", attributes[attribute], flags=re.IGNORECASE)
                     if match is not None:
-                        group_identifier = next(group_counter)
+                        group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
                             "MS:1001975|delta m/z", match.group(1), group_identifier)
                         spectrum.add_attribute(
@@ -471,7 +474,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                         match = re.match(
                             "([\-\+e\d\.]+)\s*", attributes[attribute])
                         if match is not None:
-                            group_identifier = next(group_counter)
+                            group_identifier = spectrum.get_next_group_identifier()
                             spectrum.add_attribute(
                                 "MS:1001975|delta m/z", match.group(1), group_identifier)
                             spectrum.add_attribute(
@@ -488,7 +491,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
             #### Expand the Dev_ppm attribute
             elif attribute == "Dev_ppm":
                 if attributes[attribute] is not None:
-                    group_identifier = next(group_counter)
+                    group_identifier = spectrum.get_next_group_identifier()
                     spectrum.add_attribute(
                         "MS:1001975|delta m/z", attributes[attribute], group_identifier)
                     spectrum.add_attribute(
@@ -555,7 +558,7 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                     value = value.strip('"')
 
                     if value in species_map:
-                        group_identifier = next(group_counter)
+                        group_identifier = spectrum.get_next_group_identifier()
                         for item in species_map[value]:
                             spectrum.add_attribute(
                                 item[0], item[1], group_identifier)
@@ -590,9 +593,31 @@ class MSPSpectralLibrary(SpectralLibraryBackendBase):
                 spectrum.add_attribute(
                     "MS:1009900|other attribute name", attribute)
             else:
-                group_identifier = next(group_counter)
+                group_identifier = spectrum.get_next_group_identifier()
                 spectrum.add_attribute(
                     "MS:1009900|other attribute name", attribute, group_identifier)
                 spectrum.add_attribute("MS:1009902|other attribute value",
                                    attributes[attribute], group_identifier)
         return spectrum
+
+    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+        # keep the two branches separate for the possibility that this is not possible with all
+        # index schemes.
+        if spectrum_number is not None:
+            if spectrum_name is not None:
+                raise ValueError("Provide only one of spectrum_number or spectrum_name")
+            offset = self.index.offset_for(spectrum_number)
+        elif spectrum_name is not None:
+            offset = self.index.offset_for(spectrum_name)
+        buffer = self._get_lines_for(offset)
+        spectrum = self._parse(buffer, spectrum_number)
+        return spectrum
+
+    def search(self, specification, **query_keys):
+        records = self.index.search(specification, **query_keys)
+        spectra = []
+        for record in records:
+            buffer = self._get_lines_for(record.offset)
+            spectrum = self._parse(buffer, record.number)
+            spectra.append(spectrum)
+        return spectra

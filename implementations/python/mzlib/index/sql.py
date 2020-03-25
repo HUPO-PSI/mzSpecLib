@@ -35,6 +35,17 @@ class SpectrumLibraryIndexRecord(Base):
 class SQLIndex(IndexBase):
     extension = '.splindex'
 
+    @classmethod
+    def from_filename(cls, filename, library=None):
+        exists = os.path.exists(filename + cls.extension)
+        inst = cls(filename)
+
+        # File was empty
+        if len(inst) == 0 and exists:
+            exists = False
+        return inst, exists
+
+
     def __init__(self, filename):
         self.filename = filename
         self.index_filename = self.filename + self.extension

@@ -1,5 +1,9 @@
 class IndexBase(object):
 
+    @classmethod
+    def from_filename(cls, filename, library=None):
+        raise NotImplementedError()
+
     def offset_for(self, record_label):
         record = self.record_for(record_label)
         return record.offset
