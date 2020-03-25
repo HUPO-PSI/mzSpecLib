@@ -42,11 +42,11 @@ class Spectrum:
 
     #### Add an attribute to the list and update the lookup tables
     def add_attribute(self, key, value, group_identifier=None):
-        items = [ key, value ]
+        items = [key, value]
         if group_identifier is not None:
             items.append(group_identifier)
         self.attributes.append(items)
-        index = len(self.attributes)-1
+        index = len(self.attributes) - 1
 
         #### If there is already one of these, add it to the lists in attribute_dict
         if key in self.attribute_dict:
@@ -70,8 +70,6 @@ class Spectrum:
             else:
                 self.group_dict[group_identifier] = [ index ]
 
-        return()
-
 
     #### Parse a list buffer of lines from a MSP-style spectrum entry, creating
     #### a dict of attributes and a list of peaks
@@ -79,7 +77,7 @@ class Spectrum:
 
         #### Start in the header section of the entry
         in_header = True
-        
+
         #### Reset all spectrum properties in case there is already data here
         self.foreign_attributes = {}
         self.peak_list = []
@@ -109,11 +107,11 @@ class Spectrum:
 
                 #### Adds the key-value pair to the dictionary
                 self.foreign_attributes[key] = value
-                
+
                 #### If the key is "Num peaks" then we're done with the header and peak list follows
                 if key == "Num peaks":
                     in_header = False
-                    
+
                 #### The "Comment" key requires special parsing
                 if key == "Comment":
 
@@ -267,7 +265,7 @@ class Spectrum:
                 #### If the term mapping value is an ordinary string, then just substitute the key
                 elif type(other_terms[attribute]) is str:
                     self.add_attribute(other_terms[attribute], self.foreign_attributes[attribute])
-                        
+
                 #### Otherwise assume it is a dict of possible allowed values
                 else:
                     #### If the value of the original attribute is in the list of allowed values
@@ -456,7 +454,7 @@ class Spectrum:
                         group_identifier = self.get_next_group_identifier()
                         for item in species_map[value]:
                             self.add_attribute(item[0],item[1],group_identifier)
-      
+
                     else:
                         self.add_attribute("ERROR", f"Unable to parse {self.foreign_attributes[attribute]} in {attribute} at E2355")
                         unknown_terms.append(attribute)
