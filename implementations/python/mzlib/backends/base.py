@@ -15,19 +15,99 @@ class SpectralLibraryBackendBase(object):
         self.index = MemoryIndex()
         self.attributes = AttributeManager()
 
+    def read_header(self):
+        """read_header - Read just the header of the whole library
+
+        Returns
+        -------
+        bool
+        """
+        raise NotImplementedError()
+
     def add_attribute(self, key, value, group_identifier=None):
+        """Add an attribute to the library level attributes store.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to add
+        value : object
+            The value of the attribute to add
+        group_identifier : str, optional
+            The attribute group identifier to use, if any. If not provided,
+            no group is assumed.
+        """
         return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
 
     def get_attribute(self, key, group_identifier=None):
+        """Get the value or values associated with a given
+        attribute key from the library level attribute store.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
+
+        Returns
+        -------
+        attribute_value: object or list[object]
+            Returns single or multiple values for the requested attribute.
+        """
         return self.attributes.get_attribute(key, group_identifier=group_identifier)
+
+    def remove_attribute(self, key, group_identifier=None):
+        """Remove the value or values associated with a given
+        attribute key from the library level attribute store.
+
+        This rebuilds the entire store, which may be expensive.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
+
+        """
+        return self.attributes.remove_attribute(key, group_identifier=group_identifier)
+
+    def has_attribute(self, key):
+        """Test for the presence of a given attribute in the library
+        level store.
+
+        Parameters
+        ----------
+        key : str
+            The attribute to test for
+
+        Returns
+        -------
+        bool
+        """
+        return self.attributes.has_attribute(key)
 
     def _new_spectrum(self):
         return Spectrum()
 
     def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+        """Retrieve a single spectrum from the library.
+
+        Parameters
+        ----------
+        spectrum_number : int, optional
+            The index of the specturm in the library
+        spectrum_name : str, optional
+            The name of the spectrum in the library
+
+        Returns
+        -------
+        :class:`~.Spectrum`
+        """
         raise NotImplementedError()
 
-    def search(self, specification, **query_keys):
+    def find_spectra(self, specification, **query_keys):
         raise NotImplementedError()
 
     def create_index(self):
@@ -70,9 +150,6 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             self.create_index()
         if read_metadata:
             self.read_header()
-
-    def read_header(self):
-        raise NotImplementedError()
 
     def _get_lines_for(self, offset):
         raise NotImplementedError()
