@@ -1,9 +1,20 @@
 import re
 import os
+import io
 
 from mzlib.index import MemoryIndex
 
 from .base import _PlainTextSpectralLibraryBackendBase
+from .utils import try_cast
+
+term_pattern = re.compile(
+    r"^(?P<term>(?P<term_accession>\S+:\d+)\|(?P<term_name>[^=]+))")
+key_value_term_pattern = re.compile(
+    r"^(?P<term>(?P<term_accession>[A-Za-z0-9:.]+:\d+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
+grouped_key_value_term_pattern = re.compile(
+    r"^\[(?P<group_id>\d+)\](?P<term>(?P<term_accession>\S+:\d+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
+float_number = re.compile(
+    r"^\d+(.\d+)?")
 
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
@@ -51,7 +62,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
                 line = line.rstrip()
                 if state == 'header':
-                    if re.match('MS:1003061|spectrum name=', line):
+                    if re.match(r'MS:1003061\|spectrum name=', line):
                         state = 'body'
                         spectrum_file_offset = line_beginning_file_offset
                     else:
@@ -59,7 +70,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if state == 'body':
                     if len(line) == 0:
                         continue
-                    if re.match('MS:1003061|spectrum name=', line):
+                    if re.match(r'MS:1003061\|spectrum name=', line):
                         if len(spectrum_buffer) > 0:
                             self.index.add(
                                 number=n_spectra + start_index,
@@ -77,7 +88,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             #            end='', flush=True)
 
                         spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match('MS:1003061|spectrum name=(.+)', line).group(1)
+                        spectrum_name = re.match(r'MS:1003061\|spectrum name=(.+)', line).group(1)
 
                     spectrum_buffer.append(line)
 
@@ -111,13 +122,97 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if state == 'body':
                     if len(line) == 0:
                         continue
-                    if re.match('MS:1003061|spectrum name=', line):
+                    if re.match(r'MS:1003061\|spectrum name=', line):
                         if len(spectrum_buffer) > 0:
                             return spectrum_buffer
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match(
-                            'MS:1003061|spectrum name=(.+)', line).group(1)
+                            r'MS:1003061\|spectrum name=(.+)', line).group(1)
                     spectrum_buffer.append(line)
 
             #### We will end up here if this is the last spectrum in the file
             return spectrum_buffer
+
+    def _parse(self, buffer, spectrum_index=None):
+        spec = self._new_spectrum()
+        state = 'header'
+
+        peak_list = []
+
+        for line in buffer:
+            line = line.strip()
+            if not line:
+                break
+            if state == 'header':
+                match = key_value_term_pattern.match(line)
+                if match is not None:
+                    d = match.groupdict()
+                    spec.add_attribute(d['term'], try_cast(d['value']))
+                    continue
+                if line.startswith("["):
+                    match = grouped_key_value_term_pattern.match(line)
+                    if match is not None:
+                        d = match.groupdict()
+                        spec.add_attribute(
+                            d['term'], try_cast(d['value']), d['group_id'])
+                        spec.group_counter = int(d['group_id'])
+                        continue
+                    else:
+                        raise ValueError("Malformed grouped attribute f{line}")
+                else:
+                    match = float_number.match(line)
+                    if match is not None:
+                        tokens = line.split("\t")
+                        if len(tokens) == 3:
+                            mz, intensity, interpretation = tokens
+                            peak_list.append(
+                                [float(mz), float(intensity), interpretation])
+                        else:
+                            raise ValueError(f"Malformed peak line {line}")
+                        state = 'peak_list'
+                    else:
+                        raise ValueError("Malformed attribute line f{line}")
+            else:
+                match = float_number.match(line)
+                if match is not None:
+                    tokens = line.split("\t")
+                    if len(tokens) == 3:
+                        mz, intensity, interpretation = tokens
+                        peak_list.append([float(mz), float(intensity), interpretation])
+                    else:
+                        raise ValueError(f"Malformed peak line {line}")
+                else:
+                    raise ValueError(f"Malformed peak line {line}")
+        spec.peak_list = peak_list
+        return spec
+
+    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+        # keep the two branches separate for the possibility that this is not possible with all
+        # index schemes.
+        if spectrum_number is not None:
+            if spectrum_name is not None:
+                raise ValueError(
+                    "Provide only one of spectrum_number or spectrum_name")
+            offset = self.index.offset_for(spectrum_number)
+        elif spectrum_name is not None:
+            offset = self.index.offset_for(spectrum_name)
+        buffer = self._get_lines_for(offset)
+        spectrum = self._parse(buffer, spectrum_number)
+        return spectrum
+
+
+@staticmethod
+def format_spectrum(spectrum):
+    buffer = io.StringIO()
+    for attribute in spectrum.attributes:
+        if len(attribute) == 2:
+            buffer.write(f"{attribute[0]}={attribute[1]}\n")
+        elif len(attribute) == 3:
+            buffer.write(f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
+        else:
+            raise ValueError(f"Attribute has wrong number of elements: {attribute}")
+    for peak in spectrum.peak_list:
+        buffer.write("\t".join(map(str, peak))+"\n")
+    return buffer.getvalue()
+
+

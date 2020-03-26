@@ -81,16 +81,8 @@ class Spectrum:
 
         #### If the format is text
         if format == "text":
-            for attribute in self.attributes:
-                if len(attribute) == 2:
-                    buffer += f"{attribute[0]}={attribute[1]}\n"
-                elif len(attribute) == 3:
-                    buffer += f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n"
-                else:
-                    print("-ERROR: attribute has wrong number of elements:")
-                    print(attribute)
-            for peak in self.peak_list:
-                buffer += "\t".join(map(str, peak))+"\n"
+            from mzlib.backends.text import format_spectrum
+            return format_spectrum(self)
 
         #### If the format is TSV
         elif format == "tsv" or format == "csv":

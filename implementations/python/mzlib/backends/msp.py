@@ -4,7 +4,7 @@ import os
 from mzlib.index import MemoryIndex
 
 from .base import _PlainTextSpectralLibraryBackendBase
-
+from .utils import try_cast
 
 leader_terms = {
     "Name": "MS:1003061|spectrum name",
@@ -281,7 +281,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             #### If there is an = then split on the first one and store key and value
             if item.count("=") > 0:
                 comment_key, comment_value = item.split("=", 1)
-                attributes[comment_key] = comment_value
+                attributes[comment_key] = try_cast(comment_value)
                 #print(f"{comment_key}={comment_value}")
             #### Otherwise just store the key with a null value
             else:
@@ -295,7 +295,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         for term in leader_terms:
             if term in attributes:
                 spectrum.add_attribute(
-                    leader_terms[term], attributes[term])
+                    leader_terms[term], try_cast(attributes[term]))
             else:
                 spectrum.add_attribute(
                     "ERROR", f"Required term {leader_terms[term]} is missing")
@@ -309,11 +309,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
             #### If this is in the list of generic terms, process it
             if attribute in other_terms:
-                                #### If the original attribute has no value, if mapping permits this, go ahead
+                #### If the original attribute has no value, if mapping permits this, go ahead
                 if attributes[attribute] is None:
                     if isinstance(other_terms[attribute], list):
                         spectrum.add_attribute(
-                            other_terms[attribute][0], other_terms[attribute][1])
+                            other_terms[attribute][0], try_cast(other_terms[attribute][1]))
                     else:
                         spectrum.add_attribute(
                             "ERROR", f"Term {attribute} found without a value")
@@ -322,7 +322,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 #### If the term mapping value is an ordinary string, then just substitute the key
                 elif isinstance(other_terms[attribute], str):
                     spectrum.add_attribute(
-                        other_terms[attribute], attributes[attribute])
+                        other_terms[attribute], try_cast(attributes[attribute]))
 
                 #### Otherwise assume it is a dict of possible allowed values
                 else:
@@ -330,18 +330,18 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     if attributes[attribute] in other_terms[attribute]:
                         #### If the mapping is a plain string, add it
                         if isinstance(other_terms[attribute][attributes[attribute]], str):
-                            spectrum.add_attribute(
-                                other_terms[attribute][attributes[attribute]].split("="))
+                            key, value = other_terms[attribute][attributes[attribute]].split("=")
+                            spectrum.add_attribute(key, try_cast(value))
                         #### Or if it is a list, then there are multiple terms to add within a group
                         elif isinstance(other_terms[attribute][attributes[attribute]], list):
                             if len(other_terms[attribute][attributes[attribute]]) == 1:
                                 for item in other_terms[attribute][attributes[attribute]]:
-                                    spectrum.add_attribute(item[0], item[1])
+                                    spectrum.add_attribute(item[0], try_cast(item[1]))
                             else:
                                 group_identifier = spectrum.get_next_group_identifier()
                                 for item in other_terms[attribute][attributes[attribute]]:
                                     spectrum.add_attribute(
-                                        item[0], item[1], group_identifier)
+                                        item[0], try_cast(item[1]), group_identifier)
                         else:
                             spectrum.add_attribute(
                                 "ERROR", f"Internal error. Unexpected datatype in other_terms for {attribute}")
@@ -358,13 +358,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     if match is not None:
                         found_match = 1
                         group_identifier = spectrum.get_next_group_identifier()
-                        spectrum.add_attribute("MS:1000045|collision energy", match.group(1), group_identifier)
+                        spectrum.add_attribute("MS:1000045|collision energy", try_cast(match.group(1)), group_identifier)
                         spectrum.add_attribute("UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
                     match = re.match("([\d\.]+)\s*%", attributes[attribute])
                     if match is not None:
                         found_match = 1
                         group_identifier = spectrum.get_next_group_identifier()
-                        spectrum.add_attribute("MS:1000045|collision energy", match.group(1), group_identifier)
+                        spectrum.add_attribute("MS:1000045|collision energy", try_cast(match.group(1)), group_identifier)
                         spectrum.add_attribute("UO:0000000|unit", "UO:0000187|percent", group_identifier)
                     if found_match == 0:
                         spectrum.add_attribute("ERROR", f"Unable to parse attributes[attribute] in attribute")
@@ -379,7 +379,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     if match is not None:
                         group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
-                            "MS:1000045|collision energy", match.group(1), group_identifier)
+                            "MS:1000045|collision energy", try_cast(match.group(1)), group_identifier)
                         spectrum.add_attribute(
                             "UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
                     else:
@@ -402,7 +402,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         else:
                             group_identifier = spectrum.get_next_group_identifier()
                             spectrum.add_attribute(
-                                "MS:1000894|retention time", match.group(1), group_identifier)
+                                "MS:1000894|retention time", try_cast(match.group(1)), group_identifier)
                             #### If the value is greater than 250, assume it must be seconds
                             if float(match.group(1)) > 250:
                                 spectrum.add_attribute(
@@ -423,13 +423,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             elif attribute == "ms2IsolationWidth":
                 if attributes[attribute] is not None:
                     group_identifier = spectrum.get_next_group_identifier()
-                    spectrum.add_attribute("MS:1000828|isolation window lower offset", str(
-                        float(attributes[attribute])/2), group_identifier)
+                    spectrum.add_attribute("MS:1000828|isolation window lower offset",
+                        (float(attributes[attribute]) / 2), group_identifier)
                     spectrum.add_attribute("UO:0000000|unit",
                                        "MS:1000040|m/z", group_identifier)
                     group_identifier = spectrum.get_next_group_identifier()
-                    spectrum.add_attribute("MS:1000829|isolation window upper offset", str(
-                        float(attributes[attribute])/2), group_identifier)
+                    spectrum.add_attribute("MS:1000829|isolation window upper offset",
+                        (float(attributes[attribute]) / 2), group_identifier)
                     spectrum.add_attribute("UO:0000000|unit",
                                        "MS:1000040|m/z", group_identifier)
                 else:
@@ -445,7 +445,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     if match is not None:
                         group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
-                            "MS:1001975|delta m/z", match.group(1), group_identifier)
+                            "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
                         spectrum.add_attribute(
                             "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
                     else:
@@ -454,7 +454,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         if match is not None:
                             group_identifier = spectrum.get_next_group_identifier()
                             spectrum.add_attribute(
-                                "MS:1001975|delta m/z", match.group(1), group_identifier)
+                                "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
                             spectrum.add_attribute(
                                 "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
                         else:
@@ -471,7 +471,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if attributes[attribute] is not None:
                     group_identifier = spectrum.get_next_group_identifier()
                     spectrum.add_attribute(
-                        "MS:1001975|delta m/z", attributes[attribute], group_identifier)
+                        "MS:1001975|delta m/z", try_cast(attributes[attribute]), group_identifier)
                     spectrum.add_attribute(
                         "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
                 else:
@@ -493,7 +493,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             "MS:1001113|c-terminal flanking residue", match.group(3))
                         if match.group(4):
                             spectrum.add_attribute(
-                                "MS:1000041|charge state", match.group(4))
+                                "MS:1000041|charge state", try_cast(match.group(4)))
                     else:
                         spectrum.add_attribute(
                             "ERROR", f"Unable to parse {attributes[attribute]} in {attribute} at E2355")
@@ -510,17 +510,17 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         "(\d+)/(\d+)", attributes[attribute])
                     if match is not None:
                         spectrum.add_attribute(
-                            "MS:1009020|number of replicate spectra used", match.group(1))
+                            "MS:1009020|number of replicate spectra used", try_cast(match.group(1)))
                         spectrum.add_attribute(
-                            "MS:1009021|number of replicate spectra available", match.group(2))
+                            "MS:1009021|number of replicate spectra available", try_cast(match.group(2)))
                     else:
                         match = re.match(
                             "(\d+)", attributes[attribute])
                         if match is not None:
                             spectrum.add_attribute(
-                                "MS:1003070|number of replicate spectra used", match.group(1))
+                                "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
                             spectrum.add_attribute(
-                                "MS:1003069|number of replicate spectra available", match.group(1))
+                                "MS:1003069|number of replicate spectra available", try_cast(match.group(1)))
                         else:
                             spectrum.add_attribute(
                                 "ERROR", f"Unable to parse {attributes[attribute]} in {attribute} at E2455")
@@ -539,7 +539,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         group_identifier = spectrum.get_next_group_identifier()
                         for item in species_map[value]:
                             spectrum.add_attribute(
-                                item[0], item[1], group_identifier)
+                                item[0], try_cast(item[1]), group_identifier)
 
                     else:
                         spectrum.add_attribute(
@@ -563,19 +563,19 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     spectrum.add_attribute(
                         "MS:1000888|unmodified peptide sequence", match.group(1))
                     spectrum.add_attribute(
-                        "MS:1000041|charge state", match.group(2))
+                        "MS:1000041|charge state", try_cast(match.group(2)))
 
         #### Handle the uninterpretable terms
         for attribute in unknown_terms:
             if attributes[attribute] is None:
                 spectrum.add_attribute(
-                    "MS:1009900|other attribute name", attribute)
+                    "MS:1009900|other attribute name", try_cast(attribute))
             else:
                 group_identifier = spectrum.get_next_group_identifier()
                 spectrum.add_attribute(
-                    "MS:1009900|other attribute name", attribute, group_identifier)
+                    "MS:1009900|other attribute name", try_cast(attribute), group_identifier)
                 spectrum.add_attribute("MS:1009902|other attribute value",
-                                   attributes[attribute], group_identifier)
+                                   try_cast(attributes[attribute]), group_identifier)
         return spectrum
 
     def get_spectrum(self, spectrum_number=None, spectrum_name=None):
