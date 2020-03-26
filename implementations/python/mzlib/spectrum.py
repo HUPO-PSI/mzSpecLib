@@ -1,72 +1,28 @@
-#!/usr/bin/env python3
 from __future__ import print_function
-
-import sys
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
 
 import re
 import json
 
-import itertools
-
-debug = True
+from mzlib.attributes import AttributeManager
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
-class Spectrum:
+
+
+class Spectrum(AttributeManager):
 
     #### Constructor
-    def __init__(self):
+    def __init__(self, attributes=None):
         """
         __init__ - SpectrumLibrary constructor
 
         Parameters
         ----------
+        attributes: list
+            A list of attribute [key, value (, group)] sets to initialize to.
 
         """
-
-        self.attributes = []
-        self.attribute_dict = {}
-        self.group_dict = {}
-
+        super(Spectrum, self).__init__(attributes)
         self.peak_list = []
-        self.group_counter = 1
-
-    #### Get the next group identifier
-    def get_next_group_identifier(self):
-        next = self.group_counter
-        self.group_counter += 1
-        return(str(next))
-
-    #### Add an attribute to the list and update the lookup tables
-    def add_attribute(self, key, value, group_identifier=None):
-        items = [key, value]
-        if group_identifier is not None:
-            items.append(group_identifier)
-        self.attributes.append(items)
-        index = len(self.attributes) - 1
-
-        #### If there is already one of these, add it to the lists in attribute_dict
-        if key in self.attribute_dict:
-            self.attribute_dict[key]["indexes"].append(index)
-            if group_identifier is not None:
-                self.attribute_dict[key]["groups"].append(group_identifier)
-
-        #### Otherwise, create the entry in attribute_dict
-        else:
-            if group_identifier is not None:
-                self.attribute_dict[key] = { "indexes": [ index ], "groups": [ group_identifier ] }
-            else:
-                self.attribute_dict[key] = { "indexes": [ index ], "groups": [ ] }
-
-        #### If there is a group_identifier, then update the group_dict
-        if group_identifier is not None:
-            #### If this group already has one or more entries, add to it
-            if group_identifier in self.group_dict:
-                self.group_dict[group_identifier].append(index)
-            #### Else create and entry for the group_identifier
-            else:
-                self.group_dict[group_identifier] = [ index ]
 
     def write(self, format="text"):
         """
@@ -204,9 +160,3 @@ class Spectrum:
             raise ValueError(f"ERROR: Unrecogized format '{format}'")
 
         return(buffer)
-
-
-
-
-
-

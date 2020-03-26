@@ -1,9 +1,13 @@
 import warnings
+import logging
 
 from numbers import Integral
 from collections import defaultdict
 
 from .base import IndexBase
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 class IndexRecord(object):

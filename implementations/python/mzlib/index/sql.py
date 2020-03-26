@@ -1,6 +1,8 @@
 import os
 import numbers
 
+import logging
+
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime, Text, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -8,6 +10,10 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
 from .base import IndexBase
+
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 Base = declarative_base()
@@ -55,9 +61,9 @@ class SQLIndex(IndexBase):
         filename = self.index_filename
         if os.path.exists(filename):
             if create:
-                # if debug: eprint(f'INFO: Deleting previous index file {filename}')
+                logger.debug(f'INFO: Deleting previous index file {filename}')
                 os.remove(filename)
-        # if debug: eprint(f'INFO: Creating index file {filename}')
+        logger.debug(f'INFO: Creating index file {filename}')
         engine = create_engine("sqlite:///"+filename)
         Base.metadata.create_all(engine)
 

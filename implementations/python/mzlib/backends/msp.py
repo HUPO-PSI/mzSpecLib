@@ -1,10 +1,15 @@
 import re
 import os
+import logging
 
 from mzlib.index import MemoryIndex
 
 from .base import _PlainTextSpectralLibraryBackendBase
 from .utils import try_cast
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
 
 leader_terms = {
     "Name": "MS:1003061|spectrum name",
@@ -68,8 +73,16 @@ species_map = {
 
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
+    file_format = "msp"
 
-    def _build_index(self):
+    def read_header(self):
+        with open(self.filename, 'r') as stream:
+            first_line = stream.readline()
+            if re.match("Name: ",first_line):
+                return True
+        return False
+
+    def create_index(self):
         """
         Populate the spectrum index
 
@@ -102,6 +115,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
             # if debug:
             #     eprint("INFO: Reading..", end='', flush=True)
+            logger.info(f"Reading {filename} ({file_size} bytes)...")
             while 1:
                 line = infile.readline()
                 if len(line) == 0:
@@ -135,10 +149,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             #### Commit every now and then
                             if n_spectra % 1000 == 0:
                                 self.index.commit()
-                            #     percent_done = int(
-                            #         file_offset/file_size*100+0.5)
-                            #     eprint(str(percent_done)+"%..",
-                            #            end='', flush=True)
+                                percent_done = int(
+                                    file_offset/file_size*100+0.5)
+                                logger.info(str(percent_done)+"%...")
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match('Name:\s+(.+)', line).group(1)
@@ -211,7 +224,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 elif line.count("=") > 0:
                     key, value = re.split("=\s*", line, 1)
                 elif line.count("\t") > 0:
-                    print("ERROR: Looks like peaks in the header???")
+                    logger.error("Looks like peaks in the header???")
                     in_header = False
                 else:
                     key = line
@@ -282,7 +295,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if item.count("=") > 0:
                 comment_key, comment_value = item.split("=", 1)
                 attributes[comment_key] = try_cast(comment_value)
-                #print(f"{comment_key}={comment_value}")
+
             #### Otherwise just store the key with a null value
             else:
                 attributes[item] = None

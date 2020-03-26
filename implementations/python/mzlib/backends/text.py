@@ -1,11 +1,16 @@
 import re
 import os
 import io
+import logging
 
 from mzlib.index import MemoryIndex
 
 from .base import _PlainTextSpectralLibraryBackendBase
 from .utils import try_cast
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
 
 term_pattern = re.compile(
     r"^(?P<term>(?P<term_accession>\S+:\d+)\|(?P<term_name>[^=]+))")
@@ -18,8 +23,16 @@ float_number = re.compile(
 
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
+    file_format = "mzlb.txt"
 
-    def _build_index(self):
+    def read_header(self):
+        with open(self.filename, 'r') as stream:
+            first_line = stream.readline()
+            if re.match(r'MS:1003061\|spectrum name=', first_line):
+                return True
+        return False
+
+    def create_index(self):
         """
         Populate the spectrum index
 
@@ -49,6 +62,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             infile.readline()
             file_offset_line_ending = len(infile.newlines) - 1
             infile.seek(0)
+
+            logger.info(f"Reading {filename} ({file_size} bytes)...")
             while 1:
                 line = infile.readline()
                 if len(line) == 0:
@@ -57,7 +72,6 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 line_beginning_file_offset = file_offset
 
                 #### tell() is twice as slow as counting it myself
-                # file_offset = infile.tell()
                 file_offset += len(line) + file_offset_line_ending
 
                 line = line.rstrip()
@@ -82,10 +96,9 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             #### Commit every now and then
                             if n_spectra % 1000 == 0:
                                 self.index.commit()
-                            #     percent_done = int(
-                            #         file_offset/file_size*100+0.5)
-                            #     eprint(str(percent_done)+"%..",
-                            #            end='', flush=True)
+                                percent_done = int(
+                                    file_offset/file_size*100+0.5)
+                                logger.info(str(percent_done)+"%...")
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match(r'MS:1003061\|spectrum name=(.+)', line).group(1)
