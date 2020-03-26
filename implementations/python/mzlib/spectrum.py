@@ -24,6 +24,15 @@ class Spectrum(AttributeManager):
         super(Spectrum, self).__init__(attributes)
         self.peak_list = []
 
+    def __eq__(self, other):
+        result = super(Spectrum, self).__eq__(other)
+        if result:
+            result = self.peak_list == other.peak_list
+        return result
+
+    def __str__(self):
+        return self.write("text")
+
     def write(self, format="text"):
         """
         write - Write out the spectrum in any of the supported formats

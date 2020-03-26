@@ -172,6 +172,9 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         continue
                     else:
                         raise ValueError("Malformed grouped attribute f{line}")
+                elif "=" in line:
+                    name, value = line.split("=")
+                    spec.add_attribute(name, value)
                 else:
                     match = float_number.match(line)
                     if match is not None:

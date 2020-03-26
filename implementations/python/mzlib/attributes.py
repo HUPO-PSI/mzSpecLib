@@ -111,9 +111,9 @@ class AttributeManager(object):
         if group_identifier is None:
             indices = indices_and_groups['indexes']
             if len(indices) > 1:
-                return [self.attributes[i] for i in indices]
+                return [self.attributes[i][1] for i in indices]
             else:
-                return self.attributes[indices[0]]
+                return self.attributes[indices[0]][1]
         else:
             groups = indices_and_groups['groups']
             i = groups.index(group_identifier)
@@ -208,6 +208,12 @@ class AttributeManager(object):
     def __ne__(self, other):
         return not self == other
 
+    def __len__(self):
+        return len(self.attributes)
+
+    def __iter__(self):
+        return iter(self.attributes)
+
     def _from_iterable(self, attributes):
         mapping = {}
         for attrib in attributes:
@@ -228,8 +234,10 @@ class AttributeManager(object):
         return self.__class__(self.attributes)
 
     def __repr__(self):
+        if len(self) == 0:
+            return f"{self.__class__.__name__}([])"
         lines = list(map(str, self.attributes))
-        template = "{}([\n{})"
+        template = "{}([\n{}])"
         return template.format(
             self.__class__.__name__,
-            textwrap.indent('\n'.join(lines[:]), ' ' * 2))
+            textwrap.indent('\n'.join(lines), ' ' * 2))

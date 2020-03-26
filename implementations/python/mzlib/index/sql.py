@@ -37,6 +37,9 @@ class SpectrumLibraryIndexRecord(Base):
     name = Column(String(1024), nullable=False)
     analyte = Column(String(2014), nullable=True)
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.number}, {self.offset}, {self.name}, {self.analyte})"
+
 
 class SQLIndex(IndexBase):
     extension = '.splindex'
@@ -85,6 +88,9 @@ class SQLIndex(IndexBase):
         for record in self.session.query(SpectrumLibraryIndexRecord).order_by(SpectrumLibraryIndexRecord.number):
             yield record
 
+    def __getitem__(self, i):
+        return self.search(i)
+
     def __len__(self):
         value = self.session.query(func.count(SpectrumLibraryIndexRecord.id)).scalar()
         return value
@@ -94,15 +100,17 @@ class SQLIndex(IndexBase):
             # Executing attribute query
             raise NotImplementedError()
         if isinstance(i, numbers.Integral):
-            records = self.session.query(SpectrumLibraryIndexRecord.number == i).all()
+            records = self.session.query(SpectrumLibraryIndexRecord).filter(SpectrumLibraryIndexRecord.number == i).all()
             if len(records) == 1:
                 return records[0]
             else:
                 raise ValueError(f"Too many records found for spectrum number {i}")
         elif isinstance(i, slice):
-            records = self.session.query(
-                SpectrumLibraryIndexRecord.number >= i.start,
-                SpectrumLibraryIndexRecord.number < i.end).all()
+            start = i.start or 0
+            end = i.stop or float('inf')
+            records = self.session.query(SpectrumLibraryIndexRecord).filter(
+                SpectrumLibraryIndexRecord.number >= start,
+                SpectrumLibraryIndexRecord.number < end).all()
             return records
         else:
             records = self.session.query(SpectrumLibraryIndexRecord.name == i).all()
