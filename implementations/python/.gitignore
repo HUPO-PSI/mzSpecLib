@@ -1,0 +1,6 @@
+*.pyc
+__pycache__
+*egg-info*
+Untitled*.ipynb
+examples/*splindex
+.coverage

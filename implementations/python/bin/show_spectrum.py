@@ -12,7 +12,7 @@ import timeit
 basedir = "some hard coded location"
 basedir = os.path.dirname(os.path.abspath(__file__))+"/.."
 
-sys.path.append(basedir+"/lib")
+sys.path.append(basedir)
 from mzlib import SpectrumLibraryCollection
 from mzlib import SpectrumLibrary
 from mzlib import Spectrum

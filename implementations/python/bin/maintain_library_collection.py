@@ -9,7 +9,7 @@ import os.path
 import argparse
 import re
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/../lib")
+sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/..")
 from mzlib import SpectrumLibraryCollection
 
 def main():
