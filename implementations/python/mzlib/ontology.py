@@ -75,7 +75,7 @@ class Ontology(object):
 
                 #### Process the header
                 if state == 'header':
-                    match = re.search("^\s*\[Term\]\s*$",line)
+                    match = re.search(r"^\s*\[Term\]\s*$",line)
                     if match:
                         state = 'term'
                     else:
@@ -83,7 +83,7 @@ class Ontology(object):
 
                 #### Process the other elements in the file
                 if state == 'other':
-                    match = re.search("^\s*\[Term\]\s*$",line)
+                    match = re.search(r"^\s*\[Term\]\s*$",line)
                     if match:
                         state = 'term'
                     else:
@@ -93,16 +93,16 @@ class Ontology(object):
                 if state == 'term':
 
                     #### Skip an empty line
-                    match = re.search("^\s*$",line)
+                    match = re.search(r"^\s*$",line)
                     if match:
                         continue
 
                     #### If this is a new element
-                    match = re.search("^\s*\[",line)
+                    match = re.search(r"^\s*\[",line)
                     if match:
 
                         #### If this is a new [Term]
-                        match = re.search("^\s*\[Term\]\s*$",line)
+                        match = re.search(r"^\s*\[Term\]\s*$",line)
                         if match:
 
                             #### If there is currently something in the buffer, process it

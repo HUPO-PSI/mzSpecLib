@@ -1,0 +1,12 @@
+
+Notes downloading and testing ontology reading
+
+cd implementations/python/CVs
+
+rm psi-ms.obo
+curl -O http://proteomecentral.proteomexchange.org/extern/CVs/psi-ms.obo
+
+rm unimod.obo
+curl -O http://proteomecentral.proteomexchange.org/extern/CVs/unimod.obo
+
+
