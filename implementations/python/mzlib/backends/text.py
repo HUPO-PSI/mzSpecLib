@@ -216,19 +216,19 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
 
+    @staticmethod
+    def format_spectrum(spectrum):
+        buffer = io.StringIO()
+        for attribute in spectrum.attributes:
+            if len(attribute) == 2:
+                buffer.write(f"{attribute[0]}={attribute[1]}\n")
+            elif len(attribute) == 3:
+                buffer.write(f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
+            else:
+                raise ValueError(f"Attribute has wrong number of elements: {attribute}")
+        for peak in spectrum.peak_list:
+            buffer.write("\t".join(map(str, peak))+"\n")
+        return buffer.getvalue()
 
-@staticmethod
-def format_spectrum(spectrum):
-    buffer = io.StringIO()
-    for attribute in spectrum.attributes:
-        if len(attribute) == 2:
-            buffer.write(f"{attribute[0]}={attribute[1]}\n")
-        elif len(attribute) == 3:
-            buffer.write(f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
-        else:
-            raise ValueError(f"Attribute has wrong number of elements: {attribute}")
-    for peak in spectrum.peak_list:
-        buffer.write("\t".join(map(str, peak))+"\n")
-    return buffer.getvalue()
 
-
+format_spectrum = TextSpectralLibrary.format_spectrum

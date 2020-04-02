@@ -113,7 +113,8 @@ class SQLIndex(IndexBase):
                 SpectrumLibraryIndexRecord.number < end).all()
             return records
         else:
-            records = self.session.query(SpectrumLibraryIndexRecord.name == i).all()
+            records = self.session.query(SpectrumLibraryIndexRecord).filter(
+                SpectrumLibraryIndexRecord.name == i).all()
             if not records:
                 raise KeyError(i)
             elif len(records) == 1:
