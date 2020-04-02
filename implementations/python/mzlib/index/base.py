@@ -1,3 +1,5 @@
+import warnings
+
 class IndexBase(object):
 
     @classmethod

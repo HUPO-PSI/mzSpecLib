@@ -18,13 +18,16 @@ from mzlib import SpectrumLibrary
 from mzlib import Spectrum
 from mzlib import UniversalSpectrumIdentifier
 
+from mzlib.backends import TextSpectralLibrary, MSPSpectralLibrary
+from mzlib.index import SQLIndex
+
 
 def main():
 
     argparser = argparse.ArgumentParser(description='Reads one spectrum from a file and prints to stdout')
 
     argparser.add_argument('--library_file', action='store', help="Name of the library file to access")
-    argparser.add_argument('--index_number', action='store', help="Index number of the spectrum to display")
+    argparser.add_argument('--index_number', action='store', help="Index number of the spectrum to display", type=int)
     argparser.add_argument('--usi', action='store', help="Universal Spectrum Identifier of the spectrum to display")
     argparser.add_argument('--output_format', action='store', default='text', help="Format use when writing the spectrum (one of 'text', 'json', 'msp')")
 
@@ -69,13 +72,14 @@ def main():
         eprint(f"ERROR: File '{library_file}' not found or not a file")
         return()
 
-    #os.remove(library_file + '.splindex')
-    spectrum_library = SpectrumLibrary(filename=library_file)
-    #spectrum_library.read(create_index=True)
+    os.remove(library_file + '.splindex')
 
-    spectrum_buffer = spectrum_library.get_spectrum(spectrum_index_number=index_number)
-    spectrum = Spectrum()
-    spectrum.parse(spectrum_buffer, spectrum_index=index_number)
+    if library_file.lower().endswith(".msp"):
+        spectrum_library = MSPSpectralLibrary(library_file, SQLIndex)
+    elif library_file.lower().endswith(".mzlb.txt"):
+        spectrum_library = TextSpectralLibrary(library_file, SQLIndex)
+
+    spectrum = spectrum_library.get_spectrum(int(index_number))
     buffer = spectrum.write(format=params.output_format)
     print(buffer)
 
