@@ -2,6 +2,7 @@ import os
 
 from mzlib.index import MemoryIndex
 from mzlib.spectrum import Spectrum
+from mzlib.analyte import Analyte
 from mzlib.attributes import AttributeManager
 
 
@@ -90,6 +91,9 @@ class SpectralLibraryBackendBase(object):
 
     def _new_spectrum(self):
         return Spectrum()
+
+    def _new_analyte(self, id=None):
+        return Analyte(id)
 
     def get_spectrum(self, spectrum_number=None, spectrum_name=None):
         """Retrieve a single spectrum from the library.

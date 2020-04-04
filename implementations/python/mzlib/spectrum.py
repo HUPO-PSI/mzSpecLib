@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import re
+import textwrap
 import json
 
 from mzlib.attributes import AttributeManager
@@ -11,7 +12,7 @@ from mzlib.attributes import AttributeManager
 class Spectrum(AttributeManager):
 
     #### Constructor
-    def __init__(self, attributes=None):
+    def __init__(self, attributes=None, peak_list=None, analytes=None):
         """
         __init__ - SpectrumLibrary constructor
 
@@ -19,16 +20,37 @@ class Spectrum(AttributeManager):
         ----------
         attributes: list
             A list of attribute [key, value (, group)] sets to initialize to.
-
         """
+        if peak_list is None:
+            peak_list = []
+        if analytes is None:
+            analytes = []
         super(Spectrum, self).__init__(attributes)
-        self.peak_list = []
+        self.peak_list = peak_list
+        self.analytes = analytes
 
     def __eq__(self, other):
         result = super(Spectrum, self).__eq__(other)
         if result:
             result = self.peak_list == other.peak_list
+        if result:
+            result = self.analytes == other.analytes
         return result
+
+    def __repr__(self):
+        template = f"{self.__class__.__name__}("
+        lines = list(map(str, self.attributes))
+        if not lines:
+            template += "[], "
+        else:
+            template += "[\n%s], " % textwrap.indent(',\n'.join(lines), ' ' * 2)
+        lines = list(map(str, self.peak_list))
+        if not lines:
+            template += "peak_list=[])"
+        else:
+            template += "peak_list=[\n%s])" % textwrap.indent(
+                ',\n'.join(lines), ' ' * 2)
+        return template
 
     def __str__(self):
         return self.write("text")
