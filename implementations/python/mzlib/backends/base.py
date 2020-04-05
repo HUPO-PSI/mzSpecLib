@@ -155,6 +155,12 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         if read_metadata:
             self.read_header()
 
+    def _coerce_handle(self, filename_or_stream):
+        if hasattr(filename_or_stream, 'read'):
+            self.handle = filename_or_stream
+        else:
+            self.handle = open(filename_or_stream, 'rt')
+
     def _get_lines_for(self, offset):
         raise NotImplementedError()
 
@@ -171,3 +177,31 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             spectrum = self._parse(buffer, record.number)
             spectra.append(spectrum)
         return spectra
+
+
+class SpectralLibraryWriterBase(object):
+    def __init__(self, filename, **kwargs):
+        self.filename = filename
+
+    def _coerce_handle(self, filename_or_stream):
+        if hasattr(filename_or_stream, 'write'):
+            self.handle = filename_or_stream
+        else:
+            self.handle = open(filename_or_stream, 'wt')
+
+    def write_library(self, library):
+        self.write_header(library)
+        for spectrum in library:
+            self.write_spectrum(spectrum)
+
+    def write_spectrum(self, spectrum):
+        raise NotImplementedError()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+    def close(self):
+        pass

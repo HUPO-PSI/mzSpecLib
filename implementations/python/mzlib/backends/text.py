@@ -5,7 +5,7 @@ import logging
 
 from mzlib.index import MemoryIndex
 
-from .base import _PlainTextSpectralLibraryBackendBase
+from .base import _PlainTextSpectralLibraryBackendBase, SpectralLibraryWriterBase
 from .utils import try_cast
 
 logger = logging.getLogger(__name__)
@@ -267,32 +267,57 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
 
-    @staticmethod
-    def format_spectrum(spectrum):
-        buffer = io.StringIO()
-        buffer.write("<Spectrum>\n")
+
+class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
+    file_format = "mzlb.txt"
+
+    def __init__(self, filename):
+        super(TextSpectralLibraryWriter, self).__init__(filename)
+        self._coerce_handle(self.filename)
+
+    def write_header(self, library):
+        for attribute in library.attributes:
+            if len(attribute) == 2:
+                self.handle.write(f"{attribute[0]}={attribute[1]}\n")
+            elif len(attribute) == 3:
+                self.handle.write(
+                    f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
+            else:
+                raise ValueError(
+                    f"Attribute has wrong number of elements: {attribute}")
+
+    def write_spectrum(self, spectrum):
+        self.handle.write("<Spectrum>\n")
         for attribute in spectrum.attributes:
             if len(attribute) == 2:
-                buffer.write(f"{attribute[0]}={attribute[1]}\n")
+                self.handle.write(f"{attribute[0]}={attribute[1]}\n")
             elif len(attribute) == 3:
-                buffer.write(f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
+                self.handle.write(f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
             else:
                 raise ValueError(f"Attribute has wrong number of elements: {attribute}")
         for analyte in spectrum.analytes:
-            buffer.write("<Analyte=%s>\n" % analyte.id)
+            self.handle.write("<Analyte=%s>\n" % analyte.id)
             for attribute in analyte.attributes:
                 if len(attribute) == 2:
-                    buffer.write(f"{attribute[0]}={attribute[1]}\n")
+                    self.handle.write(f"{attribute[0]}={attribute[1]}\n")
                 elif len(attribute) == 3:
-                    buffer.write(
+                    self.handle.write(
                         f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
                 else:
                     raise ValueError(
                         f"Attribute has wrong number of elements: {attribute}")
-        buffer.write("<Peaks>\n")
+        self.handle.write("<Peaks>\n")
         for peak in spectrum.peak_list:
-            buffer.write("\t".join(map(str, peak))+"\n")
-        return buffer.getvalue()
+            self.handle.write("\t".join(map(str, peak))+"\n")
+        self.handle.write("\n")
+
+    def close(self):
+        self.handle.close()
 
 
-format_spectrum = TextSpectralLibrary.format_spectrum
+def format_spectrum(spectrum):
+    buffer = io.StringIO()
+    writer = TextSpectralLibraryWriter(buffer)
+    writer.write_spectrum(spectrum)
+    return buffer.getvalue()
+

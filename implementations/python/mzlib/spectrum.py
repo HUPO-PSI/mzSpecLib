@@ -136,55 +136,8 @@ class Spectrum(AttributeManager):
 
         #### If the format is JSON
         elif format == "json":
-            mzs = []
-            intensities = []
-            interpretations = []
-            for peak in self.peak_list:
-                mzs.append(peak[0])
-                intensities.append(peak[1])
-                interpretations.append(peak[2])
-
-            #### Organize the attributes from the simple list into the appropriate JSON format
-            attributes = []
-            for attribute in self.attributes:
-                reformed_attribute = {}
-                if len(attribute) == 2:
-                    key,value = attribute
-                elif len(attribute) == 3:
-                    key,value,cv_param_group = attribute
-                    reformed_attribute['cv_param_group'] = cv_param_group
-                else:
-                    print("ERROR: Unsupported number of items in attribute")
-                    print(attribute)
-                    raise ValueError(
-                        f"Unsupported number of items in attribute: {attribute}")
-                components = key.split('|',1)
-                if len(components) == 2:
-                    accession,name = components
-                    reformed_attribute['accession'] = accession
-                    reformed_attribute['name'] = name
-                else:
-                    print("ERROR: Unsupported number of items in components")
-                    print(components)
-                    raise ValueError(
-                        f"Unsupported number of items in components: {components}")
-                components = str(value).split('|',1)
-                if len(components) == 2:
-                    value_accession,value = components
-                    reformed_attribute['value_accession'] = value_accession
-                    reformed_attribute['value'] = value
-                elif len(components) == 1:
-                    reformed_attribute['value'] = value
-                else:
-                    print("ERROR: Unsupported number of items in components")
-                    print(components)
-                    raise ValueError(
-                        f"Unsupported number of items in components: {components}")
-                attributes.append(reformed_attribute)
-
-            spectrum = { "attributes": attributes, "mzs": mzs, "intensities": intensities,
-                "interpretations": interpretations }
-            buffer = json.dumps(spectrum,sort_keys=True,indent=2)
+            from mzlib.backends.json import format_spectrum
+            return format_spectrum(self)
 
         #### Otherwise we don't know this format
         else:
