@@ -1,15 +1,63 @@
 import os
 
+from pathlib import Path
+
 from mzlib.index import MemoryIndex
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte
 from mzlib.attributes import AttributeManager
 
 
-class SpectralLibraryBackendBase(object):
+class SubclassRegisteringMetaclass(type):
+    def __new__(mcs, name, parents, attrs):
+        new_type = type.__new__(mcs, name, parents, attrs)
+        if not hasattr(new_type, "_file_extension_to_implementation"):
+            new_type._file_extension_to_implementation = dict()
+
+        file_extension = attrs.get("file_format")
+        if file_extension is not None:
+            new_type._file_extension_to_implementation[file_extension] = new_type
+
+        format_name = attrs.get("format_name")
+        if format_name is not None:
+            new_type._file_extension_to_implementation[format_name] = new_type
+        else:
+            attrs['format_name'] = file_extension
+        return new_type
+
+
+class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
+    file_format = None
+
+    _file_extension_to_implementation = {}
+
+    @classmethod
+    def guess_from_filename(cls, filename):
+        if not isinstance(filename, (str, Path)):
+            return False
+        return filename.endswith(cls.file_format)
+
+    @classmethod
+    def guess_from_header(cls, filename):
+        return False
+
+    @classmethod
+    def guess_implementation(cls, filename, index_type=None, **kwargs):
+        for key, impl in cls._file_extension_to_implementation.items():
+            try:
+                if impl.guess_from_filename(filename):
+                    return impl(filename, index_type=index_type, **kwargs)
+            except TypeError:
+                pass
+            try:
+                if impl.guess_from_header(filename):
+                    return impl(filename, index_type=index_type, **kwargs)
+            except TypeError:
+                pass
+        raise ValueError(f"Could not guess backend implementation for {filename}")
 
     def __init__(self, filename):
         self.filename = filename
@@ -141,6 +189,9 @@ class SpectralLibraryBackendBase(object):
         else:
             result = self.get_spectrum(record.number)
         return result
+
+
+guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
 
 class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):

@@ -2,6 +2,8 @@ import re
 import os
 import logging
 
+from pathlib import Path
+
 from mzlib.index import MemoryIndex
 
 from .base import _PlainTextSpectralLibraryBackendBase
@@ -87,6 +89,14 @@ species_map = {
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
+
+    @classmethod
+    def guess_from_header(cls, filename):
+        with open(filename, 'r') as stream:
+            first_line = stream.readline()
+            if re.match("Name: ", first_line):
+                return True
+        return False
 
     def read_header(self):
         with open(self.filename, 'r') as stream:

@@ -28,6 +28,15 @@ START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "mzlb.txt"
+    format_name = "text"
+
+    @classmethod
+    def guess_from_header(cls, filename):
+        with open(filename, 'r') as stream:
+            first_line = stream.readline()
+            if START_OF_SPECTRUM_MARKER.match(first_line):
+                return True
+        return False
 
     def read_header(self):
         with open(self.filename, 'r') as stream:

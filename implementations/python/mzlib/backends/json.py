@@ -2,14 +2,21 @@ import io
 import json
 import re
 
+from pathlib import Path
+
 from mzlib.index import MemoryIndex
 from mzlib.attributes import AttributeManager
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase
 
 
+LIBRARY_METADATA_KEY = "metadata"
+LIBRARY_SPECTRA_KEY = "spectrum"
+
+
 class JSONSpectralLibrary(SpectralLibraryBackendBase):
     file_format = "mzlb.json"
+    format_name = "json"
 
     def __init__(self, filename, index_type=None, read_metadata=True):
         if index_type is None:
@@ -17,10 +24,19 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         super(JSONSpectralLibrary, self).__init__(filename)
         self.buffer = {}
         self._load_buffer(self.filename)
-        self.attributes = AttributeManager(self.buffer.get('metadata'))
+        self.attributes = AttributeManager(
+            self.buffer.get(LIBRARY_METADATA_KEY))
         self.index, was_initialized = index_type.from_filename(self.filename)
         if not was_initialized:
             self.create_index()
+
+    @classmethod
+    def guess_from_filename(cls, filename):
+        if isinstance(filename, dict):
+            return LIBRARY_SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
+        if not isinstance(filename, (str, Path)):
+            return False
+        return filename.endswith(cls.file_format)
 
     def _load_buffer(self, filename_or_stream):
         if isinstance(filename_or_stream, dict):
@@ -34,10 +50,12 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             self.handle.close()
 
     def read_header(self):
+        if self.buffer:
+            pass
         return False
 
     def create_index(self):
-        for i, record in enumerate(self.buffer['spectrum']):
+        for i, record in enumerate(self.buffer[LIBRARY_SPECTRA_KEY]):
             for attrib in record['attributes']:
                 if attrib["accession"] == "MS:1003061":
                     self.index.add(i, i, attrib['value'], None, None)
@@ -67,7 +85,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
             offset = self.index.offset_for(spectrum_name)
-        data = self.buffer['spectrum'][offset]
+        data = self.buffer[LIBRARY_SPECTRA_KEY][offset]
         spectrum = self.make_spectrum_from_payload(data)
         return spectrum
 
