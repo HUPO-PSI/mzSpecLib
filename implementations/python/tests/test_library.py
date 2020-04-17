@@ -1,10 +1,11 @@
 import os
 import unittest
-
 import tempfile
 
 from mzlib.backends import MSPSpectralLibrary, TextSpectralLibrary
-from mzlib.test.common import datafile
+
+from .common import datafile
+
 
 class LibraryBehaviorBase(object):
 
