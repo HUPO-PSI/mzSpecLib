@@ -17,6 +17,8 @@ class AttributeManager(object):
 
     """
 
+    __slots__ = ('attributes', 'attribute_dict', 'group_dict', 'group_counter')
+
     def __init__(self, attributes=None):
         """
 
@@ -240,4 +242,4 @@ class AttributeManager(object):
         template = "{}([\n{}])"
         return template.format(
             self.__class__.__name__,
-            textwrap.indent('\n'.join(lines), ' ' * 2))
+            textwrap.indent(',\n'.join(lines), ' ' * 2))

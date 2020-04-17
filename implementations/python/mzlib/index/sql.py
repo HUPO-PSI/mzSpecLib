@@ -1,6 +1,6 @@
 import os
 import numbers
-
+import pathlib
 import logging
 
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime, Text, LargeBinary
@@ -46,6 +46,8 @@ class SQLIndex(IndexBase):
 
     @classmethod
     def from_filename(cls, filename, library=None):
+        if not isinstance(filename, (str, pathlib.Path)):
+            raise TypeError(f"Could not coerce filename from {filename}")
         exists = os.path.exists(filename + cls.extension)
         inst = cls(filename)
 

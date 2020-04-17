@@ -1,14 +1,63 @@
 import os
 
+from pathlib import Path
+
 from mzlib.index import MemoryIndex
 from mzlib.spectrum import Spectrum
+from mzlib.analyte import Analyte
 from mzlib.attributes import AttributeManager
 
 
-class SpectralLibraryBackendBase(object):
+class SubclassRegisteringMetaclass(type):
+    def __new__(mcs, name, parents, attrs):
+        new_type = type.__new__(mcs, name, parents, attrs)
+        if not hasattr(new_type, "_file_extension_to_implementation"):
+            new_type._file_extension_to_implementation = dict()
+
+        file_extension = attrs.get("file_format")
+        if file_extension is not None:
+            new_type._file_extension_to_implementation[file_extension] = new_type
+
+        format_name = attrs.get("format_name")
+        if format_name is not None:
+            new_type._file_extension_to_implementation[format_name] = new_type
+        else:
+            attrs['format_name'] = file_extension
+        return new_type
+
+
+class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
+    file_format = None
+
+    _file_extension_to_implementation = {}
+
+    @classmethod
+    def guess_from_filename(cls, filename):
+        if not isinstance(filename, (str, Path)):
+            return False
+        return filename.endswith(cls.file_format)
+
+    @classmethod
+    def guess_from_header(cls, filename):
+        return False
+
+    @classmethod
+    def guess_implementation(cls, filename, index_type=None, **kwargs):
+        for key, impl in cls._file_extension_to_implementation.items():
+            try:
+                if impl.guess_from_filename(filename):
+                    return impl(filename, index_type=index_type, **kwargs)
+            except TypeError:
+                pass
+            try:
+                if impl.guess_from_header(filename):
+                    return impl(filename, index_type=index_type, **kwargs)
+            except TypeError:
+                pass
+        raise ValueError(f"Could not guess backend implementation for {filename}")
 
     def __init__(self, filename):
         self.filename = filename
@@ -91,6 +140,9 @@ class SpectralLibraryBackendBase(object):
     def _new_spectrum(self):
         return Spectrum()
 
+    def _new_analyte(self, id=None):
+        return Analyte(id)
+
     def get_spectrum(self, spectrum_number=None, spectrum_name=None):
         """Retrieve a single spectrum from the library.
 
@@ -139,6 +191,9 @@ class SpectralLibraryBackendBase(object):
         return result
 
 
+guess_implementation = SpectralLibraryBackendBase.guess_implementation
+
+
 class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
     def __init__(self, filename, index_type=None, read_metadata=True):
@@ -150,6 +205,12 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             self.create_index()
         if read_metadata:
             self.read_header()
+
+    def _coerce_handle(self, filename_or_stream):
+        if hasattr(filename_or_stream, 'read'):
+            self.handle = filename_or_stream
+        else:
+            self.handle = open(filename_or_stream, 'rt')
 
     def _get_lines_for(self, offset):
         raise NotImplementedError()
@@ -167,3 +228,31 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             spectrum = self._parse(buffer, record.number)
             spectra.append(spectrum)
         return spectra
+
+
+class SpectralLibraryWriterBase(object):
+    def __init__(self, filename, **kwargs):
+        self.filename = filename
+
+    def _coerce_handle(self, filename_or_stream):
+        if hasattr(filename_or_stream, 'write'):
+            self.handle = filename_or_stream
+        else:
+            self.handle = open(filename_or_stream, 'wt')
+
+    def write_library(self, library):
+        self.write_header(library)
+        for spectrum in library:
+            self.write_spectrum(spectrum)
+
+    def write_spectrum(self, spectrum):
+        raise NotImplementedError()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+    def close(self):
+        pass

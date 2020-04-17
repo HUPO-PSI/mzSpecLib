@@ -2,6 +2,8 @@ import re
 import os
 import logging
 
+from pathlib import Path
+
 from mzlib.index import MemoryIndex
 
 from .base import _PlainTextSpectralLibraryBackendBase
@@ -15,44 +17,57 @@ leader_terms = {
     "Name": "MS:1003061|spectrum name",
 }
 
-other_terms = {
+
+analyte_terms = {
     "MW": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
+    "Scan": {
+        "Protein": "MS:1000885|protein accession",
+        "Mods": "MS:1001471|peptide modification details",
+        "Naa": "MS:1003043|number of residues",
+    },
+    "Pep": {
+        "Tryptic": [["MS:1003048|number of enzymatic termini", 2], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
+        "SemiTryptic": [["MS:1003048|number of enzymatic termini", 1], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
+        "N-Semitryptic": [["MS:1003048|number of enzymatic termini", 1], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
+        "C-Semitryptic": [["MS:1003048|number of enzymatic termini", 1], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
+        "Tryptic/miss_good_confirmed": [["MS:1003048|number of enzymatic termini", 2],
+                                        ["MS:1003044|number of missed cleavages", "0"],
+                                        ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
+        "Tryptic/miss_bad_confirmed": [["MS:1003048|number of enzymatic termini", 2],
+                                        ["MS:1003044|number of missed cleavages", ">0"],
+                                        ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
+        },
+    "Protein": "MS:1000885|protein accession",
+    "Mods": "MS:1001471|peptide modification details",
+    "Naa": "MS:1003043|number of residues",
+    "PrecursorMonoisoMZ": "MS:1003053|theoretical monoisotopic m/z",
+    "Mz_exact": "MS:1003053|theoretical monoisotopic m/z",
+    "Mz_av": "MS:1003054|theoretical average m/z",
+
+}
+
+
+other_terms = {
     "Charge": "MS:1000041|charge state",
     "Parent": "MS:1000744|selected ion m/z",
     "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
     "Single": ["MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"],
     "Consensus": ["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"],
-    "PrecursorMonoisoMZ": "MS:1003053|theoretical monoisotopic m/z",
-    "Mz_exact": "MS:1003053|theoretical monoisotopic m/z",
-    "Mz_av": "MS:1003054|theoretical average m/z",
     "Inst": {"it": [["MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation"]],
              "hcd": [["MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"]]},
-    "Pep": {"Tryptic": [["MS:1003048|number of enzymatic termini", 2], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
-            "N-Semitryptic": [["MS:1003048|number of enzymatic termini", 1], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
-            "C-Semitryptic": [["MS:1003048|number of enzymatic termini", 1], ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
-            "Tryptic/miss_good_confirmed": [["MS:1003048|number of enzymatic termini", 2],
-                                            ["MS:1003044|number of missed cleavages", "0"],
-                                            ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
-            "Tryptic/miss_bad_confirmed": [["MS:1003048|number of enzymatic termini", 2],
-                                           ["MS:1003044|number of missed cleavages", ">0"],
-                                           ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
-            },
     "Spec": {"Consensus": [["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"]]},
     "Scan": "MS:1003057|scan number",
             "Origfile": "MS:1009008|source file",
             "Sample": "MS:1000002|sample name",
             "Filter": "MS:1000512|filter string",
             "FTResolution": "MS:1000028|detector resolution",
-            "Protein": "MS:1000885|protein accession",
             "ms1PrecursorAb": "MS:1009010|previous MS1 scan precursor intensity",
             "Precursor1MaxAb": "MS:1009011|precursor apex intensity",
             "Purity": "MS:1009013|isolation window precursor purity",
             "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
             "Unassign_all": "MS:1003079|total unassigned intensity fraction",
-            "Mods": "MS:1001471|peptide modification details",
             "BasePeak": "MS:1000505|base peak intensity",
-            "Naa": "MS:1003043|number of residues",
             "Num peaks": "MS:1003059|number of peaks",
 }
 
@@ -74,6 +89,14 @@ species_map = {
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
+
+    @classmethod
+    def guess_from_header(cls, filename):
+        with open(filename, 'r') as stream:
+            first_line = stream.readline()
+            if re.match("Name: ", first_line):
+                return True
+        return False
 
     def read_header(self):
         with open(self.filename, 'r') as stream:
@@ -249,6 +272,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 #### Split into the expected three values
                 values = re.split(r'\s+', line)
                 interpretations = ""
+                aggregation = ""
                 if len(values) == 1:
                     mz = values
                     intensity = "1"
@@ -265,7 +289,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 interpretations = interpretations.strip('"')
 
                 #### Add to the peak list
-                peak_list.append([float(mz), float(intensity), interpretations])
+                peak_list.append([float(mz), float(intensity), interpretations, aggregation])
 
         #### Now convert the format attributes to standard ones
         spectrum = self._make_spectrum(peak_list, attributes)
@@ -302,7 +326,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _make_spectrum(self, peak_list, attributes):
         spectrum = self._new_spectrum()
+        analyte = self._new_analyte("1")
         spectrum.peak_list = peak_list
+        spectrum.analytes.append(analyte)
 
         #### Add special terms that we want to start off with
         for term in leader_terms:
@@ -319,28 +345,37 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             #### Skip a leader term that we already processed
             if attribute in leader_terms:
                 continue
-
+            is_other = attribute in other_terms
+            is_analyte = attribute in analyte_terms
             #### If this is in the list of generic terms, process it
-            if attribute in other_terms:
+            if is_other or is_analyte:
                 #### If the original attribute has no value, if mapping permits this, go ahead
                 if attributes[attribute] is None:
-                    if isinstance(other_terms[attribute], list):
-                        spectrum.add_attribute(
-                            other_terms[attribute][0], try_cast(other_terms[attribute][1]))
+                    if is_other:
+                        if isinstance(other_terms[attribute], list):
+                            spectrum.add_attribute(
+                                other_terms[attribute][0], try_cast(other_terms[attribute][1]))
+                        else:
+                            spectrum.add_attribute(
+                                "ERROR", f"Term {attribute} found without a value")
+                            unknown_terms.append(attribute)
                     else:
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "ERROR", f"Term {attribute} found without a value")
                         unknown_terms.append(attribute)
 
                 #### If the term mapping value is an ordinary string, then just substitute the key
-                elif isinstance(other_terms[attribute], str):
+                elif is_other and isinstance(other_terms[attribute], str):
                     spectrum.add_attribute(
                         other_terms[attribute], try_cast(attributes[attribute]))
+                elif is_analyte and isinstance(analyte_terms[attribute], str):
+                    analyte.add_attribute(
+                        analyte_terms[attribute], try_cast(attributes[attribute]))
 
                 #### Otherwise assume it is a dict of possible allowed values
                 else:
                     #### If the value of the original attribute is in the list of allowed values
-                    if attributes[attribute] in other_terms[attribute]:
+                    if is_other and attributes[attribute] in other_terms[attribute]:
                         #### If the mapping is a plain string, add it
                         if isinstance(other_terms[attribute][attributes[attribute]], str):
                             key, value = other_terms[attribute][attributes[attribute]].split("=")
@@ -358,6 +393,27 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         else:
                             spectrum.add_attribute(
                                 "ERROR", f"Internal error. Unexpected datatype in other_terms for {attribute}")
+                            unknown_terms.append(attribute)
+                    elif is_analyte and attributes[attribute] in analyte_terms[attribute]:
+                        #### If the mapping is a plain string, add it
+                        if isinstance(analyte_terms[attribute][attributes[attribute]], str):
+                            key, value = analyte_terms[attribute][attributes[attribute]].split(
+                                "=")
+                            analyte.add_attribute(key, try_cast(value))
+                        #### Or if it is a list, then there are multiple terms to add within a group
+                        elif isinstance(analyte_terms[attribute][attributes[attribute]], list):
+                            if len(analyte_terms[attribute][attributes[attribute]]) == 1:
+                                for item in analyte_terms[attribute][attributes[attribute]]:
+                                    analyte.add_attribute(
+                                        item[0], try_cast(item[1]))
+                            else:
+                                group_identifier = analyte.get_next_group_identifier()
+                                for item in analyte_terms[attribute][attributes[attribute]]:
+                                    analyte.add_attribute(
+                                        item[0], try_cast(item[1]), group_identifier)
+                        else:
+                            analyte.add_attribute(
+                                "ERROR", f"Internal error. Unexpected datatype in analyte_terms for {attribute}")
                             unknown_terms.append(attribute)
                     else:
                         spectrum.add_attribute(
@@ -498,11 +554,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     match = re.match(
                         "([A-Z\-\*])\.([A-Z]+)\.([A-Z\-\*])/*([\d]*)", attributes[attribute])
                     if match is not None:
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "MS:1000888|unmodified peptide sequence", match.group(2))
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "MS:1001112|n-terminal flanking residue", match.group(1))
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "MS:1001113|c-terminal flanking residue", match.group(3))
                         if match.group(4):
                             spectrum.add_attribute(
@@ -549,13 +605,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     value = value.strip('"')
 
                     if value in species_map:
-                        group_identifier = spectrum.get_next_group_identifier()
+                        group_identifier = analyte.get_next_group_identifier()
                         for item in species_map[value]:
-                            spectrum.add_attribute(
+                            analyte.add_attribute(
                                 item[0], try_cast(item[1]), group_identifier)
 
                     else:
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "ERROR", f"Unable to parse {attributes[attribute]} in {attribute} at E2355")
                         unknown_terms.append(attribute)
                 else:
@@ -567,13 +623,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 unknown_terms.append(attribute)
 
-        if "MS:1000888|unmodified peptide sequence" not in spectrum.attribute_dict:
+        if "MS:1000888|unmodified peptide sequence" not in analyte.attribute_dict:
             if "MS:1003061|spectrum name" in spectrum.attribute_dict:
                 lookup = spectrum.attribute_dict["MS:1003061|spectrum name"]
                 name = spectrum.attributes[lookup["indexes"][0]][1]
                 match = re.match("(.+)/(\d+)", name)
                 if match:
-                    spectrum.add_attribute(
+                    analyte.add_attribute(
                         "MS:1000888|unmodified peptide sequence", match.group(1))
                     spectrum.add_attribute(
                         "MS:1000041|charge state", try_cast(match.group(2)))

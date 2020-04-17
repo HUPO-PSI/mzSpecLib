@@ -22,8 +22,8 @@ class TestSpectrum(unittest.TestCase):
         buffer = spectrum.write('text')
         lines = buffer.splitlines()
         n_lines = len(lines)
-        assert n_lines == 128
-        assert buffer.startswith("MS:1003061|spectrum name")
+        assert n_lines == 132
+        assert buffer.startswith("<Spectrum>\nMS:1003061|spectrum name")
 
     def test_equality(self):
         spectrum = self.get_spectrum(0)

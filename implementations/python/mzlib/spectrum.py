@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import re
+import textwrap
 import json
 
 from mzlib.attributes import AttributeManager
@@ -11,7 +12,7 @@ from mzlib.attributes import AttributeManager
 class Spectrum(AttributeManager):
 
     #### Constructor
-    def __init__(self, attributes=None):
+    def __init__(self, attributes=None, peak_list=None, analytes=None):
         """
         __init__ - SpectrumLibrary constructor
 
@@ -19,16 +20,37 @@ class Spectrum(AttributeManager):
         ----------
         attributes: list
             A list of attribute [key, value (, group)] sets to initialize to.
-
         """
+        if peak_list is None:
+            peak_list = []
+        if analytes is None:
+            analytes = []
         super(Spectrum, self).__init__(attributes)
-        self.peak_list = []
+        self.peak_list = peak_list
+        self.analytes = analytes
 
     def __eq__(self, other):
         result = super(Spectrum, self).__eq__(other)
         if result:
             result = self.peak_list == other.peak_list
+        if result:
+            result = self.analytes == other.analytes
         return result
+
+    def __repr__(self):
+        template = f"{self.__class__.__name__}("
+        lines = list(map(str, self.attributes))
+        if not lines:
+            template += "[], "
+        else:
+            template += "[\n%s], " % textwrap.indent(',\n'.join(lines), ' ' * 2)
+        lines = list(map(str, self.peak_list))
+        if not lines:
+            template += "peak_list=[])"
+        else:
+            template += "peak_list=[\n%s])" % textwrap.indent(
+                ',\n'.join(lines), ' ' * 2)
+        return template
 
     def __str__(self):
         return self.write("text")
@@ -114,55 +136,8 @@ class Spectrum(AttributeManager):
 
         #### If the format is JSON
         elif format == "json":
-            mzs = []
-            intensities = []
-            interpretations = []
-            for peak in self.peak_list:
-                mzs.append(peak[0])
-                intensities.append(peak[1])
-                interpretations.append(peak[2])
-
-            #### Organize the attributes from the simple list into the appropriate JSON format
-            attributes = []
-            for attribute in self.attributes:
-                reformed_attribute = {}
-                if len(attribute) == 2:
-                    key,value = attribute
-                elif len(attribute) == 3:
-                    key,value,cv_param_group = attribute
-                    reformed_attribute['cv_param_group'] = cv_param_group
-                else:
-                    print("ERROR: Unsupported number of items in attribute")
-                    print(attribute)
-                    raise ValueError(
-                        f"Unsupported number of items in attribute: {attribute}")
-                components = key.split('|',1)
-                if len(components) == 2:
-                    accession,name = components
-                    reformed_attribute['accession'] = accession
-                    reformed_attribute['name'] = name
-                else:
-                    print("ERROR: Unsupported number of items in components")
-                    print(components)
-                    raise ValueError(
-                        f"Unsupported number of items in components: {components}")
-                components = str(value).split('|',1)
-                if len(components) == 2:
-                    value_accession,value = components
-                    reformed_attribute['value_accession'] = value_accession
-                    reformed_attribute['value'] = value
-                elif len(components) == 1:
-                    reformed_attribute['value'] = value
-                else:
-                    print("ERROR: Unsupported number of items in components")
-                    print(components)
-                    raise ValueError(
-                        f"Unsupported number of items in components: {components}")
-                attributes.append(reformed_attribute)
-
-            spectrum = { "attributes": attributes, "mzs": mzs, "intensities": intensities,
-                "interpretations": interpretations }
-            buffer = json.dumps(spectrum,sort_keys=True,indent=2)
+            from mzlib.backends.json import format_spectrum
+            return format_spectrum(self)
 
         #### Otherwise we don't know this format
         else:
