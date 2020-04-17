@@ -244,7 +244,7 @@ class SpectrumLibraryIndex:
             try:
                 records = self.session.query(SpectrumLibraryIndexRecord).filter(SpectrumLibraryIndexRecord.number==spectrum_index_number).all()
             except:
-                session.rollback()
+                self.session.rollback()
                 raise
             if len(records) > 1:
                 raise Exception('Too many records')
