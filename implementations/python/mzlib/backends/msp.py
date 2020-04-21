@@ -87,6 +87,20 @@ species_map = {
 }
 
 
+annotation_pattern = re.compile(r"""
+(?:(?:(?P<series>[bycz]\.?)(?P<ordinal>\d+))|
+   (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJ]+))|
+   (?P<precursor>p)|
+   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL][A-Z]))|
+   (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
+   (?:_(?P<external_ion>[^\s,/]+))
+)
+(?P<neutral_loss>[+-](?:[A-Za-z0-9]+))?
+(?:(?P<isotope>[+-]\d*i))?
+(?:\^(?P<charge>[+-]?\d+))?
+""", re.X)
+
+
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
 
