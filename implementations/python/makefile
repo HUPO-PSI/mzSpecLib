@@ -1,2 +1,2 @@
 test:
-	pytest -v mzlib --cov
+	pytest -v tests --cov

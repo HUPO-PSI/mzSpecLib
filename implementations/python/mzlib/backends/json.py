@@ -6,6 +6,7 @@ from pathlib import Path
 
 from mzlib.index import MemoryIndex
 from mzlib.attributes import AttributeManager
+from mzlib.annotation import parse_annotation
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase
 
@@ -126,7 +127,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             peak = [
                 mzs[i],
                 intensities[i],
-                interpretations[i],
+                parse_annotation(interpretations[i]),
                 aggregations[i] if aggregations else ''
             ]
             peak_list.append(peak)
@@ -222,7 +223,8 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         for peak in spectrum.peak_list:
             mzs.append(peak[0])
             intensities.append(peak[1])
-            interpretations.append(peak[2])
+            interpretations.append(
+                '?' if not peak[2] else ",".join(map(str, peak[2])))
             aggregations.append(peak[3])
 
         #### Organize the attributes from the simple list into the appropriate JSON format

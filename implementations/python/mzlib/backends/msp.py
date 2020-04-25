@@ -5,9 +5,11 @@ import logging
 from pathlib import Path
 
 from mzlib.index import MemoryIndex
+from mzlib import annotation
 
 from .base import _PlainTextSpectralLibraryBackendBase
 from .utils import try_cast
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -87,18 +89,64 @@ species_map = {
 }
 
 
-annotation_pattern = re.compile(r"""
-(?:(?:(?P<series>[bycz]\.?)(?P<ordinal>\d+))|
-   (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJ]+))|
+annotation_pattern = re.compile(r"""^
+(?:(?:(?P<series>[abyxcz]\.?)(?P<ordinal>\d+))|
+   (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJarndceqghkmfpstwyvilj]+))|
    (?P<precursor>p)|
    (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL][A-Z]))|
    (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
-(?P<neutral_loss>[+-](?:[A-Za-z0-9]+))?
-(?:(?P<isotope>[+-]\d*i))?
+(?P<neutral_loss>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
+(?:\[M(?P<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
+(?:(?P<isotope>[+-]\d*)i)?
+(?:@(?P<analyte_reference>[^/\s]+))?
+(?:/(?P<mass_error>-?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
 """, re.X)
+
+
+class MSPAnnotationStringParser(annotation.AnnotationStringParser):
+    def _dispatch_internal_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+        spectrum = kwargs.get("spectrum")
+        if spectrum is None:
+            raise ValueError("Cannot infer sequence coordinates from MSP internal fragmentation notation without"
+                             " a reference to the spectrum, please pass spectrum as a keyword argument")
+        sequence = self._get_peptide_sequence_for_analyte(
+            spectrum, analyte_reference)
+        subseq = data['series_internal'].upper()
+        try:
+            start_index = sequence.index(subseq)
+        except ValueError as err:
+            raise ValueError(
+                f"Cannot locate internal subsequence {subseq} in {sequence}") from err
+        end_index = start_index + len(subseq)
+        data['internal_start'] = start_index + 1
+        data['internal_end'] = end_index
+        return super(MSPAnnotationStringParser, self)._dispatch_internal_peptide_fragment(
+            data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
+
+    def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+        data['immonium'] = data['immonium'][:-1]
+        return super(MSPAnnotationStringParser, self)._dispatch_immonium(
+            data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
+
+    def _get_peptide_sequence_for_analyte(self, spectrum, analyte_reference=None):
+        if analyte_reference is None:
+            if len(spectrum.analytes) == 0:
+                return None
+            else:
+                analyte_reference = spectrum.analytes[0].id
+        analyte = None
+        for analyte in spectrum.analytes:
+            if analyte.id == analyte_reference:
+                break
+        if analyte is None:
+            return None
+        return analyte.get_attribute('MS:1000888|unmodified peptide sequence')
+
+
+parse_annotation = MSPAnnotationStringParser(annotation_pattern)
 
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
@@ -301,7 +349,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     intensity = "1"
 
                 interpretations = interpretations.strip('"')
-
                 #### Add to the peak list
                 peak_list.append([float(mz), float(intensity), interpretations, aggregation])
 
@@ -309,6 +356,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum = self._make_spectrum(peak_list, attributes)
         if spectrum_index is not None:
             spectrum.add_attribute("MS:1003062|spectrum index", spectrum_index)
+        for i, peak in enumerate(spectrum.peak_list):
+            try:
+                parsed_interpretation = parse_annotation(peak[2], spectrum=spectrum)
+            except ValueError as err:
+                message = str(err)
+                raise ValueError(
+                    f"An error occurred while parsing the peak annotation for peak {i}: {message}") from err
+            peak[2] = parsed_interpretation
         return spectrum
 
     def _parse_comment(self, value, attributes):
