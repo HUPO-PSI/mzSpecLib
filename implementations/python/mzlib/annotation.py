@@ -114,10 +114,10 @@ class IonAnnotationBase(object):
         return self.serialize()
 
 
-class PeptideFragmentIonAnnotaiton(IonAnnotationBase):
+class PeptideFragmentIonAnnotation(IonAnnotationBase):
     def __init__(self, series, position, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
-        super(PeptideFragmentIonAnnotaiton, self).__init__(
+        super(PeptideFragmentIonAnnotation, self).__init__(
             series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
         self.position = position
 
@@ -271,7 +271,7 @@ class AnnotationStringParser(object):
             raise ValueError(f"Could not infer annotation type from {annotation_string}/{data}")
 
     def _dispatch_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
-        return PeptideFragmentIonAnnotaiton(
+        return PeptideFragmentIonAnnotation(
             data['series'], int(data['ordinal']),
             neutral_loss, isotope, adduct, charge, analyte_reference,
             mass_error)
@@ -334,7 +334,7 @@ parse_annotation = AnnotationStringParser(annotation_pattern)
 #     if mass_error is not None:
 #         mass_error = MassError(float(mass_error), data.get("mass_error_unit"))
 #     if data['series']:
-#         return PeptideFragmentIonAnnotaiton(
+#         return PeptideFragmentIonAnnotation(
 #             data['series'], int(data['ordinal']),
 #             neutral_loss, isotope, adduct, charge, analyte_reference,
 #             mass_error)
