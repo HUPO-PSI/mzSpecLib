@@ -1,6 +1,7 @@
 import re
 import os
 import logging
+import warnings
 
 from pathlib import Path
 
@@ -93,7 +94,7 @@ annotation_pattern = re.compile(r"""^
 (?:(?:(?P<series>[abyxcz]\.?)(?P<ordinal>\d+))|
    (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJarndceqghkmfpstwyvilj]+))|
    (?P<precursor>p)|
-   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL][A-Z]))|
+   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL](:?CAM|[A-Z])))|
    (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
@@ -127,7 +128,13 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
             data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
 
     def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
-        data['immonium'] = data['immonium'][:-1]
+        name = data['immonium']
+        if name.endswith("CAM"):
+            warnings.warn(f"Loss of information, modification in {name} lost.")
+            name = name[:-3]
+        else:
+            name = name[:-1]
+        data['immonium'] = name
         return super(MSPAnnotationStringParser, self)._dispatch_immonium(
             data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
 
