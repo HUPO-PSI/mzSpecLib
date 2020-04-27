@@ -4,6 +4,7 @@ import io
 import logging
 
 from mzlib.index import MemoryIndex
+from mzlib.annotation import parse_annotation
 
 from .base import _PlainTextSpectralLibraryBackendBase, SpectralLibraryWriterBase
 from .utils import try_cast
@@ -248,9 +249,11 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     n_tokens = len(tokens)
                     if n_tokens == 3:
                         mz, intensity, interpretation = tokens
+                        interpretation = parse_annotation(interpretation)
                         peak_list.append([float(mz), float(intensity), interpretation, ""])
                     elif n_tokens == 4:
                         mz, intensity, interpretation, aggregation = tokens
+                        interpretation = parse_annotation(interpretation)
                         peak_list.append(
                             [float(mz), float(intensity), interpretation, aggregation])
                     else:
@@ -317,7 +320,14 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                         f"Attribute has wrong number of elements: {attribute}")
         self.handle.write("<Peaks>\n")
         for peak in spectrum.peak_list:
-            self.handle.write("\t".join(map(str, peak))+"\n")
+            peak_parts = [
+                str(peak[0]),
+                str(peak[1]),
+                '?' if not peak[2] else ",".join(map(str, peak[2]))
+            ]
+            if peak[3]:
+                peak_parts.append(str(peak[3]))
+            self.handle.write("\t".join(peak_parts)+"\n")
         self.handle.write("\n")
 
     def close(self):
