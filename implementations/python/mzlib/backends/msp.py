@@ -177,7 +177,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                 logger.info(str(percent_done)+"%...")
 
                         spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match('Name:\s+(.+)', line).group(1)
+                        spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
 
                     spectrum_buffer.append(line)
 
@@ -215,7 +215,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         if len(spectrum_buffer) > 0:
                             return spectrum_buffer
                         spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match('Name:\s+(.+)', line).group(1)
+                        spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
                     spectrum_buffer.append(line)
 
             #### We will end up here if this is the last spectrum in the file
@@ -239,13 +239,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if in_header:
 
                 #### Extract the key,value pair by splitting on the *first* colon with optional whitespace
-                match = re.match("\s*#", line)
+                match = re.match(r"\s*#", line)
                 if match:
                     continue
                 elif line.count(":") > 0:
-                    key, value = re.split(":\s*", line, 1)
+                    key, value = re.split(r":\s*", line, 1)
                 elif line.count("=") > 0:
-                    key, value = re.split("=\s*", line, 1)
+                    key, value = re.split(r"=\s*", line, 1)
                 elif line.count("\t") > 0:
                     logger.error("Looks like peaks in the header???")
                     in_header = False
@@ -423,13 +423,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 spectrum.add_attribute("MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation")
                 found_match = 0
                 if attributes[attribute] is not None:
-                    match = re.match("([\d\.]+)\s*ev", attributes[attribute], flags=re.IGNORECASE)
+                    match = re.match(r"([\d\.]+)\s*ev", attributes[attribute], flags=re.IGNORECASE)
                     if match is not None:
                         found_match = 1
                         group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute("MS:1000045|collision energy", try_cast(match.group(1)), group_identifier)
                         spectrum.add_attribute("UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
-                    match = re.match("([\d\.]+)\s*%", attributes[attribute])
+                    match = re.match(r"([\d\.]+)\s*%", attributes[attribute])
                     if match is not None:
                         found_match = 1
                         group_identifier = spectrum.get_next_group_identifier()
@@ -444,7 +444,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             elif attribute == "Collision_energy":
                 if attributes[attribute] is not None:
                     match = re.match(
-                        "([\d\.]+)", attributes[attribute])
+                        r"([\d\.]+)", attributes[attribute])
                     if match is not None:
                         group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
@@ -461,7 +461,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     unknown_terms.append(attribute)
             elif attribute == "RT":
                 if attributes[attribute] is not None:
-                    match = re.match("([\d\.]+)\s*(\D*)",
+                    match = re.match(r"([\d\.]+)\s*(\D*)",
                                      attributes[attribute])
                     if match is not None:
                         if match.group(2):
@@ -510,7 +510,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             elif attribute == "Mz_diff":
                 if attributes[attribute] is not None:
                     match = re.match(
-                        "([\-\+e\d\.]+)\s*ppm", attributes[attribute], flags=re.IGNORECASE)
+                        r"([\-\+e\d\.]+)\s*ppm", str(attributes[attribute]), flags=re.IGNORECASE)
                     if match is not None:
                         group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
@@ -519,7 +519,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
                     else:
                         match = re.match(
-                            "([\-\+e\d\.]+)\s*", attributes[attribute])
+                            r"([\-\+e\d\.]+)\s*", str(attributes[attribute]))
                         if match is not None:
                             group_identifier = spectrum.get_next_group_identifier()
                             spectrum.add_attribute(
@@ -552,7 +552,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             elif attribute == "Fullname":
                 if attributes[attribute] is not None:
                     match = re.match(
-                        "([A-Z\-\*])\.([A-Z]+)\.([A-Z\-\*])/*([\d]*)", attributes[attribute])
+                        r"([A-Z\-\*])\.([A-Z]+)\.([A-Z\-\*])/*([\d]*)", attributes[attribute])
                     if match is not None:
                         analyte.add_attribute(
                             "MS:1000888|unmodified peptide sequence", match.group(2))
@@ -576,7 +576,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             elif attribute == "Nrep" or attribute == "Nreps":
                 if attributes[attribute] is not None:
                     match = re.match(
-                        "(\d+)/(\d+)", attributes[attribute])
+                        r"(\d+)/(\d+)", attributes[attribute])
                     if match is not None:
                         spectrum.add_attribute(
                             "MS:1009020|number of replicate spectra used", try_cast(match.group(1)))
@@ -584,7 +584,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             "MS:1009021|number of replicate spectra available", try_cast(match.group(2)))
                     else:
                         match = re.match(
-                            "(\d+)", attributes[attribute])
+                            r"(\d+)", attributes[attribute])
                         if match is not None:
                             spectrum.add_attribute(
                                 "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
@@ -627,7 +627,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if "MS:1003061|spectrum name" in spectrum.attribute_dict:
                 lookup = spectrum.attribute_dict["MS:1003061|spectrum name"]
                 name = spectrum.attributes[lookup["indexes"][0]][1]
-                match = re.match("(.+)/(\d+)", name)
+                match = re.match(r"(.+)/(\d+)", name)
                 if match:
                     analyte.add_attribute(
                         "MS:1000888|unmodified peptide sequence", match.group(1))
