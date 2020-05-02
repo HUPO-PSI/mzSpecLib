@@ -282,6 +282,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
 class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     file_format = "mzlb.txt"
+    format_name = "text"
 
     def __init__(self, filename):
         super(TextSpectralLibraryWriter, self).__init__(filename)

@@ -56,6 +56,12 @@ class SQLIndex(IndexBase):
             exists = False
         return inst, exists
 
+    @classmethod
+    def exists(cls, filename):
+        if not isinstance(filename, (str, pathlib.Path)):
+            raise TypeError(f"Could not coerce filename from {filename}")
+        exists = os.path.exists(filename + cls.extension)
+        return exists
 
     def __init__(self, filename):
         self.filename = filename

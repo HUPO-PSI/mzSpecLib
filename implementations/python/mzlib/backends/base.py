@@ -2,7 +2,7 @@ import os
 
 from pathlib import Path
 
-from mzlib.index import MemoryIndex
+from mzlib.index import MemoryIndex, SQLIndex
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte
 from mzlib.attributes import AttributeManager
@@ -24,6 +24,9 @@ class SubclassRegisteringMetaclass(type):
         else:
             attrs['format_name'] = file_extension
         return new_type
+
+    def type_for_format(cls, format_or_extension):
+        return cls._file_extension_to_implementation.get(format_or_extension)
 
 
 class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass):
@@ -230,7 +233,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return spectra
 
 
-class SpectralLibraryWriterBase(object):
+class SpectralLibraryWriterBase(object, metaclass=SubclassRegisteringMetaclass):
     def __init__(self, filename, **kwargs):
         self.filename = filename
 

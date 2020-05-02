@@ -8,7 +8,9 @@ setup(
 	description='HUPO-PSI Spectral library format',
 	packages=['mzlib'],
 	entry_points={
-		'console_scripts': [],
+		'console_scripts': [
+			"mzspeclib = mzlib.tools.cli:main"
+		],
 	},
 	classifiers=[
 		"Intended Audience :: Science/Research",
@@ -18,5 +20,6 @@ setup(
 	],
 	install_requires=[
 		"sqlalchemy",
+		"click",
 	],
 )

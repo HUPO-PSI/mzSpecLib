@@ -4,7 +4,7 @@ annotation_pattern = re.compile(r"""
 ^(?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
    (?P<series_internal>[m](?P<internal_start>\d+):(?P<internal_end>\d+))|
    (?P<precursor>p)|
-   (?P<immonium>[ARNDCEQGHKMFPSTWYV]|IL|LI|I|L)|
+   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL]))|
    (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
@@ -126,6 +126,8 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
 
 
 class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
+    series = "internal"
+
     def __init__(self, series, start_position, end_position, neutral_loss=None, isotope=None,
                  adduct=None, charge=None, analyte_reference=None, mass_error=None, rest=None):
         super(InternalPeptideFragmentIonAnnotation, self).__init__(
@@ -138,6 +140,8 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
 
 
 class PrecursorIonAnnotation(IonAnnotationBase):
+    series = "precursor"
+
     def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
         super(PrecursorIonAnnotation, self).__init__(
@@ -148,6 +152,8 @@ class PrecursorIonAnnotation(IonAnnotationBase):
 
 
 class ImmoniumIonAnnotation(IonAnnotationBase):
+    series = "immonium"
+
     def __init__(self, series, amino_acids, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
         super(ImmoniumIonAnnotation, self).__init__(
@@ -155,10 +161,12 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
         self.amino_acids = amino_acids
 
     def _format_ion(self):
-        return f"{self.amino_acids}"
+        return f"I{self.amino_acids}"
 
 
 class ReporterIonAnnotation(IonAnnotationBase):
+    series = "reporter"
+
     def __init__(self, series, reporter_mass, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
         super(ReporterIonAnnotation, self).__init__(
@@ -170,6 +178,8 @@ class ReporterIonAnnotation(IonAnnotationBase):
 
 
 class ExternalIonAnnotation(IonAnnotationBase):
+    series = "external"
+
     def __init__(self, series, label, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
         super(ExternalIonAnnotation, self).__init__(
@@ -309,59 +319,3 @@ class AnnotationStringParser(object):
 
 
 parse_annotation = AnnotationStringParser(annotation_pattern)
-
-# def parse_annotation(annotation_string):
-#     if annotation_string == "?" or not annotation_string:
-#         return None
-#     match = annotation_pattern.search(annotation_string)
-#     if match is None:
-#         raise ValueError(f"Invalid annotation string {annotation_string!r}")
-#     data = match.groupdict()
-
-#     adduct = None
-#     charge = (data.get("charge", 1))
-#     if charge is None:
-#         charge = 1
-#     elif charge == 0:
-#         raise ValueError(f"The charge of an annotation cannot be zero. {annotation_string}")
-#     else:
-#         charge = int(charge)
-#     isotope = int_or_sign(data.get('isotope', 0) or 0)
-#     neutral_loss = data.get("neutral_loss")
-#     analyte_reference = data.get("analyte_reference")
-
-#     mass_error = data.get("mass_error")
-#     if mass_error is not None:
-#         mass_error = MassError(float(mass_error), data.get("mass_error_unit"))
-#     if data['series']:
-#         return PeptideFragmentIonAnnotation(
-#             data['series'], int(data['ordinal']),
-#             neutral_loss, isotope, adduct, charge, analyte_reference,
-#             mass_error)
-#     elif data['series_internal']:
-#         return InternalPeptideFragmentIonAnnotation(
-#             "internal", int(data['internal_start']), int(data['internal_end']),
-#             neutral_loss, isotope, adduct, charge, analyte_reference,
-#             mass_error)
-#     elif data['precursor']:
-#         return PrecursorIonAnnotation(
-#             "precursor",
-#             neutral_loss, isotope, adduct, charge, analyte_reference,
-#             mass_error)
-#     elif data['immonium']:
-#         return ImmoniumIonAnnotation(
-#             "immonium", data['immonium'],
-#             neutral_loss, isotope, adduct, charge, analyte_reference,
-#             mass_error)
-#     elif data['reporter']:
-#         return ReporterIonAnnotation(
-#             "reporter", float(data["reporter_mass"]),
-#             neutral_loss, isotope, adduct, charge, analyte_reference,
-#             mass_error)
-#     elif data['external_ion']:
-#         return ExternalIonAnnotation(
-#             "external", data['external_ion'],
-#             neutral_loss, isotope, adduct, charge, analyte_reference,
-#             mass_error)
-#     else:
-#         raise ValueError(f"Could not infer annotation type from {annotation_string}")

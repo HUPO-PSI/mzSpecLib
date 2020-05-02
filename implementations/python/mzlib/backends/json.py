@@ -136,6 +136,9 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
 
 
 class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
+    file_format = "mzlb.json"
+    format_name = "json"
+
     def __init__(self, filename, pretty_print=True):
         super(JSONSpectralLibraryWriter, self).__init__(filename)
         self._coerce_handle(self.filename)
@@ -230,13 +233,13 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         #### Organize the attributes from the simple list into the appropriate JSON format
         attributes = self._format_attributes(spectrum)
 
-        analytes = []
+        analytes = {}
         for analyte in spectrum.analytes:
             analyte_d = {
                 "id": analyte.id,
                 "attributes": self._format_attributes(analyte)
             }
-            analytes.append(analyte_d)
+            analytes[analyte.id] = (analyte_d)
 
         spectrum = {
             "attributes": attributes,

@@ -158,6 +158,7 @@ parse_annotation = MSPAnnotationStringParser(annotation_pattern)
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
+    format_name = "msp"
 
     @classmethod
     def guess_from_header(cls, filename):
