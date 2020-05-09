@@ -9,8 +9,12 @@ from .common import datafile
 
 class LibraryBehaviorBase(object):
 
-    def test_sequence_behavior(self):
+    def _open_library(self):
         lib = self.library_cls(self.test_file)
+        return lib
+
+    def test_sequence_behavior(self):
+        lib = self._open_library()
         assert len(lib) == 7
         spec = lib[3]
         assert spec.get_attribute(

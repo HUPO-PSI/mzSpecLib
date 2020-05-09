@@ -116,9 +116,14 @@ class SpectrumLibrary:
             return self.backend.index
         return None
 
+    @property
+    def attributes(self):
+        if self._backend_initialized():
+            return self.backend
+        return None
+
     def read_header(self):
-        """
-        read_header - Read just the header of the whole library
+        """Read just the header of the whole library
 
         Returns
         -------
@@ -128,8 +133,7 @@ class SpectrumLibrary:
         return self.backend.read_header()
 
     def write(self, destination, format=None):
-        """
-        write - Write the library to disk
+        """Write the library to disk
         """
         filename = destination
         if not isinstance(filename, (str, pathlib.Path)):
