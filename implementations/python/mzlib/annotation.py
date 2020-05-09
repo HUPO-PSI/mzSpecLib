@@ -8,17 +8,26 @@ annotation_pattern = re.compile(r"""
    (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
-(?P<neutral_loss>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
+(?P<neutral_loss>(?:[+-]\d*
+    (?:(?:[A-Z][A-Za-z0-9]*)|
+        (?:\[
+            (?:
+                (?:[A-Za-z0-9:\.]+)|
+                (?:\d+(?:\.\d+)?)
+            )
+            \])
+    )
+)+)?
 (?:(?P<isotope>[+-]\d*)i)?
 (?:\[M(?P<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
 (?:@(?P<analyte_reference>[^/\s]+))?
-(?:/(?P<mass_error>-?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
+(?:/(?P<mass_error>[+-]?\d+(?:\.\d+)?)(?P<mass_error_unit>ppm)?)?
 """, re.X)
 
 # At the time of first writing, this pattern could be translated into the equivalent
 # ECMAScript compliant regex:
-# (?:(?:(?<series>[axbycz])(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(?<immonium>[ARNDCEQGHKMFPSTWYV]|IL|LI|I|L)|(?<reporter>r(?<reporter_mass>\d+(?:\.\d+)))|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_loss>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?(?:(?<isotope>[+-]\d*i))?(?:\[M(?<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:\^(?<charge>[+-]?\d+))?(?:@(?<analyte_reference>[^/\s]+))?(?:\/(?<mass_error>-?\d+(?:\.\d+))(?<mass_error_unit>ppm)?)?
+# ^(?:(?:(?<series>[axbycz]\.?)(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(:?I(?<immonium>[ARNDCEQGHKMFPSTWYVIL]))|(?<reporter>r(?<reporter_mass>\d+(?:\.\d+)))|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_loss>(?:[+-]\d*(?:(?:[A-Z][A-Za-z0-9]*)|(?:\[(?:(?:[A-Za-z0-9:\.]+)|(?:\d+(?:\.\d+)?))\])))+)?(?:(?<isotope>[+-]\d*)i)?(?:\[M(?<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:\^(?<charge>[+-]?\d+))?(?:@(?<analyte_reference>[^/\s]+))?(?:/(?<mass_error>[+-]?\d+(?:\.\d+)?)(?<mass_error_unit>ppm)?)?
 # Line breaks not introduced to preserve syntactic correctness.
 
 

@@ -13,26 +13,26 @@ class TestAnnotationParser(unittest.TestCase):
         assert parsed.series == 'b'
         assert parsed.position == 14
 
-        base += "-H2O-NH3"
+        base += "-H2O-NH3+[Foo]"
 
         parsed = parse_annotation(base)[0]
         assert parsed.series == 'b'
         assert parsed.position == 14
-        assert parsed.neutral_loss == "-H2O-NH3"
+        assert parsed.neutral_loss == "-H2O-NH3+[Foo]"
 
         base += "+2i"
 
         parsed = parse_annotation(base)[0]
         assert parsed.series == 'b'
         assert parsed.position == 14
-        assert parsed.neutral_loss == "-H2O-NH3"
+        assert parsed.neutral_loss == "-H2O-NH3+[Foo]"
         assert parsed.isotope == 2
 
         base += "^2"
         parsed = parse_annotation(base)[0]
         assert parsed.series == 'b'
         assert parsed.position == 14
-        assert parsed.neutral_loss == "-H2O-NH3"
+        assert parsed.neutral_loss == "-H2O-NH3+[Foo]"
         assert parsed.isotope == 2
         assert parsed.charge == 2
 
@@ -41,7 +41,7 @@ class TestAnnotationParser(unittest.TestCase):
         parsed = parse_annotation(base)[0]
         assert parsed.series == 'b'
         assert parsed.position == 14
-        assert parsed.neutral_loss == "-H2O-NH3"
+        assert parsed.neutral_loss == "-H2O-NH3+[Foo]"
         assert parsed.isotope == 2
         assert parsed.charge == 2
         assert parsed.mass_error == MassError(0.5, 'ppm')
