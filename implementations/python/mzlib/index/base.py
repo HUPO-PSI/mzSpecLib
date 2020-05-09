@@ -26,3 +26,19 @@ class IndexBase(object):
 
     def commit(self):
         raise NotImplementedError()
+
+    def check_names_unique(self):
+        '''Checks that all indexed spectra have unique
+        ``spectrum name`` parameters.
+
+        Returns
+        -------
+        bool:
+            Whether the spectrum names in the index are unique.
+        '''
+        seen = set()
+        for record in self:
+            if record.name in seen:
+                return False
+            seen.add(record.name)
+        return True

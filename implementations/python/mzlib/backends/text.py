@@ -141,24 +141,20 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _get_lines_for(self, offset):
-        with open(self.filename, 'r') as infile:
-            infile.seek(offset)
-            state = 'body'
-            spectrum_buffer = []
+    def _buffer_from_stream(self, infile):
+        state = 'body'
+        spectrum_buffer = []
 
-            for line in infile:
-                line = line.rstrip()
-                if state == 'body':
-                    if len(line) == 0:
-                        continue
-                    if START_OF_SPECTRUM_MARKER.match(line):
-                        if len(spectrum_buffer) > 0:
-                            return spectrum_buffer
-                    spectrum_buffer.append(line)
-
-            #### We will end up here if this is the last spectrum in the file
-            return spectrum_buffer
+        for line in infile:
+            line = line.rstrip()
+            if state == 'body':
+                if len(line) == 0:
+                    continue
+                if START_OF_SPECTRUM_MARKER.match(line):
+                    if len(spectrum_buffer) > 0:
+                        return spectrum_buffer
+                spectrum_buffer.append(line)
+        return spectrum_buffer
 
     def _parse(self, buffer, spectrum_index=None):
         spec = self._new_spectrum()

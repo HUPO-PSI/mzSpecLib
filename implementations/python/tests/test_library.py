@@ -2,7 +2,7 @@ import os
 import unittest
 import tempfile
 
-from mzlib.backends import MSPSpectralLibrary, TextSpectralLibrary
+from mzlib.backends import MSPSpectralLibrary, TextSpectralLibrary, JSONSpectralLibrary
 
 from .common import datafile
 
@@ -25,3 +25,8 @@ class TestMSPLibrary(unittest.TestCase, LibraryBehaviorBase):
 class TestTextLibrary(unittest.TestCase, LibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.txt")
     library_cls = TextSpectralLibrary
+
+
+class TestJSONLibrary(unittest.TestCase, LibraryBehaviorBase):
+    test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.json")
+    library_cls = JSONSpectralLibrary

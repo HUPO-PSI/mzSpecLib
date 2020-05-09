@@ -47,7 +47,10 @@ class SQLIndex(IndexBase):
     @classmethod
     def from_filename(cls, filename, library=None):
         if not isinstance(filename, (str, pathlib.Path)):
-            raise TypeError(f"Could not coerce filename from {filename}")
+            if not hasattr(filename, "name"):
+                raise TypeError(f"Could not coerce filename from {filename}")
+            else:
+                filename = filename.name
         exists = os.path.exists(filename + cls.extension)
         inst = cls(filename)
 
@@ -59,7 +62,10 @@ class SQLIndex(IndexBase):
     @classmethod
     def exists(cls, filename):
         if not isinstance(filename, (str, pathlib.Path)):
-            raise TypeError(f"Could not coerce filename from {filename}")
+            if not hasattr(filename, "name"):
+                raise TypeError(f"Could not coerce filename from {filename}")
+            else:
+                filename = filename.name
         exists = os.path.exists(filename + cls.extension)
         return exists
 

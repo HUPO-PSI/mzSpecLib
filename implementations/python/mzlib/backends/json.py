@@ -103,8 +103,8 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             if group is not None:
                 spectrum.group_counter = int(group)
         analytes = []
-        for analyte in data['analytes']:
-            analyte_d = self._new_analyte(analyte['id'])
+        for analyte_id, analyte in data['analytes'].items():
+            analyte_d = self._new_analyte(analyte_id)
             for attrib in analyte['attributes']:
                 key = f'{attrib["accession"]}|{attrib["name"]}'
                 if "value_accession" in attrib:
@@ -133,6 +133,13 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             peak_list.append(peak)
         spectrum.peak_list = peak_list
         return spectrum
+
+    def read(self):
+        n = len(self.buffer[LIBRARY_SPECTRA_KEY])
+        for offset in range(n):
+            data = self.buffer[LIBRARY_SPECTRA_KEY][offset]
+            spectrum = self.make_spectrum_from_payload(data)
+            yield spectrum
 
 
 class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
