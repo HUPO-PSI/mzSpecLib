@@ -44,11 +44,15 @@ https://proteomicsresource.washington.edu/protocols03/isotopic_labeling.php
 The "Nterm" elements refer to the entire N terminal label, including both the reporter and balance group. These commonly fall
 off together producing a peak at the full label mass plus a proton.
 
-Each of these may also be used as a neutral (or charged actaully) loss. It is also common to to see
+Each of these may also be used as a neutral (or charged actually) loss. It is also common to to see
 p-TMT6Nterm
 
 It is also not unusual to see a series of peaks such as:
 p-iTRAQ114
+p-iTRAQ115
+p-iTRAQ116
+etc.
+
 wherein the reporter ion falls off with a charge (yielding the reporter ion peak) and the full peptide sequence plus the
 balance group is seen as a singly charged ion.
 
