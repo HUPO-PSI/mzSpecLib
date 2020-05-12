@@ -41,8 +41,8 @@ https://proteomicsresource.washington.edu/protocols03/isotopic_labeling.php
 - iTRAQ4Nterm
 - iTRAQ8Nterm
 
-The "Nterm" elements refer to the entire N terminal label, including both the reporter and a balance group. These commonly fall
-off together producing a peak at the N terminal mass plus a proton.
+The "Nterm" elements refer to the entire N terminal label, including both the reporter and balance group. These commonly fall
+off together producing a peak at the full label mass plus a proton.
 
 Each of these may also be used as a neutral (or charged actaully) loss. It is also common to to see
 p-TMT6Nterm
