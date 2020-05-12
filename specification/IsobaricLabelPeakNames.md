@@ -50,7 +50,7 @@ Each of these may also be used as a neutral (or charged actually) loss. It is al
 It is also not unusual to see a series of peaks such as:
 - p-iTRAQ114
 - p-iTRAQ115
-- p-iTRAQ116
+- p-iTRAQ116-H2O
 - etc.
 
 wherein the reporter ion falls off with a charge (yielding the reporter ion peak) and the full peptide sequence plus the
