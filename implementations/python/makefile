@@ -1,2 +1,2 @@
 test:
-	pytest -v tests --cov
+	pytest -v tests --cov --cov-report=html --cov-report term

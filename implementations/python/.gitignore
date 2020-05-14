@@ -4,3 +4,4 @@ __pycache__
 Untitled*.ipynb
 examples/*splindex
 .coverage
+htmlcov/

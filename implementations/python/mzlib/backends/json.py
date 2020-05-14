@@ -103,8 +103,8 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             if group is not None:
                 spectrum.group_counter = int(group)
         analytes = []
-        for analyte in data['analytes']:
-            analyte_d = self._new_analyte(analyte['id'])
+        for analyte_id, analyte in data['analytes'].items():
+            analyte_d = self._new_analyte(analyte_id)
             for attrib in analyte['attributes']:
                 key = f'{attrib["accession"]}|{attrib["name"]}'
                 if "value_accession" in attrib:
@@ -134,8 +134,18 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         spectrum.peak_list = peak_list
         return spectrum
 
+    def read(self):
+        n = len(self.buffer[LIBRARY_SPECTRA_KEY])
+        for offset in range(n):
+            data = self.buffer[LIBRARY_SPECTRA_KEY][offset]
+            spectrum = self.make_spectrum_from_payload(data)
+            yield spectrum
+
 
 class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
+    file_format = "mzlb.json"
+    format_name = "json"
+
     def __init__(self, filename, pretty_print=True):
         super(JSONSpectralLibraryWriter, self).__init__(filename)
         self._coerce_handle(self.filename)
@@ -230,13 +240,13 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         #### Organize the attributes from the simple list into the appropriate JSON format
         attributes = self._format_attributes(spectrum)
 
-        analytes = []
+        analytes = {}
         for analyte in spectrum.analytes:
             analyte_d = {
                 "id": analyte.id,
                 "attributes": self._format_attributes(analyte)
             }
-            analytes.append(analyte_d)
+            analytes[analyte.id] = (analyte_d)
 
         spectrum = {
             "attributes": attributes,
