@@ -8,6 +8,8 @@ from mzlib.attributes import AttributeManager
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
 
+SPECTRUM_NAME = "MS:1003061|spectrum name"
+
 
 class Spectrum(AttributeManager):
 
@@ -29,6 +31,22 @@ class Spectrum(AttributeManager):
         self.peak_list = peak_list
         self.analytes = analytes
 
+    @property
+    def name(self):
+        return self.get_attribute(SPECTRUM_NAME)
+
+    @name.setter
+    def name(self, value):
+        if self.has_attribute(SPECTRUM_NAME):
+            self.replace_attribute(SPECTRUM_NAME, value)
+        elif AttributeManager.__len__(self) > 0:
+            attribs = [SPECTRUM_NAME, value] + list(
+                AttributeManager.__iter__(self))
+            AttributeManager.clear(self)
+            AttributeManager._from_iterable(attribs)
+        else:
+            self.add_attribute(SPECTRUM_NAME, value)
+
     def __eq__(self, other):
         result = super(Spectrum, self).__eq__(other)
         if result:
@@ -37,7 +55,7 @@ class Spectrum(AttributeManager):
             result = self.analytes == other.analytes
         return result
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         template = f"{self.__class__.__name__}("
         lines = list(map(str, self.attributes))
         if not lines:
@@ -52,10 +70,10 @@ class Spectrum(AttributeManager):
                 ',\n'.join(lines), ' ' * 2)
         return template
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return self.write("text")
 
-    def write(self, format="text"):
+    def write(self, format="text"):  # pragma: no cover
         """
         write - Write out the spectrum in any of the supported formats
         """

@@ -20,6 +20,11 @@ class LibraryBehaviorBase(object):
         assert spec.get_attribute(
             "MS:1003061|spectrum name") == "AAAAGSTSVKPIFSR/2_0_44eV"
 
+    # TODO: Fix clipping in _buffer_from_stream first
+    # def test_iteration(self):
+    #     lib = self._open_library()
+    #     assert list(lib) == list(lib.read())
+
 
 class TestMSPLibrary(unittest.TestCase, LibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.msp")

@@ -123,6 +123,35 @@ class AttributeManager(object):
             idx = indices[i]
             return self.attributes[idx]
 
+    def replace_attribute(self, key, value, group_identifier=None):
+        indices_and_groups = self.attribute_dict[key]
+        if group_identifier is None:
+            indices = indices_and_groups['indexes']
+            if len(indices) > 1:
+                raise ValueError("Cannot replace the value of an attribute used multiple times")
+            else:
+                self.attributes[indices[0]][1] = value
+        else:
+            raise NotImplementedError()
+
+    def get_by_name(self, name):
+        '''Search for an attribute by human-readable name.
+
+        Parameters
+        ----------
+        name: str
+            The name to search for.
+
+        Returns
+        -------
+        object:
+            The attribute value if found or :const:`None`.
+        '''
+        for attr in self:
+            if attr[0].split("|")[-1] == name:
+                return attr[1]
+        return None
+
     def clear(self):
         """Remove all content from the store.
 
@@ -186,6 +215,12 @@ class AttributeManager(object):
 
     def __getitem__(self, key):
         return self.get_attribute(key)
+
+    def __setitem__(self, key, value):
+        if self.has_attribute(key):
+            self.replace_attribute(key, value)
+        else:
+            self.add_attribute(key, value)
 
     def keys(self):
         return self.attribute_dict.keys()

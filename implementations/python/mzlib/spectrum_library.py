@@ -119,7 +119,7 @@ class SpectrumLibrary:
     @property
     def attributes(self):
         if self._backend_initialized():
-            return self.backend
+            return self.backend.attributes
         return None
 
     def read_header(self):
@@ -130,7 +130,12 @@ class SpectrumLibrary:
         bool:
             Whether the operation was successful
         """
+        self._requires_backend()
         return self.backend.read_header()
+
+    def read(self):
+        self._requires_backend()
+        return self.backend.read()
 
     def write(self, destination, format=None):
         """Write the library to disk

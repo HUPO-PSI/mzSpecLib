@@ -90,11 +90,16 @@ species_map = {
 }
 
 
+immonium_modification_map = {
+    "CAM": "Carbamidomethyl",
+}
+
+
 annotation_pattern = re.compile(r"""^
 (?:(?:(?P<series>[abyxcz]\.?)(?P<ordinal>\d+))|
    (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJarndceqghkmfpstwyvilj]+))|
    (?P<precursor>p)|
-   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL](:?CAM|[A-Z])))|
+   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:(?P<immonium_modification>CAM)|[A-Z])?)|
    (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
@@ -128,13 +133,13 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
             data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
 
     def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
-        name = data['immonium']
-        if name.endswith("CAM"):
-            warnings.warn(f"Loss of information, modification in {name} lost.")
-            name = name[:-3]
-        else:
-            name = name[:-1]
-        data['immonium'] = name
+        modification = data['immonium_modification']
+        if modification is not None:
+            try:
+                modification = immonium_modification_map[modification]
+                data['immonium_modification'] = modification
+            except KeyError as err:
+                print(f"Failed to convert immonium ion modification {modification}")
         return super(MSPAnnotationStringParser, self)._dispatch_immonium(
             data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
 
@@ -170,10 +175,16 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def read_header(self):
         with open(self.filename, 'r') as stream:
-            first_line = stream.readline()
-            if re.match("Name: ",first_line):
-                return True
+            match, offset = self._parse_header_from_stream(stream)
+            return match
         return False
+
+    def _parse_header_from_stream(self, stream):
+        first_line = stream.readline()
+        if re.match("Name: ", first_line):
+            return True, 0
+        return False, 0
+
 
     def create_index(self):
         """

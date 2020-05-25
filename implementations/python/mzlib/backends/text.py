@@ -5,6 +5,7 @@ import logging
 
 from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
+from mzlib.attributes import AttributeManager
 
 from .base import _PlainTextSpectralLibraryBackendBase, SpectralLibraryWriterBase
 from .utils import try_cast
@@ -26,6 +27,8 @@ float_number = re.compile(
 START_OF_SPECTRUM_MARKER = re.compile(r"^<Spectrum>")
 START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
+START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
+SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "mzlb.txt"
@@ -35,16 +38,59 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     def guess_from_header(cls, filename):
         with open(filename, 'r') as stream:
             first_line = stream.readline()
-            if START_OF_SPECTRUM_MARKER.match(first_line):
+            if START_OF_SPECTRUM_MARKER.match(first_line) or START_OF_LIBRARY_MARKER.match(first_line):
                 return True
         return False
 
+    def _parse_header_from_stream(self, stream):
+        nbytes = 0
+        first_line = stream.readline()
+        nbytes += len(first_line)
+        if SPECTRUM_NAME_PRESENT.match(first_line) or START_OF_SPECTRUM_MARKER.match(first_line):
+            return True, 0
+        elif START_OF_LIBRARY_MARKER.match(first_line):
+            match = START_OF_LIBRARY_MARKER.match(first_line)
+            version = match.group(1)
+            attributes = AttributeManager()
+            attributes.add_attribute('MS:XXXXXX|format version', version)
+            line = stream.readline()
+            while not (SPECTRUM_NAME_PRESENT.match(line) or START_OF_SPECTRUM_MARKER.match(line)):
+                nbytes += len(line)
+                match = key_value_term_pattern.match(line)
+                if match is not None:
+                    d = match.groupdict()
+                    attributes.add_attribute(
+                        d['term'], try_cast(d['value']))
+                    line = stream.readline()
+                    nbytes += len(line)
+                    continue
+                if line.startswith("["):
+                    match = grouped_key_value_term_pattern.match(line)
+                    if match is not None:
+                        d = match.groupdict()
+                        attributes.add_attribute(
+                            d['term'], try_cast(d['value']), d['group_id'])
+                        attributes.group_counter = int(d['group_id'])
+                        line = stream.readline()
+                        nbytes += len(line)
+                        continue
+                    else:
+                        raise ValueError(
+                            f"Malformed grouped attribute {line}")
+                elif "=" in line:
+                    name, value = line.split("=")
+                    attributes.add_attribute(name, value)
+                else:
+                    raise ValueError(f"Malformed attribute line {line}")
+                line = stream.readline()
+            self.attributes.clear()
+            self.attributes._from_iterable(attributes)
+            return True, nbytes
+        return False, 0
+
     def read_header(self):
-        with open(self.filename, 'r') as stream:
-            first_line = stream.readline()
-            if re.match(r'MS:1003061\|spectrum name=', first_line):
-                return True
-        return False
+        with open(self.filename, 'rt') as stream:
+            return self._parse_header_from_stream(stream)
 
     def create_index(self):
         """
@@ -279,12 +325,21 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     file_format = "mzlb.txt"
     format_name = "text"
+    default_version = '0.1'
 
-    def __init__(self, filename):
+    def __init__(self, filename, version=None):
         super(TextSpectralLibraryWriter, self).__init__(filename)
+        self.version = version
         self._coerce_handle(self.filename)
 
     def write_header(self, library):
+        if self.version is None:
+            version = library.attributes.get_by_name("format version")
+            if version is None:
+                version = self.default_version
+        else:
+            version = self.version
+        self.handle.write("<mzSpecLib %s>\n" % (version, ))
         for attribute in library.attributes:
             if len(attribute) == 2:
                 self.handle.write(f"{attribute[0]}={attribute[1]}\n")
