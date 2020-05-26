@@ -217,8 +217,12 @@ class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass)
         raise NotImplementedError()
 
     def __iter__(self):
-        for record in self.index:
-            yield self.get_spectrum(record.number)
+        if self.index:
+            for record in self.index:
+                yield self.get_spectrum(record.number)
+        else:
+            raise NotImplementedError()
+            return self.read()
 
     def __len__(self):
         return len(self.index)
@@ -300,7 +304,13 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
     def read(self):
         with open(self.filename, 'rt') as stream:
             i = 0
+            match, offset = self._parse_header_from_stream(stream)
+            if not match:
+                raise ValueError("Could not locate valid header")
+            else:
+                stream.seek(offset)
             while True:
+                # Will clip the first line of the next spectrum. Needs work
                 buffer = self._buffer_from_stream(stream)
                 if not buffer:
                     break

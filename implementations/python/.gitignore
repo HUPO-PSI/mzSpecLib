@@ -1,7 +1,7 @@
 *.pyc
 __pycache__
 *egg-info*
-Untitled*.ipynb
+*.ipynb
 examples/*splindex
 .coverage
 htmlcov/

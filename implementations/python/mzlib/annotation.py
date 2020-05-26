@@ -1,19 +1,23 @@
 import re
 
 annotation_pattern = re.compile(r"""
-^(?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
+^(?:(?P<analyte_reference>[^/\s]+)@)?
+   (?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
    (?P<series_internal>[m](?P<internal_start>\d+):(?P<internal_end>\d+))|
    (?P<precursor>p)|
-   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL]))|
-   (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
+   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:\[(?P<immonium_modification>(?:[^\]]+))\])?)|
+   (?P<reporter>r(?:
+    (?:\[
+        (?P<reporter_label>[^\]]+)
+    \])
+   ))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
 (?P<neutral_loss>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|
         (?:\[
             (?:
-                (?:[A-Za-z0-9:\.]+)|
-                (?:\d+(?:\.\d+)?)
+                (?:[A-Za-z0-9:\.]+)
             )
             \])
     )
@@ -21,7 +25,6 @@ annotation_pattern = re.compile(r"""
 (?:(?P<isotope>[+-]\d*)i)?
 (?:\[M(?P<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
-(?:@(?P<analyte_reference>[^/\s]+))?
 (?:/(?P<mass_error>[+-]?\d+(?:\.\d+)?)(?P<mass_error_unit>ppm)?)?
 """, re.X)
 
@@ -29,6 +32,9 @@ annotation_pattern = re.compile(r"""
 # ECMAScript compliant regex:
 # ^(?:(?:(?<series>[axbycz]\.?)(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(:?I(?<immonium>[ARNDCEQGHKMFPSTWYVIL]))|(?<reporter>r(?<reporter_mass>\d+(?:\.\d+)))|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_loss>(?:[+-]\d*(?:(?:[A-Z][A-Za-z0-9]*)|(?:\[(?:(?:[A-Za-z0-9:\.]+)|(?:\d+(?:\.\d+)?))\])))+)?(?:(?<isotope>[+-]\d*)i)?(?:\[M(?<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:\^(?<charge>[+-]?\d+))?(?:@(?<analyte_reference>[^/\s]+))?(?:/(?<mass_error>[+-]?\d+(?:\.\d+)?)(?<mass_error_unit>ppm)?)?
 # Line breaks not introduced to preserve syntactic correctness.
+
+def _sre_to_ecma(pattern):
+    return pattern.replace("?P<", "?<").replace("\n", '')
 
 
 class MassError(object):
@@ -95,7 +101,10 @@ class IonAnnotationBase(object):
         raise NotImplementedError()
 
     def serialize(self):
-        parts = [self._format_ion(), ]
+        parts = []
+        if self.analyte_reference is not None:
+            parts.append(f"{self.analyte_reference}@")
+        parts.append(self._format_ion())
         if self.neutral_loss is not None:
             parts.append(str(self.neutral_loss))
         if self.isotope != 0:
@@ -109,8 +118,6 @@ class IonAnnotationBase(object):
         if self.charge != 0 and self.charge != 1:
             charge = abs(self.charge)
             parts.append(f"^{charge}")
-        if self.analyte_reference is not None:
-            parts.append(f"@{self.analyte_reference}")
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
@@ -163,27 +170,32 @@ class PrecursorIonAnnotation(IonAnnotationBase):
 class ImmoniumIonAnnotation(IonAnnotationBase):
     series = "immonium"
 
-    def __init__(self, series, amino_acids, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, amino_acids, modification=None, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
         super(ImmoniumIonAnnotation, self).__init__(
             series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
         self.amino_acids = amino_acids
+        self.modification = modification
 
     def _format_ion(self):
-        return f"I{self.amino_acids}"
+        if self.modification is not None:
+            modification = f"[{self.modification}]"
+        else:
+            modification = ''
+        return f"I{self.amino_acids}{modification}"
 
 
 class ReporterIonAnnotation(IonAnnotationBase):
     series = "reporter"
 
-    def __init__(self, series, reporter_mass, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, reporter_label, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, rest=None):
         super(ReporterIonAnnotation, self).__init__(
             series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
-        self.reporter_mass = reporter_mass
+        self.reporter_label = reporter_label
 
     def _format_ion(self):
-        return f"r{self.reporter_mass}"
+        return f"r[{self.reporter_label}]"
 
 
 class ExternalIonAnnotation(IonAnnotationBase):
@@ -309,13 +321,13 @@ class AnnotationStringParser(object):
 
     def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
         return ImmoniumIonAnnotation(
-            "immonium", data['immonium'],
+            "immonium", data['immonium'], data['immonium_modification'],
             neutral_loss, isotope, adduct, charge, analyte_reference,
             mass_error)
 
     def _dispatch_reporter(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
         return ReporterIonAnnotation(
-            "reporter", float(data["reporter_mass"]),
+            "reporter", (data["reporter_label"]),
             neutral_loss, isotope, adduct, charge, analyte_reference,
             mass_error)
 
