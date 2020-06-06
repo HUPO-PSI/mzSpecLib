@@ -23,7 +23,7 @@ the developers of spectral library search tools and resources.
 
 ## Introduction
 
-Over past years several file formats has been created to store and disseminate
+Over past years several file formats have been created to store and disseminate
 spectral libraries, such as MSP, X!Hunter binary MGF, BiblioSpec SQLite and
 SSL/MS2, SpectraST SPLIB/SPTXT,
 [MassBank formats](https://github.com/HUPO-PSI/SpectralLibraryFormat/blob/master/legacy-formats/MassBank.md),
@@ -43,7 +43,6 @@ into a spectral library, the format must be flexible enough to fit all the
 potential use cases of spectral libraries, and yet retain sufficient structure
 for it to be a practically useful standard.
 
----
 
 ## Development
 
@@ -60,11 +59,10 @@ is used as a central point of information regarding the format's development:
   [here](https://github.com/HUPO-PSI/mzSpecLib/tree/master/specification).
 
 Currently, the project's progress can be split up into the development of the
-[main specification](https://github.com/HUPO-PSI/mzSpecLib/tree/master/specification]
-and into a [Python implementation](https://github.com/HUPO-PSI/mzSpecLib/tree/dev/implementations/python)
+[main specification](https://github.com/HUPO-PSI/mzSpecLib/tree/master/specification)
+and into a [Python implementation](https://github.com/HUPO-PSI/mzSpecLib/tree/master/implementations/python)
 of this specification.
 
----
 
 ## Contributing
 
