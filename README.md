@@ -70,8 +70,7 @@ of this specification.
 ## Contributing
 
 All community input is welcome! Feel free to join the discussions in the [Issue
-tracker](https://github.com/HUPO-PSI/SpectralLibraryFormat/issues) and to open a
-new issue if you have questions, recommendations or requests.
-
-To contribute to the files in the repository, check out
-[CONTRIBUTING.md](https://github.com/HUPO-PSI/SpectralLibraryFormat/blob/master/CONTRIBUTING.md)
+tracker](https://github.com/HUPO-PSI/SpectralLibraryFormat/issues) or to open a
+new issue if you have questions, recommendations or requests. Additionally, 
+everyone is allowed to post comments in the Google documents or to request full
+write access to fully contribute to the specification.
