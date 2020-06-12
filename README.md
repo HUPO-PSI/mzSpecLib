@@ -54,9 +54,12 @@ is used as a central point of information regarding the format's development:
   specifications, examples and tools that export/validate and visualize those
   files.
 - Additionally, Google Docs are used to quickly and efficiently collaborate
-  on the specification documents. Links to these documents are listed in
-  this repository, for instance
-  [here](https://github.com/HUPO-PSI/mzSpecLib/tree/master/specification).
+  on the specification documents. Links to these documents are listed here:
+  - [mzSpecLib main specification document](https://docs.google.com/document/d/1l87lIyKTy2ti5yU7aqsLr7uX5jIU1dO7gEzyqWD2uQA/edit?usp=sharing)
+  - [Metadata and CV term overview](https://drive.google.com/file/d/1rN5DJSowp2micxlwJQlPxlv39ZiaLEfv/edit?usp=sharing)
+  - [mzSpecLib peak interetation format](https://docs.google.com/document/d/1yEUNG4Ump6vnbMDs4iV4s3XISflmOkRAyqUuutcCG2w/edit?usp=sharing)
+  - [mzSpecLib general data model schematic](https://drive.google.com/file/d/1OVh5ATfKXA77pM4CYzRfdupeRGu3vt5c/view?usp=sharing)
+
 
 Currently, the project's progress can be split up into the development of the
 [main specification](https://github.com/HUPO-PSI/mzSpecLib/tree/master/specification)
