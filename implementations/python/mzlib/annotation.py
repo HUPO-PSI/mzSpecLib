@@ -11,6 +11,7 @@ annotation_pattern = re.compile(r"""
         (?P<reporter_label>[^\]]+)
     \])
    ))|
+   (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
    (?:_(?P<external_ion>[^\s,/]+))
 )
 (?P<neutral_loss>(?:[+-]\d*
@@ -26,6 +27,7 @@ annotation_pattern = re.compile(r"""
 (?:\[M(?P<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
 (?:/(?P<mass_error>[+-]?\d+(?:\.\d+)?)(?P<mass_error_unit>ppm)?)?
+(?:\*(?P<confidence>\d*(?:\.\d+)?))?
 """, re.X)
 
 # At the time of first writing, this pattern could be translated into the equivalent
@@ -67,11 +69,10 @@ class MassError(object):
 
 class IonAnnotationBase(object):
     __slots__ = ("series", "neutral_loss", "isotope", "adduct", "charge", "analyte_reference",
-                 "mass_error", "rest")
+                 "mass_error", "confidence", "rest")
 
     def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
-                 analyte_reference=None,
-                 mass_error=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
        if isotope is None:
             isotope = 0
        if charge is None:
@@ -83,6 +84,7 @@ class IonAnnotationBase(object):
        self.charge = charge
        self.analyte_reference = analyte_reference
        self.mass_error = mass_error
+       self.confidence = confidence
        self.rest = rest
 
     def __hash__(self):
@@ -121,6 +123,8 @@ class IonAnnotationBase(object):
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
+        if self.confidence is not None:
+            parts.append(f"*{self.confidence}")
         if self.rest is not None:
             parts.append("/")
             parts.append(self.rest)
@@ -132,9 +136,9 @@ class IonAnnotationBase(object):
 
 class PeptideFragmentIonAnnotation(IonAnnotationBase):
     def __init__(self, series, position, neutral_loss=None, isotope=None, adduct=None, charge=None,
-                 analyte_reference=None, mass_error=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(PeptideFragmentIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
         self.position = position
 
     def _format_ion(self):
@@ -145,9 +149,9 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     series = "internal"
 
     def __init__(self, series, start_position, end_position, neutral_loss=None, isotope=None,
-                 adduct=None, charge=None, analyte_reference=None, mass_error=None, rest=None):
+                 adduct=None, charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(InternalPeptideFragmentIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
         self.start_position = start_position
         self.end_position = end_position
 
@@ -159,9 +163,9 @@ class PrecursorIonAnnotation(IonAnnotationBase):
     series = "precursor"
 
     def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
-                 analyte_reference=None, mass_error=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(PrecursorIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
 
     def _format_ion(self):
         return "p"
@@ -171,9 +175,9 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
     series = "immonium"
 
     def __init__(self, series, amino_acids, modification=None, neutral_loss=None, isotope=None, adduct=None, charge=None,
-                 analyte_reference=None, mass_error=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ImmoniumIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
         self.amino_acids = amino_acids
         self.modification = modification
 
@@ -189,9 +193,9 @@ class ReporterIonAnnotation(IonAnnotationBase):
     series = "reporter"
 
     def __init__(self, series, reporter_label, neutral_loss=None, isotope=None, adduct=None, charge=None,
-                 analyte_reference=None, mass_error=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ReporterIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
         self.reporter_label = reporter_label
 
     def _format_ion(self):
@@ -202,13 +206,26 @@ class ExternalIonAnnotation(IonAnnotationBase):
     series = "external"
 
     def __init__(self, series, label, neutral_loss=None, isotope=None, adduct=None, charge=None,
-                 analyte_reference=None, mass_error=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ExternalIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, rest)
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
         self.label = label
 
     def _format_ion(self):
         return f"_{self.label}"
+
+class FormulaAnnotation(IonAnnotationBase):
+    series = "formula"
+
+    def __init__(self, series, formula, neutral_loss=None, isotope=None, adduct=None, charge=None,
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+        super(FormulaAnnotation, self).__init__(
+            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+        self.formula = formula
+
+    def _format_ion(self):
+        return f"f{{{self.formula}}}"
+
 
 
 def int_or_sign(string):
@@ -247,14 +264,20 @@ class AnnotationStringParser(object):
             charge = int(charge)
         isotope = int_or_sign(data.get('isotope', 0) or 0)
         neutral_loss = data.get("neutral_loss")
+        # FIXME: ensure that neutral loss is not a plain mass
         analyte_reference = data.get("analyte_reference")
 
         mass_error = data.get("mass_error")
         if mass_error is not None:
             mass_error = MassError(float(mass_error), data.get("mass_error_unit"))
+        confidence = data.get('confidence')
+        if confidence is not None:
+            confidence = float(confidence)
+            if confidence > 1.0:
+                raise ValueError(f"A single peak interpretation's confidence cannot be greater than 1. {annotation_string}")
         annotation = self._dispatch(
             annotation_string, data, adduct, charge, isotope, neutral_loss,
-            analyte_reference, mass_error, **kwargs)
+            analyte_reference, mass_error, confidence, **kwargs)
         rest = annotation_string[match.end():]
         if rest == "":
             return [annotation]
@@ -265,78 +288,97 @@ class AnnotationStringParser(object):
                 rest = rest[1:]
             result = [annotation]
             result.extend(self.parse_annotation(rest, **kwargs))
+            total_confidence = 0.0
+            for annot in result:
+                if annot.confidence is not None:
+                    total_confidence += annot.confidence
+            if total_confidence < 0 or total_confidence > (1 + 1e-3):
+                raise ValueError(
+                    f"The sum of all interpretations of a single peak's confidence cannot be greater than 1 ({total_confidence}). {annotation_string}")
             return result
 
-    def _dispatch(self, annotation_string, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch(self, annotation_string, data, adduct, charge, isotope, neutral_loss, analyte_reference,
+                  mass_error, confidence, **kwargs):
         if data['series']:
             return self._dispatch_peptide_fragment(
                 data,
                 neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
-                analyte_reference=analyte_reference, mass_error=mass_error, **kwargs)
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['series_internal']:
             return self._dispatch_internal_peptide_fragment(
                 data,
                 neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
-                analyte_reference=analyte_reference, mass_error=mass_error, **kwargs)
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['precursor']:
             return self._dispatch_precursor(
                 data,
                 neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
-                analyte_reference=analyte_reference, mass_error=mass_error, **kwargs)
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['immonium']:
             return self._dispatch_immonium(
                 data,
                 neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
-                analyte_reference=analyte_reference, mass_error=mass_error)
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['reporter']:
             return self._dispatch_reporter(
                 data,
                 neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
-                analyte_reference=analyte_reference, mass_error=mass_error, **kwargs)
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['external_ion']:
             return self._dispatch_external(
                 data,
                 neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
-                analyte_reference=analyte_reference, mass_error=mass_error, **kwargs)
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
+        elif data['formula']:
+            return self._dispatch_formula(
+                data,
+                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
+            )
         else:
             raise ValueError(f"Could not infer annotation type from {annotation_string}/{data}")
 
-    def _dispatch_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
         return PeptideFragmentIonAnnotation(
             data['series'], int(data['ordinal']),
             neutral_loss, isotope, adduct, charge, analyte_reference,
-            mass_error)
+            mass_error, confidence)
 
-    def _dispatch_internal_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_internal_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
         return InternalPeptideFragmentIonAnnotation(
             "internal", int(data['internal_start']), int(data['internal_end']),
             neutral_loss, isotope, adduct, charge, analyte_reference,
-            mass_error)
+            mass_error, confidence)
 
-    def _dispatch_precursor(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_precursor(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
         return PrecursorIonAnnotation(
             "precursor",
             neutral_loss, isotope, adduct, charge, analyte_reference,
-            mass_error)
+            mass_error, confidence)
 
-    def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
         return ImmoniumIonAnnotation(
             "immonium", data['immonium'], data['immonium_modification'],
             neutral_loss, isotope, adduct, charge, analyte_reference,
-            mass_error)
+            mass_error, confidence)
 
-    def _dispatch_reporter(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_reporter(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
         return ReporterIonAnnotation(
             "reporter", (data["reporter_label"]),
             neutral_loss, isotope, adduct, charge, analyte_reference,
-            mass_error)
+            mass_error, confidence)
 
-    def _dispatch_external(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_external(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
         return ExternalIonAnnotation(
             "external", data['external_ion'],
             neutral_loss, isotope, adduct, charge, analyte_reference,
-            mass_error)
+            mass_error, confidence)
 
+    def _dispatch_formula(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+            return FormulaAnnotation(
+                "formula", data['formula'],
+                neutral_loss, isotope, adduct, charge, analyte_reference,
+                mass_error, confidence)
 
 
 parse_annotation = AnnotationStringParser(annotation_pattern)

@@ -57,3 +57,16 @@ class TestAnnotationParser(unittest.TestCase):
         assert parsed.mass_error == MassError(0.5, 'ppm')
         assert parsed.analyte_reference == '2'
         assert parsed == base
+
+        base = base + '*0.05'
+
+        parsed = parse_annotation(base)[0]
+        assert parsed.series == 'b'
+        assert parsed.position == 14
+        assert parsed.neutral_loss == "-H2O-NH3+[Foo]"
+        assert parsed.isotope == 2
+        assert parsed.charge == 2
+        assert parsed.mass_error == MassError(0.5, 'ppm')
+        assert parsed.analyte_reference == '2'
+        assert parsed.confidence == 0.05
+        assert parsed == base
