@@ -94,6 +94,7 @@ immonium_modification_map = {
     "CAM": "Carbamidomethyl",
 }
 
+# TODO: ppm is unsigned, add mass calculation to determine true mass accuracy
 
 annotation_pattern = re.compile(r"""^
 (?:(?:(?P<series>[abyxcz]\.?)(?P<ordinal>\d+))|
