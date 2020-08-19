@@ -36,7 +36,6 @@ https://proteomicsresource.washington.edu/protocols03/isotopic_labeling.php
 - iTRAQ117
 - iTRAQ118
 - iTRAQ119
-- iTRAQ120
 - iTRAQ121
 - iTRAQ4Nterm
 - iTRAQ8Nterm
