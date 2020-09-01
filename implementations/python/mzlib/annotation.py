@@ -32,11 +32,12 @@ annotation_pattern = re.compile(r"""
 
 # At the time of first writing, this pattern could be translated into the equivalent
 # ECMAScript compliant regex:
-# ^(?:(?:(?<series>[axbycz]\.?)(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(:?I(?<immonium>[ARNDCEQGHKMFPSTWYVIL]))|(?<reporter>r(?<reporter_mass>\d+(?:\.\d+)))|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_loss>(?:[+-]\d*(?:(?:[A-Z][A-Za-z0-9]*)|(?:\[(?:(?:[A-Za-z0-9:\.]+)|(?:\d+(?:\.\d+)?))\])))+)?(?:(?<isotope>[+-]\d*)i)?(?:\[M(?<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:\^(?<charge>[+-]?\d+))?(?:@(?<analyte_reference>[^/\s]+))?(?:/(?<mass_error>[+-]?\d+(?:\.\d+)?)(?<mass_error_unit>ppm)?)?
+# ^(?:(?<analyte_reference>[^/\s]+)@)?(?:(?:(?<series>[axbycz]\.?)(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(:?I(?<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:\[(?<immonium_modification>(?:[^\]]+))\])?)|(?<reporter>r(?:(?:\[(?<reporter_label>[^\]]+)\])))|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_loss>(?:[+-]\d*(?:(?:[A-Z][A-Za-z0-9]*)|(?:\[(?:(?:[A-Za-z0-9:\.]+))\])))+)?(?:(?<isotope>[+-]\d*)i)?(?:\[M(?<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:\^(?<charge>[+-]?\d+))?(?:/(?<mass_error>[+-]?\d+(?:\.\d+)?)(?<mass_error_unit>ppm)?)?
 # Line breaks not introduced to preserve syntactic correctness.
 
 def _sre_to_ecma(pattern):
-    return pattern.replace("?P<", "?<").replace("\n", '')
+    # Assumes that expected whitespace matches are denoted with \s
+    return pattern.replace("?P<", "?<").replace("\n", '').replace(" ", "")
 
 
 class MassError(object):
@@ -115,11 +116,11 @@ class IonAnnotationBase(object):
             if isotope == 1:
                 isotope = ''
             parts.append(f"{sign}{isotope}i")
-        if self.adduct is not None:
-            parts.append(self.adduct)
         if self.charge != 0 and self.charge != 1:
             charge = abs(self.charge)
             parts.append(f"^{charge}")
+        if self.adduct is not None:
+            parts.append(self.adduct)
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
@@ -382,3 +383,7 @@ class AnnotationStringParser(object):
 
 
 parse_annotation = AnnotationStringParser(annotation_pattern)
+
+
+if __name__ == "__main__":
+    print(_sre_to_ecma(annotation_pattern.pattern))
