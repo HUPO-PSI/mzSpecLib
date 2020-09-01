@@ -2,7 +2,9 @@
 
 In mzSpecLib library peak annotations, reporter ions and other peaks related to reporter ions will be labeled with
 the following conventions. A useful resource for currently available reporter ions is available at the UWPR:
-https://proteomicsresource.washington.edu/protocols03/isotopic_labeling.php
+https://proteomicsresource.washington.edu/protocols03/isotopic_labeling.php. Additional information about TMT is
+available in the Thermo Fisher TMT brochure:
+https://assets.thermofisher.com/TFS-Assets/LSG/manuals/MAN0015866_2162600_TMT_MassTagging_UG.pdf
 
 # TMT peaks
 
