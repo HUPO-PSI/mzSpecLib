@@ -1,80 +1,80 @@
 Isobaric_label_ions = {
-  "126" : {
+  "TMT126" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 126.127726, "ETD" : 114.127725 }
   },
-  "127N" : {
+  "TMT127N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 127.124761, "ETD" : 115.124760 }
   },
-  "127C" : {
+  "TMT127C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 127.131081, "ETD" : 114.127725 }
   },
-  "128N" : {
+  "TMT128N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 128.128116, "ETD" : 115.124760 }
   },
-  "128C" : {
+  "TMT128C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 128.134436, "ETD" : 116.134433 }
   },
-  "129N" : {
+  "TMT129N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 129.131471, "ETD" : 117.131468 }
   },
-  "129C" : {
+  "TMT129C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 129.137790, "ETD" : 116.134433 }
   },
-  "130N" : {
+  "TMT130N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 130.134825, "ETD" : 117.131468 }
   },
-  "130C" : {
+  "TMT130C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 130.141145, "ETD" : 118.141141 }
   },
-  "131N" : {
+  "TMT131N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 131.138180, "ETD" : 119.138176 }
   },
-  "131C" : {
+  "TMT131C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 131.144500, "ETD" : 118.141141 }
   },
-  "132N" : {
+  "TMT132N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 132.141535 }
   },
-  "132C" : {
+  "TMT132C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 122.147855 }
   },
-  "133N" : {
+  "TMT133N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 133.14489 }
   },
-  "133C" : {
+  "TMT133C" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 133.15121 }
   },
-  "134N" : {
+  "TMT134N" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 134.148245 }
@@ -99,42 +99,42 @@ Isobaric_label_ions = {
     "ion_type"   : "reporter+balance",
     "mzs" : { "HCD" : 305.21442247 }
   },
-  "113" : {
+  "iTRAQ113" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 113.1078 }
   },
-  "114" : {
+  "iTRAQ114" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 114.1112 }
   },
-  "115" : {
+  "iTRAQ115" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 115.1082 }
   },
-  "116" : {
+  "iTRAQ116" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 116.1116 }
   },
-  "117" : {
+  "iTRAQ117" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 117.1149 }
   },
-  "118" : {
+  "iTRAQ118" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 118.1120 }
   },
-  "119" : {
+  "iTRAQ119" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 119.1153 }
   },
-  "121" : {
+  "iTRAQ121" : {
     "label_type" : "iTRAQ",
     "ion_type"   : "reporter",
     "mzs" : { "HCD" : 121.1220 }
