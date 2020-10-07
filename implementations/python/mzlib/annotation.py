@@ -67,10 +67,19 @@ class MassError(object):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.mass_error}, {self.unit})"
 
+    def to_json(self):
+        return {
+            "value": self.mass_error,
+            "unit": self.unit
+        }
+
 
 class IonAnnotationBase(object):
     __slots__ = ("series", "neutral_loss", "isotope", "adduct", "charge", "analyte_reference",
                  "mass_error", "confidence", "rest")
+
+    series_label = None
+    _molecule_description_fields = {}
 
     def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
@@ -134,8 +143,34 @@ class IonAnnotationBase(object):
     def __str__(self):
         return self.serialize()
 
+    def _molecule_description(self):
+        return {
+            'series_label': self.series_label
+        }
+
+    def to_json(self):
+        d = {}
+        for key in IonAnnotationBase.__slots__:
+            if key == 'series':
+                continue
+            if key == 'mass_error' and self.mass_error is not None:
+                d[key] = self.mass_error.to_json()
+            else:
+                d[key] = getattr(self, key)
+        d['molecule_description'] = self._molecule_description()
+        return d
+
 
 class PeptideFragmentIonAnnotation(IonAnnotationBase):
+    __slots__ = ("position", )
+
+    series_label = 'peptide'
+
+    _molecule_description_fields = {
+        "series": "The peptide ion series this ion belongs to",
+        "position": "The position from the appropriate terminal along the peptide this ion was fragmented at"
+    }
+
     def __init__(self, series, position, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(PeptideFragmentIonAnnotation, self).__init__(
@@ -145,9 +180,24 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
     def _format_ion(self):
         return f"{self.series}{self.position}"
 
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d.update({
+            "series": self.series,
+            "position": self.position
+        })
+        return d
+
 
 class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
-    series = "internal"
+    __slots__ = ("start_position", "end_position")
+
+    series_label = 'internal'
+
+    _molecule_description_fields = {
+        "start_position": "The N-terminal cleavage site for this internal fragment",
+        "end_position": "The C-terminal cleavage site for this internal fragment"
+    }
 
     def __init__(self, series, start_position, end_position, neutral_loss=None, isotope=None,
                  adduct=None, charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None):
@@ -159,9 +209,18 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     def _format_ion(self):
         return f"m{self.start_position}:{self.end_position}"
 
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['start_position'] = self.start_position
+        d['end_position'] = self.end_position
+        return d
+
 
 class PrecursorIonAnnotation(IonAnnotationBase):
-    series = "precursor"
+    __slots__ = ()
+
+    series_label = "precursor"
+    _molecule_description_fields = {}
 
     def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
@@ -173,13 +232,19 @@ class PrecursorIonAnnotation(IonAnnotationBase):
 
 
 class ImmoniumIonAnnotation(IonAnnotationBase):
-    series = "immonium"
+    __slots__ = ("amino_acid", "modification")
 
-    def __init__(self, series, amino_acids, modification=None, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    series_label = "immonium"
+    _molecule_description_fields = {
+        "amino_acid": "The amino acid represented by this immonium ion",
+        "modification": "An optional modification that may be attached to this immonium ion"
+    }
+
+    def __init__(self, series, amino_acid, modification=None, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ImmoniumIonAnnotation, self).__init__(
             series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
-        self.amino_acids = amino_acids
+        self.amino_acid = amino_acid
         self.modification = modification
 
     def _format_ion(self):
@@ -187,11 +252,22 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
             modification = f"[{self.modification}]"
         else:
             modification = ''
-        return f"I{self.amino_acids}{modification}"
+        return f"I{self.amino_acid}{modification}"
+
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['amino_acid'] = self.amino_acid
+        d['modification'] = self.modification
+        return d
 
 
 class ReporterIonAnnotation(IonAnnotationBase):
-    series = "reporter"
+    __slots__ = ("reporter_label", )
+
+    series_label = "reporter"
+    _molecule_description_fields = {
+        "reporter_label": "The labeling reagent's name or channel information"
+    }
 
     def __init__(self, series, reporter_label, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
@@ -202,9 +278,20 @@ class ReporterIonAnnotation(IonAnnotationBase):
     def _format_ion(self):
         return f"r[{self.reporter_label}]"
 
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['reporter_label'] = self.reporter_label
+        return d
+
 
 class ExternalIonAnnotation(IonAnnotationBase):
-    series = "external"
+    __slots__ = ('label', )
+
+    series_label = "external"
+
+    _molecule_description_fields = {
+        "label": "The name of the external ion being marked"
+    }
 
     def __init__(self, series, label, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
@@ -215,8 +302,19 @@ class ExternalIonAnnotation(IonAnnotationBase):
     def _format_ion(self):
         return f"_{self.label}"
 
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['label'] = self.label
+        return d
+
+
 class FormulaAnnotation(IonAnnotationBase):
-    series = "formula"
+    __slots__ = ("formula", )
+
+    series_label = "formula"
+    _molecule_description_fields = {
+        "formula": "The elemental formula of the ion being marked"
+    }
 
     def __init__(self, series, formula, neutral_loss=None, isotope=None, adduct=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
@@ -227,6 +325,10 @@ class FormulaAnnotation(IonAnnotationBase):
     def _format_ion(self):
         return f"f{{{self.formula}}}"
 
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['formula'] = self.formula
+        return d
 
 
 def int_or_sign(string):
@@ -254,7 +356,7 @@ class AnnotationStringParser(object):
             raise ValueError(f"Invalid annotation string {annotation_string!r}")
         data = match.groupdict()
 
-        adduct = None
+        adduct = data.get("adduct")
         charge = (data.get("charge", 1))
         if charge is None:
             charge = 1
