@@ -1,0 +1,18 @@
+{
+    "neutral_loss": ["-H2O"],
+    "isotope": 0,
+    "adduct": [],
+    "charge": 1,
+    "analyte_reference": 1,
+    "mass_error": {
+      "value": 14.4,
+      "unit": "ppm"
+    },
+    "confidence": null,
+    "rest": null,
+    "molecule_description": {
+      "series_label": "internal",
+      "start_position": 5,
+      "end_position": 8
+    }
+  }

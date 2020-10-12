@@ -1,0 +1,16 @@
+{
+    "neutral_loss": [],
+    "isotope": 0,
+    "adduct": [],
+    "charge": 1,
+    "analyte_reference": 1,
+    "mass_error": {
+        "value": -1.7,
+        "unit": "ppm"
+    },
+    "confidence": null,
+    "rest": null,
+    "molecule_description": {
+        "series_label": "precursor"
+    }
+}
