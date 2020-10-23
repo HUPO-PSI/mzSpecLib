@@ -14,7 +14,7 @@ annotation_pattern = re.compile(r"""
    (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
    (?:_(?P<external_ion>[^\s,/]+))
 )
-(?P<neutral_loss>(?:[+-]\d*
+(?P<neutral_losses>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|
         (?:\[
             (?:
@@ -24,7 +24,7 @@ annotation_pattern = re.compile(r"""
     )
 )+)?
 (?:(?P<isotope>[+-]\d*)i)?
-(?:\[M(?P<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
+(?:\[(?P<adducts>M(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
 (?:/(?P<mass_error>[+-]?\d+(?:\.\d+)?)(?P<mass_error_unit>ppm)?)?
 (?:\*(?P<confidence>\d*(?:\.\d+)?))?
@@ -38,6 +38,55 @@ annotation_pattern = re.compile(r"""
 def _sre_to_ecma(pattern):
     # Assumes that expected whitespace matches are denoted with \s
     return pattern.replace("?P<", "?<").replace("\n", '').replace(" ", "")
+
+
+def tokenize_signed_symbol_list(string):
+    '''Parse a string containing signed lists of symbols into
+    a signed token list
+
+    Parameters
+    ----------
+    string: str
+        The symbol sequence to parse
+
+    Returns
+    -------
+    list
+    '''
+    if not string:
+        return []
+    tokens = re.split(r"\s*(\+|-)\s*", string)
+    if not tokens:
+        return []
+
+    result = []
+    sign = '+'
+    symbol = None
+    for token in tokens:
+        if not token.strip():
+            continue
+        if token in ('+', '-'):
+            if symbol is not None:
+                result.append(sign + symbol if sign == '-' else symbol)
+            sign = token
+            symbol = None
+        else:
+            symbol = token
+    if symbol is not None:
+        result.append(sign + symbol if sign == '-' else symbol)
+    return result
+
+
+def combine_formula(tokens):
+    if not tokens:
+        return ''
+    out = [tokens[0]]
+    for token in tokens[1:]:
+        if token.startswith("-") or token.startswith("+"):
+            out.append(token)
+        else:
+            out.append('+' + token)
+    return ''.join(out)
 
 
 class MassError(object):
@@ -75,27 +124,44 @@ class MassError(object):
 
 
 class IonAnnotationBase(object):
-    __slots__ = ("series", "neutral_loss", "isotope", "adduct", "charge", "analyte_reference",
+    __slots__ = ("series", "neutral_losses", "isotope", "adducts", "charge", "analyte_reference",
                  "mass_error", "confidence", "rest")
 
     series_label = None
     _molecule_description_fields = {}
 
-    def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
-       if isotope is None:
+        if isotope is None:
             isotope = 0
-       if charge is None:
+        if charge is None:
             charge = 1
-       self.series = series
-       self.neutral_loss = neutral_loss
-       self.isotope = isotope
-       self.adduct = adduct
-       self.charge = charge
-       self.analyte_reference = analyte_reference
-       self.mass_error = mass_error
-       self.confidence = confidence
-       self.rest = rest
+
+        self.series = series
+        self.neutral_losses = neutral_losses or []
+        self.isotope = isotope
+        self.adducts = adducts or []
+        self.charge = charge
+        self.analyte_reference = analyte_reference
+        self.mass_error = mass_error
+        self.confidence = confidence
+        self.rest = rest
+
+    @property
+    def adduct(self):
+        return self.adducts
+
+    @adduct.setter
+    def adduct(self, value):
+        self.adducts = value
+
+    @property
+    def neutral_loss(self):
+        return self.neutral_losses
+
+    @neutral_loss.setter
+    def neutral_loss(self, value):
+        self.neutral_losses = value
 
     def __hash__(self):
         return hash(self.serialize())
@@ -117,8 +183,8 @@ class IonAnnotationBase(object):
         if self.analyte_reference is not None:
             parts.append(f"{self.analyte_reference}@")
         parts.append(self._format_ion())
-        if self.neutral_loss is not None:
-            parts.append(str(self.neutral_loss))
+        if self.neutral_losses:
+            parts.extend(map(str, self.neutral_losses))
         if self.isotope != 0:
             sign = "+" if self.isotope > 0 else "-"
             isotope = abs(self.isotope)
@@ -128,8 +194,8 @@ class IonAnnotationBase(object):
         if self.charge != 0 and self.charge != 1:
             charge = abs(self.charge)
             parts.append(f"^{charge}")
-        if self.adduct is not None:
-            parts.append(self.adduct)
+        if self.adducts:
+            parts.append('[{}]'.format(combine_formula(self.adducts)))
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
@@ -148,7 +214,7 @@ class IonAnnotationBase(object):
             'series_label': self.series_label
         }
 
-    def to_json(self):
+    def to_json(self, exclude_missing=False):
         d = {}
         for key in IonAnnotationBase.__slots__:
             if key == 'series':
@@ -156,7 +222,9 @@ class IonAnnotationBase(object):
             if key == 'mass_error' and self.mass_error is not None:
                 d[key] = self.mass_error.to_json()
             else:
-                d[key] = getattr(self, key)
+                value = getattr(self, key)
+                if (value is not None) or not exclude_missing:
+                    d[key] = value
         d['molecule_description'] = self._molecule_description()
         return d
 
@@ -171,10 +239,10 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
         "position": "The position from the appropriate terminal along the peptide this ion was fragmented at"
     }
 
-    def __init__(self, series, position, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, position, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(PeptideFragmentIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
         self.position = position
 
     def _format_ion(self):
@@ -195,14 +263,14 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     series_label = 'internal'
 
     _molecule_description_fields = {
-        "start_position": "The N-terminal cleavage site for this internal fragment",
-        "end_position": "The C-terminal cleavage site for this internal fragment"
+        "start_position": "N-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)",
+        "end_position": "C-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)"
     }
 
-    def __init__(self, series, start_position, end_position, neutral_loss=None, isotope=None,
-                 adduct=None, charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None):
+    def __init__(self, series, start_position, end_position, neutral_losses=None, isotope=None,
+                 adducts=None, charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(InternalPeptideFragmentIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
         self.start_position = start_position
         self.end_position = end_position
 
@@ -222,10 +290,10 @@ class PrecursorIonAnnotation(IonAnnotationBase):
     series_label = "precursor"
     _molecule_description_fields = {}
 
-    def __init__(self, series, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(PrecursorIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
 
     def _format_ion(self):
         return "p"
@@ -240,10 +308,10 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
         "modification": "An optional modification that may be attached to this immonium ion"
     }
 
-    def __init__(self, series, amino_acid, modification=None, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, amino_acid, modification=None, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ImmoniumIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
         self.amino_acid = amino_acid
         self.modification = modification
 
@@ -269,10 +337,10 @@ class ReporterIonAnnotation(IonAnnotationBase):
         "reporter_label": "The labeling reagent's name or channel information"
     }
 
-    def __init__(self, series, reporter_label, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, reporter_label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ReporterIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
         self.reporter_label = reporter_label
 
     def _format_ion(self):
@@ -293,10 +361,10 @@ class ExternalIonAnnotation(IonAnnotationBase):
         "label": "The name of the external ion being marked"
     }
 
-    def __init__(self, series, label, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(ExternalIonAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
         self.label = label
 
     def _format_ion(self):
@@ -316,10 +384,10 @@ class FormulaAnnotation(IonAnnotationBase):
         "formula": "The elemental formula of the ion being marked"
     }
 
-    def __init__(self, series, formula, neutral_loss=None, isotope=None, adduct=None, charge=None,
+    def __init__(self, series, formula, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None):
         super(FormulaAnnotation, self).__init__(
-            series, neutral_loss, isotope, adduct, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
         self.formula = formula
 
     def _format_ion(self):
@@ -355,8 +423,8 @@ class AnnotationStringParser(object):
         if match is None:
             raise ValueError(f"Invalid annotation string {annotation_string!r}")
         data = match.groupdict()
-
-        adduct = data.get("adduct")
+        # FIXME: include M in the string
+        adducts = tokenize_signed_symbol_list(data.get("adducts"))
         charge = (data.get("charge", 1))
         if charge is None:
             charge = 1
@@ -366,9 +434,9 @@ class AnnotationStringParser(object):
         else:
             charge = int(charge)
         isotope = int_or_sign(data.get('isotope', 0) or 0)
-        neutral_loss = data.get("neutral_loss")
-        # FIXME: ensure that neutral loss is not a plain mass
-        analyte_reference = data.get("analyte_reference")
+        neutral_losses = tokenize_signed_symbol_list(data.get("neutral_losses"))
+        # FIXME: ensure that neutral loss is not a plain mass, and tokenize separate blocks
+        analyte_reference = data.get("analyte_reference", '1')
 
         mass_error = data.get("mass_error")
         if mass_error is not None:
@@ -379,7 +447,7 @@ class AnnotationStringParser(object):
             if confidence > 1.0:
                 raise ValueError(f"A single peak interpretation's confidence cannot be greater than 1. {annotation_string}")
         annotation = self._dispatch(
-            annotation_string, data, adduct, charge, isotope, neutral_loss,
+            annotation_string, data, adducts, charge, isotope, neutral_losses,
             analyte_reference, mass_error, confidence, **kwargs)
         rest = annotation_string[match.end():]
         if rest == "":
@@ -400,87 +468,87 @@ class AnnotationStringParser(object):
                     f"The sum of all interpretations of a single peak's confidence cannot be greater than 1 ({total_confidence}). {annotation_string}")
             return result
 
-    def _dispatch(self, annotation_string, data, adduct, charge, isotope, neutral_loss, analyte_reference,
+    def _dispatch(self, annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference,
                   mass_error, confidence, **kwargs):
         if data['series']:
             return self._dispatch_peptide_fragment(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['series_internal']:
             return self._dispatch_internal_peptide_fragment(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['precursor']:
             return self._dispatch_precursor(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['immonium']:
             return self._dispatch_immonium(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['reporter']:
             return self._dispatch_reporter(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['external_ion']:
             return self._dispatch_external(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
         elif data['formula']:
             return self._dispatch_formula(
                 data,
-                neutral_loss=neutral_loss, isotope=isotope, adduct=adduct, charge=charge,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
             )
         else:
             raise ValueError(f"Could not infer annotation type from {annotation_string}/{data}")
 
-    def _dispatch_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_peptide_fragment(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
         return PeptideFragmentIonAnnotation(
             data['series'], int(data['ordinal']),
-            neutral_loss, isotope, adduct, charge, analyte_reference,
+            neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
-    def _dispatch_internal_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_internal_peptide_fragment(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
         return InternalPeptideFragmentIonAnnotation(
             "internal", int(data['internal_start']), int(data['internal_end']),
-            neutral_loss, isotope, adduct, charge, analyte_reference,
+            neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
-    def _dispatch_precursor(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_precursor(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
         return PrecursorIonAnnotation(
             "precursor",
-            neutral_loss, isotope, adduct, charge, analyte_reference,
+            neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
-    def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_immonium(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
         return ImmoniumIonAnnotation(
             "immonium", data['immonium'], data['immonium_modification'],
-            neutral_loss, isotope, adduct, charge, analyte_reference,
+            neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
-    def _dispatch_reporter(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_reporter(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
         return ReporterIonAnnotation(
             "reporter", (data["reporter_label"]),
-            neutral_loss, isotope, adduct, charge, analyte_reference,
+            neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
-    def _dispatch_external(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_external(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
         return ExternalIonAnnotation(
             "external", data['external_ion'],
-            neutral_loss, isotope, adduct, charge, analyte_reference,
+            neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
-    def _dispatch_formula(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, confidence, **kwargs):
+    def _dispatch_formula(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
             return FormulaAnnotation(
                 "formula", data['formula'],
-                neutral_loss, isotope, adduct, charge, analyte_reference,
+                neutral_losses, isotope, adducts, charge, analyte_reference,
                 mass_error, confidence)
 
 
