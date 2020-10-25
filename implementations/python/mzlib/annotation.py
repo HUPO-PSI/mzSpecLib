@@ -24,8 +24,8 @@ annotation_pattern = re.compile(r"""
     )
 )+)?
 (?:(?P<isotope>[+-]\d*)i)?
-(?:\[(?P<adducts>M(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
+(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:/(?P<mass_error>[+-]?\d+(?:\.\d+)?)(?P<mass_error_unit>ppm)?)?
 (?:\*(?P<confidence>\d*(?:\.\d+)?))?
 """, re.X)
@@ -184,7 +184,7 @@ class IonAnnotationBase(object):
             parts.append(f"{self.analyte_reference}@")
         parts.append(self._format_ion())
         if self.neutral_losses:
-            parts.extend(map(str, self.neutral_losses))
+            parts.append(combine_formula(self.neutral_losses))
         if self.isotope != 0:
             sign = "+" if self.isotope > 0 else "-"
             isotope = abs(self.isotope)
@@ -195,7 +195,7 @@ class IonAnnotationBase(object):
             charge = abs(self.charge)
             parts.append(f"^{charge}")
         if self.adducts:
-            parts.append('[{}]'.format(combine_formula(self.adducts)))
+            parts.append('[{}]'.format(combine_formula(['M'] + self.adducts)))
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
@@ -217,7 +217,7 @@ class IonAnnotationBase(object):
     def to_json(self, exclude_missing=False):
         d = {}
         for key in IonAnnotationBase.__slots__:
-            if key == 'series':
+            if key == 'series' or key == 'rest':
                 continue
             if key == 'mass_error' and self.mass_error is not None:
                 d[key] = self.mass_error.to_json()
