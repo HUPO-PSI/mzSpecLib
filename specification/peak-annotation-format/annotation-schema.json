@@ -3,12 +3,13 @@
     "title": "HUPO-PSI Peak annotation specification",
     "description": "Annotation of an individual peak in a mass spectrum.",
     "type": "object",
-    "additionalProperties": false,
+    "additionalProperties": true,
     "required": ["analyte_reference", "molecule_description"],
     "properties": {
         "analyte_reference": {
             "description": "Label of analyte to which this annotation belongs",
-            "oneOf": [{"type": "string"}, {"type": "integer"}]
+            "oneOf": [{"type": "string"}, {"type": "integer"}],
+            "default": "1"
         },
         "molecule_description": {
             "description": "Description of the molecule or molecule fragment that this peak is annotated with",
@@ -23,7 +24,7 @@
                 {"$ref": "#/definitions/formula"}
             ]
         },
-        "neutral_loss": {
+        "neutral_losses": {
             "description": "Any additional gains or losses of chemical groups defined by formula or by name; multiple may be specified",
             "type": "array",
             "items": {
@@ -36,7 +37,7 @@
             "type": "number",
             "default": 0
         },
-        "adduct": {
+        "adducts": {
             "description": "The charge carrier(s) for the given annotation",
             "type": "array",
             "items": {
@@ -62,7 +63,7 @@
                 "unit": {
                     "description": "Mass error unit",
                     "type": "string",
-                    "enum": ["Da", "ppm"]
+                    "enum": ["ppm", "Da"]
                 }
             }
         },
@@ -70,9 +71,6 @@
             "description": "Number defining confidence in peak annotation",
             "oneOf": [{"type": "number"}, {"type": "null"}],
             "default": null
-        },
-        "rest": {
-            "description": "Optional field for custom use"
         }
     },
     "definitions": {
@@ -148,7 +146,7 @@
                     "enum": ["immonium"]
                 },
                 "amino_acid": {
-                    "description": "The amino acid represented by this immonium ion",
+                    "description": "One-letter code of the amino acid represented by this immonium ion",
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 1
