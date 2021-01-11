@@ -1,6 +1,6 @@
 name: Validate JSON Schemas
 
-on: [push, pull_request]
+on: push
 
 jobs:
   validate:
@@ -21,7 +21,7 @@ jobs:
     - name: Validate peak annotation schema
       run: |
         jsonschema -i specification/peak-annotation-format/annotation-schema.json schema-draft-07.json
-    - name: Validate peak annotationn
+    - name: Validate peak annotation examples
       run: |
         jsonschema \
            -i specification/peak-annotation-format/annotation-example-1.json \
