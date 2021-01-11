@@ -1,7 +1,8 @@
 {
-    "neutral_loss": [],
+    "$schema": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/feature/add-annotation-schema/specification/peak-annotation-format/annotation-schema.json",
+    "neutral_losses": [],
     "isotope": 0,
-    "adduct": [],
+    "adducts": [],
     "charge": 1,
     "analyte_reference": 1,
     "mass_error": {
@@ -9,7 +10,6 @@
         "unit": "ppm"
     },
     "confidence": null,
-    "rest": null,
     "molecule_description": {
         "series_label": "precursor"
     }

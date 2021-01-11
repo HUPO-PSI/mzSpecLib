@@ -4,7 +4,7 @@
     "description": "Annotation of an individual peak in a mass spectrum.",
     "type": "object",
     "additionalProperties": true,
-    "required": ["analyte_reference", "molecule_description"],
+    "required": ["analyte_reference"],
     "properties": {
         "analyte_reference": {
             "description": "Label of analyte to which this annotation belongs",
@@ -21,8 +21,7 @@
                 {"$ref": "#/definitions/immonium"},
                 {"$ref": "#/definitions/reporter"},
                 {"$ref": "#/definitions/external"},
-                {"$ref": "#/definitions/formula"},
-                {"$ref": "#/definitions/unannotated"}
+                {"$ref": "#/definitions/formula"}
             ]
         },
         "neutral_losses": {
@@ -203,18 +202,6 @@
                 "formula": {
                     "description": "The elemental formula of the ion being marked",
                     "type": "string"
-                }
-            }
-        },
-        "unannotated": {
-            "description": "Unannotated peak",
-            "type": "object",
-            "required": ["series_label"],
-            "additionalProperties": false,
-            "properties": {
-                "series_label": {
-                    "$ref": "#/definitions/series_label",
-                    "enum": ["unannotated"]
                 }
             }
         }

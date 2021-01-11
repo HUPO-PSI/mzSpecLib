@@ -1,6 +1,4 @@
 {
-    "analyte_reference": 1,
-    "molecule_description": {
-        "series_label": "unannotated"
-    }
+    "$schema": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/feature/add-annotation-schema/specification/peak-annotation-format/annotation-schema.json",
+    "analyte_reference": 1
 }

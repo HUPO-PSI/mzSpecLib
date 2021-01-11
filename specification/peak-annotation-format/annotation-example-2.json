@@ -1,18 +1,18 @@
 {
-    "neutral_loss": ["-H2O"],
+    "$schema": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/feature/add-annotation-schema/specification/peak-annotation-format/annotation-schema.json",
+    "neutral_losses": ["-H2O"],
     "isotope": 0,
-    "adduct": [],
+    "adducts": [],
     "charge": 1,
     "analyte_reference": 1,
     "mass_error": {
-      "value": 14.4,
-      "unit": "ppm"
+        "value": 14.4,
+        "unit": "ppm"
     },
     "confidence": null,
-    "rest": null,
     "molecule_description": {
-      "series_label": "internal",
-      "start_position": 5,
-      "end_position": 8
+        "series_label": "internal",
+        "start_position": 5,
+        "end_position": 8
     }
   }
