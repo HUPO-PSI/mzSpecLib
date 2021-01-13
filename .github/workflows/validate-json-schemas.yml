@@ -20,12 +20,13 @@ jobs:
         curl http://json-schema.org/draft-07/schema# -o schema-draft-07.json
     - name: Validate peak annotation schema
       run: |
-        jsonschema -i specification/peak-annotation-format/annotation-schema.json schema-draft-07.json
+        jsonschema \
+           -i specification/peak-annotation-format/annotation-schema.json \
+           schema-draft-07.json
     - name: Validate peak annotation examples
       run: |
         jsonschema \
            -i specification/peak-annotation-format/annotation-example-1.json \
            -i specification/peak-annotation-format/annotation-example-2.json \
            -i specification/peak-annotation-format/annotation-example-3.json \
-           -i specification/peak-annotation-format/annotation-example-4.json \
            specification/peak-annotation-format/annotation-schema.json
