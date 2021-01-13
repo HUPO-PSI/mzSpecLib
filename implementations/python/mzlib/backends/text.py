@@ -7,7 +7,10 @@ from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
 from mzlib.attributes import AttributeManager
 
-from .base import _PlainTextSpectralLibraryBackendBase, SpectralLibraryWriterBase
+from .base import (
+    _PlainTextSpectralLibraryBackendBase,
+    SpectralLibraryWriterBase,
+    FORMAT_VERSION_TERM)
 from .utils import try_cast
 
 logger = logging.getLogger(__name__)
@@ -29,6 +32,7 @@ START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
 SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
+
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "mzlb.txt"
@@ -52,7 +56,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             match = START_OF_LIBRARY_MARKER.match(first_line)
             version = match.group(1)
             attributes = AttributeManager()
-            attributes.add_attribute('MS:XXXXXX|format version', version)
+            attributes.add_attribute(FORMAT_VERSION_TERM, version)
             line = stream.readline()
             while not (SPECTRUM_NAME_PRESENT.match(line) or START_OF_SPECTRUM_MARKER.match(line)):
                 nbytes += len(line)
@@ -325,9 +329,9 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     file_format = "mzlb.txt"
     format_name = "text"
-    default_version = '0.1'
+    default_version = '1.0'
 
-    def __init__(self, filename, version=None):
+    def __init__(self, filename, version=None, **kwargs):
         super(TextSpectralLibraryWriter, self).__init__(filename)
         self.version = version
         self._coerce_handle(self.filename)
@@ -386,9 +390,9 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.close()
 
 
-def format_spectrum(spectrum):
+def format_spectrum(spectrum, **kwargs):
     buffer = io.StringIO()
-    writer = TextSpectralLibraryWriter(buffer)
+    writer = TextSpectralLibraryWriter(buffer, **kwargs)
     writer.write_spectrum(spectrum)
     return buffer.getvalue()
 
