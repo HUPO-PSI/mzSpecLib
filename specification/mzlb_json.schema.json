@@ -1,9 +1,10 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "HUPO-PSI mzlb spectral library specification",
+    "title": "HUPO-PSI mzSpecLib spectral library specification",
     "description": "Describe library, spectrum, and spectrum-component attributes",
     "required": ["attributes", "format_version", "spectra"],
     "type": "object",
+    "additionalProperties": false,
     "properties": {
         "attributes": {
             "type": "array",
@@ -29,6 +30,7 @@
             "type": "object",
             "description": "A controlled vocabulary term with an optional associated value, which may itself be a cvparam",
             "required": ["accession", "name"],
+            "additionalProperties": false,
             "properties": {
                 "accession": {
                     "type": "string",
@@ -36,7 +38,7 @@
                 },
                 "name": {
                     "type": "string",
-                    "description": "The human readable name of the controlled vocabular term"
+                    "description": "The human readable name of the controlled vocabulary term"
                 },
                 "value": {
                     "oneOf": [
@@ -48,7 +50,7 @@
                     "description": "The accession number of the external controlled vocabulary term describing the value of this cvparam"
                 },
                 "cv_param_group": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "An identifier connecting a group of related parameters"
                 }
             }
@@ -57,6 +59,7 @@
             "type": "object",
             "description": "A molecule that is believed to have generated or contributed to the spectrum",
             "required": ["attributes", "id"],
+            "additionalProperties": false,
             "properties": {
                 "attributes": {
                     "type": "array",
@@ -66,8 +69,8 @@
                     }
                 },
                 "id": {
-                    "type": "string",
-                    "description": "A short identifier unique within the spectrum entry"
+                    "type": "integer",
+                    "description": "A identifier number unique within the spectrum entry"
                 }
             }
         },
@@ -78,9 +81,9 @@
                 "attributes",
                 "analytes",
                 "mzs",
-                "intensities",
-                "interpretations"
+                "intensities"
             ],
+            "additionalProperties": false,
             "properties": {
                 "attributes": {
                     "type": "array",
@@ -93,10 +96,11 @@
                     "type": "object",
                     "description": "The analytes described by this spectrum",
                     "patternProperties": {
-                        ".{1,}": {
-                                "$ref": "#/definitions/cvparam"
-                            }
+                        "[0-9]{1,}": {
+                            "$ref": "#/definitions/analyte"
                         }
+                    },
+                    "additionalProperties": false
                 },
                 "mzs": {
                     "type": "array",
@@ -116,9 +120,9 @@
                     "type": "array",
                     "description": "The annotations, if any, of each peak in the spectrum",
                     "items": {
-                        "type": ["array", "string", "null"],
+                        "type": ["array"],
                         "items": {
-                            "type": "string"
+                             "$ref": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/master/specification/peak-annotation-format/annotation-schema.json"
                         }
                     }
                 },
