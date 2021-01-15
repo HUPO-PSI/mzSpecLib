@@ -1,7 +1,7 @@
 import re
 
 annotation_pattern = re.compile(r"""
-^(?:(?P<analyte_reference>[^/\s]+)@)?
+^(?:(?P<analyte_reference>[^@\s]+)@)?
    (?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
    (?P<series_internal>[m](?P<internal_start>\d+):(?P<internal_end>\d+))|
    (?P<precursor>p)|
