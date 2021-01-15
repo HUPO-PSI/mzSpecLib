@@ -12,6 +12,7 @@ from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_
 
 
 LIBRARY_METADATA_KEY = "attributes"
+ELEMENT_ATTRIBUTES_KEY = "attributes"
 LIBRARY_SPECTRA_KEY = "spectra"
 FORMAT_VERSION_KEY = "format_version"
 
@@ -268,12 +269,12 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         for analyte in spectrum.analytes:
             analyte_d = {
                 "id": analyte.id,
-                "attributes": self._format_attributes(analyte)
+                ELEMENT_ATTRIBUTES_KEY: self._format_attributes(analyte)
             }
             analytes[analyte.id] = (analyte_d)
 
         spectrum = {
-            "attributes": attributes,
+            ELEMENT_ATTRIBUTES_KEY: attributes,
             "mzs": mzs,
             "intensities": intensities,
             "interpretations": interpretations,
@@ -283,7 +284,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         if not any(aggregations):
             spectrum.pop('aggregations')
 
-        self.buffer['spectrum'].append(spectrum)
+        self.buffer[LIBRARY_SPECTRA_KEY].append(spectrum)
 
     def flush(self):
         # If we know we're writing a complete library, skip the probably-doing-too-many-things
