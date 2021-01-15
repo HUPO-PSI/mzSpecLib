@@ -1,0 +1,32 @@
+name: Validate JSON Schemas
+
+on: push
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install jsonschema==3.2.0
+    - name: Get JSON Schema schema
+      run: |
+        curl http://json-schema.org/draft-07/schema# -o schema-draft-07.json
+    - name: Validate peak annotation schema
+      run: |
+        jsonschema \
+           -i specification/peak-annotation-format/annotation-schema.json \
+           schema-draft-07.json
+    - name: Validate peak annotation examples
+      run: |
+        jsonschema \
+           -i specification/peak-annotation-format/annotation-example-1.json \
+           -i specification/peak-annotation-format/annotation-example-2.json \
+           -i specification/peak-annotation-format/annotation-example-3.json \
+           specification/peak-annotation-format/annotation-schema.json
