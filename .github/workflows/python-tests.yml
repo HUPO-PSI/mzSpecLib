@@ -30,4 +30,5 @@ jobs:
         pip install --editable implementations/python
     - name: Test with pytest
       run: |
-        pytest
+        export MZSPECLIB_PEAK_ANNOTATION_SCHEMA_LOCATION=specification/peak-annotation-format/annotation-schema.json
+        pytest -r a

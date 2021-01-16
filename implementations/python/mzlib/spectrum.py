@@ -73,7 +73,7 @@ class Spectrum(AttributeManager):
     def __str__(self):  # pragma: no cover
         return self.write("text")
 
-    def write(self, format="text"):  # pragma: no cover
+    def write(self, format="text", **kwargs):  # pragma: no cover
         """
         write - Write out the spectrum in any of the supported formats
         """
@@ -87,7 +87,7 @@ class Spectrum(AttributeManager):
         #### If the format is text
         if format == "text":
             from mzlib.backends.text import format_spectrum
-            return format_spectrum(self)
+            return format_spectrum(self, **kwargs)
 
         #### If the format is TSV
         elif format == "tsv" or format == "csv":
@@ -155,7 +155,7 @@ class Spectrum(AttributeManager):
         #### If the format is JSON
         elif format == "json":
             from mzlib.backends.json import format_spectrum
-            return format_spectrum(self)
+            return format_spectrum(self, **kwargs)
 
         #### Otherwise we don't know this format
         else:

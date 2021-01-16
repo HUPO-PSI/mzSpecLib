@@ -22,4 +22,7 @@ setup(
 		"sqlalchemy",
 		"click",
 	],
+	test_requies=[
+		"jsonschema"
+	]
 )

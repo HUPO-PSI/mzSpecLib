@@ -1,4 +1,5 @@
 import re
+from sys import intern
 
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
@@ -25,7 +26,7 @@ annotation_pattern = re.compile(r"""
 )+)?
 (?:(?P<isotope>[+-]\d*)i)?
 (?:\^(?P<charge>[+-]?\d+))?
-(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
+(?:\[(?P<adducts>M(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:/(?P<mass_error>[+-]?\d+(?:\.\d+)?)(?P<mass_error_unit>ppm)?)?
 (?:\*(?P<confidence>\d*(?:\.\d+)?))?
 """, re.X)
@@ -123,7 +124,24 @@ class MassError(object):
         }
 
 
-class IonAnnotationBase(object):
+class SeriesLabelSubclassRegisteringMeta(type):
+    def __new__(mcls, name, bases, attrs):
+        label = attrs.get("series_label")
+        if label and isinstance(label, str):
+            label = intern(label)
+        override_label = attrs.get('override_label', False)
+        cls = super(SeriesLabelSubclassRegisteringMeta, mcls).__new__(mcls, name, bases, attrs)
+        if not hasattr(cls, '_label_registry'):
+            registry = cls._label_registry = {}
+        else:
+            registry = cls._label_registry
+        if label:
+            if label not in registry or override_label:
+                registry[label] = cls
+        return cls
+
+
+class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     __slots__ = ("series", "neutral_losses", "isotope", "adducts", "charge", "analyte_reference",
                  "mass_error", "confidence", "rest")
 
@@ -195,7 +213,7 @@ class IonAnnotationBase(object):
             charge = abs(self.charge)
             parts.append(f"^{charge}")
         if self.adducts:
-            parts.append('[{}]'.format(combine_formula(['M'] + self.adducts)))
+            parts.append('[{}]'.format(combine_formula(self.adducts)))
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
@@ -215,6 +233,7 @@ class IonAnnotationBase(object):
         }
 
     def to_json(self, exclude_missing=False):
+        #TODO: When neutral losses and adducts are formalized types, convert to string/JSON here
         d = {}
         for key in IonAnnotationBase.__slots__:
             if key == 'series' or key == 'rest':
@@ -226,7 +245,30 @@ class IonAnnotationBase(object):
                 if (value is not None) or not exclude_missing:
                     d[key] = value
         d['molecule_description'] = self._molecule_description()
+        if d['analyte_reference'] is None:
+            d['analyte_reference'] = '1'
         return d
+
+    def _populate_from_dict(self, data):
+        #TODO: When neutral losses and adducts are formalized types, parse from string here
+        for key, value in data.items():
+            if key == 'molecule_description':
+                continue
+            elif key == 'mass_error' and value is not None:
+                self.mass_error = MassError(value['value'], value['unit'])
+            else:
+                setattr(self, key, value)
+        self.rest = None
+        return self
+
+    @classmethod
+    def from_json(cls, data):
+        descr = data["molecule_description"]
+        series_label = descr['series_label']
+        cls = cls._label_registry[series_label]
+        self = cls.__new__(cls)
+        self._populate_from_dict(data)
+        return self
 
 
 class PeptideFragmentIonAnnotation(IonAnnotationBase):
@@ -256,6 +298,13 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
         })
         return d
 
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.series = descr['series']
+        self.position = descr['position']
+        return self
+
 
 class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     __slots__ = ("start_position", "end_position")
@@ -282,6 +331,13 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
         d['start_position'] = self.start_position
         d['end_position'] = self.end_position
         return d
+
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.start_position = descr['start_position']
+        self.end_position = descr['end_position']
+        return self
 
 
 class PrecursorIonAnnotation(IonAnnotationBase):
@@ -325,8 +381,16 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
     def _molecule_description(self):
         d = super()._molecule_description()
         d['amino_acid'] = self.amino_acid
-        d['modification'] = self.modification
+        if self.modification:
+            d['modification'] = self.modification
         return d
+
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.amino_acid = descr['amino_acid']
+        self.modification = descr.get('modification')
+        return self
 
 
 class ReporterIonAnnotation(IonAnnotationBase):
@@ -350,6 +414,12 @@ class ReporterIonAnnotation(IonAnnotationBase):
         d = super()._molecule_description()
         d['reporter_label'] = self.reporter_label
         return d
+
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.reporter_label = descr['reporter_label']
+        return self
 
 
 class ExternalIonAnnotation(IonAnnotationBase):
@@ -375,6 +445,12 @@ class ExternalIonAnnotation(IonAnnotationBase):
         d['label'] = self.label
         return d
 
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.label = descr['label']
+        return self
+
 
 class FormulaAnnotation(IonAnnotationBase):
     __slots__ = ("formula", )
@@ -398,6 +474,12 @@ class FormulaAnnotation(IonAnnotationBase):
         d['formula'] = self.formula
         return d
 
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.formula = descr['formula']
+        return self
+
 
 def int_or_sign(string):
     if string == "+":
@@ -406,7 +488,6 @@ def int_or_sign(string):
         return -1
     else:
         return int(string)
-
 
 
 class AnnotationStringParser(object):

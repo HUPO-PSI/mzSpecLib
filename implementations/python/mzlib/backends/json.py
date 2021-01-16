@@ -151,7 +151,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
     format_name = "json"
     default_version = '1.0'
 
-    def __init__(self, filename, version=None, pretty_print=True, simplify=True, **kwargs):
+    def __init__(self, filename, version=None, pretty_print=True, format_annotations=True, simplify=True, **kwargs):
         if version is None:
             version = self.default_version
         super(JSONSpectralLibraryWriter, self).__init__(filename)
@@ -160,6 +160,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.pretty_print = pretty_print
         self.wrote_library = False
         self.simplify = simplify
+        self.format_annotations = format_annotations
         self.buffer = {
             FORMAT_VERSION_KEY: self.version,
             LIBRARY_METADATA_KEY: [],
@@ -258,8 +259,11 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         for peak in spectrum.peak_list:
             mzs.append(peak[0])
             intensities.append(peak[1])
-            interpretations.append(
-                '?' if not peak[2] else ",".join(map(str, peak[2])))
+            if self.format_annotations:
+                interpretations.append(
+                    '?' if not peak[2] else ",".join(map(str, peak[2])))
+            else:
+                interpretations.append([c.to_json() for c in peak[2]])
             aggregations.append(peak[3])
 
         #### Organize the attributes from the simple list into the appropriate JSON format
