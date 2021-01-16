@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest setuptools
+        pip install flake8 pytest setuptools jsonschema
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -29,6 +29,7 @@ jobs:
       run: |
         pip install --editable implementations/python
     - name: Test with pytest
+      env:
+        MZSPECLIB_PEAK_ANNOTATION_SCHEMA_LOCATION: "specification/peak-annotation-format/annotation-schema.json"
       run: |
-        export MZSPECLIB_PEAK_ANNOTATION_SCHEMA_LOCATION=specification/peak-annotation-format/annotation-schema.json
         pytest -r a
