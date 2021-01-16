@@ -1,0 +1,18 @@
+{
+    "$schema": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/master/specification/peak-annotation-format/annotation-schema.json",
+    "adducts": ["M+NH4"],
+    "analyte_reference": 1,
+    "charge": 2,
+    "confidence": 0.5,
+    "isotope": 1,
+    "mass_error": {
+        "value": -0.2,
+        "unit": "ppm"
+    },
+    "molecule_description": {
+        "position": 7,
+        "series": "y",
+        "series_label": "peptide"
+    },
+    "neutral_losses": ["-H2O"]
+}
