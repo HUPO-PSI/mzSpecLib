@@ -278,7 +278,7 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
 
     _molecule_description_fields = {
         "series": "The peptide ion series this ion belongs to",
-        "position": "The position from the appropriate terminal along the peptide this ion was fragmented at"
+        "position": "The position from the appropriate terminal along the peptide this ion was fragmented at (starting with 1)"
     }
 
     def __init__(self, series, position, neutral_losses=None, isotope=None, adducts=None, charge=None,
