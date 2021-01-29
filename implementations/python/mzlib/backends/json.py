@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mzlib.index import MemoryIndex
 from mzlib.attributes import AttributeManager
-from mzlib.annotation import parse_annotation
+from mzlib.annotation import parse_annotation, IonAnnotationBase
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_VERSION_TERM
 
@@ -128,6 +128,15 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         interpretations = data['interpretations']
         aggregations = data.get("aggregations", None)
         for i in range(n):
+            interpretation = interpretations[i]
+            if isinstance(interpretation, str):
+                interpretation = parse_annotation(interpretation)
+            elif isinstance(interpretation, list):
+                interpretation = [IonAnnotationBase.from_json(interp) for interp in interpretation]
+            elif isinstance(interpretation, dict):
+                interpretation = [IonAnnotationBase.from_json(interpretation)]
+            else:
+                raise TypeError(f"Cannot reconstruct interpretation from type {interpretation.__class__}")
             peak = [
                 mzs[i],
                 intensities[i],
