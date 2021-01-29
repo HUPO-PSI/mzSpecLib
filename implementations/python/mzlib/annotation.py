@@ -143,13 +143,14 @@ class SeriesLabelSubclassRegisteringMeta(type):
 
 class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     __slots__ = ("series", "neutral_losses", "isotope", "adducts", "charge", "analyte_reference",
-                 "mass_error", "confidence", "rest")
+                 "mass_error", "confidence", "rest", "is_auxiliary")
 
     series_label = None
     _molecule_description_fields = {}
 
     def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None,
+                 is_auxiliary=None):
         if isotope is None:
             isotope = 0
         if charge is None:
@@ -164,6 +165,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         self.mass_error = mass_error
         self.confidence = confidence
         self.rest = rest
+        self.is_auxiliary = is_auxiliary
 
     @property
     def adduct(self):
@@ -222,7 +224,10 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         if self.rest is not None:
             parts.append("/")
             parts.append(self.rest)
-        return ''.join(parts)
+        result = ''.join(parts)
+        if self.is_auxiliary:
+            return f'[{result}]'
+        return result
 
     def __str__(self):
         return self.serialize()
@@ -235,8 +240,9 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     def to_json(self, exclude_missing=False):
         #TODO: When neutral losses and adducts are formalized types, convert to string/JSON here
         d = {}
+        skips = ('series', 'rest', 'is_auxiliary')
         for key in IonAnnotationBase.__slots__:
-            if key == 'series' or key == 'rest':
+            if key in skips:
                 continue
             if key == 'mass_error' and self.mass_error is not None:
                 d[key] = self.mass_error.to_json()
@@ -259,6 +265,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
             else:
                 setattr(self, key, value)
         self.rest = None
+        self.is_auxiliary = False
         return self
 
     @classmethod
@@ -282,9 +289,10 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
     }
 
     def __init__(self, series, position, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(PeptideFragmentIonAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
         self.position = position
 
     def _format_ion(self):
@@ -317,9 +325,11 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     }
 
     def __init__(self, series, start_position, end_position, neutral_losses=None, isotope=None,
-                 adducts=None, charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 adducts=None, charge=None, analyte_reference=None, mass_error=None, confidence=None,
+                 rest=None, is_auxiliary=None):
         super(InternalPeptideFragmentIonAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
         self.start_position = start_position
         self.end_position = end_position
 
@@ -347,9 +357,11 @@ class PrecursorIonAnnotation(IonAnnotationBase):
     _molecule_description_fields = {}
 
     def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None,
+                 is_auxiliary=None):
         super(PrecursorIonAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error,
+            confidence, rest, is_auxiliary)
 
     def _format_ion(self):
         return "p"
@@ -364,10 +376,11 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
         "modification": "An optional modification that may be attached to this immonium ion"
     }
 
-    def __init__(self, series, amino_acid, modification=None, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+    def __init__(self, series, amino_acid, modification=None, neutral_losses=None, isotope=None, adducts=None,
+                 charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(ImmoniumIonAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
         self.amino_acid = amino_acid
         self.modification = modification
 
@@ -402,9 +415,10 @@ class ReporterIonAnnotation(IonAnnotationBase):
     }
 
     def __init__(self, series, reporter_label, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(ReporterIonAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
         self.reporter_label = reporter_label
 
     def _format_ion(self):
@@ -432,9 +446,10 @@ class ExternalIonAnnotation(IonAnnotationBase):
     }
 
     def __init__(self, series, label, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(ExternalIonAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
         self.label = label
 
     def _format_ion(self):
@@ -461,9 +476,10 @@ class FormulaAnnotation(IonAnnotationBase):
     }
 
     def __init__(self, series, formula, neutral_losses=None, isotope=None, adducts=None, charge=None,
-                 analyte_reference=None, mass_error=None, confidence=None, rest=None):
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(FormulaAnnotation, self).__init__(
-            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence, rest)
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
         self.formula = formula
 
     def _format_ion(self):
@@ -500,11 +516,14 @@ class AnnotationStringParser(object):
     def parse_annotation(self, annotation_string, **kwargs):
         if annotation_string == "?" or not annotation_string:
             return []
+        is_auxiliary = False
+        if annotation_string[0] == '[':
+            is_auxiliary = True
+            annotation_string = annotation_string[1:]
         match = self.pattern.search(annotation_string)
         if match is None:
             raise ValueError(f"Invalid annotation string {annotation_string!r}")
         data = match.groupdict()
-        # FIXME: include M in the string
         adducts = tokenize_signed_symbol_list(data.get("adducts"))
         charge = (data.get("charge", 1))
         if charge is None:
@@ -531,6 +550,12 @@ class AnnotationStringParser(object):
             annotation_string, data, adducts, charge, isotope, neutral_losses,
             analyte_reference, mass_error, confidence, **kwargs)
         rest = annotation_string[match.end():]
+        if is_auxiliary:
+            if not rest or rest[0] != ']':
+                raise ValueError("Malformed auxiliary annotation missing closing ']'")
+            else:
+                rest = rest[1:]
+                annotation.is_auxiliary = True
         if rest == "":
             return [annotation]
         else:

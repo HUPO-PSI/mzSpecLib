@@ -110,6 +110,20 @@ class TestAnnotationParser(unittest.TestCase):
         assert parsed.confidence == 0.05
         assert parsed == base
 
+        base = '[%s]' % base
+        parsed = parse_annotation(base)[0]
+        assert parsed.series == 'b'
+        assert parsed.position == 14
+        assert parsed.neutral_loss == ['-H2O', '-NH3', '[Foo]']
+        assert parsed.isotope == 2
+        assert parsed.charge == 2
+        assert parsed.adducts == ["M", "NH4"]
+        assert parsed.mass_error == MassError(0.5, 'ppm')
+        assert parsed.analyte_reference == '2'
+        assert parsed.confidence == 0.05
+        assert parsed.is_auxiliary
+        assert parsed == base
+
     @unittest.skipIf(schema is None or jsonschema is None, skip_reason)
     def test_jsonschema_compliance(self):
         with open(datafile('annotations.txt'), 'rt') as fh:
