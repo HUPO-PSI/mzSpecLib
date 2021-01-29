@@ -33,7 +33,7 @@ annotation_pattern = re.compile(r"""
 
 # At the time of first writing, this pattern could be translated into the equivalent
 # ECMAScript compliant regex:
-# ^(?:(?<analyte_reference>[^/\s]+)@)?(?:(?:(?<series>[axbycz]\.?)(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(:?I(?<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:\[(?<immonium_modification>(?:[^\]]+))\])?)|(?<reporter>r(?:(?:\[(?<reporter_label>[^\]]+)\])))|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_loss>(?:[+-]\d*(?:(?:[A-Z][A-Za-z0-9]*)|(?:\[(?:(?:[A-Za-z0-9:\.]+))\])))+)?(?:(?<isotope>[+-]\d*)i)?(?:\[M(?<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:\^(?<charge>[+-]?\d+))?(?:/(?<mass_error>[+-]?\d+(?:\.\d+)?)(?<mass_error_unit>ppm)?)?
+# ^(?:(?<analyte_reference>[^@\s]+)@)?(?:(?:(?<series>[axbycz]\.?)(?<ordinal>\d+))|(?<series_internal>[m](?<internal_start>\d+):(?<internal_end>\d+))|(?<precursor>p)|(:?I(?<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:\[(?<immonium_modification>(?:[^\]]+))\])?)|(?<reporter>r(?:(?:\[(?<reporter_label>[^\]]+)\])))|(?:f\{(?<formula>[A-Za-z0-9]+)\})|(?:_(?<external_ion>[^\s,/]+)))(?<neutral_losses>(?:[+-]\d*(?:(?:[A-Z][A-Za-z0-9]*)|(?:\[(?:(?:[A-Za-z0-9:\.]+))\])))+)?(?:(?<isotope>[+-]\d*)i)?(?:\^(?<charge>[+-]?\d+))?(?:\[(?<adducts>M(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?(?:/(?<mass_error>[+-]?\d+(?:\.\d+)?)(?<mass_error_unit>ppm)?)?(?:\*(?<confidence>\d*(?:\.\d+)?))?
 # Line breaks not introduced to preserve syntactic correctness.
 
 def _sre_to_ecma(pattern):
