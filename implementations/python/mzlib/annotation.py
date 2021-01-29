@@ -1,5 +1,6 @@
 import re
 from sys import intern
+from typing import List
 
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
@@ -99,7 +100,7 @@ class MassError(object):
         self.mass_error = float(mass_error)
         self.unit = unit
 
-    def serialize(self):
+    def serialize(self) -> str:
         unit = self.unit
         if unit == self._DEFAULT_UNIT:
             unit = ''
@@ -117,7 +118,7 @@ class MassError(object):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.mass_error}, {self.unit})"
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return {
             "value": self.mass_error,
             "unit": self.unit
@@ -195,10 +196,10 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     def __repr__(self):
         return self.serialize()
 
-    def _format_ion(self):
+    def _format_ion(self) -> str:
         raise NotImplementedError()
 
-    def serialize(self):
+    def serialize(self) -> str:
         parts = []
         if self.analyte_reference is not None:
             parts.append(f"{self.analyte_reference}@")
@@ -232,12 +233,12 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     def __str__(self):
         return self.serialize()
 
-    def _molecule_description(self):
+    def _molecule_description(self) -> dict:
         return {
             'series_label': self.series_label
         }
 
-    def to_json(self, exclude_missing=False):
+    def to_json(self, exclude_missing=False) -> dict:
         #TODO: When neutral losses and adducts are formalized types, convert to string/JSON here
         d = {}
         skips = ('series', 'rest', 'is_auxiliary')
@@ -255,7 +256,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
             d['analyte_reference'] = '1'
         return d
 
-    def _populate_from_dict(self, data):
+    def _populate_from_dict(self, data) -> 'IonAnnotationBase':
         #TODO: When neutral losses and adducts are formalized types, parse from string here
         for key, value in data.items():
             if key == 'molecule_description':
@@ -269,7 +270,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         return self
 
     @classmethod
-    def from_json(cls, data):
+    def from_json(cls, data) -> 'IonAnnotationBase':
         descr = data["molecule_description"]
         series_label = descr['series_label']
         cls = cls._label_registry[series_label]
@@ -295,10 +296,10 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
             rest, is_auxiliary)
         self.position = position
 
-    def _format_ion(self):
+    def _format_ion(self) -> str:
         return f"{self.series}{self.position}"
 
-    def _molecule_description(self):
+    def _molecule_description(self) -> dict:
         d = super()._molecule_description()
         d.update({
             "series": self.series,
@@ -306,7 +307,7 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
         })
         return d
 
-    def _populate_from_dict(self, data):
+    def _populate_from_dict(self, data) -> IonAnnotationBase:
         super()._populate_from_dict(data)
         descr = data['molecule_description']
         self.series = descr['series']
@@ -333,16 +334,16 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
         self.start_position = start_position
         self.end_position = end_position
 
-    def _format_ion(self):
+    def _format_ion(self) -> str:
         return f"m{self.start_position}:{self.end_position}"
 
-    def _molecule_description(self):
+    def _molecule_description(self) -> dict:
         d = super()._molecule_description()
         d['start_position'] = self.start_position
         d['end_position'] = self.end_position
         return d
 
-    def _populate_from_dict(self, data):
+    def _populate_from_dict(self, data) -> IonAnnotationBase:
         super()._populate_from_dict(data)
         descr = data['molecule_description']
         self.start_position = descr['start_position']
@@ -510,10 +511,10 @@ class AnnotationStringParser(object):
     def __init__(self, pattern):
         self.pattern = pattern
 
-    def __call__(self, annotation_string, **kwargs):
+    def __call__(self, annotation_string, **kwargs) -> List[IonAnnotationBase]:
         return self.parse_annotation(annotation_string, **kwargs)
 
-    def parse_annotation(self, annotation_string, **kwargs):
+    def parse_annotation(self, annotation_string, **kwargs) -> List[IonAnnotationBase]:
         if annotation_string == "?" or not annotation_string:
             return []
         is_auxiliary = False
