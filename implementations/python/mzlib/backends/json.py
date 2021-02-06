@@ -19,6 +19,11 @@ LIBRARY_SPECTRA_KEY = "spectra"
 FORMAT_VERSION_KEY = "format_version"
 ANALYTES_KEY = 'analytes'
 INTERPRETATIONS_KEY = 'interpretations'
+PEAK_ANNOTATIONS_KEY = 'annotations'
+ID_KEY = 'id'
+MZ_KEY = "mzs"
+INTENSITY_KEY = "intensities"
+AGGREGATIONS_KEY = "aggregations"
 
 FORMAT_VERSION_ACC = FORMAT_VERSION_TERM.split("|")[0]
 
@@ -118,7 +123,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
 
     def make_spectrum_from_payload(self, data: dict) -> Spectrum:
         spectrum = self._new_spectrum()
-        for attrib in data['attributes']:
+        for attrib in data[ELEMENT_ATTRIBUTES_KEY]:
             key = f'{attrib["accession"]}|{attrib["name"]}'
             if "value_accession" in attrib:
                 value = f'{attrib["value_accession"]}|{attrib["value"]}'
@@ -140,18 +145,18 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 interpretation_d = self._new_interpretation(interpretation_id)
                 spectrum.add_interpretation(interpretation_d)
                 self._fill_attributes(interpretation[ELEMENT_ATTRIBUTES_KEY], interpretation_d)
-                for analyte_id, analyte in data[ANALYTES_KEY].items():
+                for analyte_id, analyte in interpretation[ANALYTES_KEY].items():
                     analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
                     interpretation_d.add_analyte(analyte_d)
 
         else:
             raise ValueError("This spectrum is missing the interpretations section")
         peak_list = []
-        n = len(data['mzs'])
-        mzs = data['mzs']
-        intensities = data['intensities']
-        interpretations = data['interpretations']
-        aggregations = data.get("aggregations", None)
+        n = len(data[MZ_KEY])
+        mzs = data[MZ_KEY]
+        intensities = data[INTENSITY_KEY]
+        interpretations = data[PEAK_ANNOTATIONS_KEY]
+        aggregations = data.get(AGGREGATIONS_KEY, None)
         for i in range(n):
             interpretation = interpretations[i]
             if isinstance(interpretation, str):
@@ -255,16 +260,16 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
     def write_spectrum(self, spectrum: Spectrum):
         mzs = []
         intensities = []
-        interpretations = []
+        annotations = []
         aggregations = []
         for peak in spectrum.peak_list:
             mzs.append(peak[0])
             intensities.append(peak[1])
             if self.format_annotations:
-                interpretations.append(
+                annotations.append(
                     '?' if not peak[2] else ",".join(map(str, peak[2])))
             else:
-                interpretations.append([c.to_json() for c in peak[2]])
+                annotations.append([c.to_json() for c in peak[2]])
             aggregations.append(peak[3])
 
         #### Organize the attributes from the simple list into the appropriate JSON format
@@ -273,7 +278,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         interpretations = {}
         for interpretation in spectrum.interpretations.values():
             interpretation_d = {
-                "id": interpretation.id,
+                ID_KEY: interpretation.id,
                 ELEMENT_ATTRIBUTES_KEY: self._format_attributes(interpretation),
                 ANALYTES_KEY: {}
             }
@@ -281,21 +286,21 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
 
             for analyte in interpretation.values():
                 analyte_d = {
-                    "id": analyte.id,
+                    ID_KEY: analyte.id,
                     ELEMENT_ATTRIBUTES_KEY: self._format_attributes(analyte)
                 }
                 interpretation_d[ANALYTES_KEY][analyte.id] = (analyte_d)
 
         spectrum = {
             ELEMENT_ATTRIBUTES_KEY: attributes,
-            "mzs": mzs,
-            "intensities": intensities,
-            "interpretations": interpretations,
-            "aggregations": aggregations,
+            MZ_KEY: mzs,
+            INTENSITY_KEY: intensities,
+            PEAK_ANNOTATIONS_KEY: annotations,
+            AGGREGATIONS_KEY: aggregations,
             INTERPRETATIONS_KEY: interpretations
         }
         if not any(aggregations):
-            spectrum.pop('aggregations')
+            spectrum.pop(AGGREGATIONS_KEY)
 
         self.buffer[LIBRARY_SPECTRA_KEY].append(spectrum)
 
