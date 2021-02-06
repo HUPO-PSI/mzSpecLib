@@ -5,6 +5,7 @@ import textwrap
 import json
 
 from mzlib.attributes import AttributeManager
+from mzlib.analyte import InterpretationCollection
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
 
@@ -14,7 +15,7 @@ SPECTRUM_NAME = "MS:1003061|spectrum name"
 class Spectrum(AttributeManager):
 
     #### Constructor
-    def __init__(self, attributes=None, peak_list=None, analytes=None):
+    def __init__(self, attributes=None, peak_list=None, interpretations=None):
         """
         __init__ - SpectrumLibrary constructor
 
@@ -25,11 +26,15 @@ class Spectrum(AttributeManager):
         """
         if peak_list is None:
             peak_list = []
-        if analytes is None:
-            analytes = []
+        if interpretations is None:
+            interpretations = InterpretationCollection()
         super(Spectrum, self).__init__(attributes)
         self.peak_list = peak_list
-        self.analytes = analytes
+        self.interpretations = interpretations
+
+    @property
+    def analytes(self):
+        return self.interpretations.analytes
 
     @property
     def name(self):
@@ -46,6 +51,9 @@ class Spectrum(AttributeManager):
             AttributeManager._from_iterable(attribs)
         else:
             self.add_attribute(SPECTRUM_NAME, value)
+
+    def add_interpretation(self, interpretation):
+        self.interpretations.add_interpretation(interpretation)
 
     def __eq__(self, other):
         result = super(Spectrum, self).__eq__(other)

@@ -149,11 +149,8 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
             if len(spectrum.analytes) == 0:
                 return None
             else:
-                analyte_reference = spectrum.analytes[0].id
-        analyte = None
-        for analyte in spectrum.analytes:
-            if analyte.id == analyte_reference:
-                break
+                analyte_reference = spectrum.analytes['1'].id
+        analyte = spectrum.analytes.get(analyte_reference)
         if analyte is None:
             return None
         return analyte.get_attribute('MS:1000888|unmodified peptide sequence')
@@ -411,9 +408,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _make_spectrum(self, peak_list, attributes):
         spectrum = self._new_spectrum()
+        interpretation = self._new_interpretation("1")
         analyte = self._new_analyte("1")
+        interpretation.add_analyte(analyte)
         spectrum.peak_list = peak_list
-        spectrum.analytes.append(analyte)
+        spectrum.interpretations.add_interpretation(interpretation)
 
         #### Add special terms that we want to start off with
         for term in leader_terms:

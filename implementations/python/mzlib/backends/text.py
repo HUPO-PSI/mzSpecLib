@@ -2,10 +2,14 @@ import re
 import os
 import io
 import logging
+import warnings
+import enum
 
 from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
+from mzlib.spectrum import Spectrum
 from mzlib.attributes import AttributeManager
+from mzlib.analyte import Analyte, Interpretation
 
 from .base import (
     _PlainTextSpectralLibraryBackendBase,
@@ -27,7 +31,17 @@ float_number = re.compile(
     r"^\d+(.\d+)?")
 
 
+class SpectrumParserStateEnum(enum.Enum):
+    unknown = 0
+    header = 1
+    interpretation = 2
+    analyte = 3
+    peaks = 4
+    done = 5
+
+
 START_OF_SPECTRUM_MARKER = re.compile(r"^<Spectrum>")
+START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
 START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
@@ -206,89 +220,132 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
-    def _parse(self, buffer, spectrum_index=None):
-        spec = self._new_spectrum()
-        analyte = None
-        state = 'header'
+    def _parse_attribute_into(self, line, store, line_number_message=lambda:''):
+        match = key_value_term_pattern.match(line)
+        if match is not None:
+            d = match.groupdict()
+            store.add_attribute(d['term'], try_cast(d['value']))
+            return True
+        if line.startswith("["):
+            match = grouped_key_value_term_pattern.match(line)
+            if match is not None:
+                d = match.groupdict()
+                store.add_attribute(
+                    d['term'], try_cast(d['value']), d['group_id'])
+                store.group_counter = int(d['group_id'])
+                return True
+            else:
+                raise ValueError(f"Malformed grouped attribute {line}{line_number_message()}")
+        elif "=" in line:
+            name, value = line.split("=")
+            store.add_attribute(name, value)
+            return True
+        else:
+            raise ValueError(f"Malformed attribute line {line}{line_number_message()}")
+
+    def _parse(self, buffer, spectrum_index=None, start_line_number=None):
+        spec: Spectrum = self._new_spectrum()
+        interpretation: Interpretation = None
+        analyte: Analyte = None
+
+        STATES = SpectrumParserStateEnum
+        state = STATES.header
 
         peak_list = []
+        line_number = -1
 
-        for line in buffer:
+        def real_line_number_or_nothing():
+            nonlocal start_line_number
+            nonlocal line_number
+            nonlocal spectrum_index
+
+            if start_line_number is None:
+                return ''
+            message = f" on line {line_number + start_line_number}"
+            if spectrum_index is not None:
+                message += f" in spectrum {spectrum_index}"
+
+        for line_number, line in enumerate(buffer):
             line = line.strip()
             if not line:
                 break
-            if state == 'header':
+            if state == STATES.header:
                 if START_OF_SPECTRUM_MARKER.match(line):
                     continue
                 elif START_OF_PEAKS_MARKER.match(line):
-                    state = 'peaks'
-                    if analyte is not None:
-                        spec.analytes.append(analyte)
-                        analyte = None
+                    state = STATES.peaks
                     continue
-                elif START_OF_ANALYTE_MARKER.match(line):
-                    state = 'analyte'
-                    match = START_OF_ANALYTE_MARKER.match(line)
-                    if analyte is not None:
-                        spec.analytes.append(analyte)
-                    analyte = self._new_analyte(match.group(1))
+                elif START_OF_INTERPRETATION_MARKER.match(line):
+                    state = STATES.interpretation
+                    match = START_OF_INTERPRETATION_MARKER.match(line)
+                    if interpretation is not None:
+                        spec.add_interpretation(interpretation)
+                    interpretation = self._new_interpretation(match.group(1))
+                    spec.add_interpretation(interpretation)
+                    analyte = None
                     continue
 
-                match = key_value_term_pattern.match(line)
-                if match is not None:
-                    d = match.groupdict()
-                    spec.add_attribute(d['term'], try_cast(d['value']))
+                elif START_OF_ANALYTE_MARKER.match(line):
+                    state = STATES.analyte
+                    match = START_OF_ANALYTE_MARKER.match(line)
+                    if interpretation is None:
+                        warnings.warn(
+                            f"An analyte without an interpretation was encountered, placing in default interpretation '1'{real_line_number_or_nothing()}")
+                        interpretation = self._new_interpretation('1')
+                        spec.add_interpretation(interpretation)
+
+                    analyte = self._new_analyte(match.group(1))
+                    interpretation.add_analyte(analyte)
                     continue
-                if line.startswith("["):
-                    match = grouped_key_value_term_pattern.match(line)
-                    if match is not None:
-                        d = match.groupdict()
-                        spec.add_attribute(
-                            d['term'], try_cast(d['value']), d['group_id'])
-                        spec.group_counter = int(d['group_id'])
-                        continue
-                    else:
-                        raise ValueError(f"Malformed grouped attribute {line}")
-                elif "=" in line:
-                    name, value = line.split("=")
-                    spec.add_attribute(name, value)
-                else:
-                    raise ValueError(f"Malformed attribute line {line}")
-            elif state == 'analyte':
+
+                self._parse_attribute_into(line, spec, real_line_number_or_nothing)
+
+            elif state == STATES.interpretation:
+                if START_OF_ANALYTE_MARKER.match(line):
+                    state = STATES.analyte
+                    match = START_OF_ANALYTE_MARKER.match(line)
+                    if analyte is not None:
+                        interpretation.add_analyte(analyte)
+                    analyte = self._new_analyte(match.group(1))
+                    interpretation.add_analyte(analyte)
+                    continue
+                elif START_OF_PEAKS_MARKER.match(line):
+                    state = STATES.peaks
+
+                self._parse_attribute_into(line, interpretation, real_line_number_or_nothing)
+
+            elif state == STATES.analyte:
                 if START_OF_PEAKS_MARKER.match(line):
-                    state = 'peaks'
+                    state = STATES.peaks
                     if analyte is not None:
-                        spec.analytes.append(analyte)
+                        interpretation.add_analyte(analyte)
                         analyte = None
                     continue
-                elif START_OF_ANALYTE_MARKER.match(line):
-                    state = 'analyte'
-                    match = START_OF_ANALYTE_MARKER.match(line)
-                    if analyte is None:
-                        spec.analytes.append(analyte)
-                    analyte = self._new_analyte(match.group(1))
 
-                match = key_value_term_pattern.match(line)
-                if match is not None:
-                    d = match.groupdict()
-                    analyte.add_attribute(d['term'], try_cast(d['value']))
+                elif START_OF_ANALYTE_MARKER.match(line):
+                    state = STATES.analyte
+                    match = START_OF_ANALYTE_MARKER.match(line)
+                    if analyte is not None:
+                        interpretation.add_analyte(analyte)
+                    analyte = self._new_analyte(match.group(1))
+                    interpretation.add_analyte(analyte)
                     continue
-                if line.startswith("["):
-                    match = grouped_key_value_term_pattern.match(line)
-                    if match is not None:
-                        d = match.groupdict()
-                        analyte.add_attribute(
-                            d['term'], try_cast(d['value']), d['group_id'])
-                        analyte.group_counter = int(d['group_id'])
-                        continue
-                    else:
-                        raise ValueError(f"Malformed grouped attribute {line}")
-                elif "=" in line:
-                    name, value = line.split("=")
-                    analyte.add_attribute(name, value)
-                else:
-                    raise ValueError(f"Malformed attribute line {line}")
-            elif state == 'peaks':
+
+                elif START_OF_INTERPRETATION_MARKER.match(line):
+                    state = STATES.interpretation
+                    match = START_OF_INTERPRETATION_MARKER.match(line)
+                    if analyte is not None:
+                        interpretation.add_analyte(analyte)
+                        analyte = None
+                    if interpretation is not None:
+                        spec.add_interpretation(interpretation)
+                    interpretation = self._new_interpretation(match.group(1))
+                    spec.add_interpretation(interpretation)
+                    continue
+
+                self._parse_attribute_into(line, analyte, real_line_number_or_nothing)
+
+            elif state == STATES.peaks:
                 match = float_number.match(line)
                 if match is not None:
                     tokens = line.split("\t")
@@ -303,11 +360,12 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         peak_list.append(
                             [float(mz), float(intensity), interpretation, aggregation])
                     else:
-                        raise ValueError(f"Malformed peak line {line} with {n_tokens} entries")
+                        raise ValueError(
+                            f"Malformed peak line {line} with {n_tokens} entries{real_line_number_or_nothing()}")
                 else:
-                    raise ValueError(f"Malformed peak line {line}")
+                    raise ValueError(f"Malformed peak line {line}{real_line_number_or_nothing()}")
             else:
-                raise ValueError(f"Unknown state {state}")
+                raise ValueError(f"Unknown state {state}{real_line_number_or_nothing()}")
         spec.peak_list = peak_list
         return spec
 
@@ -336,15 +394,8 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.version = version
         self._coerce_handle(self.filename)
 
-    def write_header(self, library):
-        if self.version is None:
-            version = library.attributes.get_by_name("format version")
-            if version is None:
-                version = self.default_version
-        else:
-            version = self.version
-        self.handle.write("<mzSpecLib %s>\n" % (version, ))
-        for attribute in library.attributes:
+    def _write_attributes(self, attributes):
+        for attribute in attributes:
             if len(attribute) == 2:
                 self.handle.write(f"{attribute[0]}={attribute[1]}\n")
             elif len(attribute) == 3:
@@ -354,26 +405,27 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 raise ValueError(
                     f"Attribute has wrong number of elements: {attribute}")
 
+    def write_header(self, library):
+        if self.version is None:
+            version = library.attributes.get_by_name("format version")
+            if version is None:
+                version = self.default_version
+        else:
+            version = self.version
+        self.handle.write("<mzSpecLib %s>\n" % (version, ))
+        self._write_attributes(library.attributes)
+
     def write_spectrum(self, spectrum):
         self.handle.write("<Spectrum>\n")
-        for attribute in spectrum.attributes:
-            if len(attribute) == 2:
-                self.handle.write(f"{attribute[0]}={attribute[1]}\n")
-            elif len(attribute) == 3:
-                self.handle.write(f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
-            else:
-                raise ValueError(f"Attribute has wrong number of elements: {attribute}")
-        for analyte in spectrum.analytes:
-            self.handle.write("<Analyte=%s>\n" % analyte.id)
-            for attribute in analyte.attributes:
-                if len(attribute) == 2:
-                    self.handle.write(f"{attribute[0]}={attribute[1]}\n")
-                elif len(attribute) == 3:
-                    self.handle.write(
-                        f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
-                else:
-                    raise ValueError(
-                        f"Attribute has wrong number of elements: {attribute}")
+        self._write_attributes(spectrum.attributes)
+        for interpretation in spectrum.interpretations.values():
+            self.handle.write(f"<Interpretation={interpretation.id}>\n")
+            for attribute in interpretation.attributes:
+                self._write_attributes(interpretation.attributes)
+
+            for analyte in interpretation.values():
+                self.handle.write(f"<Analyte={analyte.id}>\n")
+                self._write_attributes(analyte.attributes)
         self.handle.write("<Peaks>\n")
         for peak in spectrum.peak_list:
             peak_parts = [

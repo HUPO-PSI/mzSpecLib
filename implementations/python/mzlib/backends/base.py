@@ -4,8 +4,8 @@ from pathlib import Path
 
 from mzlib.index import MemoryIndex, SQLIndex
 from mzlib.spectrum import Spectrum
-from mzlib.analyte import Analyte
-from mzlib.attributes import AttributeManager
+from mzlib.analyte import Analyte, Interpretation
+from mzlib.attributes import AttributedEntity
 
 
 FORMAT_VERSION_TERM = 'MS:1009002|format version'
@@ -33,7 +33,7 @@ class SubclassRegisteringMetaclass(type):
         return cls._file_extension_to_implementation.get(format_or_extension)
 
 
-class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
@@ -108,7 +108,7 @@ class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass)
     def __init__(self, filename):
         self.filename = filename
         self.index = MemoryIndex()
-        self.attributes = AttributeManager()
+        super().__init__(None)
 
     @property
     def format_version(self):
@@ -129,72 +129,11 @@ class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass)
         """
         raise NotImplementedError()
 
-    def add_attribute(self, key, value, group_identifier=None):
-        """Add an attribute to the library level attributes store.
-
-        Parameters
-        ----------
-        key : str
-            The name of the attribute to add
-        value : object
-            The value of the attribute to add
-        group_identifier : str, optional
-            The attribute group identifier to use, if any. If not provided,
-            no group is assumed.
-        """
-        return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
-
-    def get_attribute(self, key, group_identifier=None):
-        """Get the value or values associated with a given
-        attribute key from the library level attribute store.
-
-        Parameters
-        ----------
-        key : str
-            The name of the attribute to retrieve
-        group_identifier : str, optional
-            The specific group identifier to return from.
-
-        Returns
-        -------
-        attribute_value: object or list[object]
-            Returns single or multiple values for the requested attribute.
-        """
-        return self.attributes.get_attribute(key, group_identifier=group_identifier)
-
-    def remove_attribute(self, key, group_identifier=None):
-        """Remove the value or values associated with a given
-        attribute key from the library level attribute store.
-
-        This rebuilds the entire store, which may be expensive.
-
-        Parameters
-        ----------
-        key : str
-            The name of the attribute to retrieve
-        group_identifier : str, optional
-            The specific group identifier to return from.
-
-        """
-        return self.attributes.remove_attribute(key, group_identifier=group_identifier)
-
-    def has_attribute(self, key):
-        """Test for the presence of a given attribute in the library
-        level store.
-
-        Parameters
-        ----------
-        key : str
-            The attribute to test for
-
-        Returns
-        -------
-        bool
-        """
-        return self.attributes.has_attribute(key)
-
     def _new_spectrum(self):
         return Spectrum()
+
+    def _new_interpretation(self, id=None):
+        return Interpretation(id)
 
     def _new_analyte(self, id=None):
         return Analyte(id)

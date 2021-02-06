@@ -5,8 +5,10 @@ import re
 from pathlib import Path
 
 from mzlib.index import MemoryIndex
-from mzlib.attributes import AttributeManager
+from mzlib.attributes import AttributeManager, Attributed
 from mzlib.annotation import parse_annotation, IonAnnotationBase
+from mzlib.analyte import Analyte, Interpretation
+from mzlib.spectrum import Spectrum
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_VERSION_TERM
 
@@ -15,6 +17,8 @@ LIBRARY_METADATA_KEY = "attributes"
 ELEMENT_ATTRIBUTES_KEY = "attributes"
 LIBRARY_SPECTRA_KEY = "spectra"
 FORMAT_VERSION_KEY = "format_version"
+ANALYTES_KEY = 'analytes'
+INTERPRETATIONS_KEY = 'interpretations'
 
 FORMAT_VERSION_ACC = FORMAT_VERSION_TERM.split("|")[0]
 
@@ -68,7 +72,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             else:
                 raise ValueError(f"Unidentified spectrum at index {i}")
 
-    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+    def get_spectrum(self, spectrum_number=None, spectrum_name=None) -> Spectrum:
         """Retrieve a single spectrum from the library.
 
         Parameters
@@ -94,7 +98,25 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         spectrum = self.make_spectrum_from_payload(data)
         return spectrum
 
-    def make_spectrum_from_payload(self, data):
+    def _fill_attributes(self, attributes: list, store: Attributed) -> Attributed:
+        for attrib in attributes:
+            key = f'{attrib["accession"]}|{attrib["name"]}'
+            if "value_accession" in attrib:
+                value = f'{attrib["value_accession"]}|{attrib["value"]}'
+            else:
+                value = attrib['value']
+            group = attrib.get("cv_param_group")
+            store.add_attribute(key, value, group_identifier=group)
+            if group is not None:
+                store.group_counter = int(group)
+        return store
+
+    def make_analyte_from_payload(self, analyte_id, analyte) -> Analyte:
+        analyte_d = self._new_analyte(analyte_id)
+        self._fill_attributes(analyte[ELEMENT_ATTRIBUTES_KEY], analyte_d)
+        return analyte_d
+
+    def make_spectrum_from_payload(self, data: dict) -> Spectrum:
         spectrum = self._new_spectrum()
         for attrib in data['attributes']:
             key = f'{attrib["accession"]}|{attrib["name"]}'
@@ -106,21 +128,24 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             spectrum.add_attribute(key, value, group_identifier=group)
             if group is not None:
                 spectrum.group_counter = int(group)
-        analytes = []
-        for analyte_id, analyte in data['analytes'].items():
-            analyte_d = self._new_analyte(analyte_id)
-            for attrib in analyte['attributes']:
-                key = f'{attrib["accession"]}|{attrib["name"]}'
-                if "value_accession" in attrib:
-                    value = f'{attrib["value_accession"]}|{attrib["value"]}'
-                else:
-                    value = attrib['value']
-                group = attrib.get("cv_param_group")
-                analyte_d.add_attribute(key, value, group_identifier=group)
-                if group is not None:
-                    analyte_d.group_counter = int(group)
-            analytes.append(analyte_d)
-        spectrum.analytes = analytes
+
+        if ANALYTES_KEY in data:
+            interpretation_d = self._new_interpretation('1')
+            spectrum.add_interpretation(interpretation_d)
+            for analyte_id, analyte in data[ANALYTES_KEY].items():
+                analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
+                interpretation_d.add_analyte(analyte_d)
+        elif INTERPRETATIONS_KEY in data:
+            for interpretation_id, interpretation in data[INTERPRETATIONS_KEY].items():
+                interpretation_d = self._new_interpretation(interpretation_id)
+                spectrum.add_interpretation(interpretation_d)
+                self._fill_attributes(interpretation[ELEMENT_ATTRIBUTES_KEY], interpretation_d)
+                for analyte_id, analyte in data[ANALYTES_KEY].items():
+                    analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
+                    interpretation_d.add_analyte(analyte_d)
+
+        else:
+            raise ValueError("This spectrum is missing the interpretations section")
         peak_list = []
         n = len(data['mzs'])
         mzs = data['mzs']
@@ -189,45 +214,12 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         return components
 
     def write_header(self, library):
-        attributes = []
-        for attribute in library.attributes:
-            reformed_attribute = {}
-            if len(attribute) == 2:
-                key, value = attribute
-            elif len(attribute) == 3:
-                key, value, cv_param_group = attribute
-                reformed_attribute['cv_param_group'] = cv_param_group
-            else:
-                raise ValueError(
-                    f"Unsupported number of items in attribute: {attribute}")
-            if FORMAT_VERSION_ACC == key:
-                # Already covered by format_version
-                continue
-            components = key.split('|', 1)
-            if len(components) == 2:
-                accession,name = components
-                reformed_attribute['accession'] = accession
-                reformed_attribute['name'] = name
-            else:
-                raise ValueError(
-                    f"Unsupported number of items in components: {components}")
-
-            components = self.split_compound_value(value)
-            if len(components) == 2:
-                value_accession,value = components
-                reformed_attribute['value_accession'] = value_accession
-                reformed_attribute['value'] = value
-            elif len(components) == 1:
-                reformed_attribute['value'] = value
-            else:
-                raise ValueError(
-                    f"Unsupported number of items in components: {components}")
-            attributes.append(reformed_attribute)
+        attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
 
-    def _format_attributes(self, attributes_manager):
+    def _format_attributes(self, attributes_manager: Attributed) -> list:
         attributes = []
-        for attribute in attributes_manager:
+        for attribute in attributes_manager.attributes:
             reformed_attribute = {}
             if len(attribute) == 2:
                 key, value = attribute
@@ -260,7 +252,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             attributes.append(reformed_attribute)
         return attributes
 
-    def write_spectrum(self, spectrum):
+    def write_spectrum(self, spectrum: Spectrum):
         mzs = []
         intensities = []
         interpretations = []
@@ -278,13 +270,21 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         #### Organize the attributes from the simple list into the appropriate JSON format
         attributes = self._format_attributes(spectrum)
 
-        analytes = {}
-        for analyte in spectrum.analytes:
-            analyte_d = {
-                "id": analyte.id,
-                ELEMENT_ATTRIBUTES_KEY: self._format_attributes(analyte)
+        interpretations = {}
+        for interpretation in spectrum.interpretations.values():
+            interpretation_d = {
+                "id": interpretation.id,
+                ELEMENT_ATTRIBUTES_KEY: self._format_attributes(interpretation),
+                ANALYTES_KEY: {}
             }
-            analytes[analyte.id] = (analyte_d)
+            interpretations[interpretation.id] = interpretation_d
+
+            for analyte in interpretation.values():
+                analyte_d = {
+                    "id": analyte.id,
+                    ELEMENT_ATTRIBUTES_KEY: self._format_attributes(analyte)
+                }
+                interpretation_d[ANALYTES_KEY][analyte.id] = (analyte_d)
 
         spectrum = {
             ELEMENT_ATTRIBUTES_KEY: attributes,
@@ -292,7 +292,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             "intensities": intensities,
             "interpretations": interpretations,
             "aggregations": aggregations,
-            "analytes": analytes
+            INTERPRETATIONS_KEY: interpretations
         }
         if not any(aggregations):
             spectrum.pop('aggregations')
