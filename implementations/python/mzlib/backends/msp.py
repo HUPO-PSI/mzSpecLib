@@ -6,6 +6,7 @@ import warnings
 from pathlib import Path
 
 from mzlib.index import MemoryIndex
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
 from mzlib import annotation
 
 from .base import _PlainTextSpectralLibraryBackendBase
@@ -149,7 +150,7 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
             if len(spectrum.analytes) == 0:
                 return None
             else:
-                analyte_reference = spectrum.analytes['1'].id
+                analyte_reference = spectrum.analytes[FIRST_ANALYTE_KEY].id
         analyte = spectrum.analytes.get(analyte_reference)
         if analyte is None:
             return None
@@ -408,8 +409,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _make_spectrum(self, peak_list, attributes):
         spectrum = self._new_spectrum()
-        interpretation = self._new_interpretation("1")
-        analyte = self._new_analyte("1")
+        interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
+        analyte = self._new_analyte(FIRST_ANALYTE_KEY)
         interpretation.add_analyte(analyte)
         spectrum.peak_list = peak_list
         spectrum.interpretations.add_interpretation(interpretation)

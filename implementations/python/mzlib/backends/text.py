@@ -9,7 +9,7 @@ from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
 from mzlib.spectrum import Spectrum
 from mzlib.attributes import AttributeManager
-from mzlib.analyte import Analyte, Interpretation
+from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 
 from .base import (
     _PlainTextSpectralLibraryBackendBase,
@@ -290,8 +290,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     match = START_OF_ANALYTE_MARKER.match(line)
                     if interpretation is None:
                         warnings.warn(
-                            f"An analyte without an interpretation was encountered, placing in default interpretation '1'{real_line_number_or_nothing()}")
-                        interpretation = self._new_interpretation('1')
+                            f"An analyte without an interpretation was encountered, placing in default interpretation {FIRST_INTERPRETATION_KEY}{real_line_number_or_nothing()}")
+                        interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
                         spec.add_interpretation(interpretation)
 
                     analyte = self._new_analyte(match.group(1))

@@ -7,7 +7,7 @@ from pathlib import Path
 from mzlib.index import MemoryIndex
 from mzlib.attributes import AttributeManager, Attributed
 from mzlib.annotation import parse_annotation, IonAnnotationBase
-from mzlib.analyte import Analyte, Interpretation
+from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_VERSION_TERM
@@ -135,7 +135,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 spectrum.group_counter = int(group)
 
         if ANALYTES_KEY in data:
-            interpretation_d = self._new_interpretation('1')
+            interpretation_d = self._new_interpretation(FIRST_INTERPRETATION_KEY)
             spectrum.add_interpretation(interpretation_d)
             for analyte_id, analyte in data[ANALYTES_KEY].items():
                 analyte_d = self.make_analyte_from_payload(analyte_id, analyte)

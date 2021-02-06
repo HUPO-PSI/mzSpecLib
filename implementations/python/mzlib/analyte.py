@@ -8,6 +8,10 @@ import textwrap
 from mzlib.attributes import AttributedEntity, AttributeManager
 
 
+FIRST_ANALYTE_KEY = '1'
+FIRST_INTERPRETATION_KEY = '1'
+
+
 class _AnalyteMappingProxy(Mapping):
     def __init__(self, parent):
         self.parent = parent
