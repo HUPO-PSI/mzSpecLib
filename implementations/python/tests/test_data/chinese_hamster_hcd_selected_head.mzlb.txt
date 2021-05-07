@@ -1,3 +1,4 @@
+<mzSpecLib 1.0>
 <Spectrum>
 MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum

@@ -1,6 +1,7 @@
 {
-  "metadata": [],
-  "spectrum": [
+  "attributes": [],
+  "format_version": "1.0",
+  "spectra": [
     {
       "analytes": {
         "1": {
@@ -46,8 +47,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",
@@ -553,8 +553,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",
@@ -1411,8 +1410,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",
@@ -2023,8 +2021,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",
@@ -2602,8 +2599,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",
@@ -3331,8 +3327,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",
@@ -3781,8 +3776,7 @@
             {
               "accession": "MS:1000885",
               "name": "protein accession",
-              "value": "G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\"",
-              "value_accession": "\"tr"
+              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003053",

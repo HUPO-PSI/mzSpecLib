@@ -104,8 +104,8 @@ annotation_pattern = re.compile(r"""^
    (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
    (?:_(?P<external_ion>[^\s,/]+))
 )
-(?P<neutral_loss>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
-(?:\[M(?P<adduct>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
+(?P<neutral_losses>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
+(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
 (?:(?P<isotope>[+-]\d*)i)?
 (?:@(?P<analyte_reference>[^/\s]+))?
@@ -114,7 +114,7 @@ annotation_pattern = re.compile(r"""^
 
 
 class MSPAnnotationStringParser(annotation.AnnotationStringParser):
-    def _dispatch_internal_peptide_fragment(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_internal_peptide_fragment(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs):
         spectrum = kwargs.get("spectrum")
         if spectrum is None:
             raise ValueError("Cannot infer sequence coordinates from MSP internal fragmentation notation without"
@@ -131,9 +131,9 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
         data['internal_start'] = start_index + 1
         data['internal_end'] = end_index
         return super(MSPAnnotationStringParser, self)._dispatch_internal_peptide_fragment(
-            data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
+            data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs)
 
-    def _dispatch_immonium(self, data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs):
+    def _dispatch_immonium(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs):
         modification = data['immonium_modification']
         if modification is not None:
             try:
@@ -142,7 +142,7 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
             except KeyError as err:
                 print(f"Failed to convert immonium ion modification {modification}")
         return super(MSPAnnotationStringParser, self)._dispatch_immonium(
-            data, adduct, charge, isotope, neutral_loss, analyte_reference, mass_error, **kwargs)
+            data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs)
 
     def _get_peptide_sequence_for_analyte(self, spectrum, analyte_reference=None):
         if analyte_reference is None:

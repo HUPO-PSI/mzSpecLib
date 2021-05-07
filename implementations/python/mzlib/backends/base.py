@@ -8,6 +8,10 @@ from mzlib.analyte import Analyte
 from mzlib.attributes import AttributeManager
 
 
+FORMAT_VERSION_TERM = 'MS:1009002|format version'
+DEFAULT_VERSION = '1.0'
+
+
 class SubclassRegisteringMetaclass(type):
     def __new__(mcs, name, parents, attrs):
         new_type = type.__new__(mcs, name, parents, attrs)
@@ -105,6 +109,16 @@ class SpectralLibraryBackendBase(object, metaclass=SubclassRegisteringMetaclass)
         self.filename = filename
         self.index = MemoryIndex()
         self.attributes = AttributeManager()
+
+    @property
+    def format_version(self):
+        try:
+            value = self.get_attribute(FORMAT_VERSION_TERM)
+            return value
+        except KeyError:
+            value = DEFAULT_VERSION
+            self.add_attribute(FORMAT_VERSION_TERM, value)
+            return value
 
     def read_header(self):
         """Read just the header of the whole library
