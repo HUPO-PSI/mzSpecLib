@@ -7,6 +7,7 @@
 
 import logging
 import re
+import sys
 
 #############################################################################
 #### Ontology Term class

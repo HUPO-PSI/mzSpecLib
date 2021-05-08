@@ -1,0 +1,209 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "HUPO-PSI Peak annotation specification",
+    "description": "Annotation of an individual peak in a mass spectrum.",
+    "type": "object",
+    "additionalProperties": true,
+    "required": ["analyte_reference"],
+    "properties": {
+        "analyte_reference": {
+            "description": "Label of analyte to which this annotation belongs",
+            "oneOf": [{"type": "string"}, {"type": "integer"}],
+            "default": "1"
+        },
+        "molecule_description": {
+            "description": "Description of the molecule or molecule fragment that this peak is annotated with",
+            "type": "object",
+            "oneOf": [
+                {"$ref": "#/definitions/peptide"},
+                {"$ref": "#/definitions/internal"},
+                {"$ref": "#/definitions/precursor"},
+                {"$ref": "#/definitions/immonium"},
+                {"$ref": "#/definitions/reporter"},
+                {"$ref": "#/definitions/external"},
+                {"$ref": "#/definitions/formula"}
+            ]
+        },
+        "neutral_losses": {
+            "description": "Any additional gains or losses of chemical groups defined by formula or by name; multiple may be specified",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": []
+        },
+        "isotope": {
+            "description": "An isotopic peak offset from the monoisotopic peak",
+            "type": "number",
+            "default": 0
+        },
+        "adducts": {
+            "description": "The charge carrier(s) for the given annotation",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": []
+        },
+        "charge": {
+            "description": "The charge state of the ion generating this peak; this value is unsigned",
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+        },
+        "mass_error": {
+            "description": "Error between observed and theoretical mass",
+            "type": "object",
+            "required": ["value", "unit"],
+            "properties": {
+                "value": {
+                    "description": "Mass error value",
+                    "type": "number"
+                },
+                "unit": {
+                    "description": "Mass error unit",
+                    "type": "string",
+                    "enum": ["ppm", "Da"]
+                }
+            }
+        },
+        "confidence": {
+            "description": "Number defining confidence in peak annotation",
+            "oneOf": [{"type": "number"}, {"type": "null"}],
+            "default": null
+        }
+    },
+    "definitions": {
+        "series_label": {
+            "description": "Type of ion being described, specifies the required molecule description keys",
+            "type": "string",
+            "enum": ["peptide", "internal", "precursor", "immonium", "reporter", "external", "formula", "unannotated"]
+        },
+        "peptide": {
+            "description": "Canonical peptide fragment ion",
+            "type": "object",
+            "required": ["series_label", "series", "position"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["peptide"]
+                },
+                "series": {
+                    "description": "The peptide ion series this ion belongs to",
+                    "type": "string",
+                    "enum": ["b", "y", "a", "x", "c", "z"]
+                },
+                "position": {
+                    "description": "The position from the appropriate terminal along the peptide this ion was fragmented at (starting with 1)",
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "internal": {
+            "description": "Internal fragment ion",
+            "type": "object",
+            "required": ["series_label", "start_position", "end_position"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["internal"]
+                },
+                "start_position": {
+                    "description": "N-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "end_position": {
+                    "description": "C-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)",
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "precursor": {
+            "description": "Precursor ion",
+            "type": "object",
+            "required": ["series_label"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["precursor"]
+                }
+            }
+        },
+        "immonium": {
+            "description": "Immonium ion",
+            "type": "object",
+            "required": ["series_label", "amino_acid"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["immonium"]
+                },
+                "amino_acid": {
+                    "description": "One-letter code of the amino acid represented by this immonium ion",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1
+                },
+                "modification": {
+                    "description": "An optional modification that may be attached to this immonium ion",
+                    "type": "string"
+                }
+            }
+        },
+        "reporter": {
+            "description": "Reporter ion",
+            "type": "object",
+            "required": ["series_label", "reporter_label"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["reporter"]
+                },
+                "reporter_label": {
+                    "description": "The labeling reagent's name or channel information",
+                    "type": "string"
+                }
+            }
+        },
+        "external": {
+            "description": "External ion",
+            "type": "object",
+            "required": ["series_label", "external_label"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["external"]
+                },
+                "external_label": {
+                    "description": "The name of the external ion being marked",
+                    "type": "string"
+                }
+            }
+        },
+        "formula": {
+            "description": "Ion described by chemical formula",
+            "type": "object",
+            "required": ["series_label", "formula"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["formula"]
+                },
+                "formula": {
+                    "description": "The elemental formula of the ion being marked",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

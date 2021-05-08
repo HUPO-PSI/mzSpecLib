@@ -7,9 +7,12 @@ def eprint(*args, **kwargs):
 import re
 import timeit
 import os
+import pathlib
 
 from mzlib.spectrum_library_index import SpectrumLibraryIndex
 from mzlib.spectrum import Spectrum
+from mzlib.index import MemoryIndex, SQLIndex
+from mzlib.backends import guess_implementation, SpectralLibraryBackendBase, SpectralLibraryWriterBase
 
 
 debug = False
@@ -20,8 +23,15 @@ class SpectrumLibrary:
 
     Attributes
     ----------
+    identifier: str
+        A unique identifier string assigned to this library by a spectral library host or
+        provider.
+    filename: str or Path
+        A location on the local file system where the spectral library is stored
     format : string
-        Name of the format for the current encoding of the library.
+        The name of the format for the current encoding of the library.
+    backend: :class:`~.SpectralLibraryBackendBase`
+        The implementation used to parse the file
 
     Methods
     -------
@@ -36,7 +46,7 @@ class SpectrumLibrary:
     """
 
 
-    def __init__(self, identifier=None, name=None, filename=None, format=None):
+    def __init__(self, identifier=None, filename=None, format=None, index_type=None):
         """
         __init__ - SpectrumLibrary constructor
 
@@ -46,340 +56,219 @@ class SpectrumLibrary:
             Name of the format for the current encoding of the library.
 
         """
-
+        self.backend = None
         self.identifier = identifier
-        self.name = name
+        self.index_type = index_type
+        self._format = format
         self.filename = filename
-        self.format = format
 
-        #### If we already have a filename, look for or create an index
-        self.index = None
-        if self.filename is not None:
-            self.index = SpectrumLibraryIndex( library_filename=self.filename )
+    def _init_from_filename(self, filename, index_type=None):
+        if index_type is None:
+            index_type = self.index_type
+        if self.format is None:
+            self.backend = guess_implementation(self.filename, index_type)
+            self._format = self.backend.format_name
+        else:
+            backend_type = SpectralLibraryBackendBase.type_for_format(self.format)
+            if backend_type is None:
+                raise ValueError(
+                    f"Could not find an implementation for {self.format}")
+            self.backend = backend_type(
+                self.filename, index_type=index_type)
+            self._format = self.backend.format_name
 
+    def _backend_initialized(self):
+        return self.backend is not None
+
+    def _requires_backend(self):
+        if not self._backend_initialized():
+            raise ValueError(
+                "Cannot read library data, library parser not yet initialized")
 
     #### Define getter/setter for attribute identifier
     @property
     def identifier(self):
         return(self._identifier)
+
     @identifier.setter
     def identifier(self, identifier):
         self._identifier = identifier
-
-    #### Define getter/setter for attribute name
-    @property
-    def name(self):
-        return(self._name)
-    @name.setter
-    def name(self, name):
-        self._name = name
 
     #### Define getter/setter for attribute filename
     @property
     def filename(self):
         return(self._filename)
+
     @filename.setter
     def filename(self, filename):
         self._filename = filename
+        if filename is not None:
+            self._init_from_filename(filename)
 
     #### Define getter/setter for attribute format
     @property
     def format(self):
-        return(self._format)
-    @format.setter
-    def format(self, format):
-        self._format = format
+        return self._format
 
+    @property
+    def index(self):
+        if self._backend_initialized():
+            return self.backend.index
+        return None
 
+    @property
+    def attributes(self):
+        if self._backend_initialized():
+            return self.backend.attributes
+        return None
 
     def read_header(self):
-        """
-        read_header - Read just the header of the whole library
-
-        Extended description of function.
-
-        Parameters
-        ----------
+        """Read just the header of the whole library
 
         Returns
         -------
-        int
-            Description of return value
+        bool:
+            Whether the operation was successful
         """
+        self._requires_backend()
+        return self.backend.read_header()
 
-        #### Begin functionality here
-        filename = self.filename
-        if debug: eprint(f"INFO: Reading library header from {filename}")
-        if filename is None:
-            eprint("ERROR: Unable to read library with no filename")
-            return(False)
-        with open(filename, 'r') as stream:
-            first_line = stream.readline()
-            if re.match("Name: ",first_line):
-                if debug: eprint("INFO: This appears to be a headerless MSP file")
-                self.format = "msp"
-                self.header = []
-                return(True)
-        return(False)
+    def read(self):
+        self._requires_backend()
+        return self.backend.read()
 
-
-    def read(self, create_index=None):
+    def write(self, destination, format=None):
+        """Write the library to disk
         """
-        read - Read the entire library into memory
+        filename = destination
+        if not isinstance(filename, (str, pathlib.Path)):
+            filename = getattr(destination, "name", None)
 
-        Extended description of function.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        int
-            Description of return value
-        """
-
-        #### Check that the spectrum library filename isvalid
-        filename = self.filename
-        if debug: eprint(f'INFO: Reading spectra from {filename}')
-        if filename is None:
-            eprint("ERROR: Unable to read library with no filename")
-            return(False)
-
-        #### If an index hasn't been opened, open it now
-        if create_index is not None:
-            if self.index is None:
-                self.index = SpectrumLibraryIndex( library_filename=self.filename )
-                self.index.create_index()
-
-        #### Determine the filesize
-        file_size = os.path.getsize(filename)
-        if debug: eprint(f"INFO: File size is {file_size}")
-
-        with open(filename, 'r') as infile:
-            state = 'header'
-            spectrum_buffer = []
-            n_spectra = 0
-            start_index = 0
-            file_offset = 0
-            line_beginning_file_offset = 0
-            spectrum_file_offset = 0
-            spectrum_name = ''
-
-            # Required for counting file_offset manually (LF vs CRLF)
-            infile.readline()
-            file_offset_line_ending = len(infile.newlines) - 1
-            infile.seek(0)
-
-            if debug: eprint("INFO: Reading..",end='',flush=True)
-            while 1:
-                line = infile.readline()
-                if len(line) == 0:
-                    break
-
-                line_beginning_file_offset = file_offset
-
-                #### tell() is twice as slow as counting it myself
-                # file_offset = infile.tell()
-                file_offset += len(line) + file_offset_line_ending
-
-                line = line.rstrip()
-                if state == 'header':
-                    if re.match('Name: ',line):
-                        state = 'body'
-                        spectrum_file_offset = line_beginning_file_offset
-                    else:
-                        continue
-                if state == 'body':
-                    if len(line) == 0:
-                        continue
-                    if re.match('Name: ',line):
-                        if len(spectrum_buffer) > 0:
-                            #parse(spectrum_buffer)
-                            if create_index is not None:
-                                self.index.add_spectrum( number=n_spectra + start_index, offset=spectrum_file_offset, name=spectrum_name, peptide_sequence=None )
-                            n_spectra += 1
-                            spectrum_buffer = []
-                            #### Commit every now and then
-                            if int(n_spectra/1000) == n_spectra/1000:
-                                self.index.commit()
-                                percent_done = int(file_offset/file_size*100+0.5)
-                                eprint(str(percent_done)+"%..",end='',flush=True)
-
-                        spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match('Name:\s+(.+)',line).group(1)
-                        #print(spectrum_name)
-                    spectrum_buffer.append(line)
-                #if n_spectra > 5:
-                #    break
-
-            #### Process the last spectrum in the buffer
-            #parse(spectrum_buffer)
-            if create_index is not None:
-                self.index.add_spectrum( number=n_spectra + start_index, offset=spectrum_file_offset, name=spectrum_name, peptide_sequence=None )
-                self.index.commit()
-            n_spectra += 1
-            if debug:
-                eprint()
-                eprint(f"INFO: Read {n_spectra} spectra from {filename}")
-
-            #### Flush the index
-            if create_index:
-                self.index.commit()
-
-        return(n_spectra)
-
-
-    def read_spectrum(self, offset=None):
-        """
-        read - Read the entire library into memory
-
-        Extended description of function.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        int
-            Description of return value
-        """
-
-        #### Check that an offset is supplied
-        if offset is None:
-            eprint("ERROR: Required parameter offset is not supplied")
-            return(False)
-
-        #### Check that the spectrum library filename is valid
-        filename = self.filename
-        if debug: eprint(f'INFO: Reading spectrum from {filename} at offset {offset}')
-        if filename is None:
-            eprint("ERROR: Unable to read library with no filename")
-            return(False)
-
-        with open(filename, 'r') as infile:
-            infile.seek(offset)
-            state = 'body'
-            spectrum_buffer = []
-            n_spectra = 0
-            start_index = 0
-            file_offset = 0
-            line_beginning_file_offset = 0
-            spectrum_file_offset = 0
-            spectrum_name = ''
-            for line in infile:
-                line_beginning_file_offset = file_offset
-                file_offset += len(line)
-                line = line.rstrip()
-                if state == 'body':
-                    if len(line) == 0:
-                        continue
-                    if re.match('Name: ',line):
-                        if len(spectrum_buffer) > 0:
-                            #parse(spectrum_buffer)
-                            return(spectrum_buffer)
-                        spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match('Name:\s+(.+)',line).group(1)
-                        #print(spectrum_name)
-                    spectrum_buffer.append(line)
-
-            #### We will end up here if this is the last spectrum in the file
-            #parse(spectrum_buffer)
-            return(spectrum_buffer)
-
-        return(False)
-
-
-    def write(self):
-        """
-        write - Write the library to disk
-
-        Extended description of function.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        int
-            Description of return value
-        """
-
-        #### Begin functionality here
-
-        return()
-
-
-    def create_index(self):
-        """
-        create_index - Create an index file for this library
-
-        Extended description of function.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        int
-            Description of return value
-        """
-
-        self.read(create_index=True)
-        return()
-
-
-    def get_spectrum(self,spectrum_index_number=None,spectrum_name=None):
-        """
-        get_spectrum - Extract a single spectrum by identifier
-
-        Extended description of function.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        int
-            Description of return value
-        """
-
-        #### Begin functionality here
-        if self.index is None:
-            self.index = SpectrumLibraryIndex( library_filename=self.filename )
-
-        #### If spectrum_index_number was specified, find the spectrum by that
-        if spectrum_index_number is not None:
-            offset = self.index.get_offset(spectrum_index_number=spectrum_index_number)
-            if offset is not None:
-                if debug: print(f'Found offset {offset} for spectrum {spectrum_index_number}')
+        if format is None and filename is not None:
+            basename = os.path.basename(filename)
+            tokens = basename.rsplit(".", 2)
+            if len(tokens) == 3:
+                writer_type = SpectralLibraryWriterBase.type_for_format('.'.join(tokens[1:]))
             else:
-                if debug: print(f'Unable to find offset for spectrum {spectrum_index_number}')
-            spectrum_buffer = self.read_spectrum(offset=offset)
-            return(spectrum_buffer)
-        return()
+                raise ValueError(f"Could not guess format from file name {filename}")
+        else:
+            writer_type = SpectralLibraryWriterBase.type_for_format(format)
+        if writer_type is None:
+            raise ValueError(
+                f"Could not find a format writer from file name {filename} or format {format}")
+        writer = writer_type(destination)
+        if self._backend_initialized():
+            with writer:
+                writer.write_library(self.backend)
+        else:
+            print("Library not initialized")
+            writer.close()
 
+    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+        """Retrieve a single spectrum from the library.
 
-    def find_spectra(self):
+        Parameters
+        ----------
+        spectrum_number : int, optional
+            The index of the specturm in the library
+        spectrum_name : str, optional
+            The name of the spectrum in the library
+
+        Returns
+        -------
+        :class:`~.Spectrum`
+        """
+        self._requires_backend()
+        return self.backend.get_spectrum(spectrum_number, spectrum_name)
+
+    def find_spectra(self, specification, **query_keys):
         """
         find_spectra - Return a list of spectra given query constraints
+        """
+        self._requires_backend()
+        return self.backend.find_spectra(specification, **query_keys)
 
-        Extended description of function.
+    def __getitem__(self, i):
+        self._requires_backend()
+        return self.backend[i]
+
+    def __len__(self):
+        if self._backend_initialized():
+            return len(self.backend)
+        return 0
+
+    def __iter__(self):
+        if self._backend_initialized():
+            return iter(self.backend)
+        return iter([])
+
+    def add_attribute(self, key, value, group_identifier=None):
+        """Add an attribute to the library level attributes store.
 
         Parameters
         ----------
+        key : str
+            The name of the attribute to add
+        value : object
+            The value of the attribute to add
+        group_identifier : str, optional
+            The attribute group identifier to use, if any. If not provided,
+            no group is assumed.
+        """
+        self._requires_backend()
+        return self.backend.add_attribute(key, value, group_identifier=group_identifier)
+
+    def get_attribute(self, key, group_identifier=None):
+        """Get the value or values associated with a given
+        attribute key from the library level attribute store.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
 
         Returns
         -------
-        int
-            Description of return value
+        attribute_value: object or list[object]
+            Returns single or multiple values for the requested attribute.
         """
+        self._requires_backend()
+        return self.backend.get_attribute(key, group_identifier=group_identifier)
 
-        #### Begin functionality here
+    def remove_attribute(self, key, group_identifier=None):
+        """Remove the value or values associated with a given
+        attribute key from the library level attribute store.
 
-        return()
+        This rebuilds the entire store, which may be expensive.
 
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
 
+        """
+        self._requires_backend()
+        return self.backend.remove_attribute(key, group_identifier=group_identifier)
 
+    def has_attribute(self, key):
+        """Test for the presence of a given attribute in the library
+        level store.
+
+        Parameters
+        ----------
+        key : str
+            The attribute to test for
+
+        Returns
+        -------
+        bool
+        """
+        self._requires_backend()
+        return self.backend.has_attribute(key)
 
 
 
@@ -390,7 +279,7 @@ def example():
     spectrum_library = SpectrumLibrary()
     spectrum_library.filename = "../refData/sigmaups1_consensus_final_true_lib.msp"
     spectrum_library.read_header()
- 
+
     spectrum_buffer = spectrum_library.get_spectrum(spectrum_index_number=2000)
     spectrum = Spectrum()
     spectrum.parse(spectrum_buffer)

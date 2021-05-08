@@ -1,13 +1,16 @@
 import re
 import os
 import logging
+import warnings
 
 from pathlib import Path
 
 from mzlib.index import MemoryIndex
+from mzlib import annotation
 
 from .base import _PlainTextSpectralLibraryBackendBase
 from .utils import try_cast
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -87,8 +90,81 @@ species_map = {
 }
 
 
+immonium_modification_map = {
+    "CAM": "Carbamidomethyl",
+}
+
+# TODO: ppm is unsigned, add mass calculation to determine true mass accuracy
+
+annotation_pattern = re.compile(r"""^
+(?:(?:(?P<series>[abyxcz]\.?)(?P<ordinal>\d+))|
+   (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJarndceqghkmfpstwyvilj]+))|
+   (?P<precursor>p)|
+   (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:(?P<immonium_modification>CAM)|[A-Z])?)|
+   (?P<reporter>r(?P<reporter_mass>\d+(?:\.\d+)))|
+   (?:_(?P<external_ion>[^\s,/]+))
+)
+(?P<neutral_losses>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
+(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
+(?:\^(?P<charge>[+-]?\d+))?
+(?:(?P<isotope>[+-]\d*)i)?
+(?:@(?P<analyte_reference>[^/\s]+))?
+(?:/(?P<mass_error>[+-]?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
+""", re.X)
+
+
+class MSPAnnotationStringParser(annotation.AnnotationStringParser):
+    def _dispatch_internal_peptide_fragment(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs):
+        spectrum = kwargs.get("spectrum")
+        if spectrum is None:
+            raise ValueError("Cannot infer sequence coordinates from MSP internal fragmentation notation without"
+                             " a reference to the spectrum, please pass spectrum as a keyword argument")
+        sequence = self._get_peptide_sequence_for_analyte(
+            spectrum, analyte_reference)
+        subseq = data['series_internal'].upper()
+        try:
+            start_index = sequence.index(subseq)
+        except ValueError as err:
+            raise ValueError(
+                f"Cannot locate internal subsequence {subseq} in {sequence}") from err
+        end_index = start_index + len(subseq)
+        data['internal_start'] = start_index + 1
+        data['internal_end'] = end_index
+        return super(MSPAnnotationStringParser, self)._dispatch_internal_peptide_fragment(
+            data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs)
+
+    def _dispatch_immonium(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs):
+        modification = data['immonium_modification']
+        if modification is not None:
+            try:
+                modification = immonium_modification_map[modification]
+                data['immonium_modification'] = modification
+            except KeyError as err:
+                print(f"Failed to convert immonium ion modification {modification}")
+        return super(MSPAnnotationStringParser, self)._dispatch_immonium(
+            data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs)
+
+    def _get_peptide_sequence_for_analyte(self, spectrum, analyte_reference=None):
+        if analyte_reference is None:
+            if len(spectrum.analytes) == 0:
+                return None
+            else:
+                analyte_reference = spectrum.analytes[0].id
+        analyte = None
+        for analyte in spectrum.analytes:
+            if analyte.id == analyte_reference:
+                break
+        if analyte is None:
+            return None
+        return analyte.get_attribute('MS:1000888|unmodified peptide sequence')
+
+
+parse_annotation = MSPAnnotationStringParser(annotation_pattern)
+
+
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
+    format_name = "msp"
 
     @classmethod
     def guess_from_header(cls, filename):
@@ -100,10 +176,16 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def read_header(self):
         with open(self.filename, 'r') as stream:
-            first_line = stream.readline()
-            if re.match("Name: ",first_line):
-                return True
+            match, offset = self._parse_header_from_stream(stream)
+            return match
         return False
+
+    def _parse_header_from_stream(self, stream):
+        first_line = stream.readline()
+        if re.match("Name: ", first_line):
+            return True, 0
+        return False, 0
+
 
     def create_index(self):
         """
@@ -194,32 +276,28 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _get_lines_for(self, offset):
-        with open(self.filename, 'r') as infile:
-            infile.seek(offset)
-            state = 'body'
-            spectrum_buffer = []
+    def _buffer_from_stream(self, infile):
+        state = 'body'
+        spectrum_buffer = []
 
-            file_offset = 0
-            line_beginning_file_offset = 0
-            spectrum_file_offset = 0
-            spectrum_name = ''
-            for line in infile:
-                line_beginning_file_offset = file_offset
-                file_offset += len(line)
-                line = line.rstrip()
-                if state == 'body':
-                    if len(line) == 0:
-                        continue
-                    if re.match('Name: ', line):
-                        if len(spectrum_buffer) > 0:
-                            return spectrum_buffer
-                        spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
-                    spectrum_buffer.append(line)
-
-            #### We will end up here if this is the last spectrum in the file
-            return spectrum_buffer
+        file_offset = 0
+        line_beginning_file_offset = 0
+        spectrum_file_offset = 0
+        spectrum_name = ''
+        for line in infile:
+            line_beginning_file_offset = file_offset
+            file_offset += len(line)
+            line = line.rstrip()
+            if state == 'body':
+                if len(line) == 0:
+                    continue
+                if re.match(r'Name: ', line):
+                    if len(spectrum_buffer) > 0:
+                        return spectrum_buffer
+                    spectrum_file_offset = line_beginning_file_offset
+                    spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
+                spectrum_buffer.append(line)
+        return spectrum_buffer
 
     def _parse(self, buffer, spectrum_index=None):
 
@@ -287,7 +365,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     intensity = "1"
 
                 interpretations = interpretations.strip('"')
-
                 #### Add to the peak list
                 peak_list.append([float(mz), float(intensity), interpretations, aggregation])
 
@@ -295,6 +372,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum = self._make_spectrum(peak_list, attributes)
         if spectrum_index is not None:
             spectrum.add_attribute("MS:1003062|spectrum index", spectrum_index)
+        for i, peak in enumerate(spectrum.peak_list):
+            try:
+                parsed_interpretation = parse_annotation(peak[2], spectrum=spectrum)
+            except ValueError as err:
+                message = str(err)
+                raise ValueError(
+                    f"An error occurred while parsing the peak annotation for peak {i}: {message}") from err
+            peak[2] = parsed_interpretation
         return spectrum
 
     def _parse_comment(self, value, attributes):
@@ -510,7 +595,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             elif attribute == "Mz_diff":
                 if attributes[attribute] is not None:
                     match = re.match(
-                        r"([\-\+e\d\.]+)\s*ppm", str(attributes[attribute]), flags=re.IGNORECASE)
+                        r"([\-\+e\d\.]+)\s*ppm", attributes[attribute], flags=re.IGNORECASE)
                     if match is not None:
                         group_identifier = spectrum.get_next_group_identifier()
                         spectrum.add_attribute(
@@ -519,7 +604,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
                     else:
                         match = re.match(
-                            r"([\-\+e\d\.]+)\s*", str(attributes[attribute]))
+                            r"([\-\+e\d\.]+)\s*", attributes[attribute])
                         if match is not None:
                             group_identifier = spectrum.get_next_group_identifier()
                             spectrum.add_attribute(
