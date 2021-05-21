@@ -1,8 +1,10 @@
 import os
+import io
 
+from typing import Iterable, Union, List, Type
 from pathlib import Path
 
-from mzlib.index import MemoryIndex, SQLIndex
+from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte, Interpretation
 from mzlib.attributes import AttributedEntity
@@ -42,7 +44,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
     _file_extension_to_implementation = {}
 
     @classmethod
-    def guess_from_filename(cls, filename):
+    def guess_from_filename(cls, filename) -> bool:
         """Guess if the file is of this type by inspecting the file's name and extension.
 
         Parameters
@@ -60,7 +62,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
         return filename.endswith(cls.file_format)
 
     @classmethod
-    def guess_from_header(cls, filename):
+    def guess_from_header(cls, filename) -> bool:
         """Guess if the file is of this type by inspecting the file's header section
 
         Parameters
@@ -76,7 +78,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
         return False
 
     @classmethod
-    def guess_implementation(cls, filename, index_type=None, **kwargs):
+    def guess_implementation(cls, filename, index_type=None, **kwargs) -> 'SpectralLibraryBackendBase':
         """Guess the backend implementation to use with this file format.
 
         Parameters
@@ -120,7 +122,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
             self.add_attribute(FORMAT_VERSION_TERM, value)
             return value
 
-    def read_header(self):
+    def read_header(self) -> bool:
         """Read just the header of the whole library
 
         Returns
@@ -129,16 +131,16 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
         """
         raise NotImplementedError()
 
-    def _new_spectrum(self):
+    def _new_spectrum(self) -> Spectrum:
         return Spectrum()
 
-    def _new_interpretation(self, id=None):
+    def _new_interpretation(self, id=None) -> Interpretation:
         return Interpretation(id)
 
-    def _new_analyte(self, id=None):
+    def _new_analyte(self, id=None) -> Analyte:
         return Analyte(id)
 
-    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+    def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None):
         """Retrieve a single spectrum from the library.
 
         Parameters
@@ -157,7 +159,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
     def find_spectra(self, specification, **query_keys):
         raise NotImplementedError()
 
-    def create_index(self):
+    def create_index(self) -> int:
         """Populate the spectrum index.
 
         This method may produce a large amount of file I/O.
@@ -180,7 +182,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
     def __len__(self):
         return len(self.index)
 
-    def __getitem__(self, i):
+    def __getitem__(self, i) -> Union[Spectrum, List[Spectrum]]:
         record = self.index[i]
         if isinstance(record, list):
             result = [self.get_spectrum(rec.number) for rec in record]
@@ -189,7 +191,7 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
         return result
 
     @classmethod
-    def has_index_preference(cls, filename):
+    def has_index_preference(cls, filename) -> Type[IndexBase]:
         '''Does this backend prefer a particular index for this file?
 
         The base implementation checks to see if there is a SQL index
@@ -238,7 +240,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         else:
             self.handle = open(filename_or_stream, 'rt')
 
-    def _buffer_from_stream(self, stream):
+    def _buffer_from_stream(self, stream: io.IOBase) -> list:
         '''Collect data from the readable stream until
         a complete spectrum entry has been observed.
 
@@ -269,17 +271,17 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                     break
                 yield self._parse(buffer, i)
 
-    def _get_lines_for(self, offset):
+    def _get_lines_for(self, offset: int) -> list:
         with open(self.filename, 'r') as infile:
             infile.seek(offset)
             spectrum_buffer = self._buffer_from_stream(infile)
             #### We will end up here if this is the last spectrum in the file
         return spectrum_buffer
 
-    def _parse(self, buffer, spectrum_index=None):
+    def _parse(self, buffer: Iterable, spectrum_index: int=None):
         raise NotImplementedError()
 
-    def search(self, specification, **query_keys):
+    def search(self, specification, **query_keys) -> list:
         records = self.index.search(specification, **query_keys)
         if not isinstance(records, list):
             records = [records]
@@ -301,15 +303,15 @@ class SpectralLibraryWriterBase(object, metaclass=SubclassRegisteringMetaclass):
         else:
             self.handle = open(filename_or_stream, 'wt')
 
-    def write_library(self, library):
+    def write_library(self, library: SpectralLibraryBackendBase):
         self.write_header(library)
         for spectrum in library:
             self.write_spectrum(spectrum)
 
-    def write_spectrum(self, spectrum):
+    def write_spectrum(self, spectrum: Spectrum):
         raise NotImplementedError()
 
-    def __enter__(self):
+    def __enter__(self) -> 'SpectralLibraryWriterBase':
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):

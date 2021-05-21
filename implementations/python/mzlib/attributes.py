@@ -1,6 +1,6 @@
 import textwrap
 
-from typing import Union
+from typing import Any, Iterable, Union, List
 
 class AttributeManager(object):
     """A key-value pair store with optional attribute grouping
@@ -18,10 +18,15 @@ class AttributeManager(object):
         The number of attribute groups assigned.
 
     """
+    attributes: list
+    attribute_dict: dict
+    group_dict: dict
+    group_counter: int
+
 
     __slots__ = ('attributes', 'attribute_dict', 'group_dict', 'group_counter')
 
-    def __init__(self, attributes=None):
+    def __init__(self, attributes: Iterable = None):
         """
 
         Parameters
@@ -39,7 +44,7 @@ class AttributeManager(object):
         if attributes is not None:
             self._from_iterable(attributes)
 
-    def get_next_group_identifier(self):
+    def get_next_group_identifier(self) -> str:
         """Retrieve the next un-used attribute group identifier
         and increment the internal counter.
 
@@ -95,7 +100,7 @@ class AttributeManager(object):
             else:
                 self.group_dict[group_identifier] = [index]
 
-    def get_attribute(self, key, group_identifier=None):
+    def get_attribute(self, key, group_identifier=None) -> Union[Any, List[Any]]:
         """Get the value or values associated with a given
         attribute key.
 
@@ -136,7 +141,7 @@ class AttributeManager(object):
         else:
             raise NotImplementedError()
 
-    def get_by_name(self, name):
+    def get_by_name(self, name: str):
         '''Search for an attribute by human-readable name.
 
         Parameters
@@ -292,10 +297,12 @@ class AttributedEntity(object):
     '''
     __slots__ = ("attributes", )
 
-    def __init__(self, attributes=None, **kwargs):
+    attributes: AttributeManager
+
+    def __init__(self, attributes: Iterable=None, **kwargs):
         self.attributes = AttributeManager(attributes)
 
-    def add_attribute(self, key, value, group_identifier=None):
+    def add_attribute(self, key, value, group_identifier=None) -> Union[Any, List[Any]]:
         """Add an attribute to the entity's attributes store.
 
         Parameters
@@ -344,7 +351,7 @@ class AttributedEntity(object):
         """
         return self.attributes.remove_attribute(key, group_identifier=group_identifier)
 
-    def has_attribute(self, key):
+    def has_attribute(self, key) -> bool:
         """Test for the presence of a given attribute in the library
         level store.
 

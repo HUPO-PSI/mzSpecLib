@@ -51,19 +51,19 @@ class InterpretationCollection(MutableMapping):
             interpretations = {}
         self.interpretations = interpretations
 
-    def get_interpretation(self, interpretation_id):
+    def get_interpretation(self, interpretation_id) -> 'Interpretation':
         return self.interpretations[str(interpretation_id)]
 
-    def add_interpretation(self, interpretation):
+    def add_interpretation(self, interpretation: 'Interpretation'):
         self.set_interpretation(str(interpretation.id), interpretation)
 
-    def set_interpretation(self, key, interpretation):
+    def set_interpretation(self, key, interpretation: 'Interpretation'):
         self.interpretations[str(key)] = interpretation
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> 'Interpretation':
         return self.get_interpretation(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value: 'Interpretation'):
         self.set_interpretation(key, value)
 
     def __delitem__(self, key):
@@ -82,7 +82,7 @@ class InterpretationCollection(MutableMapping):
         return self.interpretations.keys()
 
     @property
-    def analytes(self):
+    def analytes(self) -> '_AnalyteMappingProxy':
         return _AnalyteMappingProxy(self)
 
     def __repr__(self):
@@ -99,22 +99,22 @@ class Interpretation(AttributedEntity, MutableMapping):
         self.analytes = analytes or {}
         super(Interpretation, self).__init__(attributes)
 
-    def get_analyte(self, analyte_id):
+    def get_analyte(self, analyte_id) -> 'Analyte':
         return self.analytes[str(analyte_id)]
 
-    def add_analyte(self, analyte):
+    def add_analyte(self, analyte: 'Analyte'):
         self.set_analyte(analyte.id, analyte)
 
-    def set_analyte(self, key, analyte):
+    def set_analyte(self, key, analyte: 'Analyte'):
         self.analytes[str(key)] = analyte
 
     def remove_analyte(self, analyte_id):
         del self.analytes[str(analyte_id)]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> 'Analyte':
         return self.get_analyte(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value: 'Analyte'):
         self.set_analyte(key, value)
 
     def __delitem__(self, key):

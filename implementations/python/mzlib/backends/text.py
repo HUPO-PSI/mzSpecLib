@@ -5,13 +5,16 @@ import logging
 import warnings
 import enum
 
+from typing import Tuple, Union, Iterable
+
 from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
 from mzlib.spectrum import Spectrum
-from mzlib.attributes import AttributeManager
+from mzlib.attributes import AttributeManager, Attributed
 from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 
 from .base import (
+    SpectralLibraryBackendBase,
     _PlainTextSpectralLibraryBackendBase,
     SpectralLibraryWriterBase,
     FORMAT_VERSION_TERM)
@@ -53,14 +56,14 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     format_name = "text"
 
     @classmethod
-    def guess_from_header(cls, filename):
+    def guess_from_header(cls, filename: str) -> bool:
         with open(filename, 'r') as stream:
             first_line = stream.readline()
             if START_OF_SPECTRUM_MARKER.match(first_line) or START_OF_LIBRARY_MARKER.match(first_line):
                 return True
         return False
 
-    def _parse_header_from_stream(self, stream):
+    def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         nbytes = 0
         first_line = stream.readline()
         nbytes += len(first_line)
@@ -106,11 +109,11 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             return True, nbytes
         return False, 0
 
-    def read_header(self):
+    def read_header(self) -> Tuple[bool, int]:
         with open(self.filename, 'rt') as stream:
             return self._parse_header_from_stream(stream)
 
-    def create_index(self):
+    def create_index(self) -> int:
         """
         Populate the spectrum index
 
@@ -205,7 +208,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _buffer_from_stream(self, infile):
+    def _buffer_from_stream(self, infile: io.IOBase) -> list:
         state = 'body'
         spectrum_buffer = []
 
@@ -220,7 +223,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
-    def _parse_attribute_into(self, line, store, line_number_message=lambda:''):
+    def _parse_attribute_into(self, line: str, store: Attributed, line_number_message=lambda:'') -> bool:
         match = key_value_term_pattern.match(line)
         if match is not None:
             d = match.groupdict()
@@ -243,7 +246,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         else:
             raise ValueError(f"Malformed attribute line {line}{line_number_message()}")
 
-    def _parse(self, buffer, spectrum_index=None, start_line_number=None):
+    def _parse(self, buffer: Iterable, spectrum_index: int = None,
+               start_line_number: int=None) -> Spectrum:
         spec: Spectrum = self._new_spectrum()
         interpretation: Interpretation = None
         analyte: Analyte = None
@@ -264,6 +268,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             message = f" on line {line_number + start_line_number}"
             if spectrum_index is not None:
                 message += f" in spectrum {spectrum_index}"
+            return message
 
         for line_number, line in enumerate(buffer):
             line = line.strip()
@@ -290,7 +295,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     match = START_OF_ANALYTE_MARKER.match(line)
                     if interpretation is None:
                         warnings.warn(
-                            f"An analyte without an interpretation was encountered, placing in default interpretation {FIRST_INTERPRETATION_KEY}{real_line_number_or_nothing()}")
+                            f"An analyte without an interpretation was encountered, placing in default interpretation "
+                            f"{FIRST_INTERPRETATION_KEY}{real_line_number_or_nothing()}")
                         interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
                         spec.add_interpretation(interpretation)
 
@@ -369,7 +375,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spec.peak_list = peak_list
         return spec
 
-    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+    def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
         # keep the two branches separate for the possibility that this is not possible with all
         # index schemes.
         if spectrum_number is not None:
@@ -394,7 +400,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.version = version
         self._coerce_handle(self.filename)
 
-    def _write_attributes(self, attributes):
+    def _write_attributes(self, attributes: Attributed):
         for attribute in attributes:
             if len(attribute) == 2:
                 self.handle.write(f"{attribute[0]}={attribute[1]}\n")
@@ -405,7 +411,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 raise ValueError(
                     f"Attribute has wrong number of elements: {attribute}")
 
-    def write_header(self, library):
+    def write_header(self, library: SpectralLibraryBackendBase):
         if self.version is None:
             version = library.attributes.get_by_name("format version")
             if version is None:
@@ -415,7 +421,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
         self._write_attributes(library.attributes)
 
-    def write_spectrum(self, spectrum):
+    def write_spectrum(self, spectrum: Spectrum):
         self.handle.write("<Spectrum>\n")
         self._write_attributes(spectrum.attributes)
         for interpretation in spectrum.interpretations.values():
@@ -442,7 +448,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.close()
 
 
-def format_spectrum(spectrum, **kwargs):
+def format_spectrum(spectrum: Spectrum, **kwargs) -> str:
     buffer = io.StringIO()
     writer = TextSpectralLibraryWriter(buffer, **kwargs)
     writer.write_spectrum(spectrum)

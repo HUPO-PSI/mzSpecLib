@@ -45,7 +45,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             self.create_index()
 
     @classmethod
-    def guess_from_filename(cls, filename):
+    def guess_from_filename(cls, filename) -> bool:
         if isinstance(filename, dict):
             return LIBRARY_SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
         if not isinstance(filename, (str, Path)):
@@ -63,7 +63,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             self.buffer = json.load(self.handle)
             self.handle.close()
 
-    def read_header(self):
+    def read_header(self) -> bool:
         if self.buffer:
             pass
         return False
@@ -77,7 +77,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             else:
                 raise ValueError(f"Unidentified spectrum at index {i}")
 
-    def get_spectrum(self, spectrum_number=None, spectrum_name=None) -> Spectrum:
+    def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
         """Retrieve a single spectrum from the library.
 
         Parameters
@@ -116,7 +116,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 store.group_counter = int(group)
         return store
 
-    def make_analyte_from_payload(self, analyte_id, analyte) -> Analyte:
+    def make_analyte_from_payload(self, analyte_id, analyte: Analyte) -> Analyte:
         analyte_d = self._new_analyte(analyte_id)
         self._fill_attributes(analyte[ELEMENT_ATTRIBUTES_KEY], analyte_d)
         return analyte_d
@@ -206,7 +206,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             LIBRARY_SPECTRA_KEY: []
         }
 
-    def write_library(self, library):
+    def write_library(self, library: SpectralLibraryBackendBase):
         self.wrote_library = True
         return super().write_library(library)
 
@@ -218,7 +218,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         components = value.split('|', 1)
         return components
 
-    def write_header(self, library):
+    def write_header(self, library: SpectralLibraryBackendBase):
         attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
 
@@ -335,7 +335,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.close()
 
 
-def format_spectrum(spectrum, pretty_print=True, **kwargs):
+def format_spectrum(spectrum: Spectrum, pretty_print=True, **kwargs) -> str:
     buffer = io.StringIO()
     with JSONSpectralLibraryWriter(buffer, pretty_print=pretty_print, **kwargs) as writer:
         writer.write_spectrum(spectrum)

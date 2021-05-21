@@ -1,7 +1,12 @@
+from mzlib.attributes import Attributed
+from mzlib.spectrum import Spectrum
 import re
+import io
 import os
 import logging
 import warnings
+
+from typing import Tuple, Union, Iterable
 
 from pathlib import Path
 
@@ -165,27 +170,27 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     format_name = "msp"
 
     @classmethod
-    def guess_from_header(cls, filename):
+    def guess_from_header(cls, filename: str) -> bool:
         with open(filename, 'r') as stream:
             first_line = stream.readline()
             if re.match("Name: ", first_line):
                 return True
         return False
 
-    def read_header(self):
+    def read_header(self) -> bool:
         with open(self.filename, 'r') as stream:
             match, offset = self._parse_header_from_stream(stream)
             return match
         return False
 
-    def _parse_header_from_stream(self, stream):
+    def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         first_line = stream.readline()
         if re.match("Name: ", first_line):
             return True, 0
         return False, 0
 
 
-    def create_index(self):
+    def create_index(self) -> int:
         """
         Populate the spectrum index
 
@@ -274,7 +279,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _buffer_from_stream(self, infile):
+    def _buffer_from_stream(self, infile: io.BufferedIOBase) -> list:
         state = 'body'
         spectrum_buffer = []
 
@@ -297,7 +302,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
-    def _parse(self, buffer, spectrum_index=None):
+    def _parse(self, buffer: Iterable, spectrum_index: int=None) -> Spectrum:
 
         #### Start in the header section of the entry
         in_header = True
@@ -380,7 +385,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             peak[2] = parsed_interpretation
         return spectrum
 
-    def _parse_comment(self, value, attributes):
+    def _parse_comment(self, value: str, attributes: Attributed):
         comment_items = re.split(" ", value)
 
         #### Any spaces within quotes are then de-split
@@ -407,7 +412,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 attributes[item] = None
 
-    def _make_spectrum(self, peak_list, attributes):
+    def _make_spectrum(self, peak_list: list, attributes: Attributed):
         spectrum = self._new_spectrum()
         interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
         analyte = self._new_analyte(FIRST_ANALYTE_KEY)
@@ -732,7 +737,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                    try_cast(attributes[attribute]), group_identifier)
         return spectrum
 
-    def get_spectrum(self, spectrum_number=None, spectrum_name=None):
+    def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
         # keep the two branches separate for the possibility that this is not possible with all
         # index schemes.
         if spectrum_number is not None:
