@@ -426,8 +426,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self._write_attributes(spectrum.attributes)
         for interpretation in spectrum.interpretations.values():
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
-            for attribute in interpretation.attributes:
-                self._write_attributes(interpretation.attributes)
+            self._write_attributes(interpretation.attributes)
 
             for analyte in interpretation.values():
                 self.handle.write(f"<Analyte={analyte.id}>\n")
