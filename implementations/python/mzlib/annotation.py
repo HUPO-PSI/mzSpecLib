@@ -1,6 +1,6 @@
 import re
 from sys import intern
-from typing import List
+from typing import Any, List
 
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
@@ -94,6 +94,9 @@ def combine_formula(tokens):
 class MassError(object):
     _DEFAULT_UNIT = "Da"
 
+    unit: str
+    mass_error: float
+
     def __init__(self, mass_error, unit=None):
         if unit is None:
             unit = self._DEFAULT_UNIT
@@ -149,6 +152,17 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     series_label = None
     _molecule_description_fields = {}
 
+    series: str
+    neutral_losses: list
+    isotope: int
+    adducts: list
+    charge: int
+    analyte_reference: str
+    mass_error: MassError
+    confidence: float
+    rest: Any
+    is_auxiliary: bool
+
     def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None,
                  is_auxiliary=None):
@@ -169,7 +183,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         self.is_auxiliary = is_auxiliary
 
     @property
-    def adduct(self):
+    def adduct(self) -> list:
         return self.adducts
 
     @adduct.setter
@@ -177,7 +191,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         self.adducts = value
 
     @property
-    def neutral_loss(self):
+    def neutral_loss(self) -> list:
         return self.neutral_losses
 
     @neutral_loss.setter
@@ -289,6 +303,8 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
         "position": "The position from the appropriate terminal along the peptide this ion was fragmented at (starting with 1)"
     }
 
+    position: int
+
     def __init__(self, series, position, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(PeptideFragmentIonAnnotation, self).__init__(
@@ -324,6 +340,9 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
         "start_position": "N-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)",
         "end_position": "C-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)"
     }
+
+    start_position: int
+    end_position: int
 
     def __init__(self, series, start_position, end_position, neutral_losses=None, isotope=None,
                  adducts=None, charge=None, analyte_reference=None, mass_error=None, confidence=None,
@@ -377,6 +396,9 @@ class ImmoniumIonAnnotation(IonAnnotationBase):
         "modification": "An optional modification that may be attached to this immonium ion"
     }
 
+    amino_acid: str
+    modification: str
+
     def __init__(self, series, amino_acid, modification=None, neutral_losses=None, isotope=None, adducts=None,
                  charge=None, analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(ImmoniumIonAnnotation, self).__init__(
@@ -415,6 +437,8 @@ class ReporterIonAnnotation(IonAnnotationBase):
         "reporter_label": "The labeling reagent's name or channel information"
     }
 
+    reporter_label: str
+
     def __init__(self, series, reporter_label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(ReporterIonAnnotation, self).__init__(
@@ -446,6 +470,8 @@ class ExternalIonAnnotation(IonAnnotationBase):
         "label": "The name of the external ion being marked"
     }
 
+    label: str
+
     def __init__(self, series, label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(ExternalIonAnnotation, self).__init__(
@@ -476,6 +502,8 @@ class FormulaAnnotation(IonAnnotationBase):
         "formula": "The elemental formula of the ion being marked"
     }
 
+    formula: str
+
     def __init__(self, series, formula, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         super(FormulaAnnotation, self).__init__(
@@ -498,7 +526,7 @@ class FormulaAnnotation(IonAnnotationBase):
         return self
 
 
-def int_or_sign(string):
+def int_or_sign(string: str) -> int:
     if string == "+":
         return 1
     elif string == '-':
@@ -508,13 +536,15 @@ def int_or_sign(string):
 
 
 class AnnotationStringParser(object):
+    pattern: re.Pattern
+
     def __init__(self, pattern):
         self.pattern = pattern
 
-    def __call__(self, annotation_string, **kwargs) -> List[IonAnnotationBase]:
+    def __call__(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
         return self.parse_annotation(annotation_string, **kwargs)
 
-    def parse_annotation(self, annotation_string, **kwargs) -> List[IonAnnotationBase]:
+    def parse_annotation(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
         if annotation_string == "?" or not annotation_string:
             return []
         is_auxiliary = False

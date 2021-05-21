@@ -94,6 +94,9 @@ class InterpretationCollection(MutableMapping):
 class Interpretation(AttributedEntity, MutableMapping):
     __slots__ = ('id', 'analytes', )
 
+    id: str
+    analytes: dict
+
     def __init__(self, id, attributes=None, analytes=None):
         self.id = str(id)
         self.analytes = analytes or {}
@@ -133,6 +136,8 @@ class Interpretation(AttributedEntity, MutableMapping):
 
 class Analyte(AttributeManager):
     __slots__ = ('id', )
+
+    id: str
 
     def __init__(self, id, attributes=None):
         self.id = str(id)
