@@ -318,7 +318,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 elif START_OF_PEAKS_MARKER.match(line):
                     state = STATES.peaks
 
-                self._parse_attribute_into(line, interpretation, real_line_number_or_nothing)
+                self._parse_attribute_into(line, interpretation.attributes, real_line_number_or_nothing)
 
             elif state == STATES.analyte:
                 if START_OF_PEAKS_MARKER.match(line):

@@ -1,0 +1,537 @@
+{
+  "attributes": [
+    {
+      "accession": "MS:1009002",
+      "name": "format version",
+      "value": "1.0"
+    }
+  ],
+  "format_version": "1.0",
+  "spectra": [
+    {
+      "annotations": [
+        "b2/5.6ppm",
+        "?",
+        "?",
+        "?",
+        "?",
+        "y1/2.0ppm,IR/2.0ppm",
+        "?",
+        "?",
+        "?",
+        "?",
+        "b3/4.1ppm",
+        "?",
+        "?",
+        "?",
+        "a4/9.7ppm",
+        "?",
+        "?",
+        "?",
+        "b4/3.4ppm",
+        "?",
+        "?",
+        "y3/-12.9ppm",
+        "?",
+        "b5-NH2-CO-CH2SH/5.9ppm",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "a5/3.9ppm",
+        "b6-NH2-CO-CH2SH/6.6ppm",
+        "m5:8-H2O/14.4ppm",
+        "?",
+        "y4/1.8ppm",
+        "b5/5.0ppm",
+        "m5:8/-4.2ppm",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "a6/16.6ppm",
+        "y10^2/-0.6ppm",
+        "y10+i^2/5.4ppm",
+        "?",
+        "m4:8-H2O/6.2ppm",
+        "b6/0.2ppm",
+        "?",
+        "?",
+        "?",
+        "y5/7.0ppm",
+        "?",
+        "?",
+        "a7/3.6ppm",
+        "?",
+        "?",
+        "b7/-3.7ppm",
+        "m2:8-H2O/-2.7ppm",
+        "m2:8/11.8ppm",
+        "?",
+        "b8-H2O/3.6ppm",
+        "b8/3.5ppm",
+        "y8/-2.0ppm",
+        "?",
+        "?",
+        "?",
+        "y9/-0.3ppm",
+        "?",
+        "?",
+        "y10-NH3/17.9ppm",
+        "y10/3.7ppm",
+        "y10+i/3.6ppm",
+        "?",
+        "?",
+        "?",
+        "y11/3.8ppm",
+        "y11+i/4.5ppm",
+        "?",
+        "y12/4.9ppm",
+        "y12+i/-0.1ppm",
+        "y13/4.8ppm",
+        "y13+i/3.2ppm",
+        "?",
+        "?",
+        "y14/1.4ppm",
+        "y14+i/3.8ppm",
+        "y15/-6.5ppm"
+      ],
+      "attributes": [
+        {
+          "accession": "MS:1003061",
+          "name": "spectrum name",
+          "value": "AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 855.4538
+        },
+        {
+          "accession": "MS:1001975",
+          "cv_param_group": "1",
+          "name": "delta m/z",
+          "value": 1.4
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "1",
+          "name": "unit",
+          "value": "parts per million",
+          "value_accession": "UO:0000169"
+        },
+        {
+          "accession": "MS:1000044",
+          "name": "dissociation method",
+          "value": "beam-type collision-induced dissociation",
+          "value_accession": "MS:1000422"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 46
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1003057",
+          "name": "scan number",
+          "value": 5538
+        },
+        {
+          "accession": "MS:1009008",
+          "name": "source file",
+          "value": "\"CHO-K1_bRPLC_C1.RAW.FT.hcd.ch.MGF\""
+        },
+        {
+          "accession": "MS:1009020",
+          "name": "number of replicate spectra used",
+          "value": 1
+        },
+        {
+          "accession": "MS:1009021",
+          "name": "number of replicate spectra available",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000002",
+          "name": "sample name",
+          "value": "\"jhu_cho_brplc_cam\""
+        },
+        {
+          "accession": "MS:1003079",
+          "name": "total unassigned intensity fraction",
+          "value": 0.2848
+        },
+        {
+          "accession": "MS:1003080",
+          "name": "top 20 peak unassigned intensity fraction",
+          "value": 0.1879
+        },
+        {
+          "accession": "MS:1000028",
+          "name": "detector resolution",
+          "value": 7500
+        },
+        {
+          "accession": "MS:1000828",
+          "cv_param_group": "3",
+          "name": "isolation window lower offset",
+          "value": 0.95
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "m/z",
+          "value_accession": "MS:1000040"
+        },
+        {
+          "accession": "MS:1000829",
+          "cv_param_group": "4",
+          "name": "isolation window upper offset",
+          "value": 0.95
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "4",
+          "name": "unit",
+          "value": "m/z",
+          "value_accession": "MS:1000040"
+        },
+        {
+          "accession": "MS:1009010",
+          "name": "previous MS1 scan precursor intensity",
+          "value": 8799173.32
+        },
+        {
+          "accession": "MS:1009011",
+          "name": "precursor apex intensity",
+          "value": 25273307.5
+        },
+        {
+          "accession": "MS:1000512",
+          "name": "filter string",
+          "value": "\"FTMS + p NSI d Full ms2 855.96@hcd35.00 [140.00-1725.00]\""
+        },
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "value": 87
+        },
+        {
+          "accession": "MS:1009900",
+          "cv_param_group": "5",
+          "name": "other attribute name",
+          "value": "Se"
+        },
+        {
+          "accession": "MS:1009902",
+          "cv_param_group": "5",
+          "name": "other attribute value",
+          "value": "1(^G1:sc=8.13346e-015)"
+        },
+        {
+          "accession": "MS:1009900",
+          "cv_param_group": "6",
+          "name": "other attribute name",
+          "value": "max_unassigned_ab"
+        },
+        {
+          "accession": "MS:1009902",
+          "cv_param_group": "6",
+          "name": "other attribute value",
+          "value": 0.45
+        },
+        {
+          "accession": "MS:1009900",
+          "cv_param_group": "7",
+          "name": "other attribute name",
+          "value": "num_unassigned_peaks"
+        },
+        {
+          "accession": "MS:1009902",
+          "cv_param_group": "7",
+          "name": "other attribute value",
+          "value": "4/20"
+        },
+        {
+          "accession": "MS:1003062",
+          "name": "spectrum index",
+          "value": 0
+        }
+      ],
+      "intensities": [
+        14791.5,
+        5008.6,
+        11531.8,
+        5804.6,
+        12931.0,
+        18211.1,
+        6011.0,
+        6737.4,
+        5576.3,
+        13786.1,
+        82269.8,
+        7852.0,
+        28555.9,
+        4670.7,
+        15001.9,
+        5288.0,
+        24965.9,
+        5090.5,
+        48285.5,
+        10558.9,
+        52736.6,
+        6585.3,
+        18050.6,
+        31400.1,
+        7124.1,
+        6139.7,
+        11983.3,
+        34930.7,
+        8953.6,
+        16940.5,
+        15449.8,
+        8874.5,
+        6831.1,
+        30118.6,
+        57883.2,
+        8868.2,
+        5403.5,
+        6117.4,
+        6906.4,
+        9435.3,
+        15480.3,
+        13813.7,
+        12739.9,
+        6651.0,
+        6370.5,
+        5273.9,
+        49862.4,
+        9881.3,
+        10333.1,
+        7041.3,
+        6833.8,
+        23958.7,
+        6006.3,
+        11919.6,
+        5841.2,
+        4342.1,
+        22419.3,
+        11147.2,
+        9164.2,
+        6861.0,
+        13798.2,
+        16426.3,
+        18892.5,
+        7062.7,
+        249849.0,
+        57946.3,
+        29383.7,
+        6413.2,
+        6605.4,
+        13545.1,
+        559065.0,
+        216762.0,
+        14218.2,
+        9574.2,
+        6611.6,
+        179858.0,
+        79540.9,
+        6099.8,
+        106907.0,
+        50339.1,
+        83029.7,
+        42164.7,
+        5531.5,
+        8549.2,
+        51400.1,
+        40643.8,
+        11918.3
+      ],
+      "interpretations": {
+        "1": {
+          "analytes": {
+            "1": {
+              "attributes": [
+                {
+                  "accession": "MS:1000224",
+                  "name": "molecular mass",
+                  "value": 1710.9076
+                },
+                {
+                  "accession": "MS:1003048",
+                  "cv_param_group": "1",
+                  "name": "number of enzymatic termini",
+                  "value": 2
+                },
+                {
+                  "accession": "MS:1001045",
+                  "cv_param_group": "1",
+                  "name": "cleavage agent name",
+                  "value": "Trypsin",
+                  "value_accession": "MS:1001251"
+                },
+                {
+                  "accession": "MS:1001471",
+                  "name": "peptide modification details",
+                  "value": "1(4,C,CAM)"
+                },
+                {
+                  "accession": "MS:1000888",
+                  "name": "unmodified peptide sequence",
+                  "value": "AAAACALTPGPLADLAAR"
+                },
+                {
+                  "accession": "MS:1001112",
+                  "name": "n-terminal flanking residue",
+                  "value": "R"
+                },
+                {
+                  "accession": "MS:1001113",
+                  "name": "c-terminal flanking residue",
+                  "value": "L"
+                },
+                {
+                  "accession": "MS:1000885",
+                  "name": "protein accession",
+                  "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
+                },
+                {
+                  "accession": "MS:1003053",
+                  "name": "theoretical monoisotopic m/z",
+                  "value": 855.455
+                }
+              ],
+              "id": "1"
+            }
+          },
+          "attributes": [
+            {
+              "accession": "MS:1009900",
+              "cv_param_group": "1",
+              "name": "other attribute name",
+              "value": "Foolishness"
+            },
+            {
+              "accession": "MS:1009902",
+              "cv_param_group": "1",
+              "name": "other attribute value",
+              "value": "Great"
+            }
+          ],
+          "id": "1"
+        }
+      },
+      "mzs": [
+        143.0823,
+        153.2575,
+        159.0917,
+        162.5977,
+        169.0972,
+        175.1193,
+        194.0699,
+        199.1074,
+        201.7527,
+        212.1051,
+        214.1195,
+        229.1552,
+        232.0764,
+        249.1071,
+        257.1633,
+        276.4497,
+        283.1411,
+        283.3943,
+        285.1567,
+        302.1834,
+        303.114,
+        317.1891,
+        345.1593,
+        354.1793,
+        356.1916,
+        370.3776,
+        371.6662,
+        374.1505,
+        416.2029,
+        417.1931,
+        425.2171,
+        428.2024,
+        428.249,
+        430.278,
+        445.1886,
+        446.2049,
+        457.1753,
+        467.2682,
+        469.2735,
+        471.2018,
+        487.2299,
+        488.2367,
+        490.7795,
+        491.2839,
+        495.9153,
+        499.2364,
+        516.2236,
+        528.2323,
+        530.2752,
+        541.3164,
+        545.308,
+        558.2726,
+        570.3232,
+        601.3148,
+        617.2834,
+        617.3372,
+        629.3052,
+        641.3058,
+        659.3259,
+        685.3383,
+        712.3472,
+        730.3578,
+        826.4765,
+        855.017,
+        855.5167,
+        856.523,
+        883.4993,
+        922.4447,
+        934.4906,
+        963.5431,
+        980.556,
+        981.5587,
+        1037.5859,
+        1038.5812,
+        1067.8983,
+        1081.6041,
+        1082.6077,
+        1143.0283,
+        1194.6899,
+        1195.6869,
+        1265.7273,
+        1266.7281,
+        1390.1328,
+        1395.6904,
+        1425.7538,
+        1426.7601,
+        1496.7792
+      ]
+    }
+  ]
+}

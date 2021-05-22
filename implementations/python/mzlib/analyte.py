@@ -4,6 +4,7 @@ except ImportError:
     from collections import (MutableMapping, Mapping)
 
 import textwrap
+from typing import Iterable
 
 from mzlib.attributes import AttributedEntity, AttributeManager
 
@@ -90,14 +91,13 @@ class InterpretationCollection(MutableMapping):
         return f"{self.__class__.__name__}({d})"
 
 
-
 class Interpretation(AttributedEntity, MutableMapping):
     __slots__ = ('id', 'analytes', )
 
     id: str
     analytes: dict
 
-    def __init__(self, id, attributes=None, analytes=None):
+    def __init__(self, id, attributes: Iterable=None, analytes: dict=None):
         self.id = str(id)
         self.analytes = analytes or {}
         super(Interpretation, self).__init__(attributes)
@@ -131,7 +131,10 @@ class Interpretation(AttributedEntity, MutableMapping):
 
     def __repr__(self):
         d = dict(self)
-        return f"{self.__class__.__name__}({d})"
+        a = ''
+        if self.attributes:
+            a = f', {self.attributes}'
+        return f"{self.__class__.__name__}({d}{a})"
 
 
 class Analyte(AttributeManager):
@@ -139,7 +142,7 @@ class Analyte(AttributeManager):
 
     id: str
 
-    def __init__(self, id, attributes=None):
+    def __init__(self, id, attributes: Iterable=None):
         self.id = str(id)
         super(Analyte, self).__init__(attributes)
 

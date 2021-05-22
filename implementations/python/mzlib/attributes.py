@@ -126,7 +126,7 @@ class AttributeManager(object):
         else:
             groups = indices_and_groups['groups']
             i = groups.index(group_identifier)
-            indices = indices['indexes']
+            indices = indices_and_groups['indexes']
             idx = indices[i]
             return self.attributes[idx]
 
@@ -154,9 +154,15 @@ class AttributeManager(object):
         object:
             The attribute value if found or :const:`None`.
         '''
+        matches = []
         for attr in self:
             if attr[0].split("|")[-1] == name:
-                return attr[1]
+                matches.append(attr[1])
+        n = len(matches)
+        if n == 1:
+            return matches[0]
+        elif n > 1:
+            return matches
         return None
 
     def clear(self):
@@ -365,5 +371,21 @@ class AttributedEntity(object):
         bool
         """
         return self.attributes.has_attribute(key)
+
+    def get_by_name(self, name: str):
+        '''Search for an attribute by human-readable name.
+
+        Parameters
+        ----------
+        name: str
+            The name to search for.
+
+        Returns
+        -------
+        object:
+            The attribute value if found or :const:`None`.
+        '''
+        return self.attributes.get_by_name(name)
+
 
 Attributed = Union[AttributeManager, AttributedEntity]

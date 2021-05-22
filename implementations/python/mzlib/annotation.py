@@ -1,6 +1,6 @@
 import re
 from sys import intern
-from typing import Any, List
+from typing import Any, List, Pattern
 
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
@@ -536,7 +536,7 @@ def int_or_sign(string: str) -> int:
 
 
 class AnnotationStringParser(object):
-    pattern: re.Pattern
+    pattern: Pattern
 
     def __init__(self, pattern):
         self.pattern = pattern

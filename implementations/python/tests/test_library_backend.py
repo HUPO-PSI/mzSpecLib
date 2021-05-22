@@ -1,3 +1,4 @@
+from mzlib.spectrum import Spectrum
 import os
 import unittest
 import tempfile
@@ -9,8 +10,10 @@ from .common import datafile
 
 class LibraryBehaviorBase(object):
 
-    def _open_library(self):
-        lib = self.library_cls(self.test_file)
+    def _open_library(self, file_path=None):
+        if file_path is None:
+            file_path = self.test_file
+        lib = self.library_cls(file_path)
         return lib
 
     def test_sequence_behavior(self):
@@ -31,11 +34,25 @@ class TestMSPLibrary(unittest.TestCase, LibraryBehaviorBase):
     library_cls = MSPSpectralLibrary
 
 
-class TestTextLibrary(unittest.TestCase, LibraryBehaviorBase):
+class MzSpecLibLibraryBehaviorBase(LibraryBehaviorBase):
+
+    def test_interpretation_attribute(self):
+        lib = self._open_library(self.test_interpretation_file)
+        spec: Spectrum = lib[0]
+        interp = spec.interpretations[1]
+        assert len(interp.attributes) == 2
+        assert interp.get_attribute('MS:1009900|other attribute name') == 'Foolishness'
+        assert interp.get_attribute('MS:1009902|other attribute value') == "Great"
+
+
+
+class TestTextLibrary(unittest.TestCase, MzSpecLibLibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.txt")
     library_cls = TextSpectralLibrary
+    test_interpretation_file = datafile("test_interpretations.mzlb.txt")
 
 
-class TestJSONLibrary(unittest.TestCase, LibraryBehaviorBase):
+class TestJSONLibrary(unittest.TestCase, MzSpecLibLibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.json")
     library_cls = JSONSpectralLibrary
+    test_interpretation_file = datafile("test_interpretations.mzlb.json")

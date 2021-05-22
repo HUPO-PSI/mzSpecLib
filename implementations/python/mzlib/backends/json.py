@@ -38,8 +38,8 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         super(JSONSpectralLibrary, self).__init__(filename)
         self.buffer = {}
         self._load_buffer(self.filename)
-        self.attributes = AttributeManager(
-            self.buffer.get(LIBRARY_METADATA_KEY))
+        self.attributes = AttributeManager()
+        self._fill_attributes(self.buffer.get(LIBRARY_METADATA_KEY), self.attributes)
         self.index, was_initialized = index_type.from_filename(self.filename)
         if not was_initialized:
             self.create_index()
@@ -144,7 +144,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             for interpretation_id, interpretation in data[INTERPRETATIONS_KEY].items():
                 interpretation_d = self._new_interpretation(interpretation_id)
                 spectrum.add_interpretation(interpretation_d)
-                self._fill_attributes(interpretation[ELEMENT_ATTRIBUTES_KEY], interpretation_d)
+                self._fill_attributes(interpretation[ELEMENT_ATTRIBUTES_KEY], interpretation_d.attributes)
                 for analyte_id, analyte in interpretation[ANALYTES_KEY].items():
                     analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
                     interpretation_d.add_analyte(analyte_d)

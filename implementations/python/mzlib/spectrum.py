@@ -14,7 +14,7 @@ SPECTRUM_NAME = "MS:1003061|spectrum name"
 
 class Spectrum(AttributeManager):
     peak_list: list
-    interpretations: list
+    interpretations: InterpretationCollection
 
     #### Constructor
     def __init__(self, attributes=None, peak_list=None, interpretations=None):
@@ -30,6 +30,8 @@ class Spectrum(AttributeManager):
             peak_list = []
         if interpretations is None:
             interpretations = InterpretationCollection()
+        else:
+            interpretations = InterpretationCollection(interpretations)
         super(Spectrum, self).__init__(attributes)
         self.peak_list = peak_list
         self.interpretations = interpretations
