@@ -139,18 +139,16 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             spectrum.add_interpretation(interpretation_d)
             for analyte_id, analyte in data[ANALYTES_KEY].items():
                 analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
-                interpretation_d.add_analyte(analyte_d)
-        elif INTERPRETATIONS_KEY in data:
+                spectrum.add_analyte(analyte_d)
+
+        if INTERPRETATIONS_KEY in data:
             for interpretation_id, interpretation in data[INTERPRETATIONS_KEY].items():
                 interpretation_d = self._new_interpretation(interpretation_id)
                 spectrum.add_interpretation(interpretation_d)
-                self._fill_attributes(interpretation[ELEMENT_ATTRIBUTES_KEY], interpretation_d.attributes)
-                for analyte_id, analyte in interpretation[ANALYTES_KEY].items():
-                    analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
-                    interpretation_d.add_analyte(analyte_d)
+                self._fill_attributes(
+                    interpretation[ELEMENT_ATTRIBUTES_KEY],
+                    interpretation_d.attributes)
 
-        else:
-            raise ValueError("This spectrum is missing the interpretations section")
         peak_list = []
         n = len(data[MZ_KEY])
         mzs = data[MZ_KEY]
@@ -275,21 +273,22 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         #### Organize the attributes from the simple list into the appropriate JSON format
         attributes = self._format_attributes(spectrum)
 
+        analytes = {}
+        for analyte in spectrum.analytes.values():
+            analyte_d = {
+                ID_KEY: analyte.id,
+                ELEMENT_ATTRIBUTES_KEY: self._format_attributes(analyte)
+            }
+            analytes[analyte.id] = (analyte_d)
+
         interpretations = {}
         for interpretation in spectrum.interpretations.values():
             interpretation_d = {
                 ID_KEY: interpretation.id,
                 ELEMENT_ATTRIBUTES_KEY: self._format_attributes(interpretation),
-                ANALYTES_KEY: {}
             }
             interpretations[interpretation.id] = interpretation_d
 
-            for analyte in interpretation.values():
-                analyte_d = {
-                    ID_KEY: analyte.id,
-                    ELEMENT_ATTRIBUTES_KEY: self._format_attributes(analyte)
-                }
-                interpretation_d[ANALYTES_KEY][analyte.id] = (analyte_d)
 
         spectrum = {
             ELEMENT_ATTRIBUTES_KEY: attributes,
@@ -297,6 +296,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             INTENSITY_KEY: intensities,
             PEAK_ANNOTATIONS_KEY: annotations,
             AGGREGATIONS_KEY: aggregations,
+            ANALYTES_KEY: analytes,
             INTERPRETATIONS_KEY: interpretations
         }
         if not any(aggregations):

@@ -3,6 +3,61 @@
   "format_version": "1.0",
   "spectra": [
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 1710.9076
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": "1(4,C,CAM)"
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAACALTPGPLADLAAR"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "R"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "L"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 855.455
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "b2/5.6ppm",
         "?",
@@ -365,62 +420,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 1710.9076
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 2
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": "1(4,C,CAM)"
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAACALTPGPLADLAAR"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "R"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "L"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 855.455
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },
@@ -515,6 +521,61 @@
       ]
     },
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 1710.9076
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": "1(4,C,CAM)"
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAACALTPGPLADLAAR"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "R"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "L"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 855.4574
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "b2/-0.7ppm",
         "?",
@@ -1111,62 +1172,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 1710.9076
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 2
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": "1(4,C,CAM)"
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAACALTPGPLADLAAR"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "R"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "L"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 855.4574
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },
@@ -1378,6 +1390,61 @@
       ]
     },
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 2414.3344
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 1
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": 0
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "A"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "E"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 1207.1661
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "b2/0.7ppm",
         "y1/-0.7ppm",
@@ -1810,62 +1877,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 2414.3344
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 1
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": 0
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "A"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "E"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 1207.1661
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },
@@ -1995,6 +2013,61 @@
       ]
     },
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 1463.8086
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 1
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": 0
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAAGSTSVKPIFSR"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "Q"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "D"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 731.9023
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "?",
         "?",
@@ -2405,62 +2478,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 1463.8086
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 1
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": 0
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAAGSTSVKPIFSR"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "Q"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "D"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 731.9023
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },
@@ -2579,6 +2603,61 @@
       ]
     },
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 1464.8157
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 1
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": 0
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAAGSTSVKPIFSR"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "Q"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "D"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 488.2738
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "?",
         "?",
@@ -3089,62 +3168,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 1464.8157
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 1
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": 0
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAAGSTSVKPIFSR"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "Q"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "D"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 488.2738
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },
@@ -3313,6 +3343,61 @@
       ]
     },
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 1661.7668
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": "1(10,C,CAM)"
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAALGSHGSCSSEVEK"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "K"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "E"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 830.8868
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "?",
         "a2/-1.6ppm",
@@ -3637,62 +3722,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 1661.7668
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 2
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": "1(10,C,CAM)"
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAALGSHGSCSSEVEK"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "K"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "E"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 830.8868
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },
@@ -3768,6 +3804,61 @@
       ]
     },
     {
+      "analytes": {
+        "1": {
+          "attributes": [
+            {
+              "accession": "MS:1000224",
+              "name": "molecular mass",
+              "value": 1661.7668
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "1",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "1",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001471",
+              "name": "peptide modification details",
+              "value": "1(10,C,CAM)"
+            },
+            {
+              "accession": "MS:1000888",
+              "name": "unmodified peptide sequence",
+              "value": "AAAALGSHGSCSSEVEK"
+            },
+            {
+              "accession": "MS:1001112",
+              "name": "n-terminal flanking residue",
+              "value": "K"
+            },
+            {
+              "accession": "MS:1001113",
+              "name": "c-terminal flanking residue",
+              "value": "E"
+            },
+            {
+              "accession": "MS:1000885",
+              "name": "protein accession",
+              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
+            },
+            {
+              "accession": "MS:1003053",
+              "name": "theoretical monoisotopic m/z",
+              "value": 830.8817
+            }
+          ],
+          "id": "1"
+        }
+      },
       "annotations": [
         "?",
         "b2/0.7ppm",
@@ -4382,62 +4473,13 @@
       ],
       "interpretations": {
         "1": {
-          "analytes": {
-            "1": {
-              "attributes": [
-                {
-                  "accession": "MS:1000224",
-                  "name": "molecular mass",
-                  "value": 1661.7668
-                },
-                {
-                  "accession": "MS:1003048",
-                  "cv_param_group": "1",
-                  "name": "number of enzymatic termini",
-                  "value": 2
-                },
-                {
-                  "accession": "MS:1001045",
-                  "cv_param_group": "1",
-                  "name": "cleavage agent name",
-                  "value": "Trypsin",
-                  "value_accession": "MS:1001251"
-                },
-                {
-                  "accession": "MS:1001471",
-                  "name": "peptide modification details",
-                  "value": "1(10,C,CAM)"
-                },
-                {
-                  "accession": "MS:1000888",
-                  "name": "unmodified peptide sequence",
-                  "value": "AAAALGSHGSCSSEVEK"
-                },
-                {
-                  "accession": "MS:1001112",
-                  "name": "n-terminal flanking residue",
-                  "value": "K"
-                },
-                {
-                  "accession": "MS:1001113",
-                  "name": "c-terminal flanking residue",
-                  "value": "E"
-                },
-                {
-                  "accession": "MS:1000885",
-                  "name": "protein accession",
-                  "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
-                },
-                {
-                  "accession": "MS:1003053",
-                  "name": "theoretical monoisotopic m/z",
-                  "value": 830.8817
-                }
-              ],
-              "id": "1"
+          "attributes": [
+            {
+              "accession": "MS:XXXXXXX",
+              "name": "analyte mixture members",
+              "value": "1"
             }
-          },
-          "attributes": [],
+          ],
           "id": "1"
         }
       },

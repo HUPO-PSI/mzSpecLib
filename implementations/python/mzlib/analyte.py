@@ -1,3 +1,5 @@
+import warnings
+
 try:
     from collections.abc import (MutableMapping, Mapping)
 except ImportError:
@@ -6,11 +8,13 @@ except ImportError:
 import textwrap
 from typing import Iterable
 
-from mzlib.attributes import AttributedEntity, AttributeManager
+from mzlib.attributes import AttributedEntity, AttributeManager, IdentifiedAttributeManager
 
 
 FIRST_ANALYTE_KEY = '1'
 FIRST_INTERPRETATION_KEY = '1'
+
+ANALYTE_MIXTURE_TERM = "MS:XXXXXXX|analyte mixture members"
 
 
 class _AnalyteMappingProxy(Mapping):
@@ -92,27 +96,67 @@ class InterpretationCollection(MutableMapping):
 
 
 class Interpretation(AttributedEntity, MutableMapping):
-    __slots__ = ('id', 'analytes', )
+    __slots__ = ('id', 'analytes', 'member_interpretations')
 
     id: str
     analytes: dict
+    member_interpretations: dict
 
-    def __init__(self, id, attributes: Iterable=None, analytes: dict=None):
+    def __init__(self, id, attributes: Iterable = None, analytes: dict = None, member_interpretations: dict=None):
         self.id = str(id)
         self.analytes = analytes or {}
+        self.member_interpretations = member_interpretations or {}
         super(Interpretation, self).__init__(attributes)
+
+    def _update_mixture_members_term(self):
+        value = ','.join(map(str, sorted(self.analytes.keys())))
+        self.replace_attribute(ANALYTE_MIXTURE_TERM, value)
 
     def get_analyte(self, analyte_id) -> 'Analyte':
         return self.analytes[str(analyte_id)]
 
     def add_analyte(self, analyte: 'Analyte'):
         self.set_analyte(analyte.id, analyte)
+        self._update_mixture_members_term()
 
     def set_analyte(self, key, analyte: 'Analyte'):
         self.analytes[str(key)] = analyte
+        self._update_mixture_members_term()
 
     def remove_analyte(self, analyte_id):
         del self.analytes[str(analyte_id)]
+        self._update_mixture_members_term()
+
+    def has_analyte(self, analyte_id) -> bool:
+        return str(analyte_id) in self.analytes
+
+    def get_member_interpretation(self, member_id) -> 'InterpretationMember':
+        return self.member_interpretations[str(member_id)]
+
+    def add_member_interpretation(self, interpretation_member: 'InterpretationMember'):
+        self.set_member_interpretation(interpretation_member.id, interpretation_member)
+
+    def set_member_interpretation(self, key, interpretation_member: 'InterpretationMember'):
+        self.member_interpretations[str(key)] = interpretation_member
+
+    def remove_member_interpretation(self, member_id):
+        del self.member_interpretations[str(member_id)]
+
+    def validate(self) -> bool:
+        '''Perform validation on each component to confirm this object is well formed.
+
+        Returns
+        -------
+        bool
+        '''
+        analyte_ids = set(self.analytes)
+        member_ids = set(self.member_interpretations)
+        valid = True
+        if not (analyte_ids >= member_ids):
+            warnings.warn(
+                f"Interpretation has InterpretationMembers {member_ids - analyte_ids} lacking Analytes")
+            valid = False
+        return valid
 
     def __getitem__(self, key) -> 'Analyte':
         return self.get_analyte(key)
@@ -137,20 +181,9 @@ class Interpretation(AttributedEntity, MutableMapping):
         return f"{self.__class__.__name__}({d}{a})"
 
 
-class Analyte(AttributeManager):
-    __slots__ = ('id', )
+class InterpretationMember(IdentifiedAttributeManager):
+    __slots__ = ()
 
-    id: str
 
-    def __init__(self, id, attributes: Iterable=None):
-        self.id = str(id)
-        super(Analyte, self).__init__(attributes)
-
-    def __repr__(self):
-        template = f"{self.__class__.__name__}(id={self.id}, "
-        lines = list(map(str, self.attributes))
-        if not lines:
-            template += "[])"
-            return template
-        template += "[\n%s])" % textwrap.indent(',\n'.join(lines), ' ' * 2)
-        return template
+class Analyte(IdentifiedAttributeManager):
+    __slots__ = ()

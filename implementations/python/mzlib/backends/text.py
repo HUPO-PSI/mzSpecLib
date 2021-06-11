@@ -11,7 +11,7 @@ from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
 from mzlib.spectrum import Spectrum
 from mzlib.attributes import AttributeManager, Attributed
-from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
+from mzlib.analyte import ANALYTE_MIXTURE_TERM, Analyte, Interpretation, InterpretationMember
 
 from .base import (
     SpectralLibraryBackendBase,
@@ -37,10 +37,11 @@ float_number = re.compile(
 class SpectrumParserStateEnum(enum.Enum):
     unknown = 0
     header = 1
-    interpretation = 2
-    analyte = 3
-    peaks = 4
-    done = 5
+    analyte = 2
+    interpretation = 3
+    interpretation_member = 4
+    peaks = 5
+    done = 6
 
 
 START_OF_SPECTRUM_MARKER = re.compile(r"^<Spectrum>")
@@ -49,6 +50,7 @@ START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
 SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
+START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:=(.+))>")
 
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
@@ -251,6 +253,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spec: Spectrum = self._new_spectrum()
         interpretation: Interpretation = None
         analyte: Analyte = None
+        interpretation_member: InterpretationMember = None
 
         STATES = SpectrumParserStateEnum
         state = STATES.header
@@ -268,6 +271,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             message = f" on line {line_number + start_line_number}"
             if spectrum_index is not None:
                 message += f" in spectrum {spectrum_index}"
+            message += f" in state {state}"
             return message
 
         for line_number, line in enumerate(buffer):
@@ -277,9 +281,11 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if state == STATES.header:
                 if START_OF_SPECTRUM_MARKER.match(line):
                     continue
+
                 elif START_OF_PEAKS_MARKER.match(line):
                     state = STATES.peaks
                     continue
+
                 elif START_OF_INTERPRETATION_MARKER.match(line):
                     state = STATES.interpretation
                     match = START_OF_INTERPRETATION_MARKER.match(line)
@@ -293,38 +299,84 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 elif START_OF_ANALYTE_MARKER.match(line):
                     state = STATES.analyte
                     match = START_OF_ANALYTE_MARKER.match(line)
-                    if interpretation is None:
-                        warnings.warn(
-                            f"An analyte without an interpretation was encountered, placing in default interpretation "
-                            f"{FIRST_INTERPRETATION_KEY}{real_line_number_or_nothing()}")
-                        interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
-                        spec.add_interpretation(interpretation)
-
                     analyte = self._new_analyte(match.group(1))
-                    interpretation.add_analyte(analyte)
+                    spec.add_analyte(analyte)
                     continue
 
                 self._parse_attribute_into(line, spec, real_line_number_or_nothing)
 
             elif state == STATES.interpretation:
                 if START_OF_ANALYTE_MARKER.match(line):
+                    warnings.warn(
+                        f"An analyte found after an interpretation was encountered, {real_line_number_or_nothing()}")
                     state = STATES.analyte
                     match = START_OF_ANALYTE_MARKER.match(line)
                     if analyte is not None:
-                        interpretation.add_analyte(analyte)
+                        spec.add_analyte(analyte)
                     analyte = self._new_analyte(match.group(1))
-                    interpretation.add_analyte(analyte)
+                    spec.add_analyte(analyte)
+                    continue
+                elif START_OF_INTERPRETATION_MARKER.match(line):
+                    state = STATES.interpretation
+                    match = START_OF_INTERPRETATION_MARKER.match(line)
+                    if interpretation is not None:
+                        spec.add_interpretation(interpretation)
+                    interpretation = self._new_interpretation(match.group(1))
+                    spec.add_interpretation(interpretation)
+                    analyte = None
                     continue
                 elif START_OF_PEAKS_MARKER.match(line):
                     state = STATES.peaks
+                    continue
+                elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
+                    state = STATES.interpretation_member
+                    match = START_OF_INTERPRETATION_MEMBER_MARKER.match(line)
+
+                    if interpretation_member is not None:
+                        interpretation.add_member_interpretation(interpretation_member)
+
+                    interpretation_member = InterpretationMember(match.group(1))
+                    interpretation.add_member_interpretation(interpretation_member)
+                    continue
 
                 self._parse_attribute_into(line, interpretation.attributes, real_line_number_or_nothing)
+                if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
+                    analyte_ids = interpretation.get_attribute(ANALYTE_MIXTURE_TERM).split(",")
+                    for analyte_id in analyte_ids:
+                        interpretation.add_analyte(spec.analytes[analyte_id])
+
+            elif state == STATES.interpretation_member:
+                if START_OF_PEAKS_MARKER.match(line):
+                    state = STATES.peaks
+                    interpretation_member = None
+                    interpretation = None
+                    continue
+                elif START_OF_INTERPRETATION_MARKER.match(line):
+                    state = STATES.interpretation
+                    match = START_OF_INTERPRETATION_MARKER.match(line)
+                    if interpretation is not None:
+                        spec.add_interpretation(interpretation)
+                    interpretation = self._new_interpretation(match.group(1))
+                    spec.add_interpretation(interpretation)
+                    interpretation_member = None
+                    continue
+                elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
+                    state = STATES.interpretation_member
+                    match = START_OF_INTERPRETATION_MEMBER_MARKER.match(line)
+                    if interpretation_member is not None:
+                        interpretation.add_member_interpretation(interpretation_member)
+                    interpretation_member = InterpretationMember(match.group(1))
+                    interpretation.add_member_interpretation(interpretation_member)
+                    continue
+
+                self._parse_attribute_into(
+                    line, interpretation_member, real_line_number_or_nothing)
 
             elif state == STATES.analyte:
                 if START_OF_PEAKS_MARKER.match(line):
                     state = STATES.peaks
                     if analyte is not None:
-                        interpretation.add_analyte(analyte)
+                        spec.add_analyte(analyte)
                         analyte = None
                     continue
 
@@ -332,18 +384,22 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     state = STATES.analyte
                     match = START_OF_ANALYTE_MARKER.match(line)
                     if analyte is not None:
-                        interpretation.add_analyte(analyte)
+                        spec.add_analyte(analyte)
                     analyte = self._new_analyte(match.group(1))
-                    interpretation.add_analyte(analyte)
                     continue
 
                 elif START_OF_INTERPRETATION_MARKER.match(line):
                     state = STATES.interpretation
                     match = START_OF_INTERPRETATION_MARKER.match(line)
                     if analyte is not None:
-                        interpretation.add_analyte(analyte)
+                        spec.add_analyte(analyte)
                         analyte = None
+
+                    # Somehow we have an in-progress Interpretation that hasn't been cleared yet.
+                    # This should probably be an error strictly speaking.
                     if interpretation is not None:
+                        warnings.warn(
+                            f"Interleaved analytes and interpretations detected at {real_line_number_or_nothing()}")
                         spec.add_interpretation(interpretation)
                     interpretation = self._new_interpretation(match.group(1))
                     spec.add_interpretation(interpretation)
@@ -357,14 +413,14 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     tokens = line.split("\t")
                     n_tokens = len(tokens)
                     if n_tokens == 3:
-                        mz, intensity, interpretation = tokens
-                        interpretation = parse_annotation(interpretation)
-                        peak_list.append([float(mz), float(intensity), interpretation, ""])
+                        mz, intensity, annotation = tokens
+                        annotation = parse_annotation(annotation)
+                        peak_list.append([float(mz), float(intensity), annotation, ""])
                     elif n_tokens == 4:
-                        mz, intensity, interpretation, aggregation = tokens
-                        interpretation = parse_annotation(interpretation)
+                        mz, intensity, annotation, aggregation = tokens
+                        annotation = parse_annotation(annotation)
                         peak_list.append(
-                            [float(mz), float(intensity), interpretation, aggregation])
+                            [float(mz), float(intensity), annotation, aggregation])
                     else:
                         raise ValueError(
                             f"Malformed peak line {line} with {n_tokens} entries{real_line_number_or_nothing()}")
@@ -373,6 +429,11 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 raise ValueError(f"Unknown state {state}{real_line_number_or_nothing()}")
         spec.peak_list = peak_list
+        # Backfill analytes into interpretations that never explicitly listed them.
+        for interpretation in spec.interpretations.values():
+            if not interpretation.analytes:
+                for analyte in spec.analytes.values():
+                    interpretation.add_analyte(analyte)
         return spec
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
@@ -424,13 +485,13 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     def write_spectrum(self, spectrum: Spectrum):
         self.handle.write("<Spectrum>\n")
         self._write_attributes(spectrum.attributes)
+        for analyte in spectrum.analytes.values():
+            self.handle.write(f"<Analyte={analyte.id}>\n")
+            self._write_attributes(analyte.attributes)
         for interpretation in spectrum.interpretations.values():
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
             self._write_attributes(interpretation.attributes)
-
-            for analyte in interpretation.values():
-                self.handle.write(f"<Analyte={analyte.id}>\n")
-                self._write_attributes(analyte.attributes)
+            # TODO: InterpretationMember sections
         self.handle.write("<Peaks>\n")
         for peak in spectrum.peak_list:
             peak_parts = [

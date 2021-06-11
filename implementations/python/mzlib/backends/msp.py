@@ -11,7 +11,7 @@ from typing import Tuple, Union, Iterable
 from pathlib import Path
 
 from mzlib.index import MemoryIndex
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, ANALYTE_MIXTURE_TERM
 from mzlib import annotation
 
 from .base import _PlainTextSpectralLibraryBackendBase
@@ -416,9 +416,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum = self._new_spectrum()
         interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
         analyte = self._new_analyte(FIRST_ANALYTE_KEY)
-        interpretation.add_analyte(analyte)
+        spectrum.add_analyte(analyte)
+        # interpretation.add_analyte(analyte)
         spectrum.peak_list = peak_list
-        spectrum.interpretations.add_interpretation(interpretation)
+        # spectrum.interpretations.add_interpretation(interpretation)
 
         #### Add special terms that we want to start off with
         for term in leader_terms:
@@ -735,6 +736,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     "MS:1009900|other attribute name", try_cast(attribute), group_identifier)
                 spectrum.add_attribute("MS:1009902|other attribute value",
                                    try_cast(attributes[attribute]), group_identifier)
+        if analyte:
+            spectrum.add_analyte(analyte)
+            interpretation.add_analyte(analyte)
+            spectrum.add_interpretation(interpretation)
         return spectrum
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:

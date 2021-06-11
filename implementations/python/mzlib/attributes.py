@@ -131,7 +131,10 @@ class AttributeManager(object):
             return self.attributes[idx]
 
     def replace_attribute(self, key, value, group_identifier=None):
-        indices_and_groups = self.attribute_dict[key]
+        try:
+            indices_and_groups = self.attribute_dict[key]
+        except KeyError:
+            return self.add_attribute(key, value, group_identifier=group_identifier)
         if group_identifier is None:
             indices = indices_and_groups['indexes']
             if len(indices) > 1:
@@ -261,6 +264,9 @@ class AttributeManager(object):
     def __len__(self):
         return len(self.attributes)
 
+    def __bool__(self):
+        return len(self) > 0
+
     def __iter__(self):
         return iter(self.attributes)
 
@@ -291,6 +297,25 @@ class AttributeManager(object):
         return template.format(
             self.__class__.__name__,
             textwrap.indent(',\n'.join(lines), ' ' * 2))
+
+
+class IdentifiedAttributeManager(AttributeManager):
+    __slots__ = ('id', )
+
+    id: str
+
+    def __init__(self, id, attributes: Iterable = None):
+        self.id = str(id)
+        super(IdentifiedAttributeManager, self).__init__(attributes)
+
+    def __repr__(self):
+        template = f"{self.__class__.__name__}(id={self.id}, "
+        lines = list(map(str, self.attributes))
+        if not lines:
+            template += "[])"
+            return template
+        template += "[\n%s])" % textwrap.indent(',\n'.join(lines), ' ' * 2)
+        return template
 
 
 class AttributedEntity(object):
@@ -340,6 +365,9 @@ class AttributedEntity(object):
             Returns single or multiple values for the requested attribute.
         """
         return self.attributes.get_attribute(key, group_identifier=group_identifier)
+
+    def replace_attribute(self, key, value, group_identifier=None):
+        return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
 
     def remove_attribute(self, key, group_identifier=None):
         """Remove the value or values associated with a given

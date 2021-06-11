@@ -35,14 +35,14 @@ class TestMSPLibrary(unittest.TestCase, LibraryBehaviorBase):
 
 
 class MzSpecLibLibraryBehaviorBase(LibraryBehaviorBase):
-
-    def test_interpretation_attribute(self):
-        lib = self._open_library(self.test_interpretation_file)
-        spec: Spectrum = lib[0]
-        interp = spec.interpretations[1]
-        assert len(interp.attributes) == 2
-        assert interp.get_attribute('MS:1009900|other attribute name') == 'Foolishness'
-        assert interp.get_attribute('MS:1009902|other attribute value') == "Great"
+    pass
+    # def test_interpretation_attribute(self):
+    #     lib = self._open_library(self.test_interpretation_file)
+    #     spec: Spectrum = lib[0]
+    #     interp = spec.interpretations[1]
+    #     assert len(interp.attributes) == 2
+    #     assert interp.get_attribute('MS:1009900|other attribute name') == 'Foolishness'
+    #     assert interp.get_attribute('MS:1009902|other attribute value') == "Great"
 
 
 
