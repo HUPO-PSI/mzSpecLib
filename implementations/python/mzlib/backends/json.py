@@ -19,6 +19,7 @@ LIBRARY_SPECTRA_KEY = "spectra"
 FORMAT_VERSION_KEY = "format_version"
 ANALYTES_KEY = 'analytes'
 INTERPRETATIONS_KEY = 'interpretations'
+INTERPRETATION_MEMBERS_KEY = 'members'
 PEAK_ANNOTATIONS_KEY = 'annotations'
 ID_KEY = 'id'
 MZ_KEY = "mzs"
@@ -148,6 +149,15 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 self._fill_attributes(
                     interpretation[ELEMENT_ATTRIBUTES_KEY],
                     interpretation_d.attributes)
+                if INTERPRETATION_MEMBERS_KEY in interpretation:
+                    for member_id, member in interpretation[INTERPRETATION_MEMBERS_KEY].items():
+                        member_d = self._new_interpretation_member(member_id)
+                        self._fill_attributes(
+                            member[ELEMENT_ATTRIBUTES_KEY],
+                            member_d)
+                        interpretation_d.add_member_interpretation(member_d)
+                self._analyte_interpretation_link(spectrum, interpretation_d)
+            self._default_interpretation_to_analytes(spectrum)
 
         peak_list = []
         n = len(data[MZ_KEY])
@@ -288,7 +298,13 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
                 ELEMENT_ATTRIBUTES_KEY: self._format_attributes(interpretation),
             }
             interpretations[interpretation.id] = interpretation_d
-
+            if interpretation.member_interpretations:
+                members_d = interpretation_d[INTERPRETATION_MEMBERS_KEY] = {}
+                for member in interpretation.member_interpretations.values():
+                    members_d[member.id] = {
+                        ID_KEY: member.id,
+                        ELEMENT_ATTRIBUTES_KEY: self._format_attributes(member)
+                    }
 
         spectrum = {
             ELEMENT_ATTRIBUTES_KEY: attributes,

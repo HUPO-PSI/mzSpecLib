@@ -25,11 +25,11 @@ logger.addHandler(logging.NullHandler())
 
 
 term_pattern = re.compile(
-    r"^(?P<term>(?P<term_accession>\S+:\d+)\|(?P<term_name>[^=]+))")
+    r"^(?P<term>(?P<term_accession>\S+:(?:\d|X)+)\|(?P<term_name>[^=]+))")
 key_value_term_pattern = re.compile(
-    r"^(?P<term>(?P<term_accession>[A-Za-z0-9:.]+:\d+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
+    r"^(?P<term>(?P<term_accession>[A-Za-z0-9:.]+:(?:\d|X)+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
 grouped_key_value_term_pattern = re.compile(
-    r"^\[(?P<group_id>\d+)\](?P<term>(?P<term_accession>\S+:\d+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
+    r"^\[(?P<group_id>\d+)\](?P<term>(?P<term_accession>\S+:(?:\d|X)+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
 float_number = re.compile(
     r"^\d+(.\d+)?")
 
@@ -243,7 +243,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 raise ValueError(f"Malformed grouped attribute {line}{line_number_message()}")
         elif "=" in line:
             name, value = line.split("=")
-            store.add_attribute(name, value)
+            store.add_attribute(name, try_cast(value))
             return True
         else:
             raise ValueError(f"Malformed attribute line {line}{line_number_message()}")
@@ -302,7 +302,6 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     analyte = self._new_analyte(match.group(1))
                     spec.add_analyte(analyte)
                     continue
-
                 self._parse_attribute_into(line, spec, real_line_number_or_nothing)
 
             elif state == STATES.interpretation:
@@ -340,10 +339,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     continue
 
                 self._parse_attribute_into(line, interpretation.attributes, real_line_number_or_nothing)
-                if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
-                    analyte_ids = interpretation.get_attribute(ANALYTE_MIXTURE_TERM).split(",")
-                    for analyte_id in analyte_ids:
-                        interpretation.add_analyte(spec.analytes[analyte_id])
+                self._analyte_interpretation_link(spec, interpretation)
 
             elif state == STATES.interpretation_member:
                 if START_OF_PEAKS_MARKER.match(line):
@@ -430,10 +426,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 raise ValueError(f"Unknown state {state}{real_line_number_or_nothing()}")
         spec.peak_list = peak_list
         # Backfill analytes into interpretations that never explicitly listed them.
-        for interpretation in spec.interpretations.values():
-            if not interpretation.analytes:
-                for analyte in spec.analytes.values():
-                    interpretation.add_analyte(analyte)
+        self._default_interpretation_to_analytes(spec)
         return spec
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
@@ -489,9 +482,13 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
             self.handle.write(f"<Analyte={analyte.id}>\n")
             self._write_attributes(analyte.attributes)
         for interpretation in spectrum.interpretations.values():
+            interpretation: Interpretation
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
             self._write_attributes(interpretation.attributes)
-            # TODO: InterpretationMember sections
+            for member in interpretation.member_interpretations.values():
+                member: InterpretationMember
+                self.handle.write(f"<InterpretationMember={member.id}>\n")
+                self._write_attributes(member.attributes)
         self.handle.write("<Peaks>\n")
         for peak in spectrum.peak_list:
             peak_parts = [

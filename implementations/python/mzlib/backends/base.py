@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import Spectrum
-from mzlib.analyte import Analyte, Interpretation
+from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
 from mzlib.attributes import AttributedEntity
 
 
@@ -137,8 +137,30 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
     def _new_interpretation(self, id=None) -> Interpretation:
         return Interpretation(id)
 
+    def _new_interpretation_member(self, id=None) -> InterpretationMember:
+        return InterpretationMember(id)
+
     def _new_analyte(self, id=None) -> Analyte:
         return Analyte(id)
+
+    def _analyte_interpretation_link(self, spectrum: Spectrum, interpretation: Interpretation):
+        if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
+            analyte_ids_term = interpretation.get_attribute(ANALYTE_MIXTURE_TERM)
+            # TODO: Enforce this attribute is a string at the CV level
+            if isinstance(analyte_ids_term, int):
+                analyte_ids = [analyte_ids_term]
+                interpretation.replace_attribute(ANALYTE_MIXTURE_TERM, str(analyte_ids_term))
+            else:
+                analyte_ids = analyte_ids_term.split(',')
+            for analyte_id in analyte_ids:
+                interpretation.add_analyte(spectrum.get_analyte(analyte_id))
+        return interpretation
+
+    def _default_interpretation_to_analytes(self, spectrum: Spectrum):
+        for interpretation in spectrum.interpretations.values():
+            if not interpretation.analytes:
+                for analyte in spectrum.analytes.values():
+                    interpretation.add_analyte(analyte)
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None):
         """Retrieve a single spectrum from the library.

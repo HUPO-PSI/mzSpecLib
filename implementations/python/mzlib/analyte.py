@@ -6,7 +6,7 @@ except ImportError:
     from collections import (MutableMapping, Mapping)
 
 import textwrap
-from typing import Iterable
+from typing import Iterable, KeysView, ItemsView, ValuesView, Dict
 
 from mzlib.attributes import AttributedEntity, AttributeManager, IdentifiedAttributeManager
 
@@ -51,6 +51,8 @@ class _AnalyteMappingProxy(Mapping):
 class InterpretationCollection(MutableMapping):
     __slots__ = ('interpretations', )
 
+    interpretations: Dict[str, 'Interpretation']
+
     def __init__(self, interpretations=None):
         if interpretations is None:
             interpretations = {}
@@ -83,8 +85,11 @@ class InterpretationCollection(MutableMapping):
     def __iter__(self):
         return iter(self.interpretations)
 
-    def keys(self):
+    def keys(self) -> KeysView[str]:
         return self.interpretations.keys()
+
+    def values(self) -> ValuesView['Interpretation']:
+        return self.interpretations.values()
 
     @property
     def analytes(self) -> '_AnalyteMappingProxy':
@@ -99,8 +104,8 @@ class Interpretation(AttributedEntity, MutableMapping):
     __slots__ = ('id', 'analytes', 'member_interpretations')
 
     id: str
-    analytes: dict
-    member_interpretations: dict
+    analytes: Dict[str, 'Analyte']
+    member_interpretations: Dict[str, 'InterpretationMember']
 
     def __init__(self, id, attributes: Iterable = None, analytes: dict = None, member_interpretations: dict=None):
         self.id = str(id)

@@ -2,10 +2,11 @@ from __future__ import print_function
 
 import re
 import textwrap
-import json
+
+from typing import Dict
 
 from mzlib.attributes import AttributeManager
-from mzlib.analyte import Analyte, InterpretationCollection, Interpretation, _AnalyteMappingProxy
+from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
 
@@ -14,7 +15,7 @@ SPECTRUM_NAME = "MS:1003061|spectrum name"
 
 class Spectrum(AttributeManager):
     peak_list: list
-    analytes: dict
+    analytes: Dict[str, Analyte]
     interpretations: InterpretationCollection
 
     #### Constructor
@@ -57,12 +58,13 @@ class Spectrum(AttributeManager):
             self.add_attribute(SPECTRUM_NAME, value)
 
     def add_analyte(self, analyte: Analyte):
-        self.analytes[analyte.id] = analyte
+        self.analytes[str(analyte.id)] = analyte
 
     def get_analyte(self, analyte_id: str) -> Analyte:
-        return self.analytes[analyte_id]
+        return self.analytes[str(analyte_id)]
 
     def remove_analyte(self, analyte_id: str):
+        analyte_id = str(analyte_id)
         del self.analytes[analyte_id]
         interpretation: Interpretation
         for interpretation in self.interpretations.values():

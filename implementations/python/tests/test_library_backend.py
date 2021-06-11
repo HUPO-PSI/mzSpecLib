@@ -35,24 +35,29 @@ class TestMSPLibrary(unittest.TestCase, LibraryBehaviorBase):
 
 
 class MzSpecLibLibraryBehaviorBase(LibraryBehaviorBase):
-    pass
-    # def test_interpretation_attribute(self):
-    #     lib = self._open_library(self.test_interpretation_file)
-    #     spec: Spectrum = lib[0]
-    #     interp = spec.interpretations[1]
-    #     assert len(interp.attributes) == 2
-    #     assert interp.get_attribute('MS:1009900|other attribute name') == 'Foolishness'
-    #     assert interp.get_attribute('MS:1009902|other attribute value') == "Great"
+    def test_interpretation_attribute(self):
+        try:
+            path = self.test_interpretation_file
+        except AttributeError:
+            return
+        lib = self._open_library(path)
+        spec: Spectrum = lib[0]
+        interp = spec.interpretations[1]
+        assert len(interp.attributes) == 2
+        assert interp.get_attribute('MS:1002357|PSM-level probability') == 0.974
+        mem = interp.get_member_interpretation(1)
+        assert len(mem) == 1
+        assert mem.get_attribute('MS:XXXXXXX|explained intensity fraction') == 0.287
 
 
 
 class TestTextLibrary(unittest.TestCase, MzSpecLibLibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.txt")
     library_cls = TextSpectralLibrary
-    test_interpretation_file = datafile("test_interpretations.mzlb.txt")
+    test_interpretation_file = datafile("complex_interpretations_with_members.mzlb.txt")
 
 
 class TestJSONLibrary(unittest.TestCase, MzSpecLibLibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.json")
     library_cls = JSONSpectralLibrary
-    test_interpretation_file = datafile("test_interpretations.mzlb.json")
+    test_interpretation_file = datafile("complex_interpretations_with_members.mzlb.json")
