@@ -35,7 +35,6 @@
           "id": "3"
         }
       },
-      "annotations": [],
       "attributes": [
         {
           "accession": "MS:1003061",
@@ -115,7 +114,8 @@
           }
         }
       },
-      "mzs": []
+      "mzs": [],
+      "peak_annotations": []
     }
   ]
 }

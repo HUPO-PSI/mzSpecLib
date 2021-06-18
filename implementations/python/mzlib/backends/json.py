@@ -1,6 +1,6 @@
 import io
 import json
-import re
+import warnings
 
 from pathlib import Path
 
@@ -20,7 +20,7 @@ FORMAT_VERSION_KEY = "format_version"
 ANALYTES_KEY = 'analytes'
 INTERPRETATIONS_KEY = 'interpretations'
 INTERPRETATION_MEMBERS_KEY = 'members'
-PEAK_ANNOTATIONS_KEY = 'annotations'
+PEAK_ANNOTATIONS_KEY = 'peak_annotations'
 ID_KEY = 'id'
 MZ_KEY = "mzs"
 INTENSITY_KEY = "intensities"
@@ -117,10 +117,31 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 store.group_counter = int(group)
         return store
 
-    def make_analyte_from_payload(self, analyte_id, analyte: Analyte) -> Analyte:
-        analyte_d = self._new_analyte(analyte_id)
-        self._fill_attributes(analyte[ELEMENT_ATTRIBUTES_KEY], analyte_d)
-        return analyte_d
+    def make_analyte_from_payload(self, analyte_id, analyte_d: dict) -> Analyte:
+        if analyte_id != analyte_d.get('id'):
+            warnings.warn(
+                f"An analyte with explicit id {analyte_d['id']!r} does not match its key {analyte_id!r}")
+        analyte = self._new_analyte(analyte_id)
+        self._fill_attributes(analyte_d[ELEMENT_ATTRIBUTES_KEY], analyte)
+        return analyte
+
+    def make_interpretation_from_payload(self, interpretation_id, interpretation_d: dict) -> Interpretation:
+        if interpretation_id != interpretation_d.get('id'):
+            warnings.warn(
+                f"An analyte with explicit id {interpretation_d['id']!r} does not match its key {interpretation_id!r}")
+
+        interpretation = self._new_interpretation(interpretation_id)
+        self._fill_attributes(
+            interpretation_d[ELEMENT_ATTRIBUTES_KEY],
+            interpretation.attributes)
+        if INTERPRETATION_MEMBERS_KEY in interpretation_d:
+            for member_id, member in interpretation_d[INTERPRETATION_MEMBERS_KEY].items():
+                member_d = self._new_interpretation_member(member_id)
+                self._fill_attributes(
+                    member[ELEMENT_ATTRIBUTES_KEY],
+                    member_d)
+                interpretation.add_member_interpretation(member_d)
+        return interpretation
 
     def make_spectrum_from_payload(self, data: dict) -> Spectrum:
         spectrum = self._new_spectrum()
@@ -136,27 +157,15 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 spectrum.group_counter = int(group)
 
         if ANALYTES_KEY in data:
-            interpretation_d = self._new_interpretation(FIRST_INTERPRETATION_KEY)
-            spectrum.add_interpretation(interpretation_d)
             for analyte_id, analyte in data[ANALYTES_KEY].items():
                 analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
                 spectrum.add_analyte(analyte_d)
 
         if INTERPRETATIONS_KEY in data:
-            for interpretation_id, interpretation in data[INTERPRETATIONS_KEY].items():
-                interpretation_d = self._new_interpretation(interpretation_id)
-                spectrum.add_interpretation(interpretation_d)
-                self._fill_attributes(
-                    interpretation[ELEMENT_ATTRIBUTES_KEY],
-                    interpretation_d.attributes)
-                if INTERPRETATION_MEMBERS_KEY in interpretation:
-                    for member_id, member in interpretation[INTERPRETATION_MEMBERS_KEY].items():
-                        member_d = self._new_interpretation_member(member_id)
-                        self._fill_attributes(
-                            member[ELEMENT_ATTRIBUTES_KEY],
-                            member_d)
-                        interpretation_d.add_member_interpretation(member_d)
-                self._analyte_interpretation_link(spectrum, interpretation_d)
+            for interpretation_id, interpretation_d in data[INTERPRETATIONS_KEY].items():
+                interpretation = self.make_interpretation_from_payload(interpretation_id, interpretation_d)
+                spectrum.add_interpretation(interpretation)
+                self._analyte_interpretation_link(spectrum, interpretation)
             self._default_interpretation_to_analytes(spectrum)
 
         peak_list = []
