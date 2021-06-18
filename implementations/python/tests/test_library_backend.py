@@ -4,6 +4,7 @@ import unittest
 import tempfile
 
 from mzlib.backends import MSPSpectralLibrary, TextSpectralLibrary, JSONSpectralLibrary
+from mzlib.analyte import ANALYTE_MIXTURE_TERM
 
 from .common import datafile
 
@@ -45,10 +46,10 @@ class MzSpecLibLibraryBehaviorBase(LibraryBehaviorBase):
         interp = spec.interpretations[1]
         assert len(interp.attributes) == 2
         assert interp.get_attribute('MS:1002357|PSM-level probability') == 0.974
+        assert interp.get_attribute(ANALYTE_MIXTURE_TERM) == '1,2'
         mem = interp.get_member_interpretation(1)
         assert len(mem) == 1
         assert mem.get_attribute('MS:XXXXXXX|explained intensity fraction') == 0.287
-
 
 
 class TestTextLibrary(unittest.TestCase, MzSpecLibLibraryBehaviorBase):

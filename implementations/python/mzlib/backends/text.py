@@ -483,8 +483,14 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
             self._write_attributes(analyte.attributes)
         for interpretation in spectrum.interpretations.values():
             interpretation: Interpretation
+
+            if len(spectrum.analytes) == 1:
+                attribs_of = self._filter_attributes(interpretation, self._not_analyte_mixture_term)
+            else:
+                attribs_of = interpretation.attributes
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
-            self._write_attributes(interpretation.attributes)
+            self._write_attributes(attribs_of)
+
             for member in interpretation.member_interpretations.values():
                 member: InterpretationMember
                 self.handle.write(f"<InterpretationMember={member.id}>\n")

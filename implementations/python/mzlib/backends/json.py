@@ -1,5 +1,6 @@
 import io
 import json
+from typing import Iterable
 import warnings
 
 from pathlib import Path
@@ -239,9 +240,9 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
 
-    def _format_attributes(self, attributes_manager: Attributed) -> list:
+    def _format_attributes(self, attributes_manager: Iterable) -> list:
         attributes = []
-        for attribute in attributes_manager.attributes:
+        for attribute in attributes_manager:
             reformed_attribute = {}
             if len(attribute) == 2:
                 key, value = attribute
@@ -290,7 +291,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             aggregations.append(peak[3])
 
         #### Organize the attributes from the simple list into the appropriate JSON format
-        attributes = self._format_attributes(spectrum)
+        attributes = self._format_attributes(spectrum.attributes)
 
         analytes = {}
         for analyte in spectrum.analytes.values():
@@ -302,9 +303,13 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
 
         interpretations = {}
         for interpretation in spectrum.interpretations.values():
+            if len(analytes) == 1:
+                attribs_of = self._filter_attributes(interpretation, self._not_analyte_mixture_term)
+            else:
+                attribs_of = interpretation.attributes
             interpretation_d = {
                 ID_KEY: interpretation.id,
-                ELEMENT_ATTRIBUTES_KEY: self._format_attributes(interpretation),
+                ELEMENT_ATTRIBUTES_KEY: self._format_attributes(attribs_of),
             }
             interpretations[interpretation.id] = interpretation_d
             if interpretation.member_interpretations:

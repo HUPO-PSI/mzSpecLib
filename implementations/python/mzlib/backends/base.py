@@ -1,13 +1,13 @@
 import os
 import io
 
-from typing import Iterable, Union, List, Type
+from typing import Callable, Iterable, Union, List, Type
 from pathlib import Path
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
-from mzlib.attributes import AttributedEntity
+from mzlib.attributes import Attributed, AttributedEntity
 
 
 FORMAT_VERSION_TERM = 'MS:1009002|format version'
@@ -318,6 +318,20 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 class SpectralLibraryWriterBase(object, metaclass=SubclassRegisteringMetaclass):
     def __init__(self, filename, **kwargs):
         self.filename = filename
+
+    def _filter_attributes(self, attributes: Attributed, filter_fn: Callable) -> Iterable:
+        if isinstance(attributes, AttributedEntity):
+            attributes = attributes.attributes
+        for attrib in attributes:
+            if filter_fn(attrib):
+                yield attrib
+
+    def _not_analyte_mixture_term(self, attrib):
+        if attrib:
+            key = attrib[0]
+            if key == ANALYTE_MIXTURE_TERM:
+                return False
+        return True
 
     def _coerce_handle(self, filename_or_stream):
         if hasattr(filename_or_stream, 'write'):

@@ -331,13 +331,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
@@ -966,13 +960,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
@@ -1753,13 +1741,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
@@ -2365,13 +2347,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
@@ -3005,13 +2981,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
@@ -3652,13 +3622,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
@@ -4258,13 +4222,7 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [
-            {
-              "accession": "MS:XXXXXXX",
-              "name": "analyte mixture members",
-              "value": "1"
-            }
-          ],
+          "attributes": [],
           "id": "1"
         }
       },
