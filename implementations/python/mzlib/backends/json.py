@@ -1,6 +1,6 @@
 import io
 import json
-from typing import Iterable
+from typing import Iterable, List, Dict
 import warnings
 
 from pathlib import Path
@@ -105,7 +105,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         spectrum = self.make_spectrum_from_payload(data)
         return spectrum
 
-    def _fill_attributes(self, attributes: list, store: Attributed) -> Attributed:
+    def _fill_attributes(self, attributes: List, store: Attributed) -> Attributed:
         for attrib in attributes:
             key = f'{attrib["accession"]}|{attrib["name"]}'
             if "value_accession" in attrib:
@@ -118,7 +118,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 store.group_counter = int(group)
         return store
 
-    def make_analyte_from_payload(self, analyte_id, analyte_d: dict) -> Analyte:
+    def make_analyte_from_payload(self, analyte_id, analyte_d: Dict) -> Analyte:
         if analyte_id != analyte_d.get('id'):
             warnings.warn(
                 f"An analyte with explicit id {analyte_d['id']!r} does not match its key {analyte_id!r}")
@@ -126,7 +126,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         self._fill_attributes(analyte_d[ELEMENT_ATTRIBUTES_KEY], analyte)
         return analyte
 
-    def make_interpretation_from_payload(self, interpretation_id, interpretation_d: dict) -> Interpretation:
+    def make_interpretation_from_payload(self, interpretation_id, interpretation_d: Dict) -> Interpretation:
         if interpretation_id != interpretation_d.get('id'):
             warnings.warn(
                 f"An analyte with explicit id {interpretation_d['id']!r} does not match its key {interpretation_id!r}")
@@ -144,7 +144,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 interpretation.add_member_interpretation(member_d)
         return interpretation
 
-    def make_spectrum_from_payload(self, data: dict) -> Spectrum:
+    def make_spectrum_from_payload(self, data: Dict) -> Spectrum:
         spectrum = self._new_spectrum()
         for attrib in data[ELEMENT_ATTRIBUTES_KEY]:
             key = f'{attrib["accession"]}|{attrib["name"]}'
@@ -240,7 +240,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
 
-    def _format_attributes(self, attributes_manager: Iterable) -> list:
+    def _format_attributes(self, attributes_manager: Iterable) -> List:
         attributes = []
         for attribute in attributes_manager:
             reformed_attribute = {}

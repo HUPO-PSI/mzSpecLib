@@ -5,7 +5,7 @@ import logging
 import warnings
 import enum
 
-from typing import Tuple, Union, Iterable
+from typing import List, Tuple, Union, Iterable
 
 from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
@@ -210,7 +210,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _buffer_from_stream(self, infile: io.IOBase) -> list:
+    def _buffer_from_stream(self, infile: io.IOBase) -> List:
         state = 'body'
         spectrum_buffer = []
 

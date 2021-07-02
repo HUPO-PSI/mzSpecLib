@@ -18,30 +18,26 @@ ANALYTE_MIXTURE_TERM = "MS:XXXXXXX|analyte mixture members"
 
 
 class _AnalyteMappingProxy(Mapping):
+    parent: Mapping
+
     def __init__(self, parent):
         self.parent = parent
 
     def __getitem__(self, key):
         for group_id, group in self.parent.items():
-            try:
+            if key in group:
                 return group[key]
-            except KeyError:
-                pass
         raise KeyError(key)
 
     def __iter__(self):
         keys = set()
         for group_id, group in self.parent.items():
             k_ = set(group.keys())
-            assert not (keys & k_)
             keys.update(k_)
         return iter(keys)
 
     def __len__(self):
-        n = 0
-        for group_id, group in self.parent.items():
-            n += len(group)
-        return n
+        return sum([len(v) for v in self.parent.values()])
 
     def __repr__(self):
         d = dict(self)
@@ -107,7 +103,7 @@ class Interpretation(AttributedEntity, MutableMapping):
     analytes: Dict[str, 'Analyte']
     member_interpretations: Dict[str, 'InterpretationMember']
 
-    def __init__(self, id, attributes: Iterable = None, analytes: dict = None, member_interpretations: dict=None):
+    def __init__(self, id, attributes: Iterable = None, analytes: Dict = None, member_interpretations: Dict = None):
         self.id = str(id)
         self.analytes = analytes or {}
         self.member_interpretations = member_interpretations or {}

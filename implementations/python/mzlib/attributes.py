@@ -1,26 +1,27 @@
 import textwrap
 
-from typing import Any, Iterable, Union, List
+from typing import Any, Iterable, Union, List, Dict
+
 
 class AttributeManager(object):
     """A key-value pair store with optional attribute grouping
 
     Attributes
     ----------
-    attributes: list[list]
+    attributes: List[List]
         The actual attribute name-value pairs with an optional grouping value
-    attribute_dict: dict
+    attribute_dict: Dict
         A mapping from attribute name to indices into :attr:`attributes` and
         the group assignments.
-    group_dict: dict
+    group_dict: Dict
         A mapping from group identifier to indices into :attr:`attributes`
     group_counter: int
         The number of attribute groups assigned.
 
     """
-    attributes: list
-    attribute_dict: dict
-    group_dict: dict
+    attributes: List[List]
+    attribute_dict: Dict
+    group_dict: Dict
     group_counter: int
 
 

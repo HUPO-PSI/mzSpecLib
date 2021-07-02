@@ -262,7 +262,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         else:
             self.handle = open(filename_or_stream, 'rt')
 
-    def _buffer_from_stream(self, stream: io.IOBase) -> list:
+    def _buffer_from_stream(self, stream: io.IOBase) -> List:
         '''Collect data from the readable stream until
         a complete spectrum entry has been observed.
 
@@ -273,7 +273,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
         Returns
         -------
-        line_buffer: list[str]
+        line_buffer: List[str]
             A list of lines read from the input stream.
         '''
         raise NotImplementedError()
@@ -293,7 +293,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                     break
                 yield self._parse(buffer, i)
 
-    def _get_lines_for(self, offset: int) -> list:
+    def _get_lines_for(self, offset: int) -> List[str]:
         with open(self.filename, 'r') as infile:
             infile.seek(offset)
             spectrum_buffer = self._buffer_from_stream(infile)
@@ -303,7 +303,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
     def _parse(self, buffer: Iterable, spectrum_index: int=None):
         raise NotImplementedError()
 
-    def search(self, specification, **query_keys) -> list:
+    def search(self, specification, **query_keys) -> List[Spectrum]:
         records = self.index.search(specification, **query_keys)
         if not isinstance(records, list):
             records = [records]

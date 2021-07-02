@@ -1,6 +1,10 @@
 import re
 from sys import intern
-from typing import Any, List, Pattern
+from typing import Any, List, Pattern, Dict, NewType, Union
+
+
+JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
+
 
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
@@ -121,7 +125,7 @@ class MassError(object):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.mass_error}, {self.unit})"
 
-    def to_json(self) -> dict:
+    def to_json(self) -> JSONDict:
         return {
             "value": self.mass_error,
             "unit": self.unit
@@ -153,9 +157,9 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     _molecule_description_fields = {}
 
     series: str
-    neutral_losses: list
+    neutral_losses: List
     isotope: int
-    adducts: list
+    adducts: List
     charge: int
     analyte_reference: str
     mass_error: MassError
@@ -183,7 +187,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         self.is_auxiliary = is_auxiliary
 
     @property
-    def adduct(self) -> list:
+    def adduct(self) -> List:
         return self.adducts
 
     @adduct.setter
@@ -191,7 +195,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
         self.adducts = value
 
     @property
-    def neutral_loss(self) -> list:
+    def neutral_loss(self) -> List:
         return self.neutral_losses
 
     @neutral_loss.setter
@@ -247,12 +251,12 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
     def __str__(self):
         return self.serialize()
 
-    def _molecule_description(self) -> dict:
+    def _molecule_description(self) -> JSONDict:
         return {
             'series_label': self.series_label
         }
 
-    def to_json(self, exclude_missing=False) -> dict:
+    def to_json(self, exclude_missing=False) -> JSONDict:
         #TODO: When neutral losses and adducts are formalized types, convert to string/JSON here
         d = {}
         skips = ('series', 'rest', 'is_auxiliary')
@@ -315,7 +319,7 @@ class PeptideFragmentIonAnnotation(IonAnnotationBase):
     def _format_ion(self) -> str:
         return f"{self.series}{self.position}"
 
-    def _molecule_description(self) -> dict:
+    def _molecule_description(self) -> JSONDict:
         d = super()._molecule_description()
         d.update({
             "series": self.series,
@@ -356,7 +360,7 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     def _format_ion(self) -> str:
         return f"m{self.start_position}:{self.end_position}"
 
-    def _molecule_description(self) -> dict:
+    def _molecule_description(self) -> JSONDict:
         d = super()._molecule_description()
         d['start_position'] = self.start_position
         d['end_position'] = self.end_position

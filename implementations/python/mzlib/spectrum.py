@@ -3,7 +3,7 @@ from __future__ import print_function
 import re
 import textwrap
 
-from typing import Dict
+from typing import Dict,  List
 
 from mzlib.attributes import AttributeManager
 from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
@@ -14,7 +14,7 @@ SPECTRUM_NAME = "MS:1003061|spectrum name"
 
 
 class Spectrum(AttributeManager):
-    peak_list: list
+    peak_list: List
     analytes: Dict[str, Analyte]
     interpretations: InterpretationCollection
 
