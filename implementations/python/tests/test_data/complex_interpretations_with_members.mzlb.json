@@ -57,9 +57,9 @@
               "value": 0.974
             },
             {
-              "accession": "MS:XXXXXXX",
+              "accession": "MS:1003163",
               "name": "analyte mixture members",
-              "value": "1,2"
+              "value": [1, 2]
             }
           ],
           "id": "1",
@@ -94,9 +94,9 @@
               "value": 0.937
             },
             {
-              "accession": "MS:XXXXXXX",
+              "accession": "MS:1003163",
               "name": "analyte mixture members",
-              "value": "3"
+              "value": [3]
             }
           ],
           "id": "2",

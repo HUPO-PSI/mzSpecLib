@@ -225,16 +225,28 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
+    def _prepare_attribute_dict(self, match):
+        key = match['term_accession']
+        value = match['value']
+        try:
+            term = self._find_term_for(key)
+            match['value'] = term.value_type(value)
+        except KeyError:
+            match['value'] = try_cast(value)
+
+
     def _parse_attribute_into(self, line: str, store: Attributed, line_number_message=lambda:'') -> bool:
         match = key_value_term_pattern.match(line)
         if match is not None:
             d = match.groupdict()
+            self._prepare_attribute_dict(d)
             store.add_attribute(d['term'], try_cast(d['value']))
             return True
         if line.startswith("["):
             match = grouped_key_value_term_pattern.match(line)
             if match is not None:
                 d = match.groupdict()
+                self._prepare_attribute_dict(d)
                 store.add_attribute(
                     d['term'], try_cast(d['value']), d['group_id'])
                 store.group_counter = int(d['group_id'])
@@ -456,14 +468,17 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
 
     def _write_attributes(self, attributes: Attributed):
         for attribute in attributes:
-            if len(attribute) == 2:
-                self.handle.write(f"{attribute[0]}={attribute[1]}\n")
-            elif len(attribute) == 3:
-                self.handle.write(
-                    f"[{attribute[2]}]{attribute[0]}={attribute[1]}\n")
+            value = attribute.value
+            try:
+                term = self._find_term_for(attribute.key.split("|")[0])
+                value = term.value_type.format(value)
+            except KeyError:
+                pass
+            if attribute.group_id is None:
+                self.handle.write(f"{attribute.key}={value}\n")
             else:
-                raise ValueError(
-                    f"Attribute has wrong number of elements: {attribute}")
+                self.handle.write(
+                    f"[{attribute.group_id}]{attribute.key}={value}\n")
 
     def write_header(self, library: SpectralLibraryBackendBase):
         if self.version is None:
@@ -481,13 +496,16 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         for analyte in spectrum.analytes.values():
             self.handle.write(f"<Analyte={analyte.id}>\n")
             self._write_attributes(analyte.attributes)
+        n_interps = len(spectrum.interpretations)
         for interpretation in spectrum.interpretations.values():
             interpretation: Interpretation
 
             if len(spectrum.analytes) == 1:
-                attribs_of = self._filter_attributes(interpretation, self._not_analyte_mixture_term)
+                attribs_of = list(self._filter_attributes(interpretation, self._not_analyte_mixture_term))
             else:
                 attribs_of = interpretation.attributes
+            if len(attribs_of) == 0 and n_interps == 1:
+                continue
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
             self._write_attributes(attribs_of)
 

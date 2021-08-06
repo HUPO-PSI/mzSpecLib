@@ -1,6 +1,56 @@
 import textwrap
 
-from typing import Any, Iterable, Union, List, Dict
+from typing import Any, Iterable, Optional, Union, List, Dict
+
+
+class Attribute(object):
+    __slots__ = ("key", "value", "group_id")
+    key: str
+    value: Union[str, int, float, 'Attribute', List]
+    group_id: Optional[str]
+
+    def __init__(self, key, value, group_id=None):
+        self.key = key
+        self.value = value
+        self.group_id = group_id
+
+    def __getitem__(self, i):
+        if i == 0:
+            return self.key
+        elif i == 1:
+            return self.value
+        elif i == 2:
+            return self.group_id
+        else:
+            raise IndexError(i)
+
+    def __iter__(self):
+        yield self.key
+        yield self.value
+        if self.group_id:
+            yield self.group_id
+
+    def __len__(self):
+        if self.group_id is None:
+            return 2
+        return 3
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.key == other.key and self.value == other.value and self.group_id == other.group_id
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.key}, {self.value}, {self.group_id})"
+
+    def __str__(self):
+        base = f"{self.key}={self.value}"
+        if self.group_id:
+            base = f"[{self.group_id}]" + base
+        return base
 
 
 class AttributeManager(object):
@@ -19,7 +69,7 @@ class AttributeManager(object):
         The number of attribute groups assigned.
 
     """
-    attributes: List[List]
+    attributes: List[Attribute]
     attribute_dict: Dict
     group_dict: Dict
     group_counter: int
@@ -72,9 +122,7 @@ class AttributeManager(object):
             The attribute group identifier to use, if any. If not provided,
             no group is assumed.
         """
-        items = [key, value]
-        if group_identifier is not None:
-            items.append(group_identifier)
+        items = Attribute(key, value, group_identifier)
         self.attributes.append(items)
         index = len(self.attributes) - 1
 
@@ -141,7 +189,7 @@ class AttributeManager(object):
             if len(indices) > 1:
                 raise ValueError("Cannot replace the value of an attribute used multiple times")
             else:
-                self.attributes[indices[0]][1] = value
+                self.attributes[indices[0]].value = value
         else:
             raise NotImplementedError()
 
@@ -160,7 +208,7 @@ class AttributeManager(object):
         '''
         matches = []
         for attr in self:
-            if attr[0].split("|")[-1] == name:
+            if attr.key.split("|")[-1] == name:
                 matches.append(attr[1])
         n = len(matches)
         if n == 1:
@@ -333,6 +381,7 @@ class AttributedEntity(object):
 
     def __init__(self, attributes: Iterable=None, **kwargs):
         self.attributes = AttributeManager(attributes)
+        super().__init__(**kwargs)
 
     def add_attribute(self, key, value, group_identifier=None) -> Union[Any, List[Any]]:
         """Add an attribute to the entity's attributes store.

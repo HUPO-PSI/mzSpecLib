@@ -244,20 +244,22 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         attributes = []
         for attribute in attributes_manager:
             reformed_attribute = {}
-            if len(attribute) == 2:
+            if attribute.group_id is None:
                 key, value = attribute
-            elif len(attribute) == 3:
+            else:
                 key, value, cv_param_group = attribute
                 reformed_attribute['cv_param_group'] = cv_param_group
-            else:
-                raise ValueError(
-                    f"Unsupported number of items in attribute: {attribute}")
 
+            term = None
             components = key.split('|', 1)
             if len(components) == 2:
                 accession, name = components
                 reformed_attribute['accession'] = accession
                 reformed_attribute['name'] = name
+                try:
+                    term = self._find_term_for(accession)
+                except KeyError:
+                    pass
             else:
                 raise ValueError(
                     f"Unsupported number of items in components: {components}")
@@ -268,6 +270,8 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
                 reformed_attribute['value_accession'] = value_accession
                 reformed_attribute['value'] = value
             elif len(components) == 1:
+                # If an attribute could take on a JSON-incompatible type, we would need to
+                # cast it here.
                 reformed_attribute['value'] = value
             else:
                 raise ValueError(

@@ -1,5 +1,5 @@
 test:
-	pytest -r a -v tests --cov --cov-report=html --cov-report term
+	pytest -r a -v tests --cov mzlib --cov-report=html --cov-report term
 
 rebuild_test_bundle:
 	mzspeclib convert -f text tests/test_data/chinese_hamster_hcd_selected_head.msp tests/test_data/chinese_hamster_hcd_selected_head.mzlb.txt

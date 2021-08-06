@@ -4,15 +4,40 @@ import io
 from typing import Callable, Iterable, Union, List, Type
 from pathlib import Path
 
+from psims.controlled_vocabulary import load_psims
+
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
 from mzlib.attributes import Attributed, AttributedEntity
 
 
+ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
+
 FORMAT_VERSION_TERM = 'MS:1009002|format version'
 DEFAULT_VERSION = '1.0'
 
+
+class VocabularyResolverMixin(object):
+    default_cv_loader_map = {
+        "MS": load_psims
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.controlled_vocabularies = dict()
+        super().__init__(*args, **kwargs)
+
+    def load_cv(self, name):
+        if name in self.controlled_vocabularies:
+            return self.controlled_vocabularies[name]
+        self.controlled_vocabularies[name] = self.default_cv_loader_map[name]()
+        return self.controlled_vocabularies[name]
+
+    def _find_term_for(self, curie):
+        name, _id = curie.split(":")
+        cv = self.load_cv(name)
+        term = cv[curie]
+        return term
 
 class SubclassRegisteringMetaclass(type):
     def __new__(mcs, name, parents, attrs):
@@ -35,7 +60,7 @@ class SubclassRegisteringMetaclass(type):
         return cls._file_extension_to_implementation.get(format_or_extension)
 
 
-class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
@@ -145,13 +170,17 @@ class SpectralLibraryBackendBase(AttributedEntity, metaclass=SubclassRegistering
 
     def _analyte_interpretation_link(self, spectrum: Spectrum, interpretation: Interpretation):
         if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
-            analyte_ids_term = interpretation.get_attribute(ANALYTE_MIXTURE_TERM)
+            analyte_ids = interpretation.get_attribute(ANALYTE_MIXTURE_TERM)
+            if isinstance(analyte_ids, str):
+                term = self._find_term_for(ANALYTE_MIXTURE_CURIE)
+                analyte_ids = term.value_type(analyte_ids)
+
             # TODO: Enforce this attribute is a string at the CV level
-            if isinstance(analyte_ids_term, int):
-                analyte_ids = [analyte_ids_term]
-                interpretation.replace_attribute(ANALYTE_MIXTURE_TERM, str(analyte_ids_term))
-            else:
-                analyte_ids = analyte_ids_term.split(',')
+            # if isinstance(analyte_ids_term, int):
+            #     analyte_ids = [analyte_ids_term]
+            #     interpretation.replace_attribute(ANALYTE_MIXTURE_TERM, str(analyte_ids_term))
+            # else:
+            #     analyte_ids = analyte_ids_term.split(',')
             for analyte_id in analyte_ids:
                 interpretation.add_analyte(spectrum.get_analyte(analyte_id))
         return interpretation
@@ -315,9 +344,10 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return spectra
 
 
-class SpectralLibraryWriterBase(object, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
     def __init__(self, filename, **kwargs):
         self.filename = filename
+        super().__init__(**kwargs)
 
     def _filter_attributes(self, attributes: Attributed, filter_fn: Callable) -> Iterable:
         if isinstance(attributes, AttributedEntity):

@@ -14,7 +14,7 @@ from mzlib.attributes import AttributedEntity, AttributeManager, IdentifiedAttri
 FIRST_ANALYTE_KEY = '1'
 FIRST_INTERPRETATION_KEY = '1'
 
-ANALYTE_MIXTURE_TERM = "MS:XXXXXXX|analyte mixture members"
+ANALYTE_MIXTURE_TERM = "MS:1003163|analyte mixture members"
 
 
 class _AnalyteMappingProxy(Mapping):
@@ -110,7 +110,7 @@ class Interpretation(AttributedEntity, MutableMapping):
         super(Interpretation, self).__init__(attributes)
 
     def _update_mixture_members_term(self):
-        value = ','.join(map(str, sorted(self.analytes.keys())))
+        value = sorted(map(int, self.analytes.keys()))
         self.replace_attribute(ANALYTE_MIXTURE_TERM, value)
 
     def get_analyte(self, analyte_id) -> 'Analyte':
