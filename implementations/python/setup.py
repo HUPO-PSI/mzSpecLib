@@ -21,6 +21,7 @@ setup(
     install_requires=[
         "sqlalchemy",
         "click",
+        "psims >= 0.1.41"
     ],
     test_requires=[
         "jsonschema"
