@@ -1,0 +1,152 @@
+Isobaric_label_ions = {
+  "TMT126" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 126.127726, "ETD" : 114.127725 }
+  },
+  "TMT127N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 127.124761, "ETD" : 115.124760 }
+  },
+  "TMT127C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 127.131081, "ETD" : 114.127725 }
+  },
+  "TMT128N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 128.128116, "ETD" : 115.124760 }
+  },
+  "TMT128C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 128.134436, "ETD" : 116.134433 }
+  },
+  "TMT129N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 129.131471, "ETD" : 117.131468 }
+  },
+  "TMT129C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 129.137790, "ETD" : 116.134433 }
+  },
+  "TMT130N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 130.134825, "ETD" : 117.131468 }
+  },
+  "TMT130C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 130.141145, "ETD" : 118.141141 }
+  },
+  "TMT131N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 131.138180, "ETD" : 119.138176 }
+  },
+  "TMT131C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 131.144500, "ETD" : 118.141141 }
+  },
+  "TMT132N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 132.141535 }
+  },
+  "TMT132C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 122.147855 }
+  },
+  "TMT133N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 133.14489 }
+  },
+  "TMT133C" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 133.15121 }
+  },
+  "TMT134N" : {
+    "label_type" : "TMT",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 134.148245 }
+  },
+  "TMT0nterm" : {
+    "label_type" : "TMTzero",
+    "ion_type"   : "reporter+balance",
+    "mzs" : { "HCD" : 225.15975447 }
+  },
+  "TMT2nterm" : {
+    "label_type" : "TMT2plex",
+    "ion_type"   : "reporter+balance",
+    "mzs" : { "HCD" : 226.16310947 }
+  },
+  "TMT6nterm" : {
+    "label_type" : "TMT6plex",
+    "ion_type"   : "reporter+balance",
+    "mzs" : { "HCD" : 230.17020847 }
+  },
+  "TMTPROnterm" : {
+    "label_type" : "TMTPro",
+    "ion_type"   : "reporter+balance",
+    "mzs" : { "HCD" : 305.21442247 }
+  },
+  "iTRAQ113" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 113.1078 }
+  },
+  "iTRAQ114" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 114.1112 }
+  },
+  "iTRAQ115" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 115.1082 }
+  },
+  "iTRAQ116" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 116.1116 }
+  },
+  "iTRAQ117" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 117.1149 }
+  },
+  "iTRAQ118" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 118.1120 }
+  },
+  "iTRAQ119" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 119.1153 }
+  },
+  "iTRAQ121" : {
+    "label_type" : "iTRAQ",
+    "ion_type"   : "reporter",
+    "mzs" : { "HCD" : 121.1220 }
+  },
+  "iTRAQ4nterm" : {
+    "label_type" : "iTRAQ4plex",
+    "ion_type"   : "reporter+balance",
+    "mzs" : { "HCD" : 145.10933947 }
+  },
+  "iTRAQ8nterm" : {
+    "label_type" : "iTRAQ8plex",
+    "ion_type"   : "reporter+balance",
+    "mzs" : { "HCD" : 305.21263647 }
+  }
+}

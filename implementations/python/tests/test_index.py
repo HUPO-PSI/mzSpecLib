@@ -1,15 +1,11 @@
 import os
 import unittest
-
 import tempfile
-
 
 from mzlib.backends import TextSpectralLibrary
 from mzlib.index import MemoryIndex, SQLIndex
 
-from mzlib.test.common import datafile
-
-
+from .common import datafile
 
 class IndexBehaviorBase(object):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.txt")

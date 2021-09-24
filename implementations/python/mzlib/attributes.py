@@ -1,25 +1,83 @@
 import textwrap
 
+from typing import Any, Iterable, Optional, Union, List, Dict
+
+
+class Attribute(object):
+    __slots__ = ("key", "value", "group_id")
+    key: str
+    value: Union[str, int, float, 'Attribute', List]
+    group_id: Optional[str]
+
+    def __init__(self, key, value, group_id=None):
+        self.key = key
+        self.value = value
+        self.group_id = group_id
+
+    def __getitem__(self, i):
+        if i == 0:
+            return self.key
+        elif i == 1:
+            return self.value
+        elif i == 2:
+            return self.group_id
+        else:
+            raise IndexError(i)
+
+    def __iter__(self):
+        yield self.key
+        yield self.value
+        if self.group_id:
+            yield self.group_id
+
+    def __len__(self):
+        if self.group_id is None:
+            return 2
+        return 3
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.key == other.key and self.value == other.value and self.group_id == other.group_id
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.key}, {self.value}, {self.group_id})"
+
+    def __str__(self):
+        base = f"{self.key}={self.value}"
+        if self.group_id:
+            base = f"[{self.group_id}]" + base
+        return base
+
+
 class AttributeManager(object):
     """A key-value pair store with optional attribute grouping
 
     Attributes
     ----------
-    attributes: list[list]
+    attributes: List[List]
         The actual attribute name-value pairs with an optional grouping value
-    attribute_dict: dict
+    attribute_dict: Dict
         A mapping from attribute name to indices into :attr:`attributes` and
         the group assignments.
-    group_dict: dict
+    group_dict: Dict
         A mapping from group identifier to indices into :attr:`attributes`
     group_counter: int
         The number of attribute groups assigned.
 
     """
+    attributes: List[Attribute]
+    attribute_dict: Dict
+    group_dict: Dict
+    group_counter: int
+
 
     __slots__ = ('attributes', 'attribute_dict', 'group_dict', 'group_counter')
 
-    def __init__(self, attributes=None):
+    def __init__(self, attributes: Iterable = None):
         """
 
         Parameters
@@ -37,7 +95,7 @@ class AttributeManager(object):
         if attributes is not None:
             self._from_iterable(attributes)
 
-    def get_next_group_identifier(self):
+    def get_next_group_identifier(self) -> str:
         """Retrieve the next un-used attribute group identifier
         and increment the internal counter.
 
@@ -64,9 +122,7 @@ class AttributeManager(object):
             The attribute group identifier to use, if any. If not provided,
             no group is assumed.
         """
-        items = [key, value]
-        if group_identifier is not None:
-            items.append(group_identifier)
+        items = Attribute(key, value, group_identifier)
         self.attributes.append(items)
         index = len(self.attributes) - 1
 
@@ -93,7 +149,7 @@ class AttributeManager(object):
             else:
                 self.group_dict[group_identifier] = [index]
 
-    def get_attribute(self, key, group_identifier=None):
+    def get_attribute(self, key, group_identifier=None) -> Union[Any, List[Any]]:
         """Get the value or values associated with a given
         attribute key.
 
@@ -119,9 +175,47 @@ class AttributeManager(object):
         else:
             groups = indices_and_groups['groups']
             i = groups.index(group_identifier)
-            indices = indices['indexes']
+            indices = indices_and_groups['indexes']
             idx = indices[i]
             return self.attributes[idx]
+
+    def replace_attribute(self, key, value, group_identifier=None):
+        try:
+            indices_and_groups = self.attribute_dict[key]
+        except KeyError:
+            return self.add_attribute(key, value, group_identifier=group_identifier)
+        if group_identifier is None:
+            indices = indices_and_groups['indexes']
+            if len(indices) > 1:
+                raise ValueError("Cannot replace the value of an attribute used multiple times")
+            else:
+                self.attributes[indices[0]].value = value
+        else:
+            raise NotImplementedError()
+
+    def get_by_name(self, name: str):
+        '''Search for an attribute by human-readable name.
+
+        Parameters
+        ----------
+        name: str
+            The name to search for.
+
+        Returns
+        -------
+        object:
+            The attribute value if found or :const:`None`.
+        '''
+        matches = []
+        for attr in self:
+            if attr.key.split("|")[-1] == name:
+                matches.append(attr[1])
+        n = len(matches)
+        if n == 1:
+            return matches[0]
+        elif n > 1:
+            return matches
+        return None
 
     def clear(self):
         """Remove all content from the store.
@@ -187,6 +281,12 @@ class AttributeManager(object):
     def __getitem__(self, key):
         return self.get_attribute(key)
 
+    def __setitem__(self, key, value):
+        if self.has_attribute(key):
+            self.replace_attribute(key, value)
+        else:
+            self.add_attribute(key, value)
+
     def keys(self):
         return self.attribute_dict.keys()
 
@@ -212,6 +312,9 @@ class AttributeManager(object):
 
     def __len__(self):
         return len(self.attributes)
+
+    def __bool__(self):
+        return len(self) > 0
 
     def __iter__(self):
         return iter(self.attributes)
@@ -243,3 +346,124 @@ class AttributeManager(object):
         return template.format(
             self.__class__.__name__,
             textwrap.indent(',\n'.join(lines), ' ' * 2))
+
+
+class IdentifiedAttributeManager(AttributeManager):
+    __slots__ = ('id', )
+
+    id: str
+
+    def __init__(self, id, attributes: Iterable = None):
+        self.id = str(id)
+        super(IdentifiedAttributeManager, self).__init__(attributes)
+
+    def __repr__(self):
+        template = f"{self.__class__.__name__}(id={self.id}, "
+        lines = list(map(str, self.attributes))
+        if not lines:
+            template += "[])"
+            return template
+        template += "[\n%s])" % textwrap.indent(',\n'.join(lines), ' ' * 2)
+        return template
+
+
+class AttributedEntity(object):
+    '''A base type for entities which contain an :class:`AttributeManager`
+    without being completely subsumed by it.
+
+    An :class:`AttributeManager` represents a collection of attributes
+    first and foremost, supplying :class:`~.collections.abc.MutableMapping`-like
+    interface to them, in addition to methods.
+    '''
+    __slots__ = ("attributes", )
+
+    attributes: AttributeManager
+
+    def __init__(self, attributes: Iterable=None, **kwargs):
+        self.attributes = AttributeManager(attributes)
+        super().__init__(**kwargs)
+
+    def add_attribute(self, key, value, group_identifier=None) -> Union[Any, List[Any]]:
+        """Add an attribute to the entity's attributes store.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to add
+        value : object
+            The value of the attribute to add
+        group_identifier : str, optional
+            The attribute group identifier to use, if any. If not provided,
+            no group is assumed.
+        """
+        return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
+
+    def get_attribute(self, key, group_identifier=None):
+        """Get the value or values associated with a given
+        attribute key from the entity's attribute store.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
+
+        Returns
+        -------
+        attribute_value: object or list[object]
+            Returns single or multiple values for the requested attribute.
+        """
+        return self.attributes.get_attribute(key, group_identifier=group_identifier)
+
+    def replace_attribute(self, key, value, group_identifier=None):
+        return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
+
+    def remove_attribute(self, key, group_identifier=None):
+        """Remove the value or values associated with a given
+        attribute key from the entity's attribute store.
+
+        This rebuilds the entire store, which may be expensive.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
+
+        """
+        return self.attributes.remove_attribute(key, group_identifier=group_identifier)
+
+    def has_attribute(self, key) -> bool:
+        """Test for the presence of a given attribute in the library
+        level store.
+
+        Parameters
+        ----------
+        key : str
+            The attribute to test for
+
+        Returns
+        -------
+        bool
+        """
+        return self.attributes.has_attribute(key)
+
+    def get_by_name(self, name: str):
+        '''Search for an attribute by human-readable name.
+
+        Parameters
+        ----------
+        name: str
+            The name to search for.
+
+        Returns
+        -------
+        object:
+            The attribute value if found or :const:`None`.
+        '''
+        return self.attributes.get_by_name(name)
+
+
+Attributed = Union[AttributeManager, AttributedEntity]
