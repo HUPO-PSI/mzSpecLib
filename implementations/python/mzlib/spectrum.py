@@ -6,6 +6,7 @@ import textwrap
 from typing import Dict,  List
 
 from mzlib.attributes import AttributeManager
+from mzlib.key import IdType
 from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
@@ -15,7 +16,7 @@ SPECTRUM_NAME = "MS:1003061|spectrum name"
 
 class Spectrum(AttributeManager):
     peak_list: List
-    analytes: Dict[str, Analyte]
+    analytes: Dict[IdType, Analyte]
     interpretations: InterpretationCollection
 
     #### Constructor
@@ -58,13 +59,13 @@ class Spectrum(AttributeManager):
             self.add_attribute(SPECTRUM_NAME, value)
 
     def add_analyte(self, analyte: Analyte):
-        self.analytes[str(analyte.id)] = analyte
+        self.analytes[IdType(analyte.id)] = analyte
 
-    def get_analyte(self, analyte_id: str) -> Analyte:
-        return self.analytes[str(analyte_id)]
+    def get_analyte(self, analyte_id: IdType) -> Analyte:
+        return self.analytes[IdType(analyte_id)]
 
-    def remove_analyte(self, analyte_id: str):
-        analyte_id = str(analyte_id)
+    def remove_analyte(self, analyte_id: IdType):
+        analyte_id = IdType(analyte_id)
         del self.analytes[analyte_id]
         interpretation: Interpretation
         for interpretation in self.interpretations.values():
@@ -74,7 +75,7 @@ class Spectrum(AttributeManager):
     def add_interpretation(self, interpretation: Interpretation):
         self.interpretations.add_interpretation(interpretation)
 
-    def get_interpretation(self, interpretation_id: str) -> Interpretation:
+    def get_interpretation(self, interpretation_id: IdType) -> Interpretation:
         return self.interpretations.get_interpretation(interpretation_id)
 
     def __eq__(self, other):

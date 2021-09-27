@@ -2,6 +2,8 @@ import textwrap
 
 from typing import Any, Iterable, Optional, Union, List, Dict
 
+from .key import IdType
+
 
 class Attribute(object):
     __slots__ = ("key", "value", "group_id")
@@ -351,10 +353,10 @@ class AttributeManager(object):
 class IdentifiedAttributeManager(AttributeManager):
     __slots__ = ('id', )
 
-    id: str
+    id: IdType
 
     def __init__(self, id, attributes: Iterable = None):
-        self.id = str(id)
+        self.id = IdType(id)
         super(IdentifiedAttributeManager, self).__init__(attributes)
 
     def __repr__(self):

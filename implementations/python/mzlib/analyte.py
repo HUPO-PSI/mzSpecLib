@@ -9,10 +9,11 @@ import textwrap
 from typing import Iterable, KeysView, ItemsView, ValuesView, Dict
 
 from mzlib.attributes import AttributedEntity, AttributeManager, IdentifiedAttributeManager
+from mzlib.key import IdType
 
 
-FIRST_ANALYTE_KEY = '1'
-FIRST_INTERPRETATION_KEY = '1'
+FIRST_ANALYTE_KEY = IdType('1')
+FIRST_INTERPRETATION_KEY = IdType('1')
 
 ANALYTE_MIXTURE_TERM = "MS:1003163|analyte mixture members"
 
@@ -47,7 +48,7 @@ class _AnalyteMappingProxy(Mapping):
 class InterpretationCollection(MutableMapping):
     __slots__ = ('interpretations', )
 
-    interpretations: Dict[str, 'Interpretation']
+    interpretations: Dict[IdType, 'Interpretation']
 
     def __init__(self, interpretations=None):
         if interpretations is None:
@@ -55,13 +56,13 @@ class InterpretationCollection(MutableMapping):
         self.interpretations = interpretations
 
     def get_interpretation(self, interpretation_id) -> 'Interpretation':
-        return self.interpretations[str(interpretation_id)]
+        return self.interpretations[IdType(interpretation_id)]
 
     def add_interpretation(self, interpretation: 'Interpretation'):
-        self.set_interpretation(str(interpretation.id), interpretation)
+        self.set_interpretation(IdType(interpretation.id), interpretation)
 
     def set_interpretation(self, key, interpretation: 'Interpretation'):
-        self.interpretations[str(key)] = interpretation
+        self.interpretations[IdType(key)] = interpretation
 
     def __getitem__(self, key) -> 'Interpretation':
         return self.get_interpretation(key)
@@ -70,7 +71,7 @@ class InterpretationCollection(MutableMapping):
         self.set_interpretation(key, value)
 
     def __delitem__(self, key):
-        del self.interpretations[str(key)]
+        del self.interpretations[IdType(key)]
 
     def __len__(self):
         return len(self.interpretations)
@@ -81,7 +82,7 @@ class InterpretationCollection(MutableMapping):
     def __iter__(self):
         return iter(self.interpretations)
 
-    def keys(self) -> KeysView[str]:
+    def keys(self) -> KeysView[IdType]:
         return self.interpretations.keys()
 
     def values(self) -> ValuesView['Interpretation']:
@@ -99,12 +100,12 @@ class InterpretationCollection(MutableMapping):
 class Interpretation(AttributedEntity, MutableMapping):
     __slots__ = ('id', 'analytes', 'member_interpretations')
 
-    id: str
-    analytes: Dict[str, 'Analyte']
-    member_interpretations: Dict[str, 'InterpretationMember']
+    id: IdType
+    analytes: Dict[IdType, 'Analyte']
+    member_interpretations: Dict[IdType, 'InterpretationMember']
 
     def __init__(self, id, attributes: Iterable = None, analytes: Dict = None, member_interpretations: Dict = None):
-        self.id = str(id)
+        self.id = IdType(id)
         self.analytes = analytes or {}
         self.member_interpretations = member_interpretations or {}
         super(Interpretation, self).__init__(attributes)
@@ -114,34 +115,34 @@ class Interpretation(AttributedEntity, MutableMapping):
         self.replace_attribute(ANALYTE_MIXTURE_TERM, value)
 
     def get_analyte(self, analyte_id) -> 'Analyte':
-        return self.analytes[str(analyte_id)]
+        return self.analytes[IdType(analyte_id)]
 
     def add_analyte(self, analyte: 'Analyte'):
         self.set_analyte(analyte.id, analyte)
         self._update_mixture_members_term()
 
     def set_analyte(self, key, analyte: 'Analyte'):
-        self.analytes[str(key)] = analyte
+        self.analytes[IdType(key)] = analyte
         self._update_mixture_members_term()
 
     def remove_analyte(self, analyte_id):
-        del self.analytes[str(analyte_id)]
+        del self.analytes[IdType(analyte_id)]
         self._update_mixture_members_term()
 
     def has_analyte(self, analyte_id) -> bool:
-        return str(analyte_id) in self.analytes
+        return IdType(analyte_id) in self.analytes
 
     def get_member_interpretation(self, member_id) -> 'InterpretationMember':
-        return self.member_interpretations[str(member_id)]
+        return self.member_interpretations[IdType(member_id)]
 
     def add_member_interpretation(self, interpretation_member: 'InterpretationMember'):
         self.set_member_interpretation(interpretation_member.id, interpretation_member)
 
     def set_member_interpretation(self, key, interpretation_member: 'InterpretationMember'):
-        self.member_interpretations[str(key)] = interpretation_member
+        self.member_interpretations[IdType(key)] = interpretation_member
 
     def remove_member_interpretation(self, member_id):
-        del self.member_interpretations[str(member_id)]
+        del self.member_interpretations[IdType(member_id)]
 
     def validate(self) -> bool:
         '''Perform validation on each component to confirm this object is well formed.

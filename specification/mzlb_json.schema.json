@@ -56,6 +56,44 @@
                 }
             }
         },
+        "interpretation": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "A identifier number unique within the spectrum entry for interpretations"
+                },
+                "attributes": {
+                    "type": "array",
+                    "description": "A list of controlled vocabulary terms describing the interpretation",
+                    "items": {
+                        "$ref": "#/definitions/cvparam"
+                    }
+                },
+                "member_interpretations": {
+                    "type": "object",
+                    "description": "Additional attributes to describe each member analyte within the context of this interpretation"
+                }
+            }
+        },
+        "interpretation_member": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "A identifier number corresponding to the analyte this interpretation member describes"
+                },
+                "attributes": {
+                    "type": "array",
+                    "description": "A list of controlled vocabulary terms describing the interpretation member",
+                    "items": {
+                        "$ref": "#/definitions/cvparam"
+                    }
+                }
+            }
+        },
         "analyte": {
             "type": "object",
             "description": "A molecule that is believed to have generated or contributed to the spectrum",
@@ -71,7 +109,7 @@
                 },
                 "id": {
                     "type": "integer",
-                    "description": "A identifier number unique within the spectrum entry"
+                    "description": "A identifier number unique within the spectrum entry for analytes"
                 }
             }
         },
