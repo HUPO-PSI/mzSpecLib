@@ -1,4 +1,4 @@
-Isobaric_label_ions = {
+"Isobaric_label_ions" = {
   "TMT126" : {
     "label_type" : "TMT",
     "ion_type"   : "reporter",
