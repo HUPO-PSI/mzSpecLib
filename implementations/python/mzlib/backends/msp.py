@@ -116,7 +116,7 @@ annotation_pattern = re.compile(r"""^
 (?:\^(?P<charge>[+-]?\d+))?
 (?:(?P<isotope>[+-]\d*)i)?
 (?:@(?P<analyte_reference>[^/\s]+))?
-(?:/(?P<mass_error>[+-]?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?(?P<aggergations>.*)
+(?:/(?P<mass_error>[+-]?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
 """, re.X)
 
 

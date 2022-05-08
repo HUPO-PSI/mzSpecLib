@@ -2,8 +2,11 @@ IF/0.2ppm
 IK+i/4.4ppm
 IK/-0.3ppm
 IK/0.5ppm
+IR/-0.3ppm
+IR/-1.4ppm
 IR/-2.6ppm
 IR/0.7ppm
+IR/2.0ppm
 a2+i/5.4ppm
 a2/-0.8ppm
 a2/-1.6ppm
@@ -103,9 +106,17 @@ m11:12/2.8ppm
 m11:13/-1.8ppm
 m11:13/-3.1ppm
 m11:13/4.1ppm
+m11:14-CO/1.5ppm
 m11:14/-2.7ppm
+m11:14/0.4ppm
 m11:17-CO/4.0ppm
 m11:17/0.7ppm
+m11:18+i/-7.5ppm
+m11:18-CO/-2.2ppm
+m11:18/-0.7ppm
+m11:20+i/-2.7ppm
+m11:20-CO/-2.7ppm
+m11:20/-0.5ppm
 m11:22/-2.2ppm
 m11:23/6.6ppm
 m11:24/2.2ppm
@@ -127,6 +138,7 @@ m12:21-CO/-2.7ppm
 m12:21/-0.5ppm
 m13:14/1.9ppm
 m14:15/-0.8ppm
+m15:16/-0.8ppm
 m15:18/-1.4ppm
 m15:19/5.2ppm
 m15:20/-0.9ppm
@@ -161,6 +173,7 @@ m9:14/0.9ppm
 m9:15+i/1.2ppm
 m9:15-CO/1.7ppm
 m9:15/-3.1ppm
+m9:16+i/4.3ppm
 m9:16/1.5ppm
 m9:17+i/-5.0ppm
 m9:17/-0.3ppm
@@ -168,6 +181,7 @@ p+i/0.8ppm
 p/-1.7ppm
 y1+i/1.9ppm
 y1-H2O+CO/1.6ppm
+y1-H2O/0.5ppm
 y1-NH3/-1.3ppm
 y1-NH3/0.4ppm
 y1/-0.3ppm
@@ -212,6 +226,8 @@ y11+i/4.5ppm
 y11+i^2/-0.5ppm
 y11+i^2/-0.6ppm
 y11+i^2/-1.5ppm
+y11-H2O+i/-11.2ppm
+y11-H2O+i/-8.8ppm
 y11-H2O+i^2/9.7ppm
 y11-H2O/-1.1ppm
 y11-H2O/4.4ppm
@@ -233,6 +249,9 @@ y12+i/-2.8ppm
 y12+i/4.7ppm
 y12+i^2/-0.2ppm
 y12+i^2/2.5ppm
+y12-H2O+i/-7.9ppm
+y12-H2O+i^2/-1.5ppm
+y12-H2O+i^2/3.8ppm
 y12-H2O/7.5ppm
 y12-H2O^2/-0.7ppm
 y12-H2O^2/1.3ppm
@@ -273,6 +292,7 @@ y14+i/3.8ppm
 y14+i^2/-1.1ppm
 y14+i^2/-2.6ppm
 y14+i^2/0.1ppm
+y14-H2O+i/2.3ppm
 y14-H2O/-4.0ppm
 y14-H2O^2/-9.6ppm
 y14-NH2-CO-CH2SH/15.2ppm
@@ -368,6 +388,7 @@ y7^2/4.9ppm
 y8+i/0.4ppm
 y8+i/1.0ppm
 y8+i^2/1.9ppm
+y8-H2O+i/-13.9ppm
 y8-H2O/8.8ppm
 y8-NH3/-5.9ppm
 y8-NH3/6.7ppm
@@ -381,7 +402,9 @@ y9+i/-1.3ppm
 y9+i/-1.5ppm
 y9+i/0.7ppm
 y9+i/1.5ppm
+y9+i/2.6ppm
 y9+i^2/0.5ppm
+y9-H2O+i/-18.9ppm
 y9-H2O/4.8ppm
 y9-H2O^2/1.6ppm
 y9-NH3/-0.3ppm
