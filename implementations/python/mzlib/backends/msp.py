@@ -11,7 +11,8 @@ from typing import List, Tuple, Union, Iterable
 from pathlib import Path
 
 from mzlib.index import MemoryIndex
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, ANALYTE_MIXTURE_TERM
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
+from mzlib.spectrum import Spectrum, LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, SPECTRUM_NAME
 from mzlib import annotation
 
 from .base import _PlainTextSpectralLibraryBackendBase
@@ -23,7 +24,7 @@ logger.addHandler(logging.NullHandler())
 
 
 leader_terms = {
-    "Name": "MS:1003061|spectrum name",
+    "Name": SPECTRUM_NAME,
 }
 
 
@@ -189,7 +190,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             return True, 0
         return False, 0
 
-
     def create_index(self) -> int:
         """
         Populate the spectrum index
@@ -279,7 +279,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _buffer_from_stream(self, infile: io.BufferedIOBase) -> List:
+    def _buffer_from_stream(self, infile: Iterable[str]) -> List[str]:
         state = 'body'
         spectrum_buffer = []
 
@@ -302,7 +302,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
-    def _parse(self, buffer: Iterable, spectrum_index: int=None) -> Spectrum:
+    def _parse(self, buffer: Iterable[str], spectrum_index: int=None) -> Spectrum:
 
         #### Start in the header section of the entry
         in_header = True
@@ -386,7 +386,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         #### Now convert the format attributes to standard ones
         spectrum = self._make_spectrum(peak_list, attributes)
         if spectrum_index is not None:
-            spectrum.add_attribute("MS:1003062|spectrum index", spectrum_index)
+            spectrum.index = spectrum_index
+        else:
+            spectrum.index = -1
+        spectrum.key = spectrum.index + 1
         for i, peak in enumerate(spectrum.peak_list):
             try:
                 parsed_interpretation = parse_annotation(peak[2], spectrum=spectrum)
@@ -395,6 +398,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 raise ValueError(
                     f"An error occurred while parsing the peak annotation for peak {i}: {message}") from err
             peak[2] = parsed_interpretation
+
         return spectrum
 
     def _parse_comment(self, value: str, attributes: Attributed):
@@ -736,8 +740,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 unknown_terms.append(attribute)
 
         if "MS:1000888|unmodified peptide sequence" not in analyte.attribute_dict:
-            if "MS:1003061|spectrum name" in spectrum.attribute_dict:
-                lookup = spectrum.attribute_dict["MS:1003061|spectrum name"]
+            if SPECTRUM_NAME in spectrum.attribute_dict:
+                lookup = spectrum.attribute_dict[SPECTRUM_NAME]
                 name = spectrum.attributes[lookup["indexes"][0]][1]
                 match = re.match(r"(.+)/(\d+)", name)
                 if match:

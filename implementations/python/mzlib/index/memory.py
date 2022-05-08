@@ -1,3 +1,4 @@
+from typing import Any, Dict, Optional
 import warnings
 import logging
 
@@ -13,12 +14,29 @@ logger.addHandler(logging.NullHandler())
 class IndexRecord(object):
     __slots__ = ('number', 'offset', 'name', 'analyte', 'attributes')
 
+    number: int
+    offset: int
+    name: str
+    analyte: Any
+    attributes: Optional[Dict[str, Any]]
+
     def __init__(self, number, offset, name, analyte, attributes=None):
         self.number = number
         self.offset = offset
         self.name = name
         self.analyte = analyte
-        self.attributes = attributes or {}
+        self.attributes = attributes
+
+    def get(self, key: str, default=None) -> Any:
+        if self.attributes:
+            return self.attributes.get(key, default)
+        return default
+
+    def set(self, key: str, value: Any):
+        if self.attributes:
+            self.attributes[key] = value
+        else:
+            self.attributes = {key: value}
 
     def __repr__(self):
         template = f"{self.__class__.__name__}({self.number}, {self.offset}, {self.name}, {self.analyte}, {self.attributes})"

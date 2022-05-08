@@ -1,7 +1,6 @@
 {
   "attributes": [],
-  "format_version": "1.0",
-  "spectra": [
+  "entries": [
     {
       "analytes": {
         "1": {
@@ -59,6 +58,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 1
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -233,11 +237,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "4/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 0
         }
       ],
       "intensities": [
@@ -430,7 +429,7 @@
         "?",
         "?",
         "?",
-        "y1/2.0ppm,IR/2.0ppm",
+        "y1/2.0ppm",
         "?",
         "?",
         "?",
@@ -571,6 +570,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 2
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -745,11 +749,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "5/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 1
         }
       ],
       "intensities": [
@@ -1175,7 +1174,7 @@
         "?",
         "?",
         "?",
-        "y1/-1.4ppm,IR/-1.4ppm",
+        "y1/-1.4ppm",
         "?",
         "?",
         "m11:12-CO/1.7ppm",
@@ -1313,7 +1312,7 @@
         "b8/2.1ppm",
         "m9:16/1.5ppm",
         "?",
-        "b9-NH2-CO-CH2SH/14.8ppm,m9:16+i/4.3ppm",
+        "b9-NH2-CO-CH2SH/14.8ppm",
         "?",
         "?",
         "m9:17/-0.3ppm",
@@ -1344,13 +1343,13 @@
         "?",
         "?",
         "y11-H2O/-1.1ppm",
-        "y11-NH3/6.5ppm,y11-H2O+i/-11.2ppm",
+        "y11-NH3/6.5ppm",
         "y11/-1.4ppm",
         "y11+i/-1.1ppm",
         "y11+2i/-6.6ppm",
         "?",
         "y12-H2O/7.5ppm",
-        "y12-NH3/8.1ppm,y12-H2O+i/-7.9ppm",
+        "y12-NH3/8.1ppm",
         "?",
         "y12/-1.3ppm",
         "y12+i/-1.4ppm",
@@ -1366,7 +1365,7 @@
         "?",
         "?",
         "y14-H2O/-4.0ppm",
-        "y14-NH3/15.6ppm,y14-H2O+i/2.3ppm",
+        "y14-NH3/15.6ppm",
         "y14/-0.3ppm",
         "y14+i/1.1ppm",
         "?",
@@ -1434,6 +1433,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 3
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -1608,11 +1612,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "0/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 2
         }
       ],
       "intensities": [
@@ -1899,8 +1898,8 @@
         "?",
         "?",
         "?",
-        "m12:15-CO/1.5ppm,m11:14-CO/1.5ppm",
-        "m12:15/0.4ppm,m11:14/0.4ppm",
+        "m12:15-CO/1.5ppm",
+        "m12:15/0.4ppm",
         "?",
         "?",
         "m15:18/-1.4ppm",
@@ -1934,10 +1933,10 @@
         "b7/-3.9ppm",
         "?",
         "?",
-        "m12:19-CO/-2.2ppm,m11:18-CO/-2.2ppm",
+        "m12:19-CO/-2.2ppm",
         "?",
-        "m12:19/-0.7ppm,m11:18/-0.7ppm",
-        "m12:19+i/-7.5ppm,m11:18+i/-7.5ppm",
+        "m12:19/-0.7ppm",
+        "m12:19+i/-7.5ppm",
         "m19:25/0.5ppm",
         "y15-NH3^2/5.9ppm",
         "?",
@@ -1956,9 +1955,9 @@
         "?",
         "y17^2/0.3ppm",
         "y17+i^2/-9.0ppm",
-        "m12:21-CO/-2.7ppm,m11:20-CO/-2.7ppm",
-        "m12:21/-0.5ppm,m11:20/-0.5ppm",
-        "m12:21+i/-2.7ppm,m11:20+i/-2.7ppm",
+        "m12:21-CO/-2.7ppm",
+        "m12:21/-0.5ppm",
+        "m12:21+i/-2.7ppm",
         "m15:24/5.7ppm",
         "y9/-1.7ppm",
         "y9+i/1.5ppm",
@@ -2051,6 +2050,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 4
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -2225,11 +2229,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "1/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 3
         }
       ],
       "intensities": [
@@ -2475,7 +2474,7 @@
         "?",
         "?",
         "?",
-        "y1/-0.3ppm,IK/-0.3ppm,IR/-0.3ppm",
+        "y1/-0.3ppm",
         "m11:12-CO/-2.1ppm",
         "?",
         "b3/0.4ppm",
@@ -2565,7 +2564,7 @@
         "y10/-0.4ppm",
         "y10+i/-3.2ppm",
         "y11-H2O/4.4ppm",
-        "y11-NH3/7.4ppm,y11-H2O+i/-8.8ppm",
+        "y11-NH3/7.4ppm",
         "y11/-0.6ppm",
         "y11+i/-0.1ppm",
         "?",
@@ -2635,6 +2634,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 5
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -2809,11 +2813,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "0/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 4
         }
       ],
       "intensities": [
@@ -3172,7 +3171,7 @@
         "?",
         "?",
         "?",
-        "y1/-0.3ppm,IK/-0.3ppm,IR/-0.3ppm",
+        "y1/-0.3ppm",
         "?",
         "m11:12-CO/0.1ppm",
         "?",
@@ -3262,7 +3261,7 @@
         "?",
         "?",
         "y12-H2O^2/1.3ppm",
-        "y12-NH3^2/13.8ppm,y12-H2O+i^2/-1.5ppm",
+        "y12-NH3^2/13.8ppm",
         "?",
         "y5/0.0ppm",
         "?",
@@ -3288,13 +3287,13 @@
         "y7+i/-0.7ppm",
         "?",
         "y8-H2O/8.8ppm",
-        "y8-NH3/6.7ppm,y8-H2O+i/-13.9ppm",
+        "y8-NH3/6.7ppm",
         "y8/0.1ppm",
         "y8+i/0.4ppm",
         "?",
         "?",
         "y9-H2O/4.8ppm",
-        "y9-NH3/-0.3ppm,y9-H2O+i/-18.9ppm",
+        "y9-NH3/-0.3ppm",
         "y9/-0.1ppm",
         "y9+i/-1.3ppm",
         "?",
@@ -3369,6 +3368,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 6
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -3543,11 +3547,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "6/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 5
         }
       ],
       "intensities": [
@@ -3700,7 +3699,7 @@
         "?",
         "a2/-1.6ppm",
         "?",
-        "IK/0.5ppm,y1-H2O/0.5ppm",
+        "IK/0.5ppm",
         "y1-NH3/0.4ppm",
         "?",
         "b2/-0.7ppm",
@@ -3741,7 +3740,7 @@
         "?",
         "?",
         "y9/-0.4ppm",
-        "b11/-16.6ppm,y9+i/2.6ppm",
+        "b11/-16.6ppm",
         "?",
         "?",
         "y10/2.9ppm",
@@ -3824,6 +3823,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 7
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -3998,11 +4002,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "3/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 6
         }
       ],
       "intensities": [
@@ -4481,7 +4480,7 @@
         "?",
         "?",
         "?",
-        "m14:15/-0.8ppm,m15:16/-0.8ppm",
+        "m14:15/-0.8ppm",
         "?",
         "?",
         "?",
@@ -4608,7 +4607,7 @@
         "?",
         "?",
         "y12-H2O^2/-0.7ppm",
-        "y12-NH3^2/18.8ppm,y12-H2O+i^2/3.8ppm",
+        "y12-NH3^2/18.8ppm",
         "y12^2/1.7ppm",
         "y12+i^2/2.5ppm",
         "y12+2i^2/3.5ppm",
@@ -4657,5 +4656,15 @@
         "?"
       ]
     }
-  ]
+  ],
+  "format_version": "1.0",
+  "library_analyte_attribute_sets": {
+    "all": []
+  },
+  "library_entry_attribute_sets": {
+    "all": []
+  },
+  "library_interpretation_attribute_sets": {
+    "all": []
+  }
 }

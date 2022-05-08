@@ -1,21 +1,27 @@
-import os
 import io
+import enum
 
-from typing import Callable, Iterable, Union, List, Type
+from typing import Callable, Dict, Iterable, Union, List, Type
 from pathlib import Path
 
 from psims.controlled_vocabulary import load_psims
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
-from mzlib.spectrum import Spectrum
+from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
-from mzlib.attributes import Attributed, AttributedEntity
+from mzlib.attributes import Attributed, AttributedEntity, AttributeSet
 
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
 
 FORMAT_VERSION_TERM = 'MS:1009002|format version'
 DEFAULT_VERSION = '1.0'
+
+
+class AttributeSetTypes(enum.Enum):
+    library_entry = enum.auto()
+    analyte = enum.auto()
+    interpretation = enum.auto()
 
 
 class VocabularyResolverMixin(object):
@@ -67,6 +73,10 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     file_format = None
 
     _file_extension_to_implementation = {}
+
+    entry_attribute_sets: Dict[str, AttributeSet]
+    analyte_attribute_sets: Dict[str, AttributeSet]
+    interpretation_attribute_sets: Dict[str, AttributeSet]
 
     @classmethod
     def guess_from_filename(cls, filename) -> bool:
@@ -135,6 +145,17 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     def __init__(self, filename):
         self.filename = filename
         self.index = MemoryIndex()
+
+        self.entry_attribute_sets = {
+            "all": AttributeSet("all", [])
+        }
+        self.analyte_attribute_sets = {
+            "all": AttributeSet("all", [])
+        }
+        self.interpretation_attribute_sets = {
+            "all": AttributeSet("all", [])
+        }
+
         super().__init__(None)
 
     @property
@@ -157,16 +178,28 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         raise NotImplementedError()
 
     def _new_spectrum(self) -> Spectrum:
-        return Spectrum()
+        spec = Spectrum()
+        attr_set = self.entry_attribute_sets.get("all")
+        if attr_set:
+            attr_set.apply(spec)
+        return spec
 
     def _new_interpretation(self, id=None) -> Interpretation:
-        return Interpretation(id)
+        interp = Interpretation(id)
+        attr_set = self.interpretation_attribute_sets.get('all')
+        if attr_set:
+            attr_set.apply(interp)
+        return interp
 
     def _new_interpretation_member(self, id=None) -> InterpretationMember:
         return InterpretationMember(id)
 
     def _new_analyte(self, id=None) -> Analyte:
-        return Analyte(id)
+        analyte = Analyte(id)
+        attr_set = self.analyte_attribute_sets.get('all')
+        if attr_set:
+            attr_set.apply(analyte)
+        return analyte
 
     def _analyte_interpretation_link(self, spectrum: Spectrum, interpretation: Interpretation):
         if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
@@ -270,6 +303,16 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     def read(self):
         raise NotImplementedError()
 
+    def _add_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
+        if attribute_set_type == AttributeSetTypes.library_entry:
+            self.entry_attribute_sets[attribute_set.name] = attribute_set
+        elif attribute_set_type == AttributeSetTypes.analyte:
+            self.analyte_attribute_sets[attribute_set.name] = attribute_set
+        elif attribute_set_type == AttributeSetTypes.interpretation:
+            self.interpretation_attribute_sets[attribute_set.name] = attribute_set
+        else:
+            raise ValueError(f"Could not map {attribute_set_type}")
+
 guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
 
@@ -360,6 +403,20 @@ class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegis
         if attrib:
             key = attrib[0]
             if key == ANALYTE_MIXTURE_TERM:
+                return False
+        return True
+
+    def _not_entry_index(self, attrib):
+        if attrib:
+            key = attrib[0]
+            if key == LIBRARY_ENTRY_INDEX:
+                return False
+        return True
+
+    def _not_entry_key_or_index(self, attrib):
+        if attrib:
+            key = attrib[0]
+            if key in (LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY):
                 return False
         return True
 

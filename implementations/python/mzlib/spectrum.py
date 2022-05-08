@@ -1,16 +1,17 @@
 from __future__ import print_function
 
-import re
 import textwrap
 
 from typing import Dict,  List
 
-from mzlib.attributes import AttributeManager
+from mzlib.attributes import AttributeManager, AttributeManagedProperty
 from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
 
 SPECTRUM_NAME = "MS:1003061|spectrum name"
+LIBRARY_ENTRY_KEY = "MS:1003237|library entry key"
+LIBRARY_ENTRY_INDEX = "MS:1003061|library entry index"
 
 
 class Spectrum(AttributeManager):
@@ -41,21 +42,9 @@ class Spectrum(AttributeManager):
         self.analytes = analytes
         self.interpretations = interpretations
 
-    @property
-    def name(self) -> str:
-        return self.get_attribute(SPECTRUM_NAME)
-
-    @name.setter
-    def name(self, value: str):
-        if self.has_attribute(SPECTRUM_NAME):
-            self.replace_attribute(SPECTRUM_NAME, value)
-        elif AttributeManager.__len__(self) > 0:
-            attribs = [SPECTRUM_NAME, value] + list(
-                AttributeManager.__iter__(self))
-            AttributeManager.clear(self)
-            AttributeManager._from_iterable(attribs)
-        else:
-            self.add_attribute(SPECTRUM_NAME, value)
+    name = AttributeManagedProperty[str](SPECTRUM_NAME)
+    key = AttributeManagedProperty[int](LIBRARY_ENTRY_KEY)
+    index = AttributeManagedProperty[int](LIBRARY_ENTRY_INDEX)
 
     def add_analyte(self, analyte: Analyte):
         self.analytes[str(analyte.id)] = analyte

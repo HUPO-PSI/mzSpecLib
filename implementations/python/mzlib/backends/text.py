@@ -5,19 +5,20 @@ import logging
 import warnings
 import enum
 
-from typing import List, Tuple, Union, Iterable
+from typing import ClassVar, List, Tuple, Union, Iterable
 
 from mzlib.index import MemoryIndex
 from mzlib.annotation import parse_annotation
 from mzlib.spectrum import Spectrum
-from mzlib.attributes import AttributeManager, Attributed
+from mzlib.attributes import AttributeManager, Attributed, AttributeSet
 from mzlib.analyte import ANALYTE_MIXTURE_TERM, Analyte, Interpretation, InterpretationMember
 
 from .base import (
     SpectralLibraryBackendBase,
     _PlainTextSpectralLibraryBackendBase,
     SpectralLibraryWriterBase,
-    FORMAT_VERSION_TERM)
+    FORMAT_VERSION_TERM,
+    AttributeSetTypes)
 from .utils import try_cast
 
 logger = logging.getLogger(__name__)
@@ -44,75 +45,146 @@ class SpectrumParserStateEnum(enum.Enum):
     done = 6
 
 
-START_OF_SPECTRUM_MARKER = re.compile(r"^<Spectrum>")
+class LibraryParserStateEnum(enum.Enum):
+    unknown = 0
+    header = 1
+    attribute_sets = 2
+    content = 3
+
+
+ATTRIBUTE_SET_NAME = "MS:1003212|library attribute set name"
+
+START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum|LibraryEntry)(?:=(.+))?>")
 START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
 START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
 SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
 START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:=(.+))>")
+START_OF_ATTRIBUTE_SET = re.compile(r"<AttributeSet (LibraryEntry|Analyte|Interpretation)=(.+)>")
+START_OF_CLUSTER = re.compile(r"<Cluster(?:=(.+))>")
+
+
+attribute_set_types = {
+    "libraryentry": AttributeSetTypes.library_entry,
+    "spectrum": AttributeSetTypes.library_entry,
+    "analyte": AttributeSetTypes.analyte,
+    "interpretation": AttributeSetTypes.interpretation
+}
+
+
+def _is_header_line(line: str) -> bool:
+    if START_OF_ATTRIBUTE_SET.match(line):
+        return False
+    if START_OF_SPECTRUM_MARKER.match(line):
+        return False
+    if START_OF_CLUSTER.match(line):
+        return False
+    if SPECTRUM_NAME_PRESENT.match(line):
+        return False
+    return True
 
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
-    file_format = "mzlb.txt"
-    format_name = "text"
+    file_format: ClassVar[str] = "mzlb.txt"
+    format_name: ClassVar[str] = "text"
 
     @classmethod
     def guess_from_header(cls, filename: str) -> bool:
-        with open(filename, 'r') as stream:
+        with open(filename, 'r', encoding='utf8') as stream:
             first_line = stream.readline()
             if START_OF_SPECTRUM_MARKER.match(first_line) or START_OF_LIBRARY_MARKER.match(first_line):
                 return True
         return False
 
-    def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
+    def _parse_header_from_stream(self, stream: io.TextIOBase) -> Tuple[bool, int]:
         nbytes = 0
         first_line = stream.readline()
         nbytes += len(first_line)
-        if SPECTRUM_NAME_PRESENT.match(first_line) or START_OF_SPECTRUM_MARKER.match(first_line):
+
+        state = LibraryParserStateEnum.unknown
+
+        current_attribute_set = None
+        current_attribute_set_type = None
+
+        if not _is_header_line(first_line):
             return True, 0
         elif START_OF_LIBRARY_MARKER.match(first_line):
+            state = LibraryParserStateEnum.header
             match = START_OF_LIBRARY_MARKER.match(first_line)
             version = match.group(1)
             attributes = AttributeManager()
             attributes.add_attribute(FORMAT_VERSION_TERM, version)
             line = stream.readline()
-            while not (SPECTRUM_NAME_PRESENT.match(line) or START_OF_SPECTRUM_MARKER.match(line)):
+            while not _is_header_line(line):
                 nbytes += len(line)
-                match = key_value_term_pattern.match(line)
-                if match is not None:
-                    d = match.groupdict()
-                    attributes.add_attribute(
-                        d['term'], try_cast(d['value']))
-                    line = stream.readline()
-                    nbytes += len(line)
-                    continue
-                if line.startswith("["):
-                    match = grouped_key_value_term_pattern.match(line)
+                match = START_OF_ATTRIBUTE_SET.match(line)
+                if match:
+                    state = LibraryParserStateEnum.attribute_sets
+                    if current_attribute_set is not None:
+                        self._add_attribute_set(current_attribute_set, current_attribute_set_type)
+
+                    current_attribute_set_type = attribute_set_types[match.group(1).lower()]
+                    attrib_set_name = match.group(2)
+                    current_attribute_set = AttributeSet(attrib_set_name, [])
+                else:
+
+                    match = key_value_term_pattern.match(line)
                     if match is not None:
                         d = match.groupdict()
-                        attributes.add_attribute(
-                            d['term'], try_cast(d['value']), d['group_id'])
-                        attributes.group_counter = int(d['group_id'])
+                        if state == LibraryParserStateEnum.attribute_sets:
+                            breakpoint()
+                            current_attribute_set.add_attribute(
+                                d['term'], try_cast(d['value']))
+                        else:
+                            attributes.add_attribute(
+                                d['term'], try_cast(d['value']))
+
                         line = stream.readline()
                         nbytes += len(line)
                         continue
+
+                    if line.startswith("["):
+                        match = grouped_key_value_term_pattern.match(line)
+                        if match is not None:
+                            d = match.groupdict()
+                            if state == LibraryParserStateEnum.attribute_sets:
+                                breakpoint()
+                                current_attribute_set.add_attribute(
+                                    d['term'], try_cast(d['value']), d['group_id'])
+                                current_attribute_set.group_counter = int(d['group_id'])
+                            else:
+                                attributes.add_attribute(
+                                    d['term'], try_cast(d['value']), d['group_id'])
+                                attributes.group_counter = int(d['group_id'])
+
+                            line = stream.readline()
+                            nbytes += len(line)
+                            continue
+                        else:
+                            raise ValueError(
+                                f"Malformed grouped attribute {line}")
+                    elif "=" in line:
+                        name, value = line.split("=")
+                        if state == LibraryParserStateEnum.attribute_sets:
+                            breakpoint()
+                            current_attribute_set.add_attribute(name, value)
+                        else:
+                            attributes.add_attribute(name, value)
                     else:
-                        raise ValueError(
-                            f"Malformed grouped attribute {line}")
-                elif "=" in line:
-                    name, value = line.split("=")
-                    attributes.add_attribute(name, value)
-                else:
-                    raise ValueError(f"Malformed attribute line {line}")
+                        raise ValueError(f"Malformed attribute line {line}")
                 line = stream.readline()
+
+            if current_attribute_set is not None:
+                self._add_attribute_set(current_attribute_set, current_attribute_set_type)
+
             self.attributes.clear()
             self.attributes._from_iterable(attributes)
             return True, nbytes
         return False, 0
 
     def read_header(self) -> Tuple[bool, int]:
-        with open(self.filename, 'rt') as stream:
+        with open(self.filename, 'rt', encoding='utf8') as stream:
             return self._parse_header_from_stream(stream)
 
     def create_index(self) -> int:
@@ -131,7 +203,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         #### Determine the filesize
         file_size = os.path.getsize(filename)
 
-        with open(filename, 'r') as infile:
+        with open(filename, 'rt', encoding='utf8') as infile:
             state = 'header'
             spectrum_buffer = []
             n_spectra = 0
@@ -234,13 +306,23 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         except KeyError:
             match['value'] = try_cast(value)
 
-
-    def _parse_attribute_into(self, line: str, store: Attributed, line_number_message=lambda:'') -> bool:
+    def _parse_attribute_into(self, line: str, store: Attributed, line_number_message=lambda:'', state: SpectrumParserStateEnum=None) -> bool:
         match = key_value_term_pattern.match(line)
         if match is not None:
             d = match.groupdict()
             self._prepare_attribute_dict(d)
-            store.add_attribute(d['term'], try_cast(d['value']))
+            if d['term'] == ATTRIBUTE_SET_NAME:
+                if SpectrumParserStateEnum.header == state:
+                    attr_set = self.entry_attribute_sets[d['value']]
+                elif SpectrumParserStateEnum.analyte == state:
+                    attr_set = self.analyte_attribute_sets[d['value']]
+                elif SpectrumParserStateEnum.interpretation == state:
+                    attr_set = self.interpretation_attribute_sets[d['value']]
+                else:
+                    raise ValueError(f"Cannot define attribute sets for {state}")
+                attr_set.apply(store)
+            else:
+                store.add_attribute(d['term'], try_cast(d['value']))
             return True
         if line.startswith("["):
             match = grouped_key_value_term_pattern.match(line)
@@ -263,6 +345,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     def _parse(self, buffer: Iterable, spectrum_index: int = None,
                start_line_number: int=None) -> Spectrum:
         spec: Spectrum = self._new_spectrum()
+        spec.index = spectrum_index if spectrum_index is not None else -1
         interpretation: Interpretation = None
         analyte: Analyte = None
         interpretation_member: InterpretationMember = None
@@ -292,6 +375,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 break
             if state == STATES.header:
                 if START_OF_SPECTRUM_MARKER.match(line):
+                    match = START_OF_SPECTRUM_MARKER.match(line)
+                    spec.key = match.group(1) or spec.index - 1
                     continue
 
                 elif START_OF_PEAKS_MARKER.match(line):
@@ -314,7 +399,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     analyte = self._new_analyte(match.group(1))
                     spec.add_analyte(analyte)
                     continue
-                self._parse_attribute_into(line, spec, real_line_number_or_nothing)
+                self._parse_attribute_into(line, spec, real_line_number_or_nothing, state)
 
             elif state == STATES.interpretation:
                 if START_OF_ANALYTE_MARKER.match(line):
@@ -488,11 +573,38 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         else:
             version = self.version
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
+
+        for attr_set in library.entry_attribute_sets.values():
+            self.write_attribute_set(attr_set, AttributeSetTypes.library_entry)
+
+        for attr_set in library.analyte_attribute_sets.values():
+            self.write_attribute_set(attr_set, AttributeSetTypes.analyte)
+
+        for attr_set in library.interpretation_attribute_sets.values():
+            self.write_attribute_set(attr_set, AttributeSetTypes.interpretation)
+
         self._write_attributes(library.attributes)
 
+    def write_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
+        if attribute_set_type == AttributeSetTypes.library_entry:
+            set_type = "LibraryEntry"
+        elif attribute_set_type == AttributeSetTypes.analyte:
+            set_type = "Analyte"
+        elif attribute_set_type == AttributeSetTypes.interpretation:
+            set_type = "Interpretation"
+
+        header = f"<AttributeSet {set_type}={attribute_set.name}>\n"
+        self.handle.write(header)
+        self._write_attributes(attribute_set.attributes)
+        self.handle.write('\n')
+
     def write_spectrum(self, spectrum: Spectrum):
-        self.handle.write("<Spectrum>\n")
-        self._write_attributes(spectrum.attributes)
+        self.handle.write(f"<LibraryEntry={spectrum.key}>\n")
+        attribs_of = list(self._filter_attributes(
+            spectrum,
+            self._not_entry_key_or_index)
+        )
+        self._write_attributes(attribs_of)
         for analyte in spectrum.analytes.values():
             self.handle.write(f"<Analyte={analyte.id}>\n")
             self._write_attributes(analyte.attributes)
