@@ -1,19 +1,14 @@
-from mzlib.attributes import Attributed
-from mzlib.spectrum import Spectrum
 import re
 import io
 import os
 import logging
-import warnings
 
-from typing import List, Tuple, Union, Iterable
+from typing import List, Tuple, Iterable
 
-from pathlib import Path
-
-from mzlib.index import MemoryIndex
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
-from mzlib.spectrum import Spectrum, LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, SPECTRUM_NAME
 from mzlib import annotation
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
+from mzlib.spectrum import Spectrum, SPECTRUM_NAME
+from mzlib.attributes import Attributed
 
 from .base import _PlainTextSpectralLibraryBackendBase
 from .utils import try_cast
