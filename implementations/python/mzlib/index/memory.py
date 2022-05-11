@@ -28,12 +28,12 @@ class IndexRecord(object):
         self.attributes = attributes
 
     def get(self, key: str, default=None) -> Any:
-        if self.attributes:
+        if self.attributes is not None:
             return self.attributes.get(key, default)
         return default
 
     def set(self, key: str, value: Any):
-        if self.attributes:
+        if self.attributes is not None:
             self.attributes[key] = value
         else:
             self.attributes = {key: value}
