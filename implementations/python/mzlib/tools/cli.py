@@ -1,3 +1,4 @@
+import ipdb
 import sys
 import traceback
 import click
@@ -7,6 +8,18 @@ from mzlib.index import MemoryIndex, SQLIndex
 from mzlib.backends.text import TextSpectralLibraryWriter
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+def info(type, value, tb):
+    if not sys.stderr.isatty():
+        click.secho("Running interactively, not starting debugger", fg='yellow')
+        sys.__excepthook__(type, value, tb)
+    else:
+        traceback.print_exception(type, value, tb)
+        ipdb.post_mortem(tb)
+
+sys.excepthook = info
+sys.breakpointhook = ipdb.set_trace
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)

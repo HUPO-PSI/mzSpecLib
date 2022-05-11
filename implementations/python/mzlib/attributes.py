@@ -1,6 +1,9 @@
 import textwrap
 
-from typing import Any, Iterable, Optional, Union, List, Dict
+from typing import Any, DefaultDict, Iterable, Iterator, Optional, Tuple, Union, List, Dict, Generic, TypeVar, Type
+
+
+T = TypeVar('T')
 
 
 class Attribute(object):
@@ -13,6 +16,9 @@ class Attribute(object):
         self.key = key
         self.value = value
         self.group_id = group_id
+
+    def copy(self):
+        return self.__class__(self.key, self.value, self.group_id)
 
     def __getitem__(self, i):
         if i == 0:
@@ -109,7 +115,7 @@ class AttributeManager(object):
         return str(next_value)
 
     #### Add an attribute to the list and update the lookup tables
-    def add_attribute(self, key, value, group_identifier=None):
+    def add_attribute(self, key: str, value, group_identifier: Optional[str] = None):
         """Add an attribute to the list and update the lookup tables
 
         Parameters
@@ -149,7 +155,17 @@ class AttributeManager(object):
             else:
                 self.group_dict[group_identifier] = [index]
 
-    def get_attribute(self, key, group_identifier=None) -> Union[Any, List[Any]]:
+    def add_attribute_group(self, attributes: List[Union[Attribute, Tuple[str, Any]]]):
+        group_id = self.get_next_group_identifier()
+        for attr in attributes:
+            if isinstance(attr, Attribute):
+                key = attr.key
+                value = attr.value
+            else:
+                key, value = attr
+            self.add_attribute(key, value, group_id)
+
+    def get_attribute(self, key: str, group_identifier: Optional[str]=None, raw: bool=False) -> Union[Any, List[Any], Attribute, List[Attribute]]:
         """Get the value or values associated with a given
         attribute key.
 
@@ -169,15 +185,30 @@ class AttributeManager(object):
         if group_identifier is None:
             indices = indices_and_groups['indexes']
             if len(indices) > 1:
+                if raw:
+                    return [self.attributes[i] for i in indices]
                 return [self.attributes[i][1] for i in indices]
             else:
+                if raw:
+                    return self.attributes[indices[0]]
                 return self.attributes[indices[0]][1]
         else:
             groups = indices_and_groups['groups']
             i = groups.index(group_identifier)
             indices = indices_and_groups['indexes']
             idx = indices[i]
-            return self.attributes[idx]
+            if raw:
+                return self.attributes[idx]
+            return self.attributes[idx][1]
+
+    def get_attribute_group(self, group_identifier: str) -> List[Any]:
+        result = []
+        group_identifier = str(group_identifier)
+        for k, indices_and_groups in self.attribute_dict.items():
+            for i, g in zip(indices_and_groups['indexes'], indices_and_groups['groups']):
+                if g == group_identifier:
+                    result.append(self.attributes[i])
+        return result
 
     def replace_attribute(self, key, value, group_identifier=None):
         try:
@@ -221,12 +252,7 @@ class AttributeManager(object):
         """Remove all content from the store.
 
         """
-        self.attributes = []
-
-        # Internal index attributes
-        self.attribute_dict = {}
-        self.group_dict = {}
-        self.group_counter = 1
+        self._clear_attributes()
 
     def remove_attribute(self, key, group_identifier=None):
         """Remove the value or values associated with a given
@@ -248,18 +274,38 @@ class AttributeManager(object):
             if len(indices) > 1:
                 indices = sorted(indices, reverse=True)
                 for i in indices:
-                    self.attributes.remove(i)
+                    self.attributes.pop(i)
             else:
-                self.attributes.remove(indices[0])
+                self.attributes.pop(indices[0])
         else:
             groups = indices_and_groups['groups']
             i = groups.index(group_identifier)
-            indices = indices['indexes']
+            indices = indices_and_groups['indexes']
             idx = indices[i]
-            self.attributes.remove(idx)
+            self.attributes.pop(idx)
         attributes = self.attributes
         self.clear()
         self._from_iterable(attributes)
+
+    def _remove_attribute_group(self, group_identifier):
+        group_indices = self.group_dict.pop(group_identifier)
+        for offset, i in enumerate(sorted(group_indices)):
+            self.attributes.pop(i - offset)
+        attributes = self.attributes
+        self.clear()
+        self._from_iterable(attributes)
+
+    def _iter_attribute_groups(self):
+        seen = set()
+        for group_id, indices in self.group_dict.items():
+            yield group_id, [self.attributes[i] for i in indices]
+            seen.update(indices)
+        acc = []
+        for i, attr in enumerate(self.attributes):
+            if i in seen:
+                continue
+            acc.append(attr)
+        yield None, acc
 
     def has_attribute(self, key):
         """Test for the presence of a given attribute
@@ -311,13 +357,27 @@ class AttributeManager(object):
         return not self == other
 
     def __len__(self):
-        return len(self.attributes)
+        return self._count_attributes()
 
     def __bool__(self):
         return len(self) > 0
 
     def __iter__(self):
+        return self._iter_attributes()
+
+    def _count_attributes(self) -> int:
+        return len(self.attributes)
+
+    def _iter_attributes(self) -> Iterator[Attribute]:
         return iter(self.attributes)
+
+    def _clear_attributes(self):
+        self.attributes = []
+
+        # Internal index attributes
+        self.attribute_dict = {}
+        self.group_dict = {}
+        self.group_counter = 1
 
     def _from_iterable(self, attributes):
         mapping = {}
@@ -332,6 +392,9 @@ class AttributeManager(object):
                 self.add_attribute(attrib[0], attrib[1], remap)
             else:
                 self.add_attribute(attrib[0], attrib[1])
+
+    def _attributes_from_iterable(self, attributes):
+        return self._from_iterable(attributes)
 
     def copy(self):
         """Make a deep copy of the object
@@ -398,7 +461,7 @@ class AttributedEntity(object):
         """
         return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
 
-    def get_attribute(self, key, group_identifier=None):
+    def get_attribute(self, key, group_identifier=None, raw: bool=False):
         """Get the value or values associated with a given
         attribute key from the entity's attribute store.
 
@@ -414,7 +477,10 @@ class AttributedEntity(object):
         attribute_value: object or list[object]
             Returns single or multiple values for the requested attribute.
         """
-        return self.attributes.get_attribute(key, group_identifier=group_identifier)
+        return self.attributes.get_attribute(key, group_identifier=group_identifier, raw=raw)
+
+    def get_attribute_group(self, group_identifier: str) -> List[Any]:
+        return self.attributes.get_attribute_group(group_identifier)
 
     def replace_attribute(self, key, value, group_identifier=None):
         return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
@@ -465,5 +531,91 @@ class AttributedEntity(object):
         '''
         return self.attributes.get_by_name(name)
 
+    def _iter_attribute_groups(self):
+        return self.attributes._iter_attribute_groups()
+
+    def _count_attributes(self) -> int:
+        return self.attributes._count_attributes()
+
+    def _iter_attributes(self) -> Iterator[Attribute]:
+        return self.attributes._iter_attributes()
+
+    def _attributes_from_iterable(self, attributes):
+        return self.attributes._attributes_from_iterable(attributes)
+
+    def _clear_attributes(self):
+        return self.attributes._clear_attributes()
+
 
 Attributed = Union[AttributeManager, AttributedEntity]
+
+
+class AttributeSet(AttributedEntity):
+    name: str
+    term_index: DefaultDict[str, List[Attribute]]
+
+    def __init__(self, name: str, attributes: Iterable = None, **kwargs):
+        super().__init__(attributes, **kwargs)
+        self.name = name
+
+    def apply(self, target: Attributed):
+        terms_to_remove: List[Tuple[str, Union[Attribute, List[Attribute]]]] = []
+        for key in self.attributes.keys():
+            terms_to_remove.append((key, target.get_attribute(key, raw=True)))
+
+        group_ids = DefaultDict(int)
+        for key, terms in terms_to_remove:
+            if isinstance(terms, list):
+                for term in terms:
+                    if term.group_id:
+                        group_ids[term.group_id] += 1
+                    target.remove_attribute(key, group_identifier=term.group_id)
+            else:
+                if term.group_id:
+                    group_ids[term.group_id] += 1
+                target.remove_attribute(key, group_identifier=term.group_id)
+
+        for group_id in group_ids:
+            target._remove_attribute_group(group_id)
+
+        for group_id, attrs in self._iter_attribute_groups():
+            if group_id is None:
+                for a in attrs:
+                    target.add_attribute(a)
+            else:
+                target.add_attribute_group(attrs)
+
+    def __repr__(self):
+        template = f"{self.__class__.__name__}(name={self.name}, "
+        lines = list(map(str, self.attributes))
+        if not lines:
+            template += "[])"
+            return template
+        template += "[\n%s])" % textwrap.indent(',\n'.join(lines), ' ' * 2)
+        return template
+
+
+
+class AttributeManagedProperty(Generic[T]):
+    __slots__ = ("attribute", )
+    attribute: str
+
+    def __init__(self, attribute: str):
+        self.attribute = attribute
+
+    def __get__(self, inst: AttributeManager, cls: Type) -> T:
+        return inst.get_attribute(self.attribute)
+
+    def __set__(self, inst: AttributeManager, value: T):
+        attrib = self.attribute
+        if inst.has_attribute(attrib):
+            inst.replace_attribute(attrib, value)
+        elif inst._count_attributes() > 0:
+            attribs = [[attrib, value]] + list(inst._iter_attributes())
+            inst._clear_attributes()
+            inst._attributes_from_iterable(attribs)
+        else:
+            inst.add_attribute(attrib, value)
+
+    def __delete__(self, inst: AttributeManager, attr):
+        inst.remove_attribute(self.attribute)

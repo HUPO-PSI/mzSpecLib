@@ -1,5 +1,11 @@
 <mzSpecLib 1.0>
-<Spectrum>
+<AttributeSet LibraryEntry=all>
+
+<AttributeSet Analyte=all>
+
+<AttributeSet Interpretation=all>
+
+<LibraryEntry=1>
 MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
@@ -31,7 +37,6 @@ MS:1003059|number of peaks=87
 [6]MS:1009902|other attribute value=0.45
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=4/20
-MS:1003062|spectrum index=0
 <Analyte=1>
 MS:1000224|molecular mass=1710.9076
 [1]MS:1003048|number of enzymatic termini=2
@@ -42,7 +47,6 @@ MS:1001112|n-terminal flanking residue=R
 MS:1001113|c-terminal flanking residue=L
 MS:1000885|protein accession="tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=855.455
-<Interpretation=1>
 <Peaks>
 143.0823	14791.5	b2/5.6ppm
 153.2575	5008.6	?
@@ -132,7 +136,7 @@ MS:1003053|theoretical monoisotopic m/z=855.455
 1426.7601	40643.8	y14+i/3.8ppm
 1496.7792	11918.3	y15/-6.5ppm
 
-<Spectrum>
+<LibraryEntry=2>
 MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_53eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
@@ -164,7 +168,6 @@ MS:1003059|number of peaks=204
 [6]MS:1009902|other attribute value=0.16
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=5/20
-MS:1003062|spectrum index=1
 <Analyte=1>
 MS:1000224|molecular mass=1710.9076
 [1]MS:1003048|number of enzymatic termini=2
@@ -175,7 +178,6 @@ MS:1001112|n-terminal flanking residue=R
 MS:1001113|c-terminal flanking residue=L
 MS:1000885|protein accession="tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=855.4574
-<Interpretation=1>
 <Peaks>
 143.0814	9555.6	b2/-0.7ppm
 169.097	5174.5	?
@@ -382,7 +384,7 @@ MS:1003053|theoretical monoisotopic m/z=855.4574
 1557.3423	600.8	?
 1628.3004	719.6	?
 
-<Spectrum>
+<LibraryEntry=3>
 MS:1003061|spectrum name=AAAAGQTGTVPPGAPGALPLPGMAIVK/2_0_76eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
@@ -414,7 +416,6 @@ MS:1003059|number of peaks=122
 [6]MS:1009902|other attribute value=0.12
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=0/20
-MS:1003062|spectrum index=2
 <Analyte=1>
 MS:1000224|molecular mass=2414.3344
 [1]MS:1003048|number of enzymatic termini=1
@@ -425,7 +426,6 @@ MS:1001112|n-terminal flanking residue=A
 MS:1001113|c-terminal flanking residue=E
 MS:1000885|protein accession="tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=1207.1661
-<Interpretation=1>
 <Peaks>
 143.0816	2935.3	b2/0.7ppm
 147.1127	2210.5	y1/-0.7ppm
@@ -550,7 +550,7 @@ MS:1003053|theoretical monoisotopic m/z=1207.1661
 1752.5294	2175.8	?
 1980.9857	3567.9	?
 
-<Spectrum>
+<LibraryEntry=4>
 MS:1003061|spectrum name=AAAAGSTSVKPIFSR/2_0_44eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
@@ -582,7 +582,6 @@ MS:1003059|number of peaks=111
 [6]MS:1009902|other attribute value=0.17
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=1/20
-MS:1003062|spectrum index=3
 <Analyte=1>
 MS:1000224|molecular mass=1463.8086
 [1]MS:1003048|number of enzymatic termini=1
@@ -593,7 +592,6 @@ MS:1001112|n-terminal flanking residue=Q
 MS:1001113|c-terminal flanking residue=D
 MS:1000885|protein accession="tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=731.9023
-<Interpretation=1>
 <Peaks>
 110.1269	76.26	?
 113.4028	68.16	?
@@ -707,7 +705,7 @@ MS:1003053|theoretical monoisotopic m/z=731.9023
 1389.0188	62.97	?
 1465.9423	113.63	?
 
-<Spectrum>
+<LibraryEntry=5>
 MS:1003061|spectrum name=AAAAGSTSVKPIFSR/3_0_28eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=3
@@ -739,7 +737,6 @@ MS:1003059|number of peaks=161
 [6]MS:1009902|other attribute value=0.09
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=0/20
-MS:1003062|spectrum index=4
 <Analyte=1>
 MS:1000224|molecular mass=1464.8157
 [1]MS:1003048|number of enzymatic termini=1
@@ -750,7 +747,6 @@ MS:1001112|n-terminal flanking residue=Q
 MS:1001113|c-terminal flanking residue=D
 MS:1000885|protein accession="tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=488.2738
-<Interpretation=1>
 <Peaks>
 110.4751	880.7	?
 111.5315	809.7	?
@@ -914,7 +910,7 @@ MS:1003053|theoretical monoisotopic m/z=488.2738
 1465.9084	1527.1	?
 1469.9915	925.5	?
 
-<Spectrum>
+<LibraryEntry=6>
 MS:1003061|spectrum name=AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_50eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
@@ -946,7 +942,6 @@ MS:1003059|number of peaks=68
 [6]MS:1009902|other attribute value=0.45
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=6/20
-MS:1003062|spectrum index=5
 <Analyte=1>
 MS:1000224|molecular mass=1661.7668
 [1]MS:1003048|number of enzymatic termini=2
@@ -957,7 +952,6 @@ MS:1001112|n-terminal flanking residue=K
 MS:1001113|c-terminal flanking residue=E
 MS:1000885|protein accession="tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=830.8868
-<Interpretation=1>
 <Peaks>
 110.1102	57.808	?
 115.0864	84.449	a2/-1.6ppm
@@ -1028,7 +1022,7 @@ MS:1003053|theoretical monoisotopic m/z=830.8868
 1628.4393	118.77	?
 1670.2889	140.136	?
 
-<Spectrum>
+<LibraryEntry=7>
 MS:1003061|spectrum name=AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_52eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
@@ -1060,7 +1054,6 @@ MS:1003059|number of peaks=402
 [6]MS:1009902|other attribute value=0.17
 [7]MS:1009900|other attribute name=num_unassigned_peaks
 [7]MS:1009902|other attribute value=3/20
-MS:1003062|spectrum index=6
 <Analyte=1>
 MS:1000224|molecular mass=1661.7668
 [1]MS:1003048|number of enzymatic termini=2
@@ -1071,7 +1064,6 @@ MS:1001112|n-terminal flanking residue=K
 MS:1001113|c-terminal flanking residue=E
 MS:1000885|protein accession="tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1"
 MS:1003053|theoretical monoisotopic m/z=830.8817
-<Interpretation=1>
 <Peaks>
 141.1024	1824.4	?
 143.0816	54472.6	b2/0.7ppm

@@ -1,7 +1,6 @@
 {
   "attributes": [],
-  "format_version": "1.0",
-  "spectra": [
+  "entries": [
     {
       "analytes": {
         "1": {
@@ -37,6 +36,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": "1"
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "Test"
@@ -59,7 +63,10 @@
             {
               "accession": "MS:1003163",
               "name": "analyte mixture members",
-              "value": [1, 2]
+              "value": [
+                1,
+                2
+              ]
             }
           ],
           "id": "1",
@@ -96,7 +103,9 @@
             {
               "accession": "MS:1003163",
               "name": "analyte mixture members",
-              "value": [3]
+              "value": [
+                3
+              ]
             }
           ],
           "id": "2",
@@ -117,5 +126,15 @@
       "mzs": [],
       "peak_annotations": []
     }
-  ]
+  ],
+  "format_version": "1.0",
+  "library_analyte_attribute_sets": {
+    "all": []
+  },
+  "library_entry_attribute_sets": {
+    "all": []
+  },
+  "library_interpretation_attribute_sets": {
+    "all": []
+  }
 }

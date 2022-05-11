@@ -1,7 +1,6 @@
 {
   "attributes": [],
-  "format_version": "1.0",
-  "spectra": [
+  "entries": [
     {
       "analytes": {
         "1": {
@@ -59,6 +58,11 @@
         }
       },
       "attributes": [
+        {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 1
+        },
         {
           "accession": "MS:1003061",
           "name": "spectrum name",
@@ -233,11 +237,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "4/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 0
         }
       ],
       "intensities": [
@@ -572,6 +571,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 2
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "AAAACALTPGPLADLAAR/2_1(4,C,CAM)_53eV"
@@ -745,11 +749,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "5/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 1
         }
       ],
       "intensities": [
@@ -1435,6 +1434,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 3
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK/2_0_76eV"
@@ -1608,11 +1612,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "0/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 2
         }
       ],
       "intensities": [
@@ -2052,6 +2051,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 4
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "AAAAGSTSVKPIFSR/2_0_44eV"
@@ -2225,11 +2229,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "1/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 3
         }
       ],
       "intensities": [
@@ -2636,6 +2635,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 5
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "AAAAGSTSVKPIFSR/3_0_28eV"
@@ -2809,11 +2813,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "0/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 4
         }
       ],
       "intensities": [
@@ -3370,6 +3369,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 6
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_50eV"
@@ -3543,11 +3547,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "6/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 5
         }
       ],
       "intensities": [
@@ -3825,6 +3824,11 @@
       },
       "attributes": [
         {
+          "accession": "MS:1003237",
+          "name": "library entry key",
+          "value": 7
+        },
+        {
           "accession": "MS:1003061",
           "name": "spectrum name",
           "value": "AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_52eV"
@@ -3998,11 +4002,6 @@
           "cv_param_group": "7",
           "name": "other attribute value",
           "value": "3/20"
-        },
-        {
-          "accession": "MS:1003062",
-          "name": "spectrum index",
-          "value": 6
         }
       ],
       "intensities": [
@@ -4657,5 +4656,15 @@
         "?"
       ]
     }
-  ]
+  ],
+  "format_version": "1.0",
+  "library_analyte_attribute_sets": {
+    "all": []
+  },
+  "library_entry_attribute_sets": {
+    "all": []
+  },
+  "library_interpretation_attribute_sets": {
+    "all": []
+  }
 }

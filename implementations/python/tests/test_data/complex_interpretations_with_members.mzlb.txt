@@ -1,4 +1,4 @@
-<Spectrum>
+<LibraryEntry=1>
 MS:1003061|spectrum name=Test
 MS:1000744|selected ion m/z=880.8902
 <Analyte=1>
