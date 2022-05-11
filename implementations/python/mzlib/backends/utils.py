@@ -10,6 +10,17 @@ GZIP_MAGIC = b'\037\213'
 
 GzipFile = gzip.GzipFile
 
+try:
+    # Fast random acces with Gzip compatibility
+    import idzip
+    idzip.compressor.IdzipWriter.enforce_extension = False
+
+    GzipFile = idzip.IdzipFile
+except ImportError:
+    pass
+
+
+
 
 class LineBuffer(object):
     lines: deque
@@ -98,18 +109,21 @@ def open_stream(f: Union[io.IOBase, os.PathLike], mode='rt', buffer_size: Option
     '''
     if buffer_size is None:
         buffer_size = DEFAULT_BUFFER_SIZE
-    if not hasattr(f, 'read'):
-        f = io.open(f, 'rb')
-    # On Py2, dill doesn't behave correctly with io-derived objects, so we have to
-    # patch it below. Don't try to wrap an io.TextIOWrapper on Py3.
-    if not isinstance(f, io.BufferedReader) and not isinstance(f, io.TextIOWrapper):
-        buffered_reader = io.BufferedReader(f, buffer_size)
+    if 'r' in mode:
+        if not hasattr(f, 'read'):
+            f = io.open(f, 'rb')
+        # On Py2, dill doesn't behave correctly with io-derived objects, so we have to
+        # patch it below. Don't try to wrap an io.TextIOWrapper on Py3.
+        if not isinstance(f, io.BufferedReader) and not isinstance(f, io.TextIOWrapper):
+            buffered_reader = io.BufferedReader(f, buffer_size)
+        else:
+            buffered_reader = f
+        if test_gzipped(buffered_reader):
+            handle = GzipFile(fileobj=buffered_reader, mode='rb')
+        else:
+            handle = buffered_reader
     else:
-        buffered_reader = f
-    if test_gzipped(buffered_reader):
-        handle = GzipFile(fileobj=buffered_reader, mode='rb')
-    else:
-        handle = buffered_reader
+        raise NotImplementedError("Haven't implemented automatic output stream determination")
     if "b" not in mode and "b" in f.mode:
         handle = io.TextIOWrapper(handle, encoding=encoding, newline=newline)
     return handle
