@@ -19,7 +19,7 @@ from .base import (
     SpectralLibraryWriterBase,
     FORMAT_VERSION_TERM,
     AttributeSetTypes)
-from .utils import try_cast
+from .utils import try_cast, open_stream
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -90,7 +90,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     @classmethod
     def guess_from_header(cls, filename: str) -> bool:
-        with open(filename, 'r', encoding='utf8') as stream:
+        with open_stream(filename, 'r', encoding='utf8') as stream:
             first_line = stream.readline()
             if START_OF_SPECTRUM_MARKER.match(first_line) or START_OF_LIBRARY_MARKER.match(first_line):
                 return True
@@ -182,7 +182,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         return False, 0
 
     def read_header(self) -> Tuple[bool, int]:
-        with open(self.filename, 'rt', encoding='utf8') as stream:
+        with open_stream(self.filename, 'rt', encoding='utf8') as stream:
             return self._parse_header_from_stream(stream)
 
     def create_index(self) -> int:
@@ -201,7 +201,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         #### Determine the filesize
         file_size = os.path.getsize(filename)
 
-        with open(filename, 'rt', encoding='utf8') as infile:
+        with open_stream(filename, 'rt', encoding='utf8') as infile:
             state = 'header'
             spectrum_buffer = []
             n_spectra = 0
@@ -251,11 +251,9 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             n_spectra += 1
                             spectrum_buffer = []
                             #### Commit every now and then
-                            if n_spectra % 1000 == 0:
+                            if n_spectra % 10000 == 0:
                                 self.index.commit()
-                                percent_done = int(
-                                    file_offset/file_size*100+0.5)
-                                logger.info(str(percent_done)+"%...")
+                                logger.info(f"Processed {file_offset} bytes, {n_spectra} read")
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = ''
@@ -274,7 +272,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 analyte=None)
             self.index.commit()
             n_spectra += 1
-
+            logger.info(f"Processed {file_offset} bytes, {n_spectra} read")
             #### Flush the index
             self.index.commit()
 
