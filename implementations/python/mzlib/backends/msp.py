@@ -8,9 +8,9 @@ from typing import List, Tuple, Iterable
 from mzlib import annotation
 from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
-from mzlib.attributes import Attributed
+from mzlib.attributes import AttributeManager, Attributed
 
-from .base import _PlainTextSpectralLibraryBackendBase
+from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM
 from .utils import try_cast
 
 
@@ -181,6 +181,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         first_line = stream.readline()
+        attributes = AttributeManager()
+        attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
+        attributes.add_attribute(LIBRARY_NAME_TERM, self.filename)
+        self.attributes.clear()
+        self.attributes._from_iterable(attributes)
         if re.match("Name: ", first_line):
             return True, 0
         return False, 0

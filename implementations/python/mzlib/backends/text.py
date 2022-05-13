@@ -54,14 +54,14 @@ class LibraryParserStateEnum(enum.Enum):
 
 ATTRIBUTE_SET_NAME = "MS:1003212|library attribute set name"
 
-START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum|LibraryEntry)(?:=(.+))?>")
+START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum)(?:=(.+))?>")
 START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
 START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
 SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
 START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:=(.+))>")
-START_OF_ATTRIBUTE_SET = re.compile(r"<AttributeSet (Spectrum|LibraryEntry|Analyte|Interpretation)=(.+)>")
+START_OF_ATTRIBUTE_SET = re.compile(r"<AttributeSet (Spectrum|Analyte|Interpretation)=(.+)>")
 START_OF_CLUSTER = re.compile(r"<Cluster(?:=(.+))>")
 
 
@@ -300,7 +300,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         key = match['term_accession']
         value = match['value']
         try:
-            term = self._find_term_for(key)
+            term = self.find_term_for(key)
             match['value'] = term.value_type(value)
         except KeyError:
             match['value'] = try_cast(value)
@@ -554,7 +554,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         for attribute in attributes:
             value = attribute.value
             try:
-                term = self._find_term_for(attribute.key.split("|")[0])
+                term = self.find_term_for(attribute.key.split("|")[0])
                 value = term.value_type.format(value)
             except KeyError:
                 pass
@@ -572,7 +572,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         else:
             version = self.version
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
-
+        self._write_attributes(library.attributes)
         for attr_set in library.entry_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.spectrum)
 
@@ -582,11 +582,9 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         for attr_set in library.interpretation_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.interpretation)
 
-        self._write_attributes(library.attributes)
-
     def write_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
         if attribute_set_type == AttributeSetTypes.spectrum:
-            set_type = "LibraryEntry"
+            set_type = "Spectrum"
         elif attribute_set_type == AttributeSetTypes.analyte:
             set_type = "Analyte"
         elif attribute_set_type == AttributeSetTypes.interpretation:
