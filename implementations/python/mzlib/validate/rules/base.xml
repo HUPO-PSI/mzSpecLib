@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CvMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/HUPO-PSI/psi-tools/master/xml-schemas/CvMappingRules.xsd" modelName="mzIdentML1.2.0.xsd" modelURI="https://raw.githubusercontent.com/HUPO-PSI/mzIdentML/master/schema/mzIdentML1.2.0.xsd" modelVersion="1.2.0">
+
+     <CvReferenceList>
+        <CvReference cvName="PSI-MS" cvIdentifier="MS"/>
+        <CvReference cvName="MOD" cvIdentifier="MOD"/>
+        <CvReference cvName="Brenda" cvIdentifier="BTO"/>
+        <CvReference cvName="UNIMOD" cvIdentifier="UNIMOD"/>
+        <CvReference cvName="GO" cvIdentifier="GO"/>
+        <CvReference cvName="PATO" cvIdentifier="PATO"/>
+        <CvReference cvName="UO" cvIdentifier="UO"/>
+        <CvReference cvName="XLMOD" cvIdentifier="XLMOD"/>
+    </CvReferenceList>
+
+    <CvMappingRuleList>
+
+        <CvMappingRule id="Library_has_format_version" requirementLevel="MUST" scopePath="/Library" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003186" useTermName="false" useTerm="true" termName="library format version" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Library_has_identifier" requirementLevel="SHOULD" scopePath="/Library" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003187" useTermName="false" useTerm="true" termName="library identifier" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Library_has_name" requirementLevel="MUST" scopePath="/Library" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003188" useTermName="false" useTerm="true" termName="library name" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_key" requirementLevel="MUST" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003237" useTermName="false" useTerm="true" termName="library spectrum key" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_index" requirementLevel="MUST" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003061" useTermName="false" useTerm="true" termName="library spectrum index" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_index" requirementLevel="MUST" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003061" useTermName="false" useTerm="true" termName="library spectrum index" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_source_file" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1009008" useTermName="false" useTerm="true" termName="source file" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_scan_identifier" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003057" useTermName="false" useTerm="true" termName="scan number" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_precursor_charge" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1000041" useTermName="false" useTerm="true" termName="charge state" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000633" useTermName="false" useTerm="true" termName="possible charge state" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_precursor_mz" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1000744" useTermName="false" useTerm="true" termName="selected ion m/z" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1003208" useTermName="false" useTerm="true" termName="experimental precursor monoisotopic m/z" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_dissociation" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1000044" useTermName="false" useTerm="true" termName="dissociation method" isRepeatable="false" allowChildren="true" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Analyte_has_any_mass" requirementLevel="SHOULD" scopePath="/Library/Spectrum/Analyte" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1001117" useTermName="false" useTerm="true" termName="theoretical mass" isRepeatable="false" allowChildren="true" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000224" useTermName="false" useTerm="true" termName="molecular mass" isRepeatable="false" allowChildren="true" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Analyte_has_any_charge" requirementLevel="MAY" scopePath="/Library/Spectrum/Analyte" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1000041" useTermName="false" useTerm="true" termName="charge state" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+
+    </CvMappingRuleList>
+</CvMapping>

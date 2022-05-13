@@ -11,6 +11,8 @@ from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
 from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
 
+from .utils import open_stream
+
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
 
@@ -85,7 +87,7 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     identifier = AttributeManagedProperty(LIBRARY_IDENTIFIER_TERM)
 
     @classmethod
-    def guess_from_filename(cls, filename) -> bool:
+    def guess_from_filename(cls, filename: Union[str, Path, io.FileIO]) -> bool:
         """Guess if the file is of this type by inspecting the file's name and extension.
 
         Parameters
@@ -98,8 +100,12 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         bool:
             Whether this is an appropriate backend for that file.
         """
+        if hasattr(filename, "name"):
+            filename = filename.name
         if not isinstance(filename, (str, Path)):
             return False
+        if filename.endswith(".gz"):
+            filename = filename[:-3]
         return filename.endswith(cls.file_format)
 
     @classmethod
@@ -338,7 +344,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         if hasattr(filename_or_stream, 'read'):
             self.handle = filename_or_stream
         else:
-            self.handle = open(filename_or_stream, 'rt')
+            self.handle = open_stream(filename_or_stream, 'rt')
 
     def _buffer_from_stream(self, stream: io.IOBase) -> List:
         '''Collect data from the readable stream until
@@ -357,7 +363,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         raise NotImplementedError()
 
     def read(self):
-        with open(self.filename, 'rt') as stream:
+        with open_stream(self.filename, 'rt') as stream:
             i = 0
             match, offset = self._parse_header_from_stream(stream)
             if not match:
@@ -372,7 +378,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 yield self._parse(buffer, i)
 
     def _get_lines_for(self, offset: int) -> List[str]:
-        with open(self.filename, 'r') as infile:
+        with open_stream(self.filename, 'r') as infile:
             infile.seek(offset)
             spectrum_buffer = self._buffer_from_stream(infile)
             #### We will end up here if this is the last spectrum in the file

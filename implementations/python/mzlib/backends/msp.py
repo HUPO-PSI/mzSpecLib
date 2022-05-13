@@ -11,7 +11,7 @@ from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 from mzlib.attributes import AttributeManager, Attributed
 
 from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM
-from .utils import try_cast
+from .utils import try_cast, open_stream
 
 
 logger = logging.getLogger(__name__)
@@ -167,14 +167,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     @classmethod
     def guess_from_header(cls, filename: str) -> bool:
-        with open(filename, 'r') as stream:
+        with open_stream(filename, 'r') as stream:
             first_line = stream.readline()
             if re.match("Name: ", first_line):
                 return True
         return False
 
     def read_header(self) -> bool:
-        with open(self.filename, 'r') as stream:
+        with open_stream(self.filename, 'r') as stream:
             match, offset = self._parse_header_from_stream(stream)
             return match
         return False
@@ -206,7 +206,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         #### Determine the filesize
         file_size = os.path.getsize(filename)
 
-        with open(filename, 'r') as infile:
+        with open_stream(filename, 'r') as infile:
             state = 'header'
             spectrum_buffer = []
             n_spectra = 0
@@ -255,11 +255,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             n_spectra += 1
                             spectrum_buffer = []
                             #### Commit every now and then
-                            if n_spectra % 1000 == 0:
+                            if n_spectra % 10000 == 0:
                                 self.index.commit()
-                                percent_done = int(
-                                    file_offset/file_size*100+0.5)
-                                logger.info(str(percent_done)+"%...")
+                                logger.info(f"Processed {file_offset} bytes, {n_spectra} read")
+
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
@@ -691,8 +690,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             #### Expand the Nrep attribute
             elif attribute == "Nrep" or attribute == "Nreps":
                 if attributes[attribute] is not None:
+                    value = attributes[attribute]
+                    if not isinstance(value, str):
+                        value = str(value)
                     match = re.match(
-                        r"(\d+)/(\d+)", attributes[attribute])
+                        r"(\d+)/(\d+)", value)
                     if match is not None:
                         spectrum.add_attribute(
                             "MS:1009020|number of replicate spectra used", try_cast(match.group(1)))
@@ -700,7 +702,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             "MS:1009021|number of replicate spectra available", try_cast(match.group(2)))
                     else:
                         match = re.match(
-                            r"(\d+)", attributes[attribute])
+                            r"(\d+)", value)
                         if match is not None:
                             spectrum.add_attribute(
                                 "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CvMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/HUPO-PSI/psi-tools/master/xml-schemas/CvMappingRules.xsd" modelName="mzIdentML1.2.0.xsd" modelURI="https://raw.githubusercontent.com/HUPO-PSI/mzIdentML/master/schema/mzIdentML1.2.0.xsd" modelVersion="1.2.0">
+
+     <CvReferenceList>
+        <CvReference cvName="PSI-MS" cvIdentifier="MS"/>
+        <CvReference cvName="MOD" cvIdentifier="MOD"/>
+        <CvReference cvName="Brenda" cvIdentifier="BTO"/>
+        <CvReference cvName="UNIMOD" cvIdentifier="UNIMOD"/>
+        <CvReference cvName="GO" cvIdentifier="GO"/>
+        <CvReference cvName="PATO" cvIdentifier="PATO"/>
+        <CvReference cvName="UO" cvIdentifier="UO"/>
+        <CvReference cvName="XLMOD" cvIdentifier="XLMOD"/>
+    </CvReferenceList>
+
+    <CvMappingRuleList>
+        <CvMappingRule id="Analyte_has_peptide_seq" requirementLevel="MUST" scopePath="/Library/Spectrum/Analyte" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1000889" useTermName="false" useTerm="true" termName="proforma peptidoform sequence" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000888" useTermName="false" useTerm="true" termName="stripped peptide sequence" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1003270" useTermName="false" useTerm="true" termName="proforma peptidoform ion notation" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+    </CvMappingRuleList>
+</CvMapping>

@@ -2,10 +2,12 @@ import ipdb
 import sys
 import traceback
 import click
+import logging
 
 from mzlib.spectrum_library import SpectrumLibrary
 from mzlib.index import MemoryIndex, SQLIndex
 from mzlib.backends.text import TextSpectralLibraryWriter
+from mzlib.validate import validator
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -27,7 +29,7 @@ def main():
     '''A collection of utilities for inspecting and manipulating
     spectral libraries.
     '''
-    pass
+    logging.basicConfig(level='INFO', stream=sys.stderr)
 
 
 @main.command("describe", short_help=("Produce a minimal textual description"
@@ -50,7 +52,6 @@ def describe(path, diagnostics=False):
     TextSpectralLibraryWriter(fh).write_header(library.backend)
 
 
-
 @main.command("convert", short_help=("Convert a spectral library from one format to another"))
 @click.argument('inpath', type=click.Path(exists=True))
 @click.argument("outpath", type=click.Path())
@@ -69,6 +70,23 @@ def convert(inpath, outpath, format=None):
     fh = click.open_file(outpath, mode='w')
     library.write(fh, format)
 
+
+@main.command("index", short_help="Build an on-disk index for a spectral library")
+@click.argument('inpath', type=click.Path(exists=True))
+def build_index(inpath):
+    library = SpectrumLibrary(filename=inpath, index_type=SQLIndex)
+
+
+@main.command(short_help="Semantically validate a spectral library")
+@click.argument('inpath', type=click.Path(exists=True))
+def validate(inpath):
+    if SQLIndex.exists(inpath):
+        index_type = SQLIndex
+    else:
+        index_type = MemoryIndex
+    library = SpectrumLibrary(filename=inpath, index_type=index_type)
+    chain = validator.get_validator_for("base")
+    chain.validate_library(library)
 
 if __name__ == "__main__":
     main()
