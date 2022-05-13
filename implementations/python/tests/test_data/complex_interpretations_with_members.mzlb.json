@@ -1,6 +1,13 @@
 {
+  "analyte_attribute_sets": {
+    "all": []
+  },
   "attributes": [],
-  "entries": [
+  "format_version": "1.0",
+  "interpretation_attribute_sets": {
+    "all": []
+  },
+  "spectra": [
     {
       "analytes": {
         "1": {
@@ -37,7 +44,7 @@
       "attributes": [
         {
           "accession": "MS:1003237",
-          "name": "library entry key",
+          "name": "library spectrum key",
           "value": "1"
         },
         {
@@ -127,14 +134,7 @@
       "peak_annotations": []
     }
   ],
-  "format_version": "1.0",
-  "library_analyte_attribute_sets": {
-    "all": []
-  },
-  "library_entry_attribute_sets": {
-    "all": []
-  },
-  "library_interpretation_attribute_sets": {
+  "spectrum_attribute_sets": {
     "all": []
   }
 }
