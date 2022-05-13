@@ -16,10 +16,14 @@ from .utils import open_stream
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
 
-FORMAT_VERSION_TERM = 'MS:1009002|format version'
+FORMAT_VERSION_TERM = 'MS:1003186|library format version'
 LIBRARY_NAME_TERM = "MS:1003188|library name"
 LIBRARY_VERSION_TERM = "MS:1003190|library version"
 LIBRARY_IDENTIFIER_TERM = "MS:1003187|library identifier"
+LIBRARY_DESCRIPTION_TERM = "MS:1003189|library description"
+LIBRARY_URI_TERM = "MS:1003191|library URI"
+
+
 DEFAULT_VERSION = '1.0'
 
 
@@ -83,8 +87,10 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     analyte_attribute_sets: Dict[str, AttributeSet]
     interpretation_attribute_sets: Dict[str, AttributeSet]
 
-    name = AttributeManagedProperty(LIBRARY_NAME_TERM)
-    identifier = AttributeManagedProperty(LIBRARY_IDENTIFIER_TERM)
+    name = AttributeManagedProperty[str](LIBRARY_NAME_TERM)
+    identifier = AttributeManagedProperty[str](LIBRARY_IDENTIFIER_TERM)
+    description = AttributeManagedProperty[str](LIBRARY_DESCRIPTION_TERM)
+    uri = AttributeManagedProperty[str](LIBRARY_URI_TERM)
 
     @classmethod
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO]) -> bool:

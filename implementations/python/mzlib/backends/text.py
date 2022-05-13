@@ -217,7 +217,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             file_offset_line_ending = len(infile.newlines) - 1
             infile.seek(0)
 
-            logger.info(f"Reading {filename} ({file_size} bytes)...")
+            logger.debug(f"Reading {filename} ({file_size} bytes)...")
             while 1:
                 line = infile.readline()
                 if len(line) == 0:
@@ -254,7 +254,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             #### Commit every now and then
                             if n_spectra % 10000 == 0:
                                 self.index.commit()
-                                logger.info(f"Processed {file_offset} bytes, {n_spectra} read")
+                                logger.info(f"Processed {file_offset} bytes, {n_spectra} spectra read")
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = ''
@@ -273,7 +273,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 analyte=None)
             self.index.commit()
             n_spectra += 1
-            logger.info(f"Processed {file_offset} bytes, {n_spectra} read")
+            logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
             #### Flush the index
             self.index.commit()
 

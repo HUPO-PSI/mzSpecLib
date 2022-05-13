@@ -1,10 +1,10 @@
 import enum
 
-class RequirementLevel(enum.Enum):
-    may = enum.auto()
-    should = enum.auto()
-    must = enum.auto()
-    disallow = enum.auto()
+class RequirementLevel(enum.IntEnum):
+    may = 0
+    should = 1
+    must = 2
+    disallow = 3
 
     @classmethod
     def from_str(cls, text: str) -> 'RequirementLevel':

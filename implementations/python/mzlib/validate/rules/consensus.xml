@@ -14,10 +14,9 @@
     </CvReferenceList>
 
     <CvMappingRuleList>
-        <CvMappingRule id="Analyte_has_peptide_seq" requirementLevel="MUST" scopePath="/Library/Spectrum/Analyte" cvTermsCombinationLogic="OR">
-            <CvTerm termAccession="MS:1000889" useTermName="false" useTerm="true" termName="proforma peptidoform sequence" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
-            <CvTerm termAccession="MS:1000888" useTermName="false" useTerm="true" termName="stripped peptide sequence" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
-            <CvTerm termAccession="MS:1003270" useTermName="false" useTerm="true" termName="proforma peptidoform ion notation" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        <CvMappingRule id="Spectrum_has_replicates_used" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="AND">
+            <CvTerm termAccession="MS:1003069" useTermName="false" useTerm="true" termName="number of replicate spectra available" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1003070" useTermName="false" useTerm="true" termName="number of replicate spectra used" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
         </CvMappingRule>
     </CvMappingRuleList>
 </CvMapping>

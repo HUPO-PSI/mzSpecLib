@@ -4,8 +4,8 @@
   },
   "attributes": [
     {
-      "accession": "MS:1009002",
-      "name": "format version",
+      "accession": "MS:1003186",
+      "name": "library format version",
       "value": "1.0"
     },
     {
@@ -48,7 +48,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
             },
             {
@@ -560,7 +560,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
             },
             {
@@ -1423,7 +1423,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
             },
             {
@@ -2040,7 +2040,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAAGSTSVKPIFSR"
             },
             {
@@ -2624,7 +2624,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAAGSTSVKPIFSR"
             },
             {
@@ -3358,7 +3358,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
@@ -3813,7 +3813,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAALGSHGSCSSEVEK"
             },
             {

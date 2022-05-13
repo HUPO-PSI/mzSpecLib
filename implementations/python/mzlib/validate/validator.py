@@ -1,5 +1,7 @@
+from dataclasses import dataclass
+import itertools
 import logging
-from typing import Any, Deque, Dict, Iterator, List, Optional, Tuple
+from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Tuple
 
 from psims.controlled_vocabulary import Entity
 
@@ -27,6 +29,8 @@ def walk_children(term: Entity):
 
 
 class ValidatorBase(VocabularyResolverMixin):
+    error_log: List
+
     def add_warning(self, obj: Attributed, path: str, identifier_path: Tuple, attrib: Any, value: Any, requirement_level: RequirementLevel, message: str):
         raise NotImplementedError()
 
@@ -39,9 +43,19 @@ class ValidatorBase(VocabularyResolverMixin):
     def validate_interpretation(self, interpretation: Interpretation, path: str, spectrum: Spectrum, library: SpectrumLibrary):
         raise NotImplementedError()
 
-    def validate_library(self, library: SpectrumLibrary):
-        for spectrum in library:
-            self.validate_spectrum(spectrum, "/Library")
+    def apply_rules(self, obj: Attributed, path: str, identifier_path: Tuple) -> bool:
+        raise NotImplementedError()
+
+    def validate_library(self, library: SpectrumLibrary, spectrum_iterator: Optional[Iterator[Spectrum]]=None):
+        path = "/Library"
+        self.apply_rules(library, path, (library.identifier, ))
+        if spectrum_iterator is None:
+            spectrum_iterator = library
+        for spectrum in spectrum_iterator:
+            self.validate_spectrum(spectrum, path, library)
+
+    def chain(self, validator: 'ValidatorBase') -> 'ValidatorBase':
+        return ValidatorChain([self, validator])
 
     def walk_terms_for(self, curie: str) -> Iterator[str]:
         term = self.find_term_for(curie)
@@ -49,11 +63,20 @@ class ValidatorBase(VocabularyResolverMixin):
             yield f"{entity.id}|{entity.name}"
 
 
+@dataclass
+class ValidationError:
+    path: str
+    identifier_path: Tuple
+    attribute: Any
+    value: Any
+    requirement_level: RequirementLevel
+    message: str
+
+
 class Validator(ValidatorBase):
     name: str
     semantic_rules: List[ScopedSemanticRule]
     object_rules: List
-    error_log: List
 
     def __init__(self, name, semantic_rules: Optional[List[ScopedSemanticRule]]=None, object_rules: Optional[List]=None, error_log: Optional[List]=None):
         super().__init__()
@@ -68,7 +91,10 @@ class Validator(ValidatorBase):
             if rule.path == path:
                 v = rule(obj, path, identifier_path, self)
                 result &= v
-                logger.info(f"Applied {rule.id} to {path}:{identifier_path} {v}/{result}")
+                level = logging.DEBUG
+                if not v and rule.requirement_level > RequirementLevel.may:
+                    level = logging.WARN
+                logger.log(level, f"Applied {rule.id} to {path}:{identifier_path} {v}/{result}")
         return result
 
     def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
@@ -100,12 +126,74 @@ class Validator(ValidatorBase):
             key = obj.id
         else:
             key = ''
-        warning = f"{attrib} failed to validate {path}:{key} ({requirement_level.name.upper()}): {message}"
+        warning = f"{attrib.id} failed to validate {path}:{key} ({requirement_level.name.upper()}): {message}"
         logger.warn(warning)
-        self.error_log.append(warning)
+        self.error_log.append(ValidationError(path, identifier_path, attrib, value, requirement_level, warning))
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.name!r}, {self.semantic_rules})"
+
+
+class PredicateValidator(Validator):
+    spectrum_predicate: Callable[[Spectrum], bool]
+
+    def __init__(self, name, predicate: Callable[[Spectrum], bool], semantic_rules: Optional[List[ScopedSemanticRule]] = None, object_rules: Optional[List] = None, error_log: Optional[List] = None):
+        self.spectrum_predicate = predicate
+        super().__init__(name, semantic_rules, object_rules, error_log)
+
+    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
+        if self.spectrum_predicate(spectrum):
+            return super().validate_spectrum(spectrum, path, library)
+        return True
+
+
+class ValidatorChain(ValidatorBase):
+    validators: List[ValidatorBase]
+
+    def __init__(self, validators: List[ValidatorBase], *args, **kwargs):
+        self.validators = list(validators)
+        super().__init__(*args, **kwargs)
+
+    @property
+    def error_log(self):
+        log = []
+        for validator in self.validators:
+            log.extend(validator.error_log)
+        return log
+
+    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
+        result = True
+        for validator in self.validators:
+            result &= validator.validate_spectrum(spectrum, path, library)
+        return result
+
+    def validate_analyte(self, analyte: Analyte, path: str, spectrum: Spectrum, library: SpectrumLibrary):
+        result = True
+        for validator in self.validators:
+            result &= validator.validate_analyte(analyte, path, spectrum, library)
+        return result
+
+    def validate_interpretation(self, interpretation: Interpretation, path: str, spectrum: Spectrum, library: SpectrumLibrary):
+        result = True
+        for validator in self.validators:
+            result &= validator.validate_interpretation(interpretation, path, spectrum, library)
+        return result
+
+    def apply_rules(self, obj: Attributed, path: str, identifier_path: Tuple) -> bool:
+        result = True
+        for validator in self.validators:
+            result &= validator.apply_rules(obj, path, identifier_path)
+        return result
+
+    def chain(self, validator: ValidatorBase) -> ValidatorBase:
+        self.validators.append(validator)
+        return self
+
+
+predicates = {
+    "single_spectrum": lambda spec: spec.get_attribute("MS:1003065|spectrum aggregation type") == "MS:1003066|singleton spectrum",
+    "consensus_spectrum": lambda spec: spec.get_attribute("MS:1003065|spectrum aggregation type") == "MS:1003066|singleton spectrum",
+}
 
 
 def get_validator_for(name: str) -> Validator:

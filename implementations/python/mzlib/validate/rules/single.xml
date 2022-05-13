@@ -14,10 +14,11 @@
     </CvReferenceList>
 
     <CvMappingRuleList>
-        <CvMappingRule id="Analyte_has_peptide_seq" requirementLevel="MUST" scopePath="/Library/Spectrum/Analyte" cvTermsCombinationLogic="OR">
-            <CvTerm termAccession="MS:1000889" useTermName="false" useTerm="true" termName="proforma peptidoform sequence" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
-            <CvTerm termAccession="MS:1000888" useTermName="false" useTerm="true" termName="stripped peptide sequence" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
-            <CvTerm termAccession="MS:1003270" useTermName="false" useTerm="true" termName="proforma peptidoform ion notation" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        <CvMappingRule id="Spectrum_has_source_file" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1009008" useTermName="false" useTerm="true" termName="source file" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Spectrum_has_scan_identifier" requirementLevel="SHOULD" scopePath="/Library/Spectrum" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1003057" useTermName="false" useTerm="true" termName="scan number" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
         </CvMappingRule>
     </CvMappingRuleList>
 </CvMapping>

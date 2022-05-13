@@ -56,7 +56,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO, Mapping]) -> bool:
         if isinstance(filename, Mapping):
             return SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
-        return super(JSONSpectralLibrary).guess_from_filename(filename)
+        return super(JSONSpectralLibrary, cls).guess_from_filename(filename)
 
     def _load_buffer(self, filename_or_stream):
         if isinstance(filename_or_stream, dict):
