@@ -3,7 +3,7 @@ import enum
 import json
 import warnings
 
-from typing import Iterable, List, Dict
+from typing import Iterable, List, Dict, Mapping, Union
 
 from pathlib import Path
 from xml.dom.minidom import Attr
@@ -53,12 +53,10 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             self.create_index()
 
     @classmethod
-    def guess_from_filename(cls, filename) -> bool:
-        if isinstance(filename, dict):
+    def guess_from_filename(cls, filename: Union[str, Path, io.FileIO, Mapping]) -> bool:
+        if isinstance(filename, Mapping):
             return SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
-        if not isinstance(filename, (str, Path)):
-            return False
-        return filename.endswith(cls.file_format)
+        return super(JSONSpectralLibrary, cls).guess_from_filename(filename)
 
     def _load_buffer(self, filename_or_stream):
         if isinstance(filename_or_stream, dict):
