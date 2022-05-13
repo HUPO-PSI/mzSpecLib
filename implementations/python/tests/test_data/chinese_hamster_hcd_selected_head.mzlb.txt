@@ -1,5 +1,5 @@
 <mzSpecLib 1.0>
-<AttributeSet LibraryEntry=all>
+<AttributeSet Spectrum=all>
 
 <AttributeSet Analyte=all>
 
