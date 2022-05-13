@@ -19,7 +19,7 @@ from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_
 
 LIBRARY_METADATA_KEY = "attributes"
 ELEMENT_ATTRIBUTES_KEY = "attributes"
-LIBRARY_ENTRIES_KEY = "entries"
+SPECTRA_KEY = "spectra"
 FORMAT_VERSION_KEY = "format_version"
 ANALYTES_KEY = 'analytes'
 INTERPRETATIONS_KEY = 'interpretations'
@@ -29,9 +29,9 @@ ID_KEY = 'id'
 MZ_KEY = "mzs"
 INTENSITY_KEY = "intensities"
 AGGREGATIONS_KEY = "aggregations"
-LIBRARY_ENTRY_CLASSES = "library_entry_attribute_sets"
-LIBRARY_ANALYTE_CLASSES = "library_analyte_attribute_sets"
-LIBRARY_INTERPRETATION_CLASSES = "library_interpretation_attribute_sets"
+SPECTRUM_CLASSES = "spectrum_attribute_sets"
+ANALYTE_CLASSES = "analyte_attribute_sets"
+INTERPRETATION_CLASSES = "interpretation_attribute_sets"
 
 FORMAT_VERSION_ACC = FORMAT_VERSION_TERM.split("|")[0]
 
@@ -55,7 +55,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
     @classmethod
     def guess_from_filename(cls, filename) -> bool:
         if isinstance(filename, dict):
-            return LIBRARY_ENTRIES_KEY in filename and LIBRARY_METADATA_KEY in filename
+            return SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
         if not isinstance(filename, (str, Path)):
             return False
         return filename.endswith(cls.file_format)
@@ -77,7 +77,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         return False
 
     def create_index(self):
-        for i, record in enumerate(self.buffer[LIBRARY_ENTRIES_KEY]):
+        for i, record in enumerate(self.buffer[SPECTRA_KEY]):
             for attrib in record['attributes']:
                 if attrib["accession"] == "MS:1003061":
                     self.index.add(i, i, attrib['value'], None, None)
@@ -107,7 +107,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
             offset = self.index.offset_for(spectrum_name)
-        data = self.buffer[LIBRARY_ENTRIES_KEY][offset]
+        data = self.buffer[SPECTRA_KEY][offset]
         spectrum = self.make_spectrum_from_payload(data)
         return spectrum
 
@@ -116,7 +116,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             if attrib['accession'] == "MS:1003212":
                 if context_type == AttributeSetTypes.analyte:
                     self.analyte_attribute_sets[attrib['value']].apply(store)
-                elif context_type == AttributeSetTypes.library_entry:
+                elif context_type == AttributeSetTypes.spectrum:
                     self.entry_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.interpretation:
                     self.interpretation_attribute_sets[attrib['value']].apply(store)
@@ -168,7 +168,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         self._fill_attributes(
             data[ELEMENT_ATTRIBUTES_KEY],
             spectrum,
-            AttributeSetTypes.library_entry
+            AttributeSetTypes.spectrum
         )
         if ANALYTES_KEY in data:
             for analyte_id, analyte in data[ANALYTES_KEY].items():
@@ -212,9 +212,9 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         return spectrum
 
     def read(self):
-        n = len(self.buffer[LIBRARY_ENTRIES_KEY])
+        n = len(self.buffer[SPECTRA_KEY])
         for offset in range(n):
-            data = self.buffer[LIBRARY_ENTRIES_KEY][offset]
+            data = self.buffer[SPECTRA_KEY][offset]
             spectrum = self.make_spectrum_from_payload(data)
             yield spectrum
 
@@ -237,10 +237,10 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.buffer = {
             FORMAT_VERSION_KEY: self.version,
             LIBRARY_METADATA_KEY: [],
-            LIBRARY_ENTRIES_KEY: [],
-            LIBRARY_ENTRY_CLASSES: {},
-            LIBRARY_ANALYTE_CLASSES: {},
-            LIBRARY_INTERPRETATION_CLASSES: {},
+            SPECTRA_KEY: [],
+            SPECTRUM_CLASSES: {},
+            ANALYTE_CLASSES: {},
+            INTERPRETATION_CLASSES: {},
         }
 
     def write_library(self, library: SpectralLibraryBackendBase):
@@ -258,13 +258,13 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
     def write_header(self, library: SpectralLibraryBackendBase):
         attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
-        self.buffer[LIBRARY_ENTRY_CLASSES] = {
+        self.buffer[SPECTRUM_CLASSES] = {
             c.name: self._format_attributes(c.attributes) for c in library.entry_attribute_sets.values()
         }
-        self.buffer[LIBRARY_ANALYTE_CLASSES] = {
+        self.buffer[ANALYTE_CLASSES] = {
             c.name: self._format_attributes(c.attributes) for c in library.analyte_attribute_sets.values()
         }
-        self.buffer[LIBRARY_INTERPRETATION_CLASSES] = {
+        self.buffer[INTERPRETATION_CLASSES] = {
             c.name: self._format_attributes(c.attributes) for c in library.interpretation_attribute_sets.values()
         }
 
@@ -370,7 +370,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         if not any(aggregations):
             spectrum.pop(AGGREGATIONS_KEY)
 
-        self.buffer[LIBRARY_ENTRIES_KEY].append(spectrum)
+        self.buffer[SPECTRA_KEY].append(spectrum)
 
     def flush(self):
         # If we know we're writing a complete library, skip the probably-doing-too-many-things
@@ -384,7 +384,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             # We don't have a header section to format, so write just the spectra,
             # and if the number of spectra is one and the simplify flag is true,
             # skip the wrapping array
-            spectra = self.buffer[LIBRARY_ENTRIES_KEY]
+            spectra = self.buffer[SPECTRA_KEY]
             n_spectra = len(spectra)
             if n_spectra == 1 and self.simplify:
                 if self.pretty_print:

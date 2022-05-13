@@ -19,7 +19,7 @@ DEFAULT_VERSION = '1.0'
 
 
 class AttributeSetTypes(enum.Enum):
-    library_entry = enum.auto()
+    spectrum = enum.auto()
     analyte = enum.auto()
     interpretation = enum.auto()
 
@@ -304,7 +304,7 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         raise NotImplementedError()
 
     def _add_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
-        if attribute_set_type == AttributeSetTypes.library_entry:
+        if attribute_set_type == AttributeSetTypes.spectrum:
             self.entry_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.analyte:
             self.analyte_attribute_sets[attribute_set.name] = attribute_set

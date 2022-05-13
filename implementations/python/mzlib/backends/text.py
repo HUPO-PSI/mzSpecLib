@@ -54,20 +54,19 @@ class LibraryParserStateEnum(enum.Enum):
 
 ATTRIBUTE_SET_NAME = "MS:1003212|library attribute set name"
 
-START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum|LibraryEntry)(?:=(.+))?>")
+START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum)(?:=(.+))?>")
 START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
 START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
 SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
 START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:=(.+))>")
-START_OF_ATTRIBUTE_SET = re.compile(r"<AttributeSet (LibraryEntry|Analyte|Interpretation)=(.+)>")
+START_OF_ATTRIBUTE_SET = re.compile(r"<AttributeSet (Spectrum|Analyte|Interpretation)=(.+)>")
 START_OF_CLUSTER = re.compile(r"<Cluster(?:=(.+))>")
 
 
 attribute_set_types = {
-    "libraryentry": AttributeSetTypes.library_entry,
-    "spectrum": AttributeSetTypes.library_entry,
+    "spectrum": AttributeSetTypes.spectrum,
     "analyte": AttributeSetTypes.analyte,
     "interpretation": AttributeSetTypes.interpretation
 }
@@ -149,7 +148,6 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         if match is not None:
                             d = match.groupdict()
                             if state == LibraryParserStateEnum.attribute_sets:
-                                breakpoint()
                                 current_attribute_set.add_attribute(
                                     d['term'], try_cast(d['value']), d['group_id'])
                                 current_attribute_set.group_counter = int(d['group_id'])
@@ -509,8 +507,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         mz, intensity, annotation = tokens
                         annotation = parse_annotation(annotation)
                         peak_list.append([float(mz), float(intensity), annotation, ""])
-                    elif n_tokens == 4:
-                        mz, intensity, annotation, aggregation = tokens
+                    elif n_tokens > 3:
+                        mz, intensity, annotation, *aggregation = tokens
                         annotation = parse_annotation(annotation)
                         peak_list.append(
                             [float(mz), float(intensity), annotation, aggregation])
@@ -575,7 +573,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
 
         for attr_set in library.entry_attribute_sets.values():
-            self.write_attribute_set(attr_set, AttributeSetTypes.library_entry)
+            self.write_attribute_set(attr_set, AttributeSetTypes.spectrum)
 
         for attr_set in library.analyte_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.analyte)
@@ -586,8 +584,8 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self._write_attributes(library.attributes)
 
     def write_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
-        if attribute_set_type == AttributeSetTypes.library_entry:
-            set_type = "LibraryEntry"
+        if attribute_set_type == AttributeSetTypes.spectrum:
+            set_type = "Spectrum"
         elif attribute_set_type == AttributeSetTypes.analyte:
             set_type = "Analyte"
         elif attribute_set_type == AttributeSetTypes.interpretation:
@@ -599,7 +597,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.write('\n')
 
     def write_spectrum(self, spectrum: Spectrum):
-        self.handle.write(f"<LibraryEntry={spectrum.key}>\n")
+        self.handle.write(f"<Spectrum={spectrum.key}>\n")
         attribs_of = list(self._filter_attributes(
             spectrum,
             self._not_entry_key_or_index)
@@ -616,8 +614,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 attribs_of = list(self._filter_attributes(interpretation, self._not_analyte_mixture_term))
             else:
                 attribs_of = interpretation.attributes
-            if len(attribs_of) == 0 and n_interps == 1:
-                continue
+
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
             self._write_attributes(attribs_of)
 
