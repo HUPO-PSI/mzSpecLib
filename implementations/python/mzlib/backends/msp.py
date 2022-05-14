@@ -155,7 +155,7 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
         analyte = spectrum.analytes.get(analyte_reference)
         if analyte is None:
             return None
-        return analyte.get_attribute('MS:1000888|unmodified peptide sequence')
+        return analyte.get_attribute('MS:1000888|stripped peptide sequence')
 
 
 parse_annotation = MSPAnnotationStringParser(annotation_pattern)
@@ -665,7 +665,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         r"([A-Z\-\*])\.([A-Z]+)\.([A-Z\-\*])/*([\d]*)", attributes[attribute])
                     if match is not None:
                         analyte.add_attribute(
-                            "MS:1000888|unmodified peptide sequence", match.group(2))
+                            "MS:1000888|stripped peptide sequence", match.group(2))
                         analyte.add_attribute(
                             "MS:1001112|n-terminal flanking residue", match.group(1))
                         analyte.add_attribute(
@@ -736,14 +736,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 unknown_terms.append(attribute)
 
-        if "MS:1000888|unmodified peptide sequence" not in analyte.attribute_dict:
+        if "MS:1000888|stripped peptide sequence" not in analyte.attribute_dict:
             if SPECTRUM_NAME in spectrum.attribute_dict:
                 lookup = spectrum.attribute_dict[SPECTRUM_NAME]
                 name = spectrum.attributes[lookup["indexes"][0]][1]
                 match = re.match(r"(.+)/(\d+)", name)
                 if match:
                     analyte.add_attribute(
-                        "MS:1000888|unmodified peptide sequence", match.group(1))
+                        "MS:1000888|stripped peptide sequence", match.group(1))
                     spectrum.add_attribute(
                         "MS:1000041|charge state", try_cast(match.group(2)))
 

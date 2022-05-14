@@ -37,7 +37,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
             },
             {
@@ -549,7 +549,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
             },
             {
@@ -1412,7 +1412,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
             },
             {
@@ -2029,7 +2029,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAAGSTSVKPIFSR"
             },
             {
@@ -2613,7 +2613,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAAGSTSVKPIFSR"
             },
             {
@@ -3347,7 +3347,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
@@ -3802,7 +3802,7 @@
             },
             {
               "accession": "MS:1000888",
-              "name": "unmodified peptide sequence",
+              "name": "stripped peptide sequence",
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
