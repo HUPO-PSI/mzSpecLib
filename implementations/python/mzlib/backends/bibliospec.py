@@ -9,14 +9,35 @@ from typing import List, Mapping, Tuple, Iterable, Type
 
 import numpy as np
 
+from pyteomics import proforma
+
 from mzlib import annotation
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME, CHARGE_STATE
 from mzlib.attributes import AttributeManager, Attributed
 
 from mzlib.backends.base import SpectralLibraryBackendBase, FORMAT_VERSION_TERM, DEFAULT_VERSION
 
 from mzlib.index.base import IndexBase
+
+
+class BibliospecBase:
+    connection: sqlite3.Connection
+
+    def _correct_modifications_in_sequence(self, row: Mapping) -> proforma.ProForma:
+        '''Correct the modifications in Bibliospec's modified peptide sequence.
+
+        Bibliospec only stores modifications as delta masses.
+        '''
+        mods = self.connection.execute("SELECT * FROM Modifications WHERE RefSpectraID = ?", (row['id'], )).fetchall()
+        peptide = proforma.ProForma.parse(row["peptideModSeq"])
+        for mod in mods:
+            position = mod['position'] - 1
+            mass = mod['mass']
+            peptide[position][1][0] = proforma.MassModification(mass)
+        return peptide
+
+
 
 
 @dataclass
@@ -27,14 +48,23 @@ class BlibIndexRecord:
     peptide: str
 
 
-class BlibIndex(IndexBase):
+class BlibIndex(BibliospecBase, IndexBase):
     connection: sqlite3.Connection
 
     def __init__(self, connection):
         self.connection = connection
 
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            return self.search(i + 1)
+        elif isinstance(i, slice):
+            return [self.search(j + 1) for j in range(i.start, i.stop, i.step)]
+        else:
+            raise TypeError(f"Cannot index {self.__class__.__name__} with {i}")
+
     def _record_from(self, row: Mapping) -> BlibIndexRecord:
-        return BlibIndexRecord(row['id'], row['precursorMZ'], row['precursorCharge'], row['peptideModSeq'])
+        peptide_sequence = str(self._correct_modifications_in_sequence(row))
+        return BlibIndexRecord(row['id'], row['precursorMZ'], row['precursorCharge'], peptide_sequence)
 
     def search(self, i):
         if isinstance(i, int):
@@ -46,8 +76,13 @@ class BlibIndex(IndexBase):
     def __iter__(self):
         return map(self._record_from, self.connection.execute("SELECT * FROM RefSpectra ORDER BY id").fetchall())
 
+    def __len__(self):
+        return self.connection.execute("SELECT count(*) FROM RefSpectra;").fetchone()[0]
 
-class BibliospecBackend(SpectralLibraryBackendBase):
+
+class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
+    '''Read Bibliospec 2 SQLite3 spectral library files.
+    '''
     connection: sqlite3.Connection
 
     file_format = "blib"
@@ -69,8 +104,29 @@ class BibliospecBackend(SpectralLibraryBackendBase):
         attribs = AttributeManager()
         attribs.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         attribs.add_attribute("MS:1003207|library creation software", "Bibliospec")
+
+        info = self.connection.execute("SELECT * FROM LibInfo;").fetchone()
+        library_id = info['libLSID']
+        _, pfx_name = library_id.split("bibliospec:")
+        _, name = pfx_name.split(":", 1)
+        attribs.add_attribute("MS:1003188|library name", name)
+        attribs.add_attribute("MS:1003187|library identifier", library_id)
+        attribs.add_attribute("MS:1003200|software version", f"{info['majorVersion']}.{info['minorVersion']}")
         self.attributes = attribs
         return True
+
+    def _populate_analyte(self, analyte: Analyte, row: Mapping):
+        '''Fill an analyte with details describing a peptide sequence and inferring
+        from context its traits based upon the assumptions Bibliospec makes.
+
+        Bibliospec only stores modifications as delta masses.
+        '''
+        peptide = self._correct_modifications_in_sequence(row)
+        analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
+        analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        analyte.add_attribute("MS:1000888|stripped peptide sequence", row['peptideSeq'])
+        analyte.add_attribute(CHARGE_STATE, row['precursorCharge'])
+
 
     def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None):
         '''Read a spectrum from the spectrum library.
@@ -87,6 +143,16 @@ class BibliospecBackend(SpectralLibraryBackendBase):
         spectrum.index = info['id'] - 1
         spectrum.precursor_mz = info['precursorMZ']
         spectrum.add_attribute(CHARGE_STATE, info['precursorCharge'])
+        try:
+            spectrum.add_attribute("MS:1000894|retention time", info['retentionTime'])
+        except KeyError:
+            pass
+
+        try:
+            spectrum.add_attribute("MS:1009021|number of replicate spectra available", info['copies'])
+            spectrum.add_attribute("MS:1009020|number of replicate spectra used", 1)
+        except KeyError:
+            pass
 
         n_peaks = info['numPeaks']
         spectrum.add_attribute("MS:1003059|number of peaks", n_peaks)
@@ -105,8 +171,7 @@ class BibliospecBackend(SpectralLibraryBackendBase):
         )
 
         analyte = self._new_analyte(1)
-        analyte.add_attribute("MS:1000888|stripped peptide sequence", info['peptideSeq'])
-        analyte.add_attribute("MS:1003169|proforma peptidoform sequence", info['peptideModSeq'])
+        self._populate_analyte(analyte, info)
 
         spectrum.add_analyte(analyte)
 
