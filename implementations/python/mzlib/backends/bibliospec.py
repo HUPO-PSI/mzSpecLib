@@ -65,14 +65,21 @@ class BibliospecBackend(SpectralLibraryBackendBase):
         self.read_header()
 
     def read_header(self) -> bool:
+        '''Stub implementation, awaiting better understanding of Bibliospec to divine other metadata'''
         attribs = AttributeManager()
         attribs.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         attribs.add_attribute("MS:1003207|library creation software", "Bibliospec")
         self.attributes = attribs
+        return True
 
     def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None):
+        '''Read a spectrum from the spectrum library.
+
+        Bibliospec does not support alternative labeling of spectra with a
+        plain text name so looking up by `spectrum_name` is not supported.
+        '''
         if spectrum_number is None:
-            raise ValueError("Only spectrum number queries are supported")
+            raise ValueError("Only spectrum number queries are supported. spectrum_number must have an integer value")
 
         info = self.connection.execute("SELECT * FROM RefSpectra WHERE id = ?", (spectrum_number, )).fetchone()
         spectrum = self._new_spectrum()
