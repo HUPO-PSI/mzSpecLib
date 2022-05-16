@@ -1,10 +1,12 @@
 import dataclasses
+from datetime import datetime
 from importlib import resources
 import io
+import logging
 
 from xml.etree import ElementTree as etree
 
-from typing import Any, List, TYPE_CHECKING, Tuple
+from typing import Any, List, TYPE_CHECKING, Optional, Tuple, Union
 
 from mzlib.attributes import Attributed
 from mzlib.utils import flatten, ensure_iter
@@ -15,12 +17,72 @@ if TYPE_CHECKING:
     from .validator import ValidatorBase
 
 
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
+
+class AttributeSemanticPredicate:
+    def validate(self, attribute: 'AttributeSemanticRule', value: str, validator_context: "ValidatorBase") -> bool:
+        raise NotImplementedError()
+
+
+class ValueOfType(AttributeSemanticPredicate):
+    type_name: Union[str, List[str]]
+
+    def __init__(self, type_name):
+        super().__init__()
+        self.type_name = type_name
+
+    def validate(self, attribute: 'AttributeSemanticRule', value: str, validator_context: "ValidatorBase") -> bool:
+        if not isinstance(self.type_name, list):
+            type_name = [self.type_name]
+        else:
+            type_name = self.type_name
+        result = False
+        for tp in type_name:
+            if tp == 'int':
+                result |= isinstance(value, int) or (isinstance(value, float) and value.is_integer())
+            elif tp == 'float':
+                result |= isinstance(value, float)
+            elif tp == "string":
+                result |= isinstance(value, str)
+            elif tp == 'datetime':
+                if isinstance(value, datetime.datetime):
+                    result |= True
+                elif isinstance(value, str):
+                    logger.warning("Ambiguous datetime found for %s: %s", attribute, value)
+                    result |= True
+            else:
+                raise ValueError(f"Can't validate type {tp}")
+        return result
+
+
+class ValueIsChildOf(AttributeSemanticPredicate):
+    parent_accession: str
+
+    def __init__(self, parent_accession):
+        super().__init__()
+        self.parent_accession = parent_accession
+
+    def validate(self, attribute: 'AttributeSemanticRule', value: str, validator_context: "ValidatorBase"):
+        for term in validator_context.walk_terms_for(self.parent_accession):
+            if term == value:
+                if not term.startswith(self.parent_accession):
+                    return True
+        return False
+
+
+
+
+
 @dataclasses.dataclass(frozen=True)
 class AttributeSemanticRule:
     accession: str
     name: str
     repeatable: bool
     allow_children: bool
+    value: Optional[AttributeSemanticPredicate] = dataclasses.field(default=None)
+    condition: Optional[str] = dataclasses.field(default=None)
 
     @property
     def attribute(self) -> str:

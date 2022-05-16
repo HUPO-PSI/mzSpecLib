@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CvMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/HUPO-PSI/psi-tools/master/xml-schemas/CvMappingRules.xsd" modelName="mzSpecLib.1.0" modelVersion="1.0.0">
+
+     <CvReferenceList>
+        <CvReference cvName="PSI-MS" cvIdentifier="MS"/>
+        <CvReference cvName="MOD" cvIdentifier="MOD"/>
+        <CvReference cvName="Brenda" cvIdentifier="BTO"/>
+        <CvReference cvName="UNIMOD" cvIdentifier="UNIMOD"/>
+        <CvReference cvName="GO" cvIdentifier="GO"/>
+        <CvReference cvName="PATO" cvIdentifier="PATO"/>
+        <CvReference cvName="UO" cvIdentifier="UO"/>
+        <CvReference cvName="XLMOD" cvIdentifier="XLMOD"/>
+    </CvReferenceList>
+
+    <CvMappingRuleList>
+        <CvMappingRule id="Library_has_contact" requirementLevel="SHOULD" scopePath="/Library" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1000586" useTermName="false" useTerm="true" termName="contact name" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000587" useTermName="false" useTerm="true" termName="contact address" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000588" useTermName="false" useTerm="true" termName="contact URL" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000589" useTermName="false" useTerm="true" termName="contact email" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+            <CvTerm termAccession="MS:1000590" useTermName="false" useTerm="true" termName="contact affilation" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+        <CvMappingRule id="Library_has_reference" requirementLevel="SHOULD" scopePath="/Library" cvTermsCombinationLogic="OR">
+            <CvTerm termAccession="MS:1002866" useTermName="false" useTerm="true" termName="Reference" isRepeatable="false" allowChildren="false" cvIdentifierRef="MS" />
+        </CvMappingRule>
+
+    </CvMappingRuleList>
+</CvMapping>
