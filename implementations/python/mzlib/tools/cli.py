@@ -111,14 +111,18 @@ def validate(inpath, profiles=None):
         index_type = SQLIndex
     else:
         index_type = MemoryIndex
+
     logger.info(f"Loading library {inpath}...")
     library = SpectrumLibrary(filename=inpath, index_type=index_type)
+
     logger.info(f"Loading validators...")
     chain = validator.get_validator_for("base")
     for profile in profiles:
         if profile is None:
             continue
+        logger.info(f"... {profile}")
         chain = chain.chain(validator.get_validator_for(profile))
+
     logger.info(f"Validating {inpath}...")
     n_spectra = len(library)
     increment = max(min(n_spectra // 10, 5000), 1)
@@ -132,6 +136,7 @@ def validate(inpath, profiles=None):
         logger.info(f"Found {len(bucket)} violations for {level.name.upper()} rules")
         for err in bucket:
             logger.warn(f"... {err.message}")
+
 
 if __name__ == "__main__":
     main()

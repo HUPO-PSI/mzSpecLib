@@ -49,10 +49,12 @@ class ValidatorBase(VocabularyResolverMixin):
     def validate_library(self, library: SpectrumLibrary, spectrum_iterator: Optional[Iterator[Spectrum]]=None):
         path = "/Library"
         self.apply_rules(library, path, (library.identifier, ))
+        result = True
         if spectrum_iterator is None:
             spectrum_iterator = library
         for spectrum in spectrum_iterator:
-            self.validate_spectrum(spectrum, path, library)
+            result &= self.validate_spectrum(spectrum, path, library)
+        return result
 
     def chain(self, validator: 'ValidatorBase') -> 'ValidatorBase':
         return ValidatorChain([self, validator])
