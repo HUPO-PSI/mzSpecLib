@@ -23,3 +23,13 @@ class CombinationLogic(enum.Enum):
         if text in ("or", "and"):
             text += '_'
         return cls[text]
+
+    def to_str(self) -> str:
+        if self == self.or_:
+            return "OR"
+        elif self == self.and_:
+            return "AND"
+        elif self == self.xor:
+            return "XOR"
+        else:
+            raise ValueError(self)

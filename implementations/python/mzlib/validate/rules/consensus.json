@@ -1,0 +1,25 @@
+{
+  "name": "consensus",
+  "rule": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1003069",
+          "allow_children": false,
+          "name": "number of replicate spectra available",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1003070",
+          "allow_children": false,
+          "name": "number of replicate spectra used",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "AND",
+      "id": "Spectrum_has_replicates_used",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    }
+  ]
+}

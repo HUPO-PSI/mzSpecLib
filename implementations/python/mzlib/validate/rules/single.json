@@ -1,0 +1,33 @@
+{
+  "name": "single",
+  "rule": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1009008",
+          "allow_children": false,
+          "name": "source file",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_source_file",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003057",
+          "allow_children": false,
+          "name": "scan number",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_scan_identifier",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    }
+  ]
+}
