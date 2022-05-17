@@ -66,7 +66,6 @@ START_OF_CLUSTER = re.compile(r"<Cluster(?:=(.+))>")
 
 
 attribute_set_types = {
-    "libraryentry": AttributeSetTypes.spectrum,
     "spectrum": AttributeSetTypes.spectrum,
     "analyte": AttributeSetTypes.analyte,
     "interpretation": AttributeSetTypes.interpretation
@@ -274,6 +273,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             self.index.commit()
             n_spectra += 1
             logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
+
             #### Flush the index
             self.index.commit()
 

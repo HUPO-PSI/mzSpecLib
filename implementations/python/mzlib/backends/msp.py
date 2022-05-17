@@ -259,7 +259,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                 self.index.commit()
                                 logger.info(f"... Indexed  {file_offset} bytes, {n_spectra} spectra read")
 
-
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
 

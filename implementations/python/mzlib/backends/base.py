@@ -13,6 +13,8 @@ from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, Attribu
 
 from .utils import open_stream
 
+from .utils import open_stream
+
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
 
