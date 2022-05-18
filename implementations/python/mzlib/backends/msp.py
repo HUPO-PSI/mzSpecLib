@@ -4,6 +4,7 @@ import os
 import logging
 
 from typing import List, Tuple, Iterable
+import warnings
 
 from pyteomics import proforma
 
@@ -29,6 +30,7 @@ leader_terms = {
 analyte_terms = {
     "MW": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
+    "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
         "Protein": "MS:1000885|protein accession",
         "Mods": "MS:1001471|peptide modification details",
@@ -102,6 +104,9 @@ immonium_modification_map = {
 
 modification_name_map = {
     "CAM": "Carbamidomethyl",
+    "Pyro_glu": "Pyro_glu",
+    "Pyro-glu": "Pyro-glu",
+    "Oxidation": "Oxidation",
 }
 
 # TODO: ppm is unsigned, add mass calculation to determine true mass accuracy
@@ -167,22 +172,26 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
 
 
 parse_annotation = MSPAnnotationStringParser(annotation_pattern)
-modification_list_parser = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL]),([A-Za-z0-9]+)")
+modification_list_parser = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_-]),([A-Za-z0-9]+)")
 
 
 def parse_modification_notation(text: str) -> List[Tuple[int, str, str]]:
-    if not isinstance(text, str):
+    if not isinstance(text, str) or not text:
         return []
     i = 0
     n = len(text)
 
     mods = []
-    while text[i].isdigit() and i < n:
+    while i < n and text[i].isdigit():
         i += 1
 
     for position, residue, mod in modification_list_parser.findall(text):
         position = int(position)
-        modification_name = modification_name_map[mod]
+        if mod not in modification_name_map:
+            warnings.warn(f"{mod} is not found in the known MSP modification mapping. Using this name verbatim")
+            modification_name = mod
+        else:
+            modification_name = modification_name_map[mod]
         mods.append((position, residue, modification_name))
     return mods
 
