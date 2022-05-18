@@ -4,8 +4,12 @@ import os
 import logging
 
 from typing import List, Tuple, Iterable
+import warnings
+
+from pyteomics import proforma
 
 from mzlib import annotation
+
 from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 from mzlib.attributes import Attributed
@@ -26,6 +30,7 @@ leader_terms = {
 analyte_terms = {
     "MW": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
+    "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
         "Protein": "MS:1000885|protein accession",
         "Mods": "MS:1001471|peptide modification details",
@@ -96,6 +101,14 @@ immonium_modification_map = {
     "CAM": "Carbamidomethyl",
 }
 
+
+modification_name_map = {
+    "CAM": "Carbamidomethyl",
+    "Pyro_glu": "Pyro_glu",
+    "Pyro-glu": "Pyro-glu",
+    "Oxidation": "Oxidation",
+}
+
 # TODO: ppm is unsigned, add mass calculation to determine true mass accuracy
 
 annotation_pattern = re.compile(r"""^
@@ -155,10 +168,32 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
         analyte = spectrum.analytes.get(analyte_reference)
         if analyte is None:
             return None
-        return analyte.get_attribute('MS:1000888|unmodified peptide sequence')
+        return analyte.get_attribute('MS:1000888|stripped peptide sequence')
 
 
 parse_annotation = MSPAnnotationStringParser(annotation_pattern)
+modification_list_parser = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_-]),([A-Za-z0-9]+)")
+
+
+def parse_modification_notation(text: str) -> List[Tuple[int, str, str]]:
+    if not isinstance(text, str) or not text:
+        return []
+    i = 0
+    n = len(text)
+
+    mods = []
+    while i < n and text[i].isdigit():
+        i += 1
+
+    for position, residue, mod in modification_list_parser.findall(text):
+        position = int(position)
+        if mod not in modification_name_map:
+            warnings.warn(f"{mod} is not found in the known MSP modification mapping. Using this name verbatim")
+            modification_name = mod
+        else:
+            modification_name = modification_name_map[mod]
+        mods.append((position, residue, modification_name))
+    return mods
 
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
@@ -498,8 +533,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     elif is_analyte and attributes[attribute] in analyte_terms[attribute]:
                         #### If the mapping is a plain string, add it
                         if isinstance(analyte_terms[attribute][attributes[attribute]], str):
-                            key, value = analyte_terms[attribute][attributes[attribute]].split(
-                                "=")
+                            key, value = analyte_terms[attribute][attributes[attribute]].split("=")
                             analyte.add_attribute(key, try_cast(value))
                         #### Or if it is a list, then there are multiple terms to add within a group
                         elif isinstance(analyte_terms[attribute][attributes[attribute]], list):
@@ -665,7 +699,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         r"([A-Z\-\*])\.([A-Z]+)\.([A-Z\-\*])/*([\d]*)", attributes[attribute])
                     if match is not None:
                         analyte.add_attribute(
-                            "MS:1000888|unmodified peptide sequence", match.group(2))
+                            "MS:1000888|stripped peptide sequence", match.group(2))
                         analyte.add_attribute(
                             "MS:1001112|n-terminal flanking residue", match.group(1))
                         analyte.add_attribute(
@@ -736,14 +770,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 unknown_terms.append(attribute)
 
-        if "MS:1000888|unmodified peptide sequence" not in analyte.attribute_dict:
+        if "MS:1000888|stripped peptide sequence" not in analyte.attribute_dict:
             if SPECTRUM_NAME in spectrum.attribute_dict:
                 lookup = spectrum.attribute_dict[SPECTRUM_NAME]
                 name = spectrum.attributes[lookup["indexes"][0]][1]
                 match = re.match(r"(.+)/(\d+)", name)
                 if match:
                     analyte.add_attribute(
-                        "MS:1000888|unmodified peptide sequence", match.group(1))
+                        "MS:1000888|stripped peptide sequence", match.group(1))
                     spectrum.add_attribute(
                         "MS:1000041|charge state", try_cast(match.group(2)))
 
@@ -758,6 +792,19 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     "MS:1009900|other attribute name", try_cast(attribute), group_identifier)
                 spectrum.add_attribute("MS:1009902|other attribute value",
                                    try_cast(attributes[attribute]), group_identifier)
+
+        if analyte.has_attribute("MS:1001471|peptide modification details"):
+            modification_details = analyte.get_attribute("MS:1001471|peptide modification details")
+            peptide = proforma.ProForma.parse(analyte.get_attribute("MS:1000888|stripped peptide sequence"))
+            mods = parse_modification_notation(modification_details)
+            for position, residue, mod in mods:
+                seqpos = list(peptide.sequence[position])
+                if not seqpos[1]:
+                    seqpos[1] = [proforma.GenericModification(mod)]
+                peptide.sequence[position] = tuple(seqpos)
+                assert seqpos[0] == residue
+            analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
+
         if analyte:
             spectrum.add_analyte(analyte)
             interpretation.add_analyte(analyte)
