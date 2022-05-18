@@ -35,7 +35,8 @@
           "accession": "MS:1003237",
           "allow_children": false,
           "name": "library spectrum key",
-          "repeatable": false
+          "repeatable": false,
+          "value": "value_is_unique"
         }
       ],
       "combination_logic": "OR",
@@ -49,7 +50,8 @@
           "accession": "MS:1003061",
           "allow_children": false,
           "name": "library spectrum index",
-          "repeatable": false
+          "repeatable": false,
+          "value": "value_is_unique"
         }
       ],
       "combination_logic": "OR",
@@ -63,7 +65,8 @@
           "accession": "MS:1003061",
           "allow_children": false,
           "name": "library spectrum index",
-          "repeatable": false
+          "repeatable": false,
+          "value": "value_is_unique"
         }
       ],
       "combination_logic": "OR",

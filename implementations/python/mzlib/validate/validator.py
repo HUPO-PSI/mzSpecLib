@@ -129,7 +129,7 @@ class Validator(ValidatorBase):
         else:
             key = ''
         warning = f"{attrib.id} failed to validate {path}:{key} ({requirement_level.name.upper()}): {message}"
-        logger.warn(warning)
+        logger.warning(warning)
         self.error_log.append(ValidationError(path, identifier_path, attrib, value, requirement_level, warning))
 
     def __repr__(self):

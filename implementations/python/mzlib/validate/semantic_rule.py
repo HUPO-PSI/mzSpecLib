@@ -8,7 +8,7 @@ from importlib import resources
 
 from xml.etree import ElementTree as etree
 
-from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, Sequence, Tuple, Union
 
 from mzlib.attributes import Attributed
 from mzlib.utils import flatten, ensure_iter
@@ -35,8 +35,14 @@ class AttributeSemanticPredicate:
     def to_dict(self) -> Dict[str, Any]:
         raise NotImplementedError()
 
+    @classmethod
     def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
-        name = state['name']
+        if isinstance(state, Mapping):
+            name = state['name']
+        elif isinstance(state, str):
+            name = state
+        else:
+            raise TypeError(f"Cannot convert {state} to {cls.__name__}")
         rule_tp = cls._registry[name]
         return rule_tp.from_dict(state)
 
@@ -86,6 +92,7 @@ class ValueOfType(AttributeSemanticPredicate):
             "type_name": self.type_name
         }
 
+    @classmethod
     def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
         return cls(state['type_name'])
 
@@ -114,8 +121,36 @@ class ValueIsChildOf(AttributeSemanticPredicate):
             "accession": self.accession
         }
 
+    @classmethod
     def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
         return cls(state['accession'])
+
+
+class ValueIsUnique(AttributeSemanticPredicate):
+    seen: set
+
+    name = "value_is_unique"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        self.seen = set()
+
+    def validate(self, attribute: 'AttributeSemanticRule', value: str, validator_context: "ValidatorBase"):
+        if isinstance(value, list) and attribute.repeatable:
+            return all(self.validate(attribute, v, validator_context) for v in value)
+        if value in self.seen:
+            return False
+        self.seen.add(value)
+        return True
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+        }
+
+    @classmethod
+    def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
+        return cls()
 
 
 @dataclasses.dataclass(frozen=True)
