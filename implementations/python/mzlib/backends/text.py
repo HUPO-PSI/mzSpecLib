@@ -569,6 +569,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         else:
             version = self.version
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
+        self._write_attributes(library.attributes)
 
         for attr_set in library.entry_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.spectrum)
@@ -578,8 +579,6 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
 
         for attr_set in library.interpretation_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.interpretation)
-
-        self._write_attributes(library.attributes)
 
     def write_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
         if attribute_set_type == AttributeSetTypes.spectrum:
@@ -592,7 +591,8 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         header = f"<AttributeSet {set_type}={attribute_set.name}>\n"
         self.handle.write(header)
         self._write_attributes(attribute_set.attributes)
-        self.handle.write('\n')
+        if attribute_set.attributes:
+            self.handle.write('\n')
 
     def write_spectrum(self, spectrum: Spectrum):
         self.handle.write(f"<Spectrum={spectrum.key}>\n")
