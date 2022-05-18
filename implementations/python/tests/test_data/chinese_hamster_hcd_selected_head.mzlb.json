@@ -70,6 +70,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 855.455
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAAC[Carbamidomethyl]ALTPGPLADLAAR"
             }
           ],
           "id": "1"
@@ -582,6 +587,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 855.4574
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAAC[Carbamidomethyl]ALTPGPLADLAAR"
             }
           ],
           "id": "1"
@@ -1445,6 +1455,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 1207.1661
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
             }
           ],
           "id": "1"
@@ -2062,6 +2077,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 731.9023
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAAGSTSVKPIFSR"
             }
           ],
           "id": "1"
@@ -2646,6 +2666,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 488.2738
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAAGSTSVKPIFSR"
             }
           ],
           "id": "1"
@@ -3380,6 +3405,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 830.8868
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAALGSHGSC[Carbamidomethyl]SSEVEK"
             }
           ],
           "id": "1"
@@ -3835,6 +3865,11 @@
               "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 830.8817
+            },
+            {
+              "accession": "MS:1003169",
+              "name": "proforma peptidoform sequence",
+              "value": "AAAALGSHGSC[Carbamidomethyl]SSEVEK"
             }
           ],
           "id": "1"
