@@ -1,3 +1,4 @@
+import logging
 import ipdb
 import sys
 import traceback
@@ -27,7 +28,13 @@ def main():
     '''A collection of utilities for inspecting and manipulating
     spectral libraries.
     '''
-    pass
+    format_string = '[%(asctime)s] %(levelname).1s | %(name)s | %(message)s'
+
+    logging.basicConfig(
+        level='INFO',
+        stream=sys.stderr,
+        format=format_string,
+        datefmt="%H:%M:%S")
 
 
 @main.command("describe", short_help=("Produce a minimal textual description"
@@ -49,6 +56,11 @@ def describe(path, diagnostics=False):
     fh = click.open_file("-", 'wt')
     TextSpectralLibraryWriter(fh).write_header(library.backend)
 
+
+@main.command("index", short_help="Build an on-disk index for a spectral library")
+@click.argument('inpath', type=click.Path(exists=True))
+def build_index(inpath):
+    library = SpectrumLibrary(filename=inpath, index_type=SQLIndex)
 
 
 @main.command("convert", short_help=("Convert a spectral library from one format to another"))
