@@ -45,7 +45,7 @@ def describe(path, diagnostics=False):
         index_type = MemoryIndex
     library = SpectrumLibrary(filename=path, index_type=index_type)
     click.echo(f"Format: {library.format}")
-    click.echo(f"Size: {library.__len__()}")
+    click.echo(f"Spectrum Count: {len(library)}")
     fh = click.open_file("-", 'wt')
     TextSpectralLibraryWriter(fh).write_header(library.backend)
 
