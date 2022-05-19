@@ -58,7 +58,7 @@ def describe(path, diagnostics=False):
         index_type = MemoryIndex
     library = SpectrumLibrary(filename=path, index_type=index_type)
     click.echo(f"Format: {library.format}")
-    click.echo(f"Size: {library.__len__()}")
+    click.echo(f"Spectrum Count: {library.__len__()}")
     for attr in library.attributes:
         if not attr.group_id:
             click.echo(f"{attr.key}={attr.value}")

@@ -591,7 +591,8 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         header = f"<AttributeSet {set_type}={attribute_set.name}>\n"
         self.handle.write(header)
         self._write_attributes(attribute_set.attributes)
-        self.handle.write('\n')
+        if attribute_set.attributes:
+            self.handle.write('\n')
 
     def write_spectrum(self, spectrum: Spectrum):
         self.handle.write(f"<Spectrum={spectrum.key}>\n")
