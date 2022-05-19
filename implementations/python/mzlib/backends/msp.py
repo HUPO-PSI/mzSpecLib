@@ -30,6 +30,7 @@ leader_terms = {
 analyte_terms = {
     "MW": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
+    "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
         "Protein": "MS:1000885|protein accession",
         "Mods": "MS:1001471|peptide modification details",
@@ -111,6 +112,14 @@ modification_name_map = {
     "Phospho": "Phospho",
     "TMT6plex": "TMT6plex",
     "iTRAQ": "iTRAQ"
+}
+
+
+modification_name_map = {
+    "CAM": "Carbamidomethyl",
+    "Pyro_glu": "Pyro_glu",
+    "Pyro-glu": "Pyro-glu",
+    "Oxidation": "Oxidation",
 }
 
 # TODO: ppm is unsigned, add mass calculation to determine true mass accuracy
