@@ -52,8 +52,8 @@ analyte_terms = {
     # "Protein": "MS:1000885|protein accession",
     "Mods": "MS:1001471|peptide modification details",
     "Naa": "MS:1003043|number of residues",
-    "PrecursorMonoisoMZ": "MS:1003053|theoretical monoisotopic m/z",
-    "Mz_exact": "MS:1003053|theoretical monoisotopic m/z",
+    "PrecursorMonoisoMZ": "MS:1003208|experimental precursor monoisotopc m/z",
+    "Mz_exact": "MS:1003208|experimental precursor monoisotopc m/z",
     "Mz_av": "MS:1003054|theoretical average m/z",
 
 }
@@ -111,16 +111,10 @@ modification_name_map = {
     "Oxidation": "Oxidation",
     "Phospho": "Phospho",
     "TMT6plex": "TMT6plex",
-    "iTRAQ": "iTRAQ"
+    "iTRAQ": "iTRAQ",
+    "Acetyl": "Acetyl",
 }
 
-
-modification_name_map = {
-    "CAM": "Carbamidomethyl",
-    "Pyro_glu": "Pyro_glu",
-    "Pyro-glu": "Pyro-glu",
-    "Oxidation": "Oxidation",
-}
 
 # TODO: ppm is unsigned, add mass calculation to determine true mass accuracy
 
