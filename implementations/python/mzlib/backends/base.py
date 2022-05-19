@@ -144,7 +144,7 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
             try:
                 if impl.guess_from_header(filename):
                     return impl(filename, index_type=index_type, **kwargs)
-            except TypeError:
+            except (TypeError, UnicodeDecodeError):
                 pass
         raise ValueError(f"Could not guess backend implementation for {filename}")
 
