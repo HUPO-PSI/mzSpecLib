@@ -1,6 +1,7 @@
 import io
 import enum
 import json
+import logging
 import warnings
 
 from typing import Iterable, List, Dict, Mapping, Union
@@ -15,6 +16,10 @@ from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_VERSION_TERM, AttributeSetTypes
+
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 LIBRARY_METADATA_KEY = "attributes"

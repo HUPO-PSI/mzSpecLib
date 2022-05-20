@@ -628,7 +628,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 '?' if not peak[2] else ",".join(map(str, peak[2]))
             ]
             if peak[3]:
-                peak_parts.append(str(peak[3]))
+                peak_parts.append('\t'.join(map(str, peak[3])))
             self.handle.write("\t".join(peak_parts)+"\n")
         self.handle.write("\n")
 

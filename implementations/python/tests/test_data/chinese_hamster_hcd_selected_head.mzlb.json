@@ -69,8 +69,8 @@
               "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 855.455
             },
             {
@@ -591,8 +591,8 @@
               "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 855.4574
             },
             {
@@ -1464,8 +1464,8 @@
               "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 1207.1661
             },
             {
@@ -2091,8 +2091,8 @@
               "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 731.9023
             },
             {
@@ -2685,8 +2685,8 @@
               "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 488.2738
             },
             {
@@ -3429,8 +3429,8 @@
               "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 830.8868
             },
             {
@@ -3894,8 +3894,8 @@
               "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopc m/z",
               "value": 830.8817
             },
             {

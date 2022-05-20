@@ -72,6 +72,7 @@ class SQLIndex(IndexBase):
     def __init__(self, filename):
         self.filename = filename
         self.index_filename = self.filename + self.extension
+        self._cache = None
         self.connect()
 
     def connect(self, create=None):
@@ -88,6 +89,7 @@ class SQLIndex(IndexBase):
         session = DBSession()
         self.session = session
         self.engine = engine
+        self._cache = None
 
     def add(self, number, offset, name, analyte, attributes=None):
         record = SpectrumLibraryIndexRecord(number=number, offset=offset, name=name, analyte=analyte)
@@ -100,6 +102,7 @@ class SQLIndex(IndexBase):
 
     def __iter__(self):
         for record in self.session.query(SpectrumLibraryIndexRecord).order_by(SpectrumLibraryIndexRecord.number):
+            self._cache = record
             yield record
 
     def __getitem__(self, i):
@@ -114,6 +117,8 @@ class SQLIndex(IndexBase):
             # Executing attribute query
             raise NotImplementedError()
         if isinstance(i, numbers.Integral):
+            if self._cache is not None and self._cache.number == i:
+                return self._cache
             records = self.session.query(SpectrumLibraryIndexRecord).filter(SpectrumLibraryIndexRecord.number == i).all()
             if len(records) == 1:
                 return records[0]

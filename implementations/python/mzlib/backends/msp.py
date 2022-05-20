@@ -84,7 +84,7 @@ other_terms = {
 
 
 interpretation_member_terms = {
-    "Q-value": "MS:1002054|MS-GF:QValue"
+    "Q-value": "MS:1002354|PSM-level q-value"
 }
 
 
@@ -106,8 +106,8 @@ species_map = {
 
 modification_name_map = {
     "CAM": "Carbamidomethyl",
-    "Pyro_glu": "Pyro_glu",
-    "Pyro-glu": "Pyro-glu",
+    "Pyro_glu": "Glu->pyro-Glu", # Resolves UNIMOD ambiguity
+    "Pyro-glu": "Gln->pyro-Glu",
     "Oxidation": "Oxidation",
     "Phospho": "Phospho",
     "TMT6plex": "TMT6plex",
@@ -181,7 +181,7 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
 
 
 parse_annotation = MSPAnnotationStringParser(annotation_pattern)
-modification_list_parser = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_-]),([A-Za-z0-9]+)")
+modification_list_parser = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_\-]),([A-Za-z0-9_\-]+)")
 
 
 def parse_modification_notation(text: str) -> List[Tuple[int, str, str]]:

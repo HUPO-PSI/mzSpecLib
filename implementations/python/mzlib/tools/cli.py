@@ -77,7 +77,9 @@ def convert(inpath, outpath, format=None):
         index_type = SQLIndex
     else:
         index_type = MemoryIndex
+    click.echo(f"Opening {inpath}")
     library = SpectrumLibrary(filename=inpath, index_type=index_type)
+    click.echo(f"Writing to {outpath}")
     fh = click.open_file(outpath, mode='w')
     library.write(fh, format)
 
