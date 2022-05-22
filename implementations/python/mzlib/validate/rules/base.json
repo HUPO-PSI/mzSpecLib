@@ -1,6 +1,7 @@
 {
+  "$schema": "./validator-rules-schema.json",
   "name": "base",
-  "rule": [
+  "rules": [
     {
       "attr": [
         {

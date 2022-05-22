@@ -1,6 +1,7 @@
 {
+  "$schema": "./validator-rules-schema.json",
   "name": "gold",
-  "rule": [
+  "rules": [
     {
       "attr": [
         {

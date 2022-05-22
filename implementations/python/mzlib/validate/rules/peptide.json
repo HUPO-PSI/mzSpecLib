@@ -1,6 +1,7 @@
 {
+  "$schema": "./validator-rules-schema.json",
   "name": "peptide",
-  "rule": [
+  "rules": [
     {
       "attr": [
         {

@@ -153,6 +153,33 @@ class ValueIsUnique(AttributeSemanticPredicate):
         return cls()
 
 
+class ValueMatches(AttributeSemanticPredicate):
+    accession: str
+
+    name = "value_matches"
+
+    def __init__(self, accession):
+        super().__init__()
+        self.accession = accession
+
+    def validate(self, attribute: 'AttributeSemanticRule', value: str, validator_context: "ValidatorBase"):
+        if isinstance(value, list) and attribute.repeatable:
+            return all(self.validate(attribute, v, validator_context) for v in value)
+        entity = validator_context.find_term_for(self.accession)
+        key = f"{entity.id}|{entity.name}"
+        return key == value
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "accession": self.accession
+        }
+
+    @classmethod
+    def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
+        return cls(state['accession'])
+
+
 @dataclasses.dataclass(frozen=True)
 class AttributeSemanticRule:
     accession: str
@@ -197,17 +224,17 @@ class AttributeSemanticRule:
         if value_rule:
             value_rule = AttributeSemanticPredicate.from_dict(value_rule)
 
-        conditional = state.get("condition")
-        if conditional:
-            conditional = cls.from_dict(conditional, cv_provider)
+        condition = state.get("condition")
+        if condition:
+            condition = cls.from_dict(condition, cv_provider)
 
-        attr_rule = AttributeSemanticRule(
+        attr_rule = cls(
             state["accession"],
             state["name"],
             repeatable=repeatable,
             allow_children=allow_children,
             value=value_rule,
-            condition=conditional,
+            condition=condition,
         )
         return attr_rule
 
@@ -216,9 +243,9 @@ class AttributeSemanticRule:
 class ScopedSemanticRule:
     id: str
     path: str
+    attributes: List[AttributeSemanticRule]
     requirement_level: RequirementLevel
     combination_logic: CombinationLogic
-    attributes: List[AttributeSemanticRule]
     condition: Optional[AttributeSemanticRule] = dataclasses.field(default=None)
 
     def find_all_children_of(self, attribute_rule: AttributeSemanticRule, obj: Attributed, validator_context: "ValidatorBase") -> Tuple:
@@ -232,8 +259,29 @@ class ScopedSemanticRule:
                 continue
         return tuple(result) if result else None
 
+    def check_rule(self, obj: Attributed, attrib: AttributeSemanticRule, validator_context: "ValidatorBase") -> bool:
+        result = True
+        if attrib.allow_children:
+            value = self.find_all_children_of(attrib, obj, validator_context)
+        else:
+            try:
+                value = obj.get_attribute(attrib.attribute)
+            except KeyError:
+                value = None
+
+        if isinstance(value, list) and not attrib.repeatable:
+            result = False
+        if attrib.value:
+            if not attrib.value.validate(attrib, value, validator_context):
+                result = False
+        return result
+
     def validate(self, obj: Attributed, path: str, identifier_path: Tuple, validator_context: "ValidatorBase") -> bool:
         values = []
+
+        if self.condition:
+            if not self.check_rule(obj, self.condition, validator_context):
+                return True
 
         for attrib in self.attributes:
             if attrib.allow_children:
@@ -250,8 +298,11 @@ class ScopedSemanticRule:
             # a list. `find_all_children_of` explicitly returns a tuple to avoid triggering
             # this.
             if isinstance(value, list) and not attrib.repeatable:
-                validator_context.add_warning(obj, path, self, identifier_path, value,
-                                              self.requirement_level, f"{attrib.attribute} cannot be repeated")
+                validator_context.add_warning(
+                    obj, path, self, identifier_path, value,
+                    self.requirement_level,
+                    f"{attrib.attribute} cannot be repeated")
+
                 result = False
             if attrib.value:
                 if not attrib.value.validate(attrib, value, validator_context):
@@ -308,8 +359,8 @@ class ScopedSemanticRule:
                 )
             attrib = node.attrib
             rule = ScopedSemanticRule(
-                attrib['id'],
-                attrib['scopePath'],
+                id=attrib['id'],
+                path=attrib['scopePath'],
                 requirement_level=RequirementLevel.from_str(attrib['requirementLevel']),
                 combination_logic=CombinationLogic.from_str(attrib['cvTermsCombinationLogic']),
                 attributes=term_rules
@@ -320,7 +371,7 @@ class ScopedSemanticRule:
     @classmethod
     def from_dict(cls, data: Dict[str, Any], cv_provider: 'VocabularyResolverMixin') -> List['ScopedSemanticRule']:
         rules = []
-        for rule_spec in data['rule']:
+        for rule_spec in data['rules']:
             rule_id = rule_spec['id']
             level = RequirementLevel.from_str(rule_spec['level'].upper())
             path = rule_spec['path']
@@ -332,8 +383,20 @@ class ScopedSemanticRule:
                 attr_rule = AttributeSemanticRule.from_dict(attrib, cv_provider)
                 attribute_rules.append(attr_rule)
 
+            condition = rule_spec.get("condition")
+            if condition:
+                condition = AttributeSemanticRule.from_dict(condition, cv_provider)
+
             rules.append(
-                ScopedSemanticRule(rule_id, path, level, combinator, attribute_rules))
+                ScopedSemanticRule(
+                    id=rule_id,
+                    path=path,
+                    attributes=attribute_rules,
+                    requirement_level=level,
+                    combination_logic=combinator,
+                    condition=condition
+                )
+            )
         return rules
 
     def to_dict(self) -> Dict[str, Any]:

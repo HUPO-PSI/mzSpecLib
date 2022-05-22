@@ -73,8 +73,6 @@ attribute_set_types = {
 
 
 def _is_header_line(line: str) -> bool:
-    if START_OF_ATTRIBUTE_SET.match(line):
-        return False
     if START_OF_SPECTRUM_MARKER.match(line):
         return False
     if START_OF_CLUSTER.match(line):
@@ -115,8 +113,12 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             attributes = AttributeManager()
             attributes.add_attribute(FORMAT_VERSION_TERM, version)
             line = stream.readline()
-            while not _is_header_line(line):
+            while _is_header_line(line):
                 nbytes += len(line)
+                line = line.strip()
+                if not line:
+                    line = stream.readline()
+                    continue
                 match = START_OF_ATTRIBUTE_SET.match(line)
                 if match:
                     state = LibraryParserStateEnum.attribute_sets
@@ -127,15 +129,16 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     attrib_set_name = match.group(2)
                     current_attribute_set = AttributeSet(attrib_set_name, [])
                 else:
-
                     match = key_value_term_pattern.match(line)
+
+                    # We found a single attribute
                     if match is not None:
                         d = match.groupdict()
+                        # If we're in an attribute set, store it in the attribute set
                         if state == LibraryParserStateEnum.attribute_sets:
-                            breakpoint()
                             current_attribute_set.add_attribute(
                                 d['term'], try_cast(d['value']))
-                        else:
+                        else: # Otherwise store it in the library level attributes
                             attributes.add_attribute(
                                 d['term'], try_cast(d['value']))
 
@@ -144,14 +147,16 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         continue
 
                     if line.startswith("["):
+                        # We found a grouped attribute
                         match = grouped_key_value_term_pattern.match(line)
                         if match is not None:
                             d = match.groupdict()
+                            # If we're in an attribute set, store it in the attribute set
                             if state == LibraryParserStateEnum.attribute_sets:
                                 current_attribute_set.add_attribute(
                                     d['term'], try_cast(d['value']), d['group_id'])
                                 current_attribute_set.group_counter = int(d['group_id'])
-                            else:
+                            else:  # Otherwise store it in the library level attributes
                                 attributes.add_attribute(
                                     d['term'], try_cast(d['value']), d['group_id'])
                                 attributes.group_counter = int(d['group_id'])
@@ -165,7 +170,6 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     elif "=" in line:
                         name, value = line.split("=")
                         if state == LibraryParserStateEnum.attribute_sets:
-                            breakpoint()
                             current_attribute_set.add_attribute(name, value)
                         else:
                             attributes.add_attribute(name, value)
@@ -175,7 +179,6 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
             if current_attribute_set is not None:
                 self._add_attribute_set(current_attribute_set, current_attribute_set_type)
-
             self.attributes.clear()
             self.attributes._from_iterable(attributes)
             return True, nbytes
@@ -570,7 +573,9 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         else:
             version = self.version
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
-        self._write_attributes(library.attributes)
+        self._write_attributes(
+            self._filter_attributes(library.attributes, lambda x: x.key != FORMAT_VERSION_TERM)
+        )
         for attr_set in library.entry_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.spectrum)
 
