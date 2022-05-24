@@ -306,6 +306,9 @@ class ScopedSemanticRule:
                 result = False
             if attrib.value:
                 if not attrib.value.validate(attrib, value, validator_context):
+                    validator_context.add_warning(
+                        obj, path, identifier_path, self, value, self.requirement_level,
+                        f"{self.id} required the value of {attrib.accession}|{attrib.name} conform to {attrib.value.name}")
                     result = False
 
         has_value = [v is not None for v in values]

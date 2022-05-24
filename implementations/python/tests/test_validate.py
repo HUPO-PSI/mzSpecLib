@@ -29,3 +29,11 @@ class TestLibrarySemanticValidator(unittest.TestCase):
         valid = validator.get_validator_for("base")
         valid = valid.chain(validator.get_validator_for("silver"))
         assert not self.validate_library(valid)
+
+    def test_validate_peak_annotations(self):
+        valid = validator.get_validator_for("base") | validator.get_object_validator_for("peak_annotations")
+        assert self.validate_library(valid)
+
+        test_file = datafile("bad_peak_annotations.mzlb.txt")
+        library = SpectrumLibrary(filename=test_file)
+        assert not valid.validate_library(library)

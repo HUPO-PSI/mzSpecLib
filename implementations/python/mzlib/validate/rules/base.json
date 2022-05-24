@@ -41,7 +41,7 @@
         }
       ],
       "combination_logic": "OR",
-      "id": "Spectrum_has_key",
+      "id": "Spectrum_has_unique_key",
       "level": "MUST",
       "path": "/Library/Spectrum"
     },

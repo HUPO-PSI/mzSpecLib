@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 import itertools
 import logging
+
+from dataclasses import dataclass
 from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Tuple
 
 from psims.controlled_vocabulary import Entity
@@ -15,6 +16,7 @@ from mzlib.backends.base import VocabularyResolverMixin
 
 from mzlib.validate.level import RequirementLevel
 from mzlib.validate.semantic_rule import ScopedSemanticRule, load_rule_set
+from mzlib.validate.object_rule import ScopedObjectRuleBase, SpectrumPeakAnnotationRule
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -59,6 +61,9 @@ class ValidatorBase(VocabularyResolverMixin):
     def chain(self, validator: 'ValidatorBase') -> 'ValidatorBase':
         return ValidatorChain([self, validator])
 
+    def __or__(self, other: 'ValidatorBase') -> 'ValidatorBase':
+        return self.chain(other)
+
     def walk_terms_for(self, curie: str) -> Iterator[str]:
         term = self.find_term_for(curie)
         for entity in walk_children(term):
@@ -78,9 +83,9 @@ class ValidationError:
 class Validator(ValidatorBase):
     name: str
     semantic_rules: List[ScopedSemanticRule]
-    object_rules: List
+    object_rules: List[ScopedObjectRuleBase]
 
-    def __init__(self, name, semantic_rules: Optional[List[ScopedSemanticRule]]=None, object_rules: Optional[List]=None, error_log: Optional[List]=None):
+    def __init__(self, name, semantic_rules: Optional[List[ScopedSemanticRule]] = None, object_rules: Optional[List[ScopedObjectRuleBase]] = None, error_log: Optional[List] = None):
         super().__init__()
         self.name = name
         self.semantic_rules = semantic_rules or []
@@ -89,7 +94,7 @@ class Validator(ValidatorBase):
 
     def apply_rules(self, obj: Attributed, path: str, identifier_path: Tuple) -> bool:
         result = True
-        for rule in self.semantic_rules:
+        for rule in itertools.chain(self.semantic_rules, self.object_rules):
             if rule.path == path:
                 v = rule(obj, path, identifier_path, self)
                 result &= v
@@ -198,6 +203,18 @@ predicates = {
 }
 
 
+object_rules = {
+    "peak_annotations": [SpectrumPeakAnnotationRule()]
+}
+
+
 def get_validator_for(name: str) -> Validator:
     rules = load_rule_set(name)
-    return Validator(name, rules)
+    validator = Validator(name, rules)
+    return validator
+
+
+def get_object_validator_for(name: str) -> Validator:
+    rules = object_rules[name]
+    validator = Validator(name, object_rules=rules)
+    return validator

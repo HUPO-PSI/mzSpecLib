@@ -117,11 +117,12 @@ def validate(inpath, profiles=None):
 
     logger.info(f"Loading validators...")
     chain = validator.get_validator_for("base")
+    chain |= validator.get_object_validator_for("peak_annotations")
     for profile in profiles:
         if profile is None:
             continue
         logger.info(f"... {profile}")
-        chain = chain.chain(validator.get_validator_for(profile))
+        chain |= validator.get_validator_for(profile)
 
     logger.info(f"Validating {inpath}...")
     n_spectra = len(library)
