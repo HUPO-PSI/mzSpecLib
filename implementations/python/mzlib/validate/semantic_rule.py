@@ -2,6 +2,7 @@ import dataclasses
 import io
 import json
 import logging
+import re
 
 from datetime import datetime
 from importlib import resources
@@ -178,6 +179,26 @@ class ValueMatches(AttributeSemanticPredicate):
     @classmethod
     def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
         return cls(state['accession'])
+
+
+class ValueMatchesPattern(AttributeSemanticPredicate):
+    pattern: re.Pattern
+
+    name = "value_matches_pattern"
+
+    def __init__(self, pattern: str):
+        super().__init__()
+        self.pattern = re.compile(pattern)
+
+    def to_dict(self) -> Dict[str, Any]:
+        state = {}
+        state['name'] = self.name
+        state['pattern'] = self.pattern.pattern
+        return state
+
+    @classmethod
+    def from_dict(cls, state: Dict[str, Any]) -> 'AttributeSemanticPredicate':
+        return cls(state['pattern'])
 
 
 @dataclasses.dataclass(frozen=True)

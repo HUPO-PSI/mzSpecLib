@@ -35,7 +35,8 @@
                         "value_matches",
                         "value_is_unique",
                         "value_is_child_of",
-                        "value_of_type"
+                        "value_of_type",
+                        "value_matches_pattern"
                     ]
                 }
             }
@@ -88,6 +89,20 @@
                 "accession": {
                     "type": "string",
                     "description": "The accession of the term that must be matched exactly"
+                }
+            }
+        },
+        "value_matches_pattern": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/attribute_semantic_predicate"
+                }
+            ],
+            "properties": {
+                "pattern": {
+                    "type": "string",
+                    "description": "The value of the term that must match this ECMAScript Regular Expression, interpreted as a string"
                 }
             }
         },
