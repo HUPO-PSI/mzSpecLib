@@ -32,7 +32,7 @@ class SpectrumLibraryIndexAttribute(Base):
 class SpectrumLibraryIndexRecord(Base):
     __tablename__ = 'spectrum_library_index_record'
     id = Column(Integer, primary_key=True)
-    number = Column(Integer, nullable=False)
+    number = Column(Integer, nullable=False, index=True)
     offset = Column(Integer, nullable=False)
     name = Column(String(1024), nullable=False)
     analyte = Column(String(2014), nullable=True)

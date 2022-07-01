@@ -1,0 +1,36 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "consensus",
+  "rules": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1003069",
+          "allow_children": false,
+          "name": "number of replicate spectra available",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1003070",
+          "allow_children": false,
+          "name": "number of replicate spectra used",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "AND",
+      "id": "Spectrum_has_replicates_used",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum",
+      "condition": {
+        "accession": "MS:1003072",
+        "allow_children": true,
+        "name": "spectrum origin type",
+        "repeatable": false,
+        "value": {
+          "name": "value_matches",
+          "accession": "MS:1003067"
+        }
+      }
+    }
+  ]
+}

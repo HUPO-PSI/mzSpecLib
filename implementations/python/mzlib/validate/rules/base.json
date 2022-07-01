@@ -1,0 +1,153 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "base",
+  "rules": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1003186",
+          "allow_children": false,
+          "name": "library format version",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Library_has_format_version",
+      "level": "MUST",
+      "path": "/Library"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003188",
+          "allow_children": false,
+          "name": "library name",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Library_has_name",
+      "level": "MUST",
+      "path": "/Library"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003237",
+          "allow_children": false,
+          "name": "library spectrum key",
+          "repeatable": false,
+          "value": "value_is_unique"
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_unique_key",
+      "level": "MUST",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003061",
+          "allow_children": false,
+          "name": "library spectrum index",
+          "repeatable": false,
+          "value": "value_is_unique"
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_index",
+      "level": "MUST",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003061",
+          "allow_children": false,
+          "name": "library spectrum index",
+          "repeatable": false,
+          "value": "value_is_unique"
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_index",
+      "level": "MUST",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1000041",
+          "allow_children": false,
+          "name": "charge state",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000633",
+          "allow_children": false,
+          "name": "possible charge state",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_precursor_charge",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1000744",
+          "allow_children": false,
+          "name": "selected ion m/z",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1003208",
+          "allow_children": false,
+          "name": "experimental precursor monoisotopic m/z",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_precursor_mz",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003065",
+          "allow_children": true,
+          "name": "spectrum aggregation type",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_aggregation",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1001117",
+          "allow_children": true,
+          "name": "theoretical mass",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000224",
+          "allow_children": true,
+          "name": "molecular mass",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Analyte_has_any_mass",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum/Analyte"
+    }
+  ]
+}

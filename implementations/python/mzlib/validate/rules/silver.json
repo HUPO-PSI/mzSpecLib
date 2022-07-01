@@ -1,0 +1,48 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "silver",
+  "rules": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1003187",
+          "allow_children": false,
+          "name": "library identifier",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Library_has_identifier",
+      "level": "SHOULD",
+      "path": "/Library"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003072",
+          "allow_children": true,
+          "name": "spectrum origin type",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_origin_type",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1000044",
+          "allow_children": true,
+          "name": "dissociation method",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_dissociation",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum"
+    }
+  ]
+}

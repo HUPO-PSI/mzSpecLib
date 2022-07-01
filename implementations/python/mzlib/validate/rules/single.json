@@ -1,0 +1,54 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "single",
+  "rules": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1009008",
+          "allow_children": false,
+          "name": "source file",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_source_file",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum",
+      "condition": {
+        "accession": "MS:1003072",
+        "allow_children": true,
+        "name": "spectrum origin type",
+        "repeatable": false,
+        "value": {
+          "name": "value_matches",
+          "accession": "MS:1003066"
+        }
+      }
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1003057",
+          "allow_children": false,
+          "name": "scan number",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Spectrum_has_scan_identifier",
+      "level": "SHOULD",
+      "path": "/Library/Spectrum",
+      "condition": {
+        "accession": "MS:1003072",
+        "allow_children": true,
+        "name": "spectrum origin type",
+        "repeatable": false,
+        "value": {
+          "name": "value_matches",
+          "accession": "MS:1003066"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "peptide",
+  "rules": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1000889",
+          "allow_children": false,
+          "name": "proforma peptidoform sequence",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000888",
+          "allow_children": false,
+          "name": "stripped peptide sequence",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1003270",
+          "allow_children": false,
+          "name": "proforma peptidoform ion notation",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Analyte_has_peptide_seq",
+      "level": "MUST",
+      "path": "/Library/Spectrum/Analyte"
+    }
+  ]
+}

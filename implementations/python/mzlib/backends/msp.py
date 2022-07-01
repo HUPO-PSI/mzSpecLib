@@ -12,9 +12,9 @@ from mzlib import annotation
 
 from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
-from mzlib.attributes import Attributed
+from mzlib.attributes import AttributeManager, Attributed
 
-from .base import _PlainTextSpectralLibraryBackendBase
+from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM
 from .utils import try_cast, open_stream
 
 
@@ -347,6 +347,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         first_line = stream.readline()
+        attributes = AttributeManager()
+        attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
+        attributes.add_attribute(LIBRARY_NAME_TERM, self.filename)
+        self.attributes.clear()
+        self.attributes._from_iterable(attributes)
         if re.match("Name: ", first_line):
             return True, 0
         return False, 0
@@ -384,7 +389,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
             # if debug:
             #     eprint("INFO: Reading..", end='', flush=True)
-            logger.info(f"Reading {filename} ({file_size} bytes)...")
+            logger.debug(f"Reading {filename} ({file_size} bytes)...")
             while 1:
                 line = infile.readline()
                 if len(line) == 0:
@@ -418,14 +423,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             #### Commit every now and then
                             if n_spectra % 10000 == 0:
                                 self.index.commit()
-                                logger.info(f"Processed {file_offset} bytes, {n_spectra} read")
-
+                                logger.info(f"... Indexed  {file_offset} bytes, {n_spectra} spectra read")
 
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
 
                     spectrum_buffer.append(line)
-
+            logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
             self.index.add(
                 number=n_spectra + start_index,
                 offset=spectrum_file_offset,
