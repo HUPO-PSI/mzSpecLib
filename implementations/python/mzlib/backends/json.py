@@ -284,7 +284,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
                 reformed_attribute['accession'] = accession
                 reformed_attribute['name'] = name
                 try:
-                    term = self._find_term_for(accession)
+                    term = self.find_term_for(accession)
                 except KeyError:
                     pass
             else:

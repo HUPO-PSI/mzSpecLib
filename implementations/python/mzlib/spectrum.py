@@ -4,7 +4,7 @@ import textwrap
 
 from typing import Dict,  List
 
-from mzlib.attributes import AttributeManager, AttributeManagedProperty
+from mzlib.attributes import AttributeManager, AttributeManagedProperty, AttributeListManagedProperty
 from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
@@ -48,8 +48,8 @@ class Spectrum(AttributeManager):
     key = AttributeManagedProperty[int](LIBRARY_ENTRY_KEY)
     index = AttributeManagedProperty[int](LIBRARY_ENTRY_INDEX)
 
-    precursor_mz = AttributeManagedProperty[float](PRECURSOR_MZ)
-    charge = AttributeManagedProperty[int](CHARGE_STATE)
+    precursor_mz = AttributeListManagedProperty[float]([PRECURSOR_MZ, "MS:1000744|selected ion m/z"])
+    precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
 
     def add_analyte(self, analyte: Analyte):
         self.analytes[str(analyte.id)] = analyte

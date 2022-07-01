@@ -530,6 +530,35 @@ class FormulaAnnotation(IonAnnotationBase):
         return self
 
 
+class InvalidAnnotation(IonAnnotationBase):
+    series_label = "!invalid!"
+
+    content: str
+    error: str
+
+    def __init__(self, content: str, error: str):
+        super().__init__(self.series_label)
+        self.content = content
+        self.error = error
+
+    def serialize(self):
+        return self.content
+
+    def _molecule_description(self) -> JSONDict:
+        return {
+            "series_label": self.series_label,
+            "content": self.content,
+            "error": self.error
+        }
+
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.content = descr['content']
+        self.error = descr['error']
+        return self
+
+
 def int_or_sign(string: str) -> int:
     if string == "+":
         return 1
@@ -545,8 +574,11 @@ class AnnotationStringParser(object):
     def __init__(self, pattern):
         self.pattern = pattern
 
-    def __call__(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
-        return self.parse_annotation(annotation_string, **kwargs)
+    def __call__(self, annotation_string: str, *, wrap_errors=True, **kwargs) -> List[IonAnnotationBase]:
+        try:
+            return self.parse_annotation(annotation_string, **kwargs)
+        except ValueError as err:
+            return [InvalidAnnotation(annotation_string, str(err))]
 
     def parse_annotation(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
         if annotation_string == "?" or not annotation_string:

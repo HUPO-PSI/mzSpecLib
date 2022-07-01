@@ -595,7 +595,6 @@ class AttributeSet(AttributedEntity):
         return template
 
 
-
 class AttributeManagedProperty(Generic[T]):
     __slots__ = ("attribute", )
     attribute: str
@@ -619,3 +618,45 @@ class AttributeManagedProperty(Generic[T]):
 
     def __delete__(self, inst: AttributeManager, attr):
         inst.remove_attribute(self.attribute)
+
+
+class AttributeListManagedProperty(Generic[T]):
+    __slots__ = ("attributes", )
+    attributes: List[str]
+
+    def __init__(self, attributes: List[str]):
+        self.attributes = attributes
+
+    def __get__(self, inst: AttributeManager, cls: Type) -> T:
+        key, val = self._find_key_used(inst)
+        if key is None:
+            raise KeyError(self.attributes[0])
+        return val
+
+    def _find_key_used(self, inst: AttributeManager) -> Optional[Tuple[str, T]]:
+        for attr in self.attributes:
+            try:
+                return attr, inst.get_attribute(attr)
+            except KeyError:
+                continue
+        return None, None
+
+    def __set__(self, inst: AttributeManager, value: T):
+        key, _val = self._find_key_used(inst)
+        if key is None:
+            attrib = self.attributes[0]
+        else:
+            attrib = key
+        if inst.has_attribute(attrib):
+            inst.replace_attribute(attrib, value)
+        elif inst._count_attributes() > 0:
+            attribs = [[attrib, value]] + list(inst._iter_attributes())
+            inst._clear_attributes()
+            inst._attributes_from_iterable(attribs)
+        else:
+            inst.add_attribute(attrib, value)
+
+    def __delete__(self, inst: AttributeManager, attr):
+        key, val = self._find_key_used(inst)
+        if key is not None:
+            inst.remove_attribute(key)

@@ -1,0 +1,58 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "gold",
+  "rules": [
+    {
+      "attr": [
+        {
+          "accession": "MS:1000586",
+          "allow_children": false,
+          "name": "contact name",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000587",
+          "allow_children": false,
+          "name": "contact address",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000588",
+          "allow_children": false,
+          "name": "contact URL",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000589",
+          "allow_children": false,
+          "name": "contact email",
+          "repeatable": false
+        },
+        {
+          "accession": "MS:1000590",
+          "allow_children": false,
+          "name": "contact affilation",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Library_has_contact",
+      "level": "SHOULD",
+      "path": "/Library"
+    },
+    {
+      "attr": [
+        {
+          "accession": "MS:1002866",
+          "allow_children": false,
+          "name": "Reference",
+          "repeatable": false
+        }
+      ],
+      "combination_logic": "OR",
+      "id": "Library_has_reference",
+      "level": "SHOULD",
+      "path": "/Library"
+    }
+  ]
+}
