@@ -32,7 +32,7 @@ class SpectrumLibraryIndexAttribute(Base):
 class SpectrumLibraryIndexRecord(Base):
     __tablename__ = 'spectrum_library_index_record'
     id = Column(Integer, primary_key=True)
-    number = Column(Integer, nullable=False)
+    number = Column(Integer, nullable=False, index=True)
     offset = Column(Integer, nullable=False)
     name = Column(String(1024), nullable=False)
     analyte = Column(String(2014), nullable=True)
@@ -99,7 +99,7 @@ class SQLIndex(IndexBase):
         self.session.commit()
 
     def __iter__(self):
-        for record in self.session.query(SpectrumLibraryIndexRecord).order_by(SpectrumLibraryIndexRecord.number):
+        for record in self.session.query(SpectrumLibraryIndexRecord).order_by(SpectrumLibraryIndexRecord.number).yield_per(10000):
             yield record
 
     def __getitem__(self, i):

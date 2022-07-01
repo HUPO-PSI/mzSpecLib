@@ -4,19 +4,28 @@ import enum
 from typing import Callable, Dict, Iterable, Union, List, Type
 from pathlib import Path
 
-from psims.controlled_vocabulary import load_psims
+from psims.controlled_vocabulary import load_psims, Entity
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
-from mzlib.attributes import Attributed, AttributedEntity, AttributeSet
+from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
+
+from .utils import open_stream
 
 from .utils import open_stream
 
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
 
-FORMAT_VERSION_TERM = 'MS:1009002|format version'
+FORMAT_VERSION_TERM = 'MS:1003186|library format version'
+LIBRARY_NAME_TERM = "MS:1003188|library name"
+LIBRARY_VERSION_TERM = "MS:1003190|library version"
+LIBRARY_IDENTIFIER_TERM = "MS:1003187|library identifier"
+LIBRARY_DESCRIPTION_TERM = "MS:1003189|library description"
+LIBRARY_URI_TERM = "MS:1003191|library URI"
+
+
 DEFAULT_VERSION = '1.0'
 
 
@@ -41,7 +50,7 @@ class VocabularyResolverMixin(object):
         self.controlled_vocabularies[name] = self.default_cv_loader_map[name]()
         return self.controlled_vocabularies[name]
 
-    def _find_term_for(self, curie):
+    def find_term_for(self, curie: str) -> Entity:
         name, _id = curie.split(":")
         cv = self.load_cv(name)
         term = cv[curie]
@@ -79,6 +88,11 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     entry_attribute_sets: Dict[str, AttributeSet]
     analyte_attribute_sets: Dict[str, AttributeSet]
     interpretation_attribute_sets: Dict[str, AttributeSet]
+
+    name = AttributeManagedProperty[str](LIBRARY_NAME_TERM)
+    identifier = AttributeManagedProperty[str](LIBRARY_IDENTIFIER_TERM)
+    description = AttributeManagedProperty[str](LIBRARY_DESCRIPTION_TERM)
+    uri = AttributeManagedProperty[str](LIBRARY_URI_TERM)
 
     @classmethod
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO]) -> bool:
@@ -211,7 +225,7 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
             analyte_ids = interpretation.get_attribute(ANALYTE_MIXTURE_TERM)
             if isinstance(analyte_ids, str):
-                term = self._find_term_for(ANALYTE_MIXTURE_CURIE)
+                term = self.find_term_for(ANALYTE_MIXTURE_CURIE)
                 analyte_ids = term.value_type(analyte_ids)
 
             # TODO: Enforce this attribute is a string at the CV level
