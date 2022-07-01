@@ -103,7 +103,10 @@ def progress_logger(iterable, label, increment: int=100):
 
 @main.command(short_help="Semantically validate a spectral library")
 @click.argument('inpath', type=click.Path(exists=True))
-@click.option("-p", "--profile", "profiles", type=click.Choice(["consensus", "single", "silver", "peptide"], case_sensitive=False), multiple=True)
+@click.option("-p", "--profile", "profiles", type=click.Choice(
+    ["consensus", "single", "silver", "peptide", "gold"],
+    case_sensitive=False),
+    multiple=True)
 def validate(inpath, profiles=None):
     if profiles is None:
         profiles = []
