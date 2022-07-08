@@ -46,12 +46,12 @@ The "Nterm" elements refer to the entire N terminal label, including both the re
 off together producing a peak at the full label mass plus a proton.
 
 Each of these may also be used as a neutral (or charged actually) loss. It is also common to to see
-- p-TMT6Nterm
+- p-[TMT6Nterm]
 
 It is also not unusual to see a series of peaks such as:
-- p-iTRAQ114
-- p-iTRAQ115
-- p-iTRAQ116-H2O
+- p-[iTRAQ114]
+- p-[iTRAQ115]
+- p-[iTRAQ116]-H2O
 - etc.
 
 wherein the reporter ion falls off with a charge (yielding the reporter ion peak) and the full peptide sequence plus the
