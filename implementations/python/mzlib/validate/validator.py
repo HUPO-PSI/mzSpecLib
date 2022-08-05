@@ -2,11 +2,13 @@ import itertools
 import logging
 
 from dataclasses import dataclass
-from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Tuple
+import re
+from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
-from psims.controlled_vocabulary import Entity
+from psims.controlled_vocabulary.entity import Entity, ListOfType
 
-from mzlib.attributes import Attributed
+
+from mzlib.attributes import Attribute, Attributed
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte, Interpretation
 from mzlib.spectrum_library import SpectrumLibrary
@@ -30,8 +32,40 @@ def walk_children(term: Entity):
         queue.extend(term.children)
 
 
+_is_curie = re.compile(r"(([A-Z]+):(.+))(?:\|.+)?")
+
+def is_curie(value: str) -> bool:
+    if isinstance(value, str):
+        return _is_curie.match(value)
+    return False
+
+
+@dataclass
+class ValidationContext:
+    attributes_visited: Dict[Tuple[str, str], bool]
+    rule_states: Dict[str, Any]
+
+    def clear_attributes(self):
+        self.attributes_visited.clear()
+
+    def record_attribute(self, attribute: Union[Tuple[str, str], Attribute], result: bool):
+        if isinstance(attribute, Attribute):
+            attribute = (attribute.key, attribute.group_id)
+        self.attributes_visited[attribute] = result
+
+    def visited_attribute(self, attribute: Union[Tuple[str, str], Attribute]) -> bool:
+        if isinstance(attribute, Attribute):
+            attribute = (attribute.key, attribute.group_id)
+        return attribute in self.attributes_visited
+
+
+
 class ValidatorBase(VocabularyResolverMixin):
     error_log: List
+    current_context: ValidationContext
+
+    def reset_context(self):
+        self.current_context.clear_attributes()
 
     def add_warning(self, obj: Attributed, path: str, identifier_path: Tuple, attrib: Any, value: Any, requirement_level: RequirementLevel, message: str):
         raise NotImplementedError()
@@ -48,10 +82,83 @@ class ValidatorBase(VocabularyResolverMixin):
     def apply_rules(self, obj: Attributed, path: str, identifier_path: Tuple) -> bool:
         raise NotImplementedError()
 
+    def check_attributes(self, obj: Attributed, path: str, identifer_path: Tuple) -> bool:
+        valid: bool = True
+        for attrib in obj.attributes:
+            if self.current_context.visited_attribute(attrib):
+                continue
+            try:
+                term = self.find_term_for(attrib.key.split("|")[0])
+            except KeyError as err:
+                logger.warn(f"Could not resolve term for {attrib.key}")
+                continue
+            value_types = term.get('has_value_type')
+            if not value_types:
+                value_parsed = isinstance(attrib.value, Attribute)
+                if value_parsed or is_curie(attrib.value):
+                    if value_parsed:
+                        value_key = attrib.value.key.split("|")[0]
+                    else:
+                        value_key = attrib.value.split("|")[0]
+                    if is_curie(value_key):
+                        value_term = self.find_term_for(value_key)
+                    else:
+                        value_term = None
+                    if not value_term or not value_term.is_of_type(term):
+                        self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
+                                         f"The value type of {attrib.key} must be a term derived from {attrib.key}, but found {attrib.value}")
+                        valid = False
+                        continue
+                else:
+                    self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
+                                     f"The value type of {attrib.key} must be a term derived from {attrib.key}")
+                    valid = False
+                    continue
+            else:
+                for rel in value_types:
+                    if isinstance(rel.value_type, ListOfType):
+                        for tp in rel.value_type.type_definition.entity.has_value_type:
+                            if isinstance(attrib.value, Sequence) and all(isinstance(v, tp.value_type.type_definition) for v in attrib.value):
+                                break
+                    elif isinstance(attrib.value, rel.value_type.type_definition):
+                        break
+                else:
+                    self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
+                                     f"The value type of {attrib.key} must be a value of type {', '.join([rel.value_type.id for rel in value_types])}, but got {type(attrib.value)}")
+                    valid = False
+
+            units = term.get('has_units')
+            if units:
+                if not isinstance(units, list):
+                    units = [units]
+                try:
+                    unit_attrib = obj.get_attribute("UO:0000000|unit", group_identifier=attrib.group_id, raw=True)
+                except KeyError:
+                    unit_attrib = None
+                    if len(units) == 1:
+                        logger.warn(f"{attrib.key}'s unit is missing, defaulting to {units[0]}")
+                        continue
+                if unit_attrib:
+                    unit_acc, unit_name = unit_attrib.value.split("|", 1)
+                    for unit in units:
+                        if unit_acc == unit.accession or unit_name == unit.comment:
+                            break
+                    else:
+                        self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
+                                        f"The attribute {attrib.key} must have a unit {', '.join([rel.accession + '|' + rel.comment for rel in units])}, but got {unit_acc}|{unit_name}")
+                        valid = False
+                else:
+                    self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
+                                     f"The attribute {attrib.key} must have a unit {', '.join([rel.accession + '|' + rel.comment for rel in units])}, but none were found")
+                    valid = False
+
+        return valid
+
     def validate_library(self, library: SpectrumLibrary, spectrum_iterator: Optional[Iterator[Spectrum]]=None):
         path = "/Library"
-        self.apply_rules(library, path, (library.identifier, ))
-        result = True
+        result = self.apply_rules(library, path, (library.identifier, ))
+        result &= self.check_attributes(library)
+        self.reset_context()
         if spectrum_iterator is None:
             spectrum_iterator = library
         for spectrum in spectrum_iterator:
@@ -108,6 +215,8 @@ class Validator(ValidatorBase):
         path = f"{path}/Spectrum"
         identifier_path = (spectrum.key, )
         result = self.apply_rules(spectrum, path, identifier_path)
+        result &= self.check_attributes(spectrum, path, identifier_path)
+        self.reset_context()
 
         for _key, analyte in spectrum.analytes.items():
             result &= self.validate_analyte(analyte, path, spectrum, library)
@@ -119,12 +228,18 @@ class Validator(ValidatorBase):
     def validate_analyte(self, analyte: Analyte, path: str, spectrum: Spectrum, library: SpectrumLibrary):
         path = f"{path}/Analyte"
         identifier_path = (spectrum.key, analyte.id)
-        return self.apply_rules(analyte, path, identifier_path)
+        result = self.apply_rules(analyte, path, identifier_path)
+        result &= self.check_attributes(analyte, path, identifier_path)
+        self.reset_context()
+        return result
 
     def validate_interpretation(self, interpretation: Interpretation, path: str, spectrum: Spectrum, library: SpectrumLibrary):
         path = f"{path}/Interpretation"
         identifier_path = (spectrum.key, interpretation.id)
-        return self.apply_rules(interpretation, path, identifier_path)
+        result = self.apply_rules(interpretation, path, identifier_path)
+        result &= self.check_attributes(interpretation, path, identifier_path)
+        self.reset_context()
+        return result
 
     def add_warning(self, obj: Attributed, path: str, identifier_path: Tuple, attrib: Any, value: Any, requirement_level: RequirementLevel, message: str):
         if hasattr(obj, "key"):
@@ -133,25 +248,12 @@ class Validator(ValidatorBase):
             key = obj.id
         else:
             key = ''
-        warning = f"{attrib.id} failed to validate {path}:{key} ({requirement_level.name.upper()}): {message}"
+        warning = f"{attrib.id if hasattr(attrib, 'id') else attrib} failed to validate {path}:{key} ({requirement_level.name.upper()}): {message}"
         logger.warning(warning)
         self.error_log.append(ValidationError(path, identifier_path, attrib, value, requirement_level, warning))
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.name!r}, {self.semantic_rules})"
-
-
-class PredicateValidator(Validator):
-    spectrum_predicate: Callable[[Spectrum], bool]
-
-    def __init__(self, name, predicate: Callable[[Spectrum], bool], semantic_rules: Optional[List[ScopedSemanticRule]] = None, object_rules: Optional[List] = None, error_log: Optional[List] = None):
-        self.spectrum_predicate = predicate
-        super().__init__(name, semantic_rules, object_rules, error_log)
-
-    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
-        if self.spectrum_predicate(spectrum):
-            return super().validate_spectrum(spectrum, path, library)
-        return True
 
 
 class ValidatorChain(ValidatorBase):

@@ -4,7 +4,8 @@ import enum
 from typing import Callable, Dict, Iterable, Union, List, Type
 from pathlib import Path
 
-from psims.controlled_vocabulary import load_psims, Entity
+from psims.controlled_vocabulary import Entity
+from psims.controlled_vocabulary.controlled_vocabulary import load_uo, load_unimod, load_psims
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
@@ -37,7 +38,9 @@ class AttributeSetTypes(enum.Enum):
 
 class VocabularyResolverMixin(object):
     default_cv_loader_map = {
-        "MS": load_psims
+        "MS": load_psims,
+        "UO": load_uo,
+        "UNIMOD": load_unimod,
     }
 
     def __init__(self, *args, **kwargs):

@@ -58,6 +58,14 @@ class Attribute(object):
             base = f"[{self.group_id}]" + base
         return base
 
+    def __hash__(self):
+        key = (self.key, )
+        if self.group_id is not None:
+            key = (self.key, self.group_id)
+        return hash(key)
+
+_sentinel = object()
+
 
 class AttributeManager(object):
     """A key-value pair store with optional attribute grouping
@@ -165,7 +173,7 @@ class AttributeManager(object):
                 key, value = attr
             self.add_attribute(key, value, group_id)
 
-    def get_attribute(self, key: str, group_identifier: Optional[str]=None, raw: bool=False) -> Union[Any, List[Any], Attribute, List[Attribute]]:
+    def get_attribute(self, key: str, group_identifier: Optional[str] = _sentinel, raw: bool = False) -> Union[Any, List[Any], Attribute, List[Attribute]]:
         """Get the value or values associated with a given
         attribute key.
 
@@ -182,7 +190,7 @@ class AttributeManager(object):
             Returns single or multiple values for the requested attribute.
         """
         indices_and_groups = self.attribute_dict[key]
-        if group_identifier is None:
+        if group_identifier is _sentinel:
             indices = indices_and_groups['indexes']
             if len(indices) > 1:
                 if raw:
@@ -194,7 +202,10 @@ class AttributeManager(object):
                 return self.attributes[indices[0]][1]
         else:
             groups = indices_and_groups['groups']
-            i = groups.index(group_identifier)
+            try:
+                i = groups.index(group_identifier)
+            except ValueError:
+                raise KeyError(f"Group {group_identifier} not found") from None
             indices = indices_and_groups['indexes']
             idx = indices[i]
             if raw:

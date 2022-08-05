@@ -9,7 +9,7 @@ from importlib import resources
 
 from xml.etree import ElementTree as etree
 
-from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, Sequence, Set, Tuple, Union
 
 from mzlib.attributes import Attributed
 from mzlib.utils import flatten, ensure_iter
@@ -475,12 +475,6 @@ class RuleSet(Sequence[ScopedSemanticRule]):
 def load_rule_set(name: str) -> List[ScopedSemanticRule]:
     return RuleSet(
         name,
-        # ScopedSemanticRule.from_xml(
-        #     resources.open_binary(
-        #         __name__.replace(".semantic_rule", '') + '.rules',
-        #         name + '.xml'
-        #     )
-        # )
         ScopedSemanticRule.from_dict(
             json.load(resources.open_text(
                 __name__.replace(".semantic_rule", '') + '.rules',

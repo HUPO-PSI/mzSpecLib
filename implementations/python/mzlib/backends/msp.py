@@ -68,12 +68,12 @@ other_terms = {
              "hcd": [["MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"]]},
     "Spec": {"Consensus": [["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"]]},
     "Scan": "MS:1003057|scan number",
-            "Origfile": "MS:1009008|source file",
+            "Origfile": "MS:1000577|source file",
             "Sample": "MS:1000002|sample name",
             "Filter": "MS:1000512|filter string",
             "FTResolution": "MS:1000028|detector resolution",
-            "ms1PrecursorAb": "MS:1009010|previous MS1 scan precursor intensity",
-            "Precursor1MaxAb": "MS:1009011|precursor apex intensity",
+            "ms1PrecursorAb": "MS:1003085|previous MS1 scan precursor intensity",
+            "Precursor1MaxAb": "MS:1003086|precursor apex intensity",
             "Purity": "MS:1009013|isolation window precursor purity",
             "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
             "Unassign_all": "MS:1003079|total unassigned intensity fraction",
@@ -730,9 +730,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         r"(\d+)/(\d+)", value)
                     if match is not None:
                         spectrum.add_attribute(
-                            "MS:1009020|number of replicate spectra used", try_cast(match.group(1)))
+                            "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
                         spectrum.add_attribute(
-                            "MS:1009021|number of replicate spectra available", try_cast(match.group(2)))
+                            "MS:1003069|number of replicate spectra available", try_cast(match.group(2)))
                     else:
                         match = re.match(
                             r"(\d+)", value)

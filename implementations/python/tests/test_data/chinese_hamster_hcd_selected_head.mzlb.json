@@ -145,17 +145,17 @@
           "value": 5538
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"CHO-K1_bRPLC_C1.RAW.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 2
         },
@@ -206,12 +206,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 8799173.32
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 25273307.5
         },
@@ -662,17 +662,17 @@
           "value": 6275
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction46.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 14
         },
@@ -723,12 +723,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 1776618.56
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 12167259.65
         },
@@ -1530,17 +1530,17 @@
           "value": 7528
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction18.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 2
         },
@@ -1591,12 +1591,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 6939079.2
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 7583304.35
         },
@@ -2152,17 +2152,17 @@
           "value": 3052
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction26.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 4
         },
@@ -2213,12 +2213,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 324419.29
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 361702.23
         },
@@ -2741,17 +2741,17 @@
           "value": 2890
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction26.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 5
         },
@@ -2802,12 +2802,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 3390555.93
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 3965011.86
         },
@@ -3480,17 +3480,17 @@
           "value": 1185
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction18.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 2
         },
@@ -3541,12 +3541,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 30003.73
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 28800.11
         },
@@ -3940,17 +3940,17 @@
           "value": 868
         },
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "name": "source file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction19.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 3
         },
@@ -4001,12 +4001,12 @@
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 9544513.13
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 26056925.91
         },

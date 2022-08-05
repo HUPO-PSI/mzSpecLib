@@ -5,7 +5,7 @@
     {
       "attr": [
         {
-          "accession": "MS:1009008",
+          "accession": "MS:1000577",
           "allow_children": false,
           "name": "source file",
           "repeatable": false

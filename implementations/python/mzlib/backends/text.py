@@ -376,7 +376,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if state == STATES.header:
                 if START_OF_SPECTRUM_MARKER.match(line):
                     match = START_OF_SPECTRUM_MARKER.match(line)
-                    spec.key = match.group(1) or spec.index - 1
+                    spec.key = int(match.group(1)) or spec.index - 1
                     continue
 
                 elif START_OF_PEAKS_MARKER.match(line):
