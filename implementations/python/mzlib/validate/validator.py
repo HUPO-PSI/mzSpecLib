@@ -1,7 +1,7 @@
 import itertools
 import logging
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import re
 from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
@@ -42,8 +42,8 @@ def is_curie(value: str) -> bool:
 
 @dataclass
 class ValidationContext:
-    attributes_visited: Dict[Tuple[str, str], bool]
-    rule_states: Dict[str, Any]
+    attributes_visited: Dict[Tuple[str, str], bool] = field(default_factory=dict)
+    rule_states: Dict[str, Any] = field(default_factory=dict)
 
     def clear_attributes(self):
         self.attributes_visited.clear()
@@ -117,9 +117,13 @@ class ValidatorBase(VocabularyResolverMixin):
             else:
                 for rel in value_types:
                     if isinstance(rel.value_type, ListOfType):
+                        hit = False
                         for tp in rel.value_type.type_definition.entity.has_value_type:
                             if isinstance(attrib.value, Sequence) and all(isinstance(v, tp.value_type.type_definition) for v in attrib.value):
+                                hit = True
                                 break
+                        if hit:
+                            break
                     elif isinstance(attrib.value, rel.value_type.type_definition):
                         break
                 else:
@@ -157,7 +161,7 @@ class ValidatorBase(VocabularyResolverMixin):
     def validate_library(self, library: SpectrumLibrary, spectrum_iterator: Optional[Iterator[Spectrum]]=None):
         path = "/Library"
         result = self.apply_rules(library, path, (library.identifier, ))
-        result &= self.check_attributes(library)
+        result &= self.check_attributes(library, path, (library.identifier, ))
         self.reset_context()
         if spectrum_iterator is None:
             spectrum_iterator = library
@@ -198,6 +202,7 @@ class Validator(ValidatorBase):
         self.semantic_rules = semantic_rules or []
         self.object_rules = object_rules or []
         self.error_log = error_log or []
+        self.current_context = ValidationContext()
 
     def apply_rules(self, obj: Attributed, path: str, identifier_path: Tuple) -> bool:
         result = True
@@ -293,6 +298,16 @@ class ValidatorChain(ValidatorBase):
         for validator in self.validators:
             result &= validator.apply_rules(obj, path, identifier_path)
         return result
+
+    def check_attributes(self, obj: Attributed, path: str, identifer_path: Tuple) -> bool:
+        result = True
+        for validator in self.validators:
+            result &= validator.check_attributes(obj, path, identifer_path)
+        return result
+
+    def reset_context(self):
+        for validator in self.validators:
+            validator.reset_context()
 
     def chain(self, validator: ValidatorBase) -> ValidatorBase:
         self.validators.append(validator)
