@@ -207,21 +207,13 @@ Annotation = (
 def render_group_to_file(fh, name):
     print("Writing", name)
     tokens = globals()[name]
-    fh.write(f"""
-    <div>
-        <p>{name}</p>
-    """)
+    fh.write(f"""## {name}\n""")
     Diagram(tokens).writeSvg(fh.write)
-    fh.write("\n    </div>")
+    fh.write("\n\n")
 
 
-with open("grammar.html", 'wt') as fh:
-    fh.write("""
-<html>
-<head>
-</head>
-<body>
-    """)
+with open("grammar.md", 'wt') as fh:
+    fh.write("""# Peak Annotation Grammar\n\n""")
     render_group_to_file(fh, "DIGIT")
     render_group_to_file(fh, "LOWER_CASE_LETTER")
     render_group_to_file(fh, "UPPER_CASE_LETTER")
@@ -233,4 +225,4 @@ with open("grammar.html", 'wt') as fh:
     render_group_to_file(fh, "ATOM_COUNT")
     render_group_to_file(fh, "AMINO_ACID")
     render_group_to_file(fh, "Annotation")
-    fh.write("</body>\n</html>")
+    fh.write("\n")
