@@ -5,7 +5,8 @@ from typing import Any, List, Pattern, Dict, NewType, Union
 
 JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
 
-
+# TODO: Add unknown ion series (?) to the pattern and data model
+# TODO: Update external_ion pattern to use enclosing quotes
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
    (?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
@@ -18,7 +19,8 @@ annotation_pattern = re.compile(r"""
     \])
    ))|
    (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
-   (?:_(?P<external_ion>[^\s,/]+))
+   (?:_(?P<external_ion>(?:[^\s,/]+)|"(?:[^"]+?)"))|
+   (?P<unknown>?)
 )
 (?P<neutral_losses>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|
@@ -484,7 +486,7 @@ class ExternalIonAnnotation(IonAnnotationBase):
         self.label = label
 
     def _format_ion(self):
-        return f"_{self.label}"
+        return f"_\"{self.label}\""
 
     def _molecule_description(self):
         d = super()._molecule_description()

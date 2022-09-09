@@ -68,7 +68,7 @@ other_terms = {
              "hcd": [["MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"]]},
     "Spec": {"Consensus": [["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"]]},
     "Scan": "MS:1003057|scan number",
-            "Origfile": "MS:1000577|source file",
+            "Origfile": "MS:1003203|constituent spectrum file",
             "Sample": "MS:1000002|sample name",
             "Filter": "MS:1000512|filter string",
             "FTResolution": "MS:1000028|detector resolution",
@@ -789,12 +789,12 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         for attribute in unknown_terms:
             if attributes[attribute] is None:
                 spectrum.add_attribute(
-                    "MS:1009900|other attribute name", try_cast(attribute))
+                    "MS:1003275|other attribute name", try_cast(attribute))
             else:
                 group_identifier = spectrum.get_next_group_identifier()
                 spectrum.add_attribute(
-                    "MS:1009900|other attribute name", try_cast(attribute), group_identifier)
-                spectrum.add_attribute("MS:1009902|other attribute value",
+                    "MS:1003275|other attribute name", try_cast(attribute), group_identifier)
+                spectrum.add_attribute("MS:1003276|other attribute value",
                                    try_cast(attributes[attribute]), group_identifier)
 
         if analyte.has_attribute("MS:1001471|peptide modification details"):

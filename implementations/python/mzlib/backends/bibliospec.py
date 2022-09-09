@@ -159,7 +159,7 @@ class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
 
         try:
             spectrum.add_attribute(
-                "MS:1000577|source file",
+                "MS:1003203|constituent spectrum file",
                 self.connection.execute("SELECT fileName FROM SpectrumSourceFiles WHERE id = ?",
                                         (info['fileID'], )).fetchone()['fileName']
             )
