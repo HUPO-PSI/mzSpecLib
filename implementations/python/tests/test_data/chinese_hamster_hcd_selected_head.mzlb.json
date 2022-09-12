@@ -145,8 +145,8 @@
           "value": 5538
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"CHO-K1_bRPLC_C1.RAW.FT.hcd.ch.MGF\""
         },
         {
@@ -662,8 +662,8 @@
           "value": 6275
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction46.raw.FT.hcd.ch.MGF\""
         },
         {
@@ -1530,8 +1530,8 @@
           "value": 7528
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction18.raw.FT.hcd.ch.MGF\""
         },
         {
@@ -2152,8 +2152,8 @@
           "value": 3052
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction26.raw.FT.hcd.ch.MGF\""
         },
         {
@@ -2741,8 +2741,8 @@
           "value": 2890
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction26.raw.FT.hcd.ch.MGF\""
         },
         {
@@ -3480,8 +3480,8 @@
           "value": 1185
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction18.raw.FT.hcd.ch.MGF\""
         },
         {
@@ -3940,8 +3940,8 @@
           "value": 868
         },
         {
-          "accession": "MS:1000577",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction19.raw.FT.hcd.ch.MGF\""
         },
         {

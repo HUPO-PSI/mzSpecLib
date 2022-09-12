@@ -19,8 +19,8 @@ annotation_pattern = re.compile(r"""
     \])
    ))|
    (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
-   (?:_(?P<external_ion>(?:[^\s,/]+)|"(?:[^"]+?)"))|
-   (?P<unknown>?)
+   (?:_(?P<external_ion>(?:[^"\s,/]+)|(?:"(?:[^"]+)")))|
+   (?P<unknown>\?)
 )
 (?P<neutral_losses>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|

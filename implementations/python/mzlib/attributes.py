@@ -64,8 +64,6 @@ class Attribute(object):
             key = (self.key, self.group_id)
         return hash(key)
 
-_sentinel = object()
-
 
 class AttributeManager(object):
     """A key-value pair store with optional attribute grouping
@@ -173,7 +171,7 @@ class AttributeManager(object):
                 key, value = attr
             self.add_attribute(key, value, group_id)
 
-    def get_attribute(self, key: str, group_identifier: Optional[str] = _sentinel, raw: bool = False) -> Union[Any, List[Any], Attribute, List[Attribute]]:
+    def get_attribute(self, key: str, group_identifier: Optional[str] = None, raw: bool = False) -> Union[Any, List[Any], Attribute, List[Attribute]]:
         """Get the value or values associated with a given
         attribute key.
 
@@ -190,7 +188,7 @@ class AttributeManager(object):
             Returns single or multiple values for the requested attribute.
         """
         indices_and_groups = self.attribute_dict[key]
-        if group_identifier is _sentinel:
+        if group_identifier is None:
             indices = indices_and_groups['indexes']
             if len(indices) > 1:
                 if raw:
