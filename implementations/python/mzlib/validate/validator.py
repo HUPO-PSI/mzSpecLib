@@ -135,13 +135,17 @@ class ValidatorBase(VocabularyResolverMixin):
             if units:
                 if not isinstance(units, list):
                     units = [units]
-                try:
-                    unit_attrib = obj.get_attribute("UO:0000000|unit", group_identifier=attrib.group_id, raw=True)
-                except KeyError:
+
+                if attrib.group_id is not None:
+                    try:
+                        unit_attrib = obj.get_attribute("UO:0000000|unit", group_identifier=attrib.group_id, raw=True)
+                    except KeyError:
+                        unit_attrib = None
+                        if len(units) == 1:
+                            logger.warn(f"{attrib.key}'s unit is missing, defaulting to {units[0]}")
+                            continue
+                else:
                     unit_attrib = None
-                    if len(units) == 1:
-                        logger.warn(f"{attrib.key}'s unit is missing, defaulting to {units[0]}")
-                        continue
                 if unit_attrib:
                     unit_acc, unit_name = unit_attrib.value.split("|", 1)
                     for unit in units:
