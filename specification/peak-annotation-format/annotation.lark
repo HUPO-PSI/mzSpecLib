@@ -1,0 +1,81 @@
+DIGIT : "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+SYMBOL_WITHOUT_CLOSING_BRACE : "[" | "{" | "}" | "(" | ")" | "<" | ">"
+       | "'" | "\"" | "=" | "|" | "." | "," | ";" | "_" | "-" | "+"
+
+SYMBOL : SYMBOL_WITHOUT_CLOSING_BRACE | "]"
+
+UPPER_CASE_LETTER : "A" | "B" | "C" | "D" | "E" | "F" | "G"
+       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+       | "V" | "W" | "X" | "Y" | "Z"
+
+LOWER_CASE_LETTER :  "a" | "b"
+       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
+       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
+       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
+       | "x" | "y" | "z"
+
+LETTER : UPPER_CASE_LETTER | LOWER_CASE_LETTER
+
+CHARACTER : LETTER | DIGIT | SYMBOL
+
+CONTENT_IN_BRACES : LETTER | DIGIT | SYMBOL_WITHOUT_CLOSING_BRACE | " "
+
+BRACE_ENCLOSED_CONTENT : "[" (CONTENT_IN_BRACES)+ "]"
+
+ANALYTE_REFERENCE : (CHARACTER)+
+
+analyte_reference_ : (ANALYTE_REFERENCE) "@"
+
+PEPTIDE_SERIES_SYMBOL : "a" | "x" | "b" | "y" | "c" | "z"
+
+ORDINAL : (DIGIT)+
+
+NUMBER : DIGIT ("." (DIGIT)+)?
+
+AMINO_ACID : "A" | "R" | "N" | "D" | "C" | "E" | "Q" | "G" | "H" | "K" | "M" | "F" | "P" | "S" | "T" | "W" | "Y" | "V" | "I" | "L"
+
+ATOM_COUNT : UPPER_CASE_LETTER LOWER_CASE_LETTER? "-"? ORDINAL*
+
+CHEMICAL_FORMULA : ATOM_COUNT+
+
+REPORTER_LABEL : BRACE_ENCLOSED_CONTENT
+
+SIGN : ("+" | "-")
+
+neutral_loss : SIGN (CHEMICAL_FORMULA | BRACE_ENCLOSED_CONTENT)
+
+isotope : SIGN ("i" ORDINAL*)
+
+charge : "^" SIGN? ORDINAL
+
+adducts : BRACE_ENCLOSED_CONTENT
+
+PPM : "ppm"
+
+mass_error : "/" NUMBER PPM?
+
+annotation_confidence : "*" NUMBER
+
+annotation_qualifiers : mass_error? annotation_confidence?
+
+series_peptide : (PEPTIDE_SERIES_SYMBOL) (ORDINAL+)
+
+series_internal : "m" ORDINAL+ ":" ORDINAL+
+
+series_immonium : "I" AMINO_ACID BRACE_ENCLOSED_CONTENT?
+
+series_reporter : "r" REPORTER_LABEL
+
+series_formula : "f" "{" CHEMICAL_FORMULA "}"
+
+series_external_ion : "_" CHARACTER+
+
+series_unknown : "?"
+
+ion_series : series_peptide | series_immonium | series_internal | series_reporter | series_formula | series_external_ion | series_unknown
+
+analyte_reference_ion_series : (analyte_reference_ ion_series) | ion_series
+
+annotation : analyte_reference_? ion_series neutral_loss* isotope? charge? adducts? annotation_qualifiers?
