@@ -1,17 +1,25 @@
+import os
+import pathlib
 import string
+
+from xml.sax.saxutils import escape
 
 from railroad import (Diagram, Choice, Group, Optional, Terminal,
                       NonTerminal, Sequence, OneOrMore, Comment, ZeroOrMore, Start,
                       End, Stack)
+import io
 
 from pyteomics.mass import std_aa_comp
+
+image_dir = pathlib.Path("schema_images/")
+os.makedirs(image_dir, exist_ok=True)
 
 
 UPPER_CASE_LETTER = Choice(0, *string.ascii_uppercase)
 
 LOWER_CASE_LETTER = Choice(0, *string.ascii_lowercase)
 
-SYMBOL = Choice(0, *string.punctuation)
+SYMBOL = Choice(0, *[(c) for c in string.punctuation])
 
 DIGIT = Choice(0, *string.digits)
 
@@ -204,12 +212,21 @@ Annotation = (
 )
 
 
+def encode_svg(diagram):
+    buffer = io.StringIO()
+    diagram.writeSvg(buffer.write)
+    value: str = buffer.getvalue()
+    value = value.replace("\n", " ").replace("'", "&apos;")
+    return value
+
+
 def render_group_to_file(fh, name):
     print("Writing", name)
     tokens = globals()[name]
-    fh.write(f"""## {name}\n""")
-    Diagram(tokens).writeSvg(fh.write)
-    fh.write("\n\n")
+    pathname: pathlib.Path = (image_dir / name).with_suffix(".svg")
+    with pathname.open('wt') as img_fh:
+        img_fh.write(encode_svg(Diagram(tokens)))
+    fh.write(f"""## {name}\n<img src="{pathname}">\n\n""")
 
 
 with open("grammar.md", 'wt') as fh:
