@@ -42,11 +42,6 @@
               "value_accession": "MS:1001251"
             },
             {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(4,C,CAM)"
-            },
-            {
               "accession": "MS:1000888",
               "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
@@ -557,11 +552,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(4,C,CAM)"
             },
             {
               "accession": "MS:1000888",
@@ -1427,11 +1417,6 @@
               "value_accession": "MS:1001251"
             },
             {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": 0
-            },
-            {
               "accession": "MS:1000888",
               "name": "stripped peptide sequence",
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
@@ -2049,11 +2034,6 @@
               "value_accession": "MS:1001251"
             },
             {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": 0
-            },
-            {
               "accession": "MS:1000888",
               "name": "stripped peptide sequence",
               "value": "AAAAGSTSVKPIFSR"
@@ -2636,11 +2616,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": 0
             },
             {
               "accession": "MS:1000888",
@@ -3377,11 +3352,6 @@
               "value_accession": "MS:1001251"
             },
             {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(10,C,CAM)"
-            },
-            {
               "accession": "MS:1000888",
               "name": "stripped peptide sequence",
               "value": "AAAALGSHGSCSSEVEK"
@@ -3835,11 +3805,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(10,C,CAM)"
             },
             {
               "accession": "MS:1000888",

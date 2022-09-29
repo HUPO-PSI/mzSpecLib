@@ -19,6 +19,7 @@ from mzlib.backends.base import VocabularyResolverMixin
 from mzlib.validate.level import RequirementLevel
 from mzlib.validate.semantic_rule import ScopedSemanticRule, load_rule_set
 from mzlib.validate.object_rule import ScopedObjectRuleBase, SpectrumPeakAnnotationRule
+from mzlib.defaults import DEFAULT_UNITS
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -85,6 +86,8 @@ class ValidatorBase(VocabularyResolverMixin):
     def check_attributes(self, obj: Attributed, path: str, identifer_path: Tuple) -> bool:
         valid: bool = True
         for attrib in obj.attributes:
+            if attrib.key == "MS:1003276|other attribute value" or attrib.key == "MS:1003275|other attribute name":
+                continue
             if self.current_context.visited_attribute(attrib):
                 continue
             try:
@@ -156,9 +159,10 @@ class ValidatorBase(VocabularyResolverMixin):
                                         f"The attribute {attrib.key} must have a unit {', '.join([rel.accession + '|' + rel.comment for rel in units])}, but got {unit_acc}|{unit_name}")
                         valid = False
                 else:
-                    self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
-                                     f"The attribute {attrib.key} must have a unit {', '.join([rel.accession + '|' + rel.comment for rel in units])}, but none were found")
-                    valid = False
+                    if not term.id in DEFAULT_UNITS:
+                        self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
+                                        f"The attribute {attrib.key} must have a unit {', '.join([rel.accession + '|' + rel.comment for rel in units])}, but none were found")
+                        valid = False
 
         return valid
 

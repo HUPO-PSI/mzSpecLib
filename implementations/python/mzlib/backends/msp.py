@@ -713,7 +713,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                 "MS:1000041|charge state", try_cast(match.group(4)))
                     else:
                         spectrum.add_attribute(
-                            "ERROR", f"Unable to parse {attributes[attribute]} in {attribute} at E2355")
+                            "ERROR", f"Unable to parse {attributes[attribute]} in {attribute}")
                         unknown_terms.append(attribute)
                 else:
                     spectrum.add_attribute(
@@ -763,7 +763,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
                     else:
                         analyte.add_attribute(
-                            "ERROR", f"Unable to parse {attributes[attribute]} in {attribute} at E2355")
+                            "ERROR", f"Unable to parse {attributes[attribute]} in {attribute}")
                         unknown_terms.append(attribute)
                 else:
                     spectrum.add_attribute(
@@ -808,6 +808,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 peptide.sequence[position] = tuple(seqpos)
                 assert seqpos[0] == residue
             analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
+            analyte.remove_attribute("MS:1001471|peptide modification details")
 
         if analyte:
             spectrum.add_analyte(analyte)
