@@ -1,6 +1,9 @@
 import warnings
 
-class IndexBase(object):
+from typing import Collection
+
+
+class IndexBase(Collection):
 
     @classmethod
     def from_filename(cls, filename, library=None):
@@ -25,6 +28,19 @@ class IndexBase(object):
         raise NotImplementedError()
 
     def commit(self):
+        raise NotImplementedError()
+
+    def __iter__(self):
+        for i in range(len(self)):
+            yield self[i]
+
+    def __getitem__(self, i):
+        return self.search(i)
+
+    def __len__(self):
+        raise NotImplementedError()
+
+    def __contains__(self):
         raise NotImplementedError()
 
     def check_names_unique(self) -> bool:

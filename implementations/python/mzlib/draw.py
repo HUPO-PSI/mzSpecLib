@@ -1,6 +1,24 @@
+from collections import defaultdict
+
 from matplotlib import pyplot as plt
 from matplotlib import patheffects as path_effects
+
 import numpy as np
+
+
+series_to_color = {
+    'b': 'crimson',
+    'y': 'steelblue',
+    'a': 'darkorange',
+    'c': 'violet',
+    'z': 'dodgerblue',
+    'internal': 'purple',
+    'precursor': 'goldenrod',
+    'immonium': 'maroon',
+    'reporter': 'skyblue',
+    'external': 'grey',
+    'formula': 'forestgreen'
+}
 
 
 def peaklist_to_vector(peaklist, width=0.000001):
@@ -62,8 +80,10 @@ def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, **kwa
         _, ax = plt.subplots(1)
     mz_array, intensity_array = peaklist_to_vector(spectrum.peak_list)
     unscaled_max = intensity_array.max()
+
     if normalize:
         intensity_array = intensity_array / intensity_array.max() * 100.0
+
     kwargs.setdefault("color", 'black')
     kwargs.setdefault("lw", 0.75)
     ax.plot(mz_array, intensity_array, **kwargs)
@@ -71,6 +91,7 @@ def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, **kwa
     max_intensity = intensity_array.max()
     ypad = 0.01 * max_intensity
     threshold = label_threshold * max_intensity
+    by_series = defaultdict(list)
     for peak in spectrum.peak_list:
         height = peak[1]
         if normalize:
@@ -78,11 +99,34 @@ def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, **kwa
         if threshold >= height:
             continue
         height += ypad
-        txt = ax.text(peak[0], height, ',\n'.join(map(str, peak[2])), ha='center', clip_on=True)
-        txt.set_path_effects([path_effects.Stroke(linewidth=0.5, foreground='white'),
-                              path_effects.Normal()])
+        if peak[2]:
+            annots = peak[2]
+            for annot in annots:
+                if annot.series_label == 'peptide':
+                    by_series[annot.series].append(peak)
+                else:
+                    by_series[annot.series_label].append(peak)
+            txt = ax.text(peak[0], height, ',\n'.join(map(str, annots)), ha='center', clip_on=True)
+            txt.set_path_effects([path_effects.Stroke(linewidth=0.75, foreground='white'),
+                                path_effects.Normal()])
+
+    for annot_series, peaks in by_series.items():
+        sub_mz_array, sub_intensity_array = peaklist_to_vector(peaks)
+
+        if normalize:
+            sub_intensity_array = sub_intensity_array / sub_intensity_array.max() * 100.0
+        ax.plot(
+            sub_mz_array,
+            sub_intensity_array,
+            label=annot_series,
+            color=series_to_color[annot_series],
+            lw=2.0
+        )
+
+
     ax.set_xlabel("m/z")
     ax.set_ylabel("Relative Intensity")
+    ax.set_title(f"{spectrum.name}")
     if pretty:
         if intensity_array.shape[0] > 0:
             set_ylim = intensity_array.min() >= 0

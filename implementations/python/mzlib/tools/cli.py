@@ -1,3 +1,4 @@
+import logging
 import ipdb
 import sys
 import traceback
@@ -66,6 +67,11 @@ def describe(path, diagnostics=False):
             click.echo(f"[{attr.group_id}]{attr.key}={attr.value}")
 
 
+@main.command("index", short_help="Build an on-disk index for a spectral library")
+@click.argument('inpath', type=click.Path(exists=True))
+def build_index(inpath):
+    library = SpectrumLibrary(filename=inpath, index_type=SQLIndex)
+
 
 @main.command("convert", short_help=("Convert a spectral library from one format to another"))
 @click.argument('inpath', type=click.Path(exists=True))
@@ -81,7 +87,9 @@ def convert(inpath, outpath, format=None):
         index_type = SQLIndex
     else:
         index_type = MemoryIndex
+    click.echo(f"Opening {inpath}")
     library = SpectrumLibrary(filename=inpath, index_type=index_type)
+    click.echo(f"Writing to {outpath}")
     fh = click.open_file(outpath, mode='w')
     library.write(fh, format)
 

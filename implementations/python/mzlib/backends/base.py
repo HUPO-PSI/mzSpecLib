@@ -1,5 +1,6 @@
 import io
 import enum
+import logging
 
 from typing import Callable, Dict, Iterable, Union, List, Type
 from pathlib import Path
@@ -16,6 +17,9 @@ from .utils import open_stream
 
 from .utils import open_stream
 
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
 
@@ -451,7 +455,15 @@ class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegis
 
     def write_library(self, library: SpectralLibraryBackendBase):
         self.write_header(library)
-        for spectrum in library:
+        n = len(library)
+        step = max(min(n // 100, 5000), 1)
+        for i, spectrum in enumerate(library):
+            if i % step == 0 and i:
+                try:
+                    ident = f"{spectrum.key}:{spectrum.name}"
+                except Exception:
+                    ident = str(spectrum.key)
+                logger.info(f"Wrote {ident} {i}/{n} ({i / n * 100.0:0.2f}%)")
             self.write_spectrum(spectrum)
 
     def write_spectrum(self, spectrum: Spectrum):
