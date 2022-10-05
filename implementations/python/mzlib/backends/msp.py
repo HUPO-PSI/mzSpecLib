@@ -3,7 +3,7 @@ import io
 import os
 import logging
 
-from typing import Any, Collection, Dict, List, Optional, Tuple, Iterable
+from typing import Any, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable
 import warnings
 
 from pyteomics import proforma
@@ -52,10 +52,9 @@ analyte_terms = {
     # "Protein": "MS:1000885|protein accession",
     "Mods": "MS:1001471|peptide modification details",
     "Naa": "MS:1003043|number of residues",
-    "PrecursorMonoisoMZ": "MS:1003208|experimental precursor monoisotopc m/z",
-    "Mz_exact": "MS:1003208|experimental precursor monoisotopc m/z",
+    "PrecursorMonoisoMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "Mz_exact": "MS:1003208|experimental precursor monoisotopic m/z",
     "Mz_av": "MS:1003054|theoretical average m/z",
-
 }
 
 
@@ -104,7 +103,7 @@ species_map = {
 }
 
 
-modification_name_map = {
+MODIFICATION_NAME_MAP = {
     "CAM": "Carbamidomethyl",
     "Pyro_glu": "Glu->pyro-Glu", # Resolves UNIMOD ambiguity
     "Pyro-glu": "Gln->pyro-Glu",
@@ -113,6 +112,7 @@ modification_name_map = {
     "TMT6plex": "TMT6plex",
     "iTRAQ": "iTRAQ",
     "Acetyl": "Acetyl",
+    "TMT": "TMT6plex",
 }
 
 
@@ -161,7 +161,7 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
         modification = data['immonium_modification']
         if modification is not None:
             try:
-                modification = modification_name_map[modification]
+                modification = MODIFICATION_NAME_MAP[modification]
                 data['immonium_modification'] = modification
             except KeyError as err:
                 print(f"Failed to convert immonium ion modification {modification}")
@@ -181,7 +181,7 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
 
 
 parse_annotation = MSPAnnotationStringParser(annotation_pattern)
-modification_list_parser = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_\-]),([A-Za-z0-9_\-]+)")
+MODIFICATION_LIST_PARSER = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_\-]),([A-Za-z0-9_\-]+)")
 
 
 def parse_modification_notation(text: str) -> List[Tuple[int, str, str]]:
@@ -194,16 +194,56 @@ def parse_modification_notation(text: str) -> List[Tuple[int, str, str]]:
     while i < n and text[i].isdigit():
         i += 1
 
-    for position, residue, mod in modification_list_parser.findall(text):
+    for position, residue, mod in MODIFICATION_LIST_PARSER.findall(text):
         position = int(position)
-        if mod not in modification_name_map:
+        if mod not in MODIFICATION_NAME_MAP:
             warnings.warn(f"{mod} is not found in the known MSP modification mapping. Using this name verbatim")
             modification_name = mod
-            modification_name_map[mod] = mod
+            MODIFICATION_NAME_MAP[mod] = mod
         else:
-            modification_name = modification_name_map[mod]
+            modification_name = MODIFICATION_NAME_MAP[mod]
         mods.append((position, residue, modification_name))
     return mods
+
+
+class ModificationParser:
+    pattern: re.Pattern
+    modification_map: Dict[str, str]
+    unknown_modifications: Set[str]
+
+    def __init__(self, pattern: str=None, modification_map: Dict[str, str]=None):
+        if pattern is None:
+            pattern = MODIFICATION_LIST_PARSER.pattern
+        if modification_map is None:
+            modification_map = dict(MODIFICATION_NAME_MAP)
+        self.pattern = re.compile(pattern)
+        self.modification_map = modification_map
+        self.unknown_modifications = set()
+
+    def __call__(self, text: str):
+        return self.parse(text)
+
+    def parse(self, text: str) -> List[Tuple[int, str, str]]:
+        if not isinstance(text, str) or not text:
+            return []
+        i = 0
+        n = len(text)
+
+        mods = []
+        while i < n and text[i].isdigit():
+            i += 1
+
+        for position, residue, mod in self.pattern.findall(text):
+            position = int(position)
+            if mod not in self.modification_map:
+                warnings.warn(f"{mod} is not found in the known MSP modification mapping. Using this name verbatim")
+                modification_name = mod
+                self.modification_map[mod] = mod
+                self.unknown_modifications.add(mod)
+            else:
+                modification_name = self.modification_map[mod]
+            mods.append((position, residue, modification_name))
+        return mods
 
 
 class AttributeHandler:
@@ -271,9 +311,6 @@ class MappingAttributeHandler(AttributeHandler):
                 return False
         return True
 
-    def __and__(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
-        return self.chain(handler)
-
 
 class AttributeHandlerChain:
     chain: List[AttributeHandler]
@@ -330,6 +367,14 @@ class RegexAttributeHandler(AttributeHandler):
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
     format_name = "msp"
+
+    modification_parser: ModificationParser
+    unknown_attributes: Set[str]
+
+    def __init__(self, filename, index_type=None, read_metadata=True):
+        super().__init__(filename, index_type, read_metadata)
+        self.modification_parser = ModificationParser()
+        self.unknown_attributes = set()
 
     @classmethod
     def guess_from_header(cls, filename: str) -> bool:
@@ -556,7 +601,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum.key = spectrum.index + 1
         for i, peak in enumerate(spectrum.peak_list):
             try:
-                parsed_interpretation = parse_annotation(peak[2], spectrum=spectrum)
+                parsed_interpretation = self._parse_annotation(peak[2], spectrum=spectrum)
             except ValueError as err:
                 message = str(err)
                 raise ValueError(
@@ -564,6 +609,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             peak[2] = parsed_interpretation
 
         return spectrum
+
+    def _parse_annotation(self, annotation: str, wrap_errors: bool=True, **kwargs):
+        return parse_annotation(annotation_string=annotation, wrap_errors=wrap_errors, **kwargs)
 
     def _parse_comment(self, value: str, attributes: Attributed):
         comment_items = re.split(" ", value)
@@ -592,7 +640,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 attributes[item] = None
 
-    def _make_spectrum(self, peak_list: List, attributes: Attributed):
+    def _make_spectrum(self, peak_list: List, attributes: Mapping[str, str]):
         spectrum = self._new_spectrum()
         interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
         interpretation_member = None
@@ -879,6 +927,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         #### Handle the uninterpretable terms
         for attribute in unknown_terms:
+            self.unknown_attributes.add(attribute)
             if attributes[attribute] is None:
                 spectrum.add_attribute(
                     "MS:1003275|other attribute name", try_cast(attribute))
@@ -901,7 +950,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         peptide = proforma.ProForma.parse(analyte.get_attribute("MS:1000888|stripped peptide sequence"))
         if analyte.has_attribute("MS:1001471|peptide modification details"):
             modification_details = analyte.get_attribute("MS:1001471|peptide modification details")
-            mods = parse_modification_notation(modification_details)
+            mods = self.modification_parser(modification_details)
             for position, residue, mod in mods:
                 seqpos = list(peptide.sequence[position])
                 if not seqpos[1]:

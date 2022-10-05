@@ -77,7 +77,8 @@ def build_index(inpath):
 @click.argument('inpath', type=click.Path(exists=True))
 @click.argument("outpath", type=click.Path())
 @click.option("-f", "--format", type=click.Choice(["text", "json"]), default="text")
-def convert(inpath, outpath, format=None):
+@click.option("-k", "--library-attribute", "library_attributes", type=(str, str), repeat=True, help="Specify an attribute to add to the library metadata section. May be repeated.")
+def convert(inpath, outpath, format=None, header_file=None, library_attributes=()):
     '''Convert a spectral library from one format to another. If `outpath` is `-`,
     instead of writing to file, data will instead be sent to STDOUT.
     '''
@@ -89,6 +90,9 @@ def convert(inpath, outpath, format=None):
         index_type = MemoryIndex
     click.echo(f"Opening {inpath}")
     library = SpectrumLibrary(filename=inpath, index_type=index_type)
+    if library_attributes:
+        for k, v in library_attributes:
+            library.add_attribute(k, v)
     click.echo(f"Writing to {outpath}")
     fh = click.open_file(outpath, mode='w')
     library.write(fh, format)

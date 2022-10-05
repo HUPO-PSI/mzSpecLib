@@ -149,6 +149,9 @@ class ValidatorBase(VocabularyResolverMixin):
                             continue
                 else:
                     unit_attrib = None
+                    if len(units) == 1:
+                        logger.warn(f"{attrib.key}'s unit is missing, defaulting to {units[0]}")
+                        continue
                 if unit_attrib:
                     unit_acc, unit_name = unit_attrib.value.split("|", 1)
                     for unit in units:
