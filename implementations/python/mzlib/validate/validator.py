@@ -7,8 +7,8 @@ from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Sequenc
 
 from psims.controlled_vocabulary.entity import Entity, ListOfType
 
-
 from mzlib.attributes import Attribute, Attributed
+
 from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte, Interpretation
 from mzlib.spectrum_library import SpectrumLibrary
@@ -174,6 +174,7 @@ class ValidatorBase(VocabularyResolverMixin):
         result = self.apply_rules(library, path, (library.identifier, ))
         result &= self.check_attributes(library, path, (library.identifier, ))
         self.reset_context()
+
         if spectrum_iterator is None:
             spectrum_iterator = library
         for spectrum in spectrum_iterator:
@@ -346,3 +347,4 @@ def get_object_validator_for(name: str) -> Validator:
     rules = object_rules[name]
     validator = Validator(name, object_rules=rules)
     return validator
+

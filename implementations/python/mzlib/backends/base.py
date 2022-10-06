@@ -5,6 +5,7 @@ import logging
 from typing import Callable, Dict, Iterable, Union, List, Type
 from pathlib import Path
 
+
 from psims.controlled_vocabulary import Entity
 from psims.controlled_vocabulary.controlled_vocabulary import load_uo, load_unimod, load_psims
 
@@ -14,9 +15,6 @@ from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE
 from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
 
 from .utils import open_stream
-
-from .utils import open_stream
-
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
