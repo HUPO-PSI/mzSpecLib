@@ -1,0 +1,604 @@
+### HumanAllPublic_2012-07_all.sptxt  (Text version of HumanAllPublic_2012-07_all.splib)
+### SpectraST (version 4.0, TPP v4.6 OCCUPY rev 0, Build 201208271324 (linux))
+### 
+### COMPILE FROM "/regis/sbeams/archive/blin/PID_serum/PID_serum/XTK_ipi.HUMAN.v3.71.targetdecoy/RAW.splib" UNION ... "/regis/sbeams/archive/msnyder/iPOP/PBMC2011_SerumProteomics_r3/XTK/RAW.splib"  [CONSENSUS;r=1;I=;_QUO=0.6;_XNR=100;_WGT=SN;_DIS=TRUE;_XPK=150;_XPU=300;_BDN=FALSE;_TBD=FALSE]
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/blin/PID_serum/PID_serum/XTK_ipi.HUMAN.v3.71.targetdecoy/raw_P0.9995850000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b1-cit_cam/SPC_HsNIST2.0/raw_P0.9984800000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b1-edta_cam/SPC_HsNIST2.0/raw_P0.9990010000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b1-hep_cam/SPC_HsNIST2.0/raw_P0.9990620000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b1-serum_cam/SPC_HsNIST2.0/raw_P0.9984360000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b2-cit_cam/SPC_HsNIST2.0/raw_P0.9990780000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b2-edta_cam/SPC_HsNIST2.0/raw_P0.9986420000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b2-hep_cam/SPC_HsNIST2.0/raw_P0.9987950000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b2-serum_cam/SPC_HsNIST2.0/raw_P0.9989710000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP01/hupo1_b3-serum_cam/SPC_HsNIST2.0/raw_P0.9987520000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP12/HUPO12_run31/SPC_HsNIST2.0/raw_P0.9991580000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP12/HUPO12_run32/SPC_HsNIST2.0/raw_P0.9988040000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP12/HUPO12_run33/SPC_HsNIST2.0/raw_P0.9988520000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP12/HUPO12_run34/SPC_HsNIST2.0/raw_P0.9987360000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP17/hupo17_b1-serum_cam/SPC_HsNIST2.0/raw_P0.9994490000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP22/HUPO22_M_CA_S/SPC_HsNIST2.0/raw_P0.9994160000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_b1-CIT/SPC_HsNIST2.0/raw_P0.9985520000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_b1-SERUM/SPC_HsNIST2.0/raw_P0.9987550000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_b2-CIT/SPC_HsNIST2.0/raw_P0.9988590000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_b2-SERUM/SPC_HsNIST2.0/raw_P0.9987430000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_b3-CIT/SPC_HsNIST2.0/raw_P0.9986470000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_b3-SERUM/SPC_HsNIST2.0/raw_P0.9985820000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_Ref-CIT/SPC_HsNIST2.0/raw_P0.9987100000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP28/HUPO28_Ref-SERUM/SPC_HsNIST2.0/raw_P0.9984740000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-CIT_1/SPC_HsNIST2.0/raw_P0.9990700000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-CIT_win1/SPC_HsNIST2.0/raw_P0.9993240000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-CIT_win2/SPC_HsNIST2.0/raw_P0.9991590000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-EDTA_1/SPC_HsNIST2.0/raw_P0.9992210000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-EDTA_win1/SPC_HsNIST2.0/raw_P0.9992910000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-EDTA_win2/SPC_HsNIST2.0/raw_P0.9989870000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-HEP/SPC_HsNIST2.0/raw_P0.9988520000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP29/HUPO29_b1-SERUM/SPC_HsNIST2.0/raw_P0.9982730000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP33/HUPOPPP33_Deca/SPC_HsNIST2.0/raw_P0.9991960000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP34/HUPO34/SPC_HsNIST2.0/raw_P0.9991510000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP34/HUPO34_b1-SERUM/SPC_HsNIST2.0/raw_P0.9994470000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP37/HUPO37_b1-HEP_2LCQ/SPC_HsNIST2.0/raw_P0.9990410000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP40/HUPO40/SPC_HsNIST2.0/raw_P0.9983940000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP46/hupo46_c1-serum_cam/SPC_HsNIST2.0/raw_P0.9980500000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP46/hupo46_reference_cam/SPC_HsNIST2.0/raw_P0.9989810000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP53/hupo53_reference_cam/SPC_HsNIST2.0/raw_P0.9993350000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/edeutsch/HUPOPPP55/hupo55_b1-cit_cam/SPC_HsNIST2.0/raw_P0.9992060000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams4/archive/wqian/HsPlasma/HsPlasma_tryp_nonalkylated/SPC_HsNIST2.0/raw_P0.9991090000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams4/archive/tconrads/NCIHumanSerum/NCIHumanSerum/SPC_HsNIST2.0/raw_P0.9993680000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/mpeitsch/NovartisPlasma/MicroProt/SPC_HsNIST2.0/raw_P0.9993180000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/pmallick/Plasma/BOBFreezeThaw/SPC_HsNIST2.0/raw_P0.9982270000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/pmallick/Plasma/BOB2L/SPC_HsNIST2.0/raw_P0.9984330000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/pmallick/Plasma/BOB2L_ISB/SPC_HsNIST2.0/raw_P0.9981950000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/pmallick/Plasma/BOB2H_ISB/SPC_HsNIST2.0/raw_P0.9983590000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/pmallick/Plasma/BOB_Sensitivity/SPC_HsNIST2.0/raw_P0.9982870000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/ovitek/LatinSquare/LS_SpikedSerum/SPC_HsNIST2.0/raw_P.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/mpeitsch/NovartisPlasma/MicroProt2/SPC_HsNIST2.0/raw_P0.9987330000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/pwilmarth/WilmarthSamples/Wilmarth_human_serum1/SPC_HsNIST2.0/raw_P0.9986970000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/15_clinprot_c3/SPC_HsNIST2.0/raw_P0.9988830000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/16_clinprot_c8/SPC_HsNIST2.0/raw_P0.9988470000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/17_wcx/SPC_HsNIST2.0/raw_P0.9984950000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/18_size/SPC_HsNIST2.0/raw_P0.9989690000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/19_proteinag/SPC_HsNIST2.0/raw_P0.9992020000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/20_cys/SPC_HsNIST2.0/raw_P0.9982920000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/21_unfract/SPC_HsNIST2.0/raw_P0.9977250000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/22_mars/SPC_HsNIST2.0/raw_P0.9989770000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/apaulovich/serum_fractionation/01_glyco/XTK_ipi.HUMAN.v3.71.targetdecoy/raw_P0.9997200000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Normal_LCQ_Cys_May04/SPC_HsNIST2.0/raw_P0.9990910000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Normal_LCQ_NoCys_May04/SPC_HsNIST2.0/raw_P0.9994750000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Normal_LCQ_NoCys_Oct04/SPC_HsNIST2.0/raw_P0.9989330000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Normal_LTQ_Cys_Dec04/SPC_HsNIST2.0/raw_P0.9986240000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Trauma_LTQ_Cys_Apr05/SPC_HsNIST2.0/raw_P0.9987230000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Trauma_LTQ_Cys_Mar05/SPC_HsNIST2.0/raw_P0.9988170000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Trauma_LTQ_NoCys_Mar05/SPC_HsNIST2.0/raw_P0.9992620000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Trauma_LTQ_NonGlyco_Apr05/SPC_HsNIST2.0/raw_P0.9993260000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/pmallick/Plasma/PPP-2/SPC_HsNIST2.0/raw_P0.9977800000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/hzhang/serum_glycoproteins/breakfast_qtof08/XTK_HsIPI3.54_Bswap/raw_P0.9995140000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/hzhang/serum_glycoproteins/caex_qtof08/XTK_HsIPI3.54_Bswap/raw_P0.9993570000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/hzhang/serum_glycoproteins/cat_ex_qtof/XTK_HsIPI3.54_Bswap/raw_P0.9994980000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/hzhang/serum_glycoproteins/cation_ex_lcq/XTK_HsIPI3.54_Bswap/raw_P0.9994650000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/hzhang/serum_peo_peptides/serum_peo_peptides/XTK_ipi.HUMAN.v3.71.targetdecoy/raw_P0.9997670000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/serum_IEF/serum_FFE_2006_LTQ-FT/XTK_HsIPI3.54_Bswap/raw_P0.9987420000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/serum_IEF/serum_FFE_2006_LTQ/XTK_HsIPI3.54_Bswap/raw_P0.9994860000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/serum_IEF/serum_OGE_2006_LTQ-FT/XTK_HsIPI3.54_Bswap/raw_P0.9994760000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/serum_IEF/serum_OGE_2006_LTQ/XTK_HsIPI3.54_Bswap/raw_P0.9993880000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/lg_scale_serum/2007_08_09/XTK_HsIPI3.54_Bswap/raw_P0.9994520000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/lg_scale_serum/SEC_OGE_II/XTK_HsIPI3.54_Bswap_LTQ/raw_P0.9992340000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/lg_scale_serum/SEC_OGE_II/XTK_HsIPI3.54_Bswap_LTQ-FT/raw_P0.9992340000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/lg_scale_serum/SEC_OGE_II/XTK_HsIPI3.54_Bswap_Agilent-IT/raw_P0.9993060000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jmalmstr/lg_scale_serum/IEF_GeH/XTK_HsIPI3.54_Bswap/raw_P0.9992190000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/jwatts/HsGlycoPlasma35indiv/HsGlycoPlasma35indiv/XTK_HsIPI3.54_Bswap/raw_P0.9994720000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/rossola/HUPO-ISB/b1-CIT_glyco_lcq/XTK_HsIPI3.54_Bswap/raw_P0.9990440000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/rossola/HUPO-ISB/b1-CIT_glyco_qstar/XTK_HsIPI3.54_Bswap/raw_P0.9984630000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/rossola/HUPO-ISB/NIBSC_glyco_lcq/XTK_HsIPI3.54_Bswap/raw_P0.9993180000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/rossola/HUPO-ISB/NIBSC_glyco_qstar/XTK_HsIPI3.54_Bswap/raw_P0.9990490000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Normal_LCQ_Glyco_Jun04/XTK_HsIPI3.54_Bswap/raw_P0.9991280000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Normal_LTQ_Glyco_Nov04/XTK_HsIPI3.54_Bswap/raw_P0.9989700000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Trauma_LTQ_Glyco_Apr05/XTK_HsIPI3.54_Bswap/raw_P0.9990290000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams/archive/dsmith/Plasma/Trauma_LTQ_Glyco_Mar05/XTK_HsIPI3.54_Bswap/raw_P0.9990750000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams4/archive/wqian/HsPlasma/HsPlasma_tryp_alkylated/SPC_HsNIST2.0/raw_P0.9990790000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_01/raw_P0.9979940000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_02/raw_P0.9980180000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_03/raw_P0.9979160000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_04/raw_P0.9979270000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_05/raw_P0.9980410000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_06/raw_P0.9982730000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_07/raw_P0.9982880000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_08/raw_P0.9986170000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_09/raw_P0.9981330000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_10/raw_P0.9977760000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_11/raw_P0.9979200000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_12/raw_P0.9981200000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_13/raw_P0.9987260000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_14/raw_P0.9975260000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_15/raw_P0.9987790000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_16/raw_P0.9983490000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_17/raw_P0.9981430000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_18/raw_P0.9984940000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_19/raw_P0.9979110000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_20/raw_P0.9982530000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_21/raw_P0.9982670000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_22/raw_P0.9979250000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_23/raw_P0.9981350000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_24/raw_P0.9981400000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_25/raw_P0.9977960000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_26/raw_P0.9977780000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_27/raw_P0.9980720000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_28/raw_P0.9981740000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_29/raw_P0.9986190000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_30/raw_P0.9980200000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_31/raw_P0.9981240000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_32/raw_P0.9983750000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_33/raw_P0.9982250000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_34/raw_P0.9983490000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_35/raw_P0.9980140000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_36/raw_P0.9981480000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_37/raw_P0.9980570000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_38/raw_P0.9979180000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_39/raw_P0.9979220000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/nobackup/Roche/Combined_40/raw_P0.9982690000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0023/iprophet_1Dec10/raw_P0.9975060000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0028/iprophet_1Dec10/raw_P0.9978820000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0029/iprophet_1Dec10/raw_P0.9979920000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0055/iprophet_1Dec10/raw_P0.9981560000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0056/iprophet_1Dec10/raw_P0.9980260000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0018/XTK-ISB/raw_P0.9992800000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0021/XTK-AWS/raw_P0.9990190000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0027/XTK-ISB/raw_P0.9993730000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0049/XTK-AWS/raw_P0.9991240000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0050/XTK-REG/raw_P0.9991300000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0083/XTK-REG/raw_P0.9992400000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0089/XTK-REG/raw_P0.9992750000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0111/XTK-REG/raw_P0.9992570000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0112/XTK-REG/raw_P0.9993110000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams2/archive/shanash/hanash_HsPlasma/HsPlasma_IP0113/XTK-REG/raw_P0.9993650000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/archive/msnyder/iPOP/PBMC2011_SerumProteomics_r1/XTK/raw_P0.9996730000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/archive/msnyder/iPOP/PBMC2011_SerumProteomics_r2/XTK/raw_P0.9996860000.msp"
+### > RAW.splib : IMPORT FROM MSP "/regis/sbeams6/archive/msnyder/iPOP/PBMC2011_SerumProteomics_r3/XTK/raw_P0.9996930000.msp"
+### ===
+Name: AAFIC[339]PGSSR/2
+LibID: 0
+MW: 1245.6576
+PrecursorMZ: 622.8288
+Status: Normal
+FullName: X.AAFIC[339]PGSSR.X/2 (CID)
+Comment: AvePrecursorMz=623.1846 BinaryFileOffset=18522 CollisionEnergy=0.0 FracUnassigned=0.00,0/5;0.11,5/20;0.21,75/150 Inst=1/UNKNOWN,1 MassDiff=0.3690 Mods=1/4,C,ICAT-C:13C(9) NAA=10 NISTProtein=3/IPI00022488/ENSP00000265983/P02790 NMC=0 NTT=1 Nreps=1/1 OrigMaxIntensity=5e+06 Parent=622.829 Pep=Semi-tryp PrecursorIntensity=9.2e+06 Prob=1.0000 Protein=1/3/IPI00022488/ENSP00000265983/P02790 RawSpectrum=serum41.01324.01324 RetentionTime=2960.9,2960.9,2960.9 Sample=1/PID_serum,1,1 Se=1^K1:pb=0.9997/0,fv=5.8759/0,hs=542/0,ns=359/0,ex=0.0540/0 Spec=Single TotalIonCurrent=3.4e+07
+NumPeaks: 150
+192.1223	90.2	?	
+216.9937	272.9	y2-46/0.85	
+233.1068	76.5	?	
+234.3250	106.3	y5-36^2/0.20,y5-35^2/-0.29	
+238.2444	136.4	?	
+244.9837	643.1	y2-17/-0.14,y2-18/0.84	
+245.9797	195.2	y2-17i/-0.14	
+260.1537	88.3	?	
+260.9393	138.9	?	
+262.0157	228.0	y2/-0.14,a3/-0.14	
+271.1136	140.0	?	
+277.7427	124.8	?	
+289.9490	877.9	b3/-0.20	
+322.2329	113.9	?	
+325.1179	178.6	?	
+329.7177	146.2	?	
+331.8362	118.4	y3-17/-0.32,y3-18/0.66	
+349.1229	397.6	y3/-0.06	
+358.9430	152.5	y6-127^2/0.73	
+368.1693	101.8	b6-102^2/-0.86	
+375.1040	500.6	a4/-0.14	
+376.0346	486.9	a4i/-0.20	
+387.2635	79.7	y4-18/-0.93	
+391.2631	125.3	?	
+394.1519	116.5	?	
+396.2213	121.9	?	
+402.2014	76.4	?	
+403.0586	595.6	b4/-0.18,y6-36^2/-0.65	
+404.0656	67.8	b4i/-0.17,y6-35^2/-0.13	
+406.2118	169.0	y4/0.01,a6^2/-0.02	
+412.9069	235.1	y6-18^2/0.20,y6-17^2/-0.30	
+418.3030	101.7	?	
+420.0251	355.9	b6^2/-0.21	
+421.8215	712.6	y6^2/0.11	
+422.8484	185.6	?	
+424.6622	124.6	?	
+429.1541	99.1	b8-127^2/0.40	
+437.6237	230.9	?	
+443.1688	65.1	?	
+447.9781	118.5	b7^2/-0.76	
+451.3279	80.5	?	
+453.2460	88.9	?	
+454.1644	96.0	?	
+456.4361	63.8	y7-44^2/0.17,y5-46/-0.82	
+465.1915	123.0	?	
+466.0222	83.3	?	
+469.6919	117.5	y7-17^2/-0.05,y7-18^2/0.44	
+472.0148	75.4	b9-127^2/-0.26	
+478.3409	2246.0	y7^2/0.08,a8^2/0.08	
+479.1372	341.2	y7^2i/0.38	
+484.2420	96.4	b8-17^2/0.50,b9-102^2/-0.33	
+485.3043	253.6	y5-18/0.06	
+486.2792	63.6	y5-17/0.05	
+503.3000	10000.0	y5/0.04	
+504.3158	1674.1	y5i/0.06	
+510.1474	99.0	?	
+517.1841	114.1	b9-36^2/-0.58	
+524.8276	199.9	?	
+529.2021	99.7	y8-46^2/0.41	
+530.2327	87.8	y8-44^2/0.44	
+536.2212	68.5	b9^2/0.45,y9-102^2/0.11	
+538.0092	1158.6	?	
+538.9526	271.0	?	
+540.1929	158.2	?	
+543.2502	642.3	y8-17^2/-0.03,y8-18^2/0.46	
+544.0131	174.5	b9+18^2/-0.77	
+551.7622	3331.6	y8^2/-0.03	
+552.4160	1341.5	y8^2i/0.12	
+553.5625	154.6	?	
+555.8557	161.4	?	
+556.6887	90.5	?	
+557.6233	532.6	?	
+565.4131	69.6	y9-44^2/0.10	
+567.0731	587.0	?	
+568.2148	70.9	?	
+569.3860	96.6	y9-36^2/0.09,y9-35^2/-0.41	
+571.4934	1158.4	p-102^2/-0.14	
+573.3652	71.0	?	
+578.1287	88.0	y9-18^2/-0.18	
+578.9750	247.3	y9-17^2/0.18	
+583.1458	270.7	?	
+587.4165	244.4	y9^2/0.11	
+591.7673	332.6	?	
+592.8489	111.1	?	
+594.1875	66.0	?	
+595.4412	130.7	?	
+600.4207	595.4	p-44^2/-0.41,p-46^2/0.59	
+601.2819	197.8	?	
+603.4592	70.3	?	
+604.5455	354.0	p-36^2/-0.27	
+605.6394	799.2	p-35^2/0.33	
+611.3955	67.4	?	
+612.2014	297.7	?	
+613.1069	129.4	?	
+614.1523	962.6	p-17^2/-0.16,p-18^2/0.33	
+626.1543	78.8	?	
+629.2721	64.6	?	
+636.2925	80.5	?	
+637.9956	136.8	?	
+639.2954	644.3	b5-102/-0.70	
+640.3325	206.8	b5-102i/-0.67	
+641.6898	76.1	?	
+654.4221	122.1	?	
+667.9453	146.9	?	
+680.2054	704.7	?	
+690.1030	90.6	?	
+696.6183	102.8	?	
+697.3414	281.3	?	
+698.3778	81.7	?	
+699.0697	93.9	?	
+701.5941	209.6	?	
+706.5812	804.1	?	
+707.5693	99.8	?	
+709.8387	103.1	?	
+724.3126	204.0	?	
+725.1575	4140.5	b5-17/-0.22	
+726.2451	1194.4	b5-17i/-0.13	
+727.4183	69.1	b5-17i/0.04	
+742.1533	1395.9	b5/-0.25	
+743.2408	384.7	b5i/-0.16	
+744.0972	63.6	b5i/-0.30	
+765.0631	136.3	?	
+772.3175	74.2	?	
+807.5458	66.6	y6-35/0.16	
+817.8947	164.5	?	
+819.8468	141.0	?	
+825.3601	416.7	y6-17/-0.04	
+833.4131	247.6	?	
+835.1906	194.2	?	
+841.2793	285.7	?	
+842.4032	5464.2	y6/-0.02	
+843.4612	1148.3	y6i/0.04	
+844.3485	169.5	y6i/-0.08	
+853.5157	106.2	y7-102/0.41	
+878.4762	162.3	?	
+880.1658	358.2	b7-17/0.72,b8-102/-0.94	
+896.3263	137.2	b7/-0.15	
+911.0426	147.0	y7-44/-0.48	
+917.0878	64.2	?	
+925.8971	73.4	?	
+955.4207	767.2	y7/-0.09,a8/-0.09	
+956.3523	136.6	y7i/-0.16	
+965.7443	159.7	b8-18/0.25,b8-17/-0.74	
+983.0483	121.4	b8/-0.46	
+984.4747	78.9	?	
+1041.6875	69.5	a9/-0.86	
+1053.0312	151.3	b9-17/-0.48,b9-18/0.50	
+1071.0249	142.3	b9/0.49,y9-102/-0.19	
+1084.5024	69.5	y8-18/-0.06	
+1102.9705	204.8	y8/0.39	
+
+Name: AC[339]EPGVDYVYK/2
+LibID: 1
+MW: 1480.7308
+PrecursorMZ: 740.3654
+Status: Normal
+FullName: X.AC[339]EPGVDYVYK.X/2 (CID)
+Comment: AvePrecursorMz=740.8029 BestRawSpectrum=serum33.01694.01694 BinaryFileOffset=22975 CollisionEnergy=0.0 ConsFracAssignedPeaks=0.558 DotConsensus=0.87,0.05;0/3 FracUnassigned=0.08,1/5;0.13,4/20;0.18,120/267 Inst=1/UNKNOWN,3,0 MassDiff=0.5880 MassDiffCounts=2/1:2,2:1 MaxRepSN=35.0 Mods=1/1,C,ICAT-C:13C(9) NAA=11 NISTProtein=5/IPI00942927/IPI00783987/IPI00739237/ENSP00000245907/P01024 NMC=0 NTT=1 Nreps=3/3 OrigMaxIntensity=1.1e+07 Parent=740.365 Pep=Tryptic PrecursorIntensity=2.2e+07 Prob=1.0000 ProbRange=1,1,1,1 Protein=1/5/IPI00942927/IPI00783987/IPI00739237/ENSP00000245907/P01024 RepFracAssignedPeaks=0.479 RepNumPeaks=322.0/50.0 RetentionTime=3645.5,3742.0,3558.6 SN=200.0 Sample=1/PID_serum,3,3 Se=1^K3:ex=0.7447/0.6316,fv=3.0427/1.0635,hs=415.0000/38.8416,ns=331.0000/34.3220,pb=0.9998/0.0000 Spec=Consensus TotalIonCurrent=7.3e+07
+NumPeaks: 138
+235.0462	72.1	?	2/2 0.0133|0.21
+241.1619	72.6	?	2/2 0.0438|0.63
+252.0775	153.2	?	2/2 0.0640|0.18
+253.0194	104.5	b3-35^2/-0.09	2/2 0.0484|0.35
+254.1315	350.1	?	3/2 0.0501|0.52
+270.1049	1946.0	b3^2/-0.53,y4-35^2/0.97	3/2 0.0524|0.34
+271.0939	253.7	?	3/2 0.0734|0.36
+272.0813	182.4	?	2/2 0.0361|0.60
+274.2663	188.3	y2-35/-0.87	2/2 0.0352|0.11
+277.0917	202.1	?	3/2 0.2194|0.57
+278.0872	708.7	y4-17^2/-0.06,y4-18^2/0.43	3/2 0.0614|0.23
+292.1574	99.7	y2-18/-0.01,y2-17/-0.99	2/2 0.0057|0.11
+295.0287	118.3	?	2/2 0.1028|0.40
+296.1373	204.7	b4-46^2/-0.02,b5-102^2/-0.33	2/2 0.0482|0.26
+310.0700	362.7	y2/-0.11,b4-17^2/-0.57,b4-18^2/-0.08	2/2 0.0436|0.64
+321.8962	44.2	y5-44^2/-0.28,y5-46^2/0.73	2/2 0.0430|0.25
+323.0528	111.1	?	2/2 0.0182|0.00
+325.1004	1177.5	b5-46^2/0.44,b5-44^2/-0.57	3/2 0.0801|0.61
+331.9786	175.8	?	2/2 0.0145|0.78
+348.3743	188.2	b5^2/0.71	2/2 0.0532|0.44
+349.1990	1422.5	?	3/2 0.0246|0.42
+350.1729	168.9	?	3/2 0.0654|0.23
+351.2245	149.0	?	2/2 0.0354|0.17
+361.1144	155.2	?	2/2 0.0355|0.26
+366.0603	826.8	y3-44/0.81	2/2 0.0935|0.20
+369.1060	180.4	?	2/2 0.0131|0.40
+376.2592	158.5	y6-35^2/0.07,y6-36^2/0.56	2/2 0.0648|0.45
+377.0597	605.8	?	3/2 0.0512|0.29
+377.9969	144.0	?	3/2 0.0298|0.45
+383.1463	73.7	a2/-0.07,a6^2/-0.06	2/2 0.0322|0.06
+394.0596	1671.2	y6^2/0.35,b2-17/-0.12	3/2 0.0575|0.41
+395.1213	441.6	b2-17i/-0.06	3/2 0.0087|0.69
+409.4444	231.8	y3/0.20	2/2 0.1247|0.35
+411.0866	617.9	b2/-0.12	3/2 0.1107|0.54
+412.1729	645.7	b2i/-0.04	2/2 0.0202|0.98
+424.2558	34.9	?	2/2 0.0382|0.51
+427.1331	41.8	?	2/2 0.0000|0.31
+436.2637	55.3	?	3/2 0.0417|0.21
+437.1697	221.2	b7-35^2/-0.03,b3-102/-0.68,b7-36^2/0.47	2/2 0.0357|0.67
+439.1306	49.5	?	2/2 0.0421|0.16
+451.2655	90.9	?	3/2 0.0781|0.23
+460.0024	169.6	?	2/2 0.0673|0.25
+461.2011	50.9	?	2/2 0.0280|0.23
+461.9786	141.9	y8-18^2/0.24,y8-17^2/-0.25	2/2 0.0455|0.39
+479.7584	206.7	?	2/2 0.2260|0.24
+495.1992	142.1	b3-46/0.95	2/2 0.0119|0.50
+498.2416	80.4	?	3/2 0.0059|0.12
+505.0964	558.5	b3-35/-0.12	2/2 0.0338|0.61
+523.1347	709.1	b3-17/-0.09,b3-18/0.89,a8^2/0.89,b9-127^2/0.85	3/2 0.1245|0.42
+524.0770	188.5	b3-17i/-0.15	2/2 0.0967|0.17
+540.5306	1969.4	b3/0.28	3/2 0.4416|0.22
+542.1607	327.5	?	2/2 0.1283|0.19
+543.2068	138.9	?	2/2 0.1939|0.00
+551.1218	207.4	?	2/2 0.0144|0.67
+553.3998	333.1	?	3/2 0.1828|0.91
+554.4981	204.3	y4-18/0.20,y4-17/-0.78	3/2 0.0589|0.41
+566.2311	144.0	?	2/2 0.2555|0.15
+569.2279	59.9	b9-35^2/0.97	2/2 0.0288|0.74
+572.2041	1094.3	y4/-0.10,a9^2/0.42	3/2 0.0158|0.14
+573.2835	357.2	y4i/-0.02	3/2 0.1143|0.31
+574.2922	105.8	y4i/-0.02	2/2 0.0237|0.03
+582.1698	156.2	?	2/2 0.1001|0.00
+586.2241	131.8	b9^2/0.44	2/2 0.0101|0.74
+597.3989	93.0	?	2/2 0.0172|0.98
+612.3705	222.5	?	2/2 0.0359|0.58
+622.1605	137.7	?	2/2 0.0097|0.43
+631.3537	258.3	?	3/2 0.0443|0.41
+632.2229	211.8	?	2/2 0.0502|0.11
+634.2368	242.8	?	2/2 0.0188|0.58
+644.9899	126.6	b10-44^2/-0.33,b10-46^2/0.68	2/2 0.0057|0.16
+654.3123	141.0	y10-102^2/0.67,a10^2/1.00	2/2 0.0266|0.55
+658.2453	407.2	b10-18^2/-0.06,b10-17^2/-0.55	2/2 0.1232|0.56
+670.7037	278.5	y5-17/0.40	2/2 0.1262|0.65
+674.2417	48.8	?	2/2 0.0391|0.19
+677.6740	105.1	p-127^2/0.81,b5-17/0.37	2/2 0.0171|0.35
+679.9149	318.3	?	2/2 0.2670|0.21
+687.2676	1071.1	y5/-0.07,y10-35^2/-0.06,y10-36^2/0.43	3/2 0.1089|0.12
+688.1693	216.7	y5i/-0.17	3/2 0.0413|0.47
+688.9847	2187.8	p-102^2/-0.18,y5i/-0.35	3/2 0.1097|0.21
+689.8105	512.3	?	3/2 0.2963|0.55
+690.2487	393.5	b6-102/-0.75	2/2 0.1962|0.83
+695.2369	84.0	b5/0.91,y10-18^2/-0.60	2/2 0.0281|0.23
+697.2747	259.4	y10-17^2/0.94	2/2 0.0821|0.65
+698.2923	152.9	?	2/2 0.0051|0.12
+705.2181	554.9	y10^2/0.37	3/2 0.2847|0.33
+706.0849	275.4	?	2/2 0.0143|0.09
+714.0747	219.5	?	2/2 0.2184|0.39
+721.6040	521.6	?	2/2 0.1928|0.20
+722.6562	332.3	p-35^2/-0.19,p-36^2/0.30	3/2 0.3124|0.67
+723.3418	260.8	p-35^2i/-0.01	2/2 0.1067|0.31
+730.6774	438.9	?	3/2 0.2333|0.78
+731.6562	623.3	p-17^2/-0.20,p-18^2/0.30	2/2 0.1498|0.14
+733.1946	187.9	?	2/2 0.0742|0.23
+739.2455	317.1	?	3/2 0.0125|0.79
+748.3103	214.3	b6-46/0.92	2/2 0.0042|0.04
+760.0866	110.5	?	2/2 0.0381|0.25
+775.2327	247.5	b6-18/-0.15	2/2 0.0120|0.41
+776.3476	359.4	b6-17/-0.02	2/2 0.1624|0.12
+777.1972	133.4	b6-17i/-0.17	2/2 0.0000|0.37
+786.2080	219.7	y6/-0.20	3/2 0.0775|0.42
+787.3005	202.3	y6i/-0.10	2/2 0.0313|0.26
+794.2209	216.6	b6/0.82	3/2 0.0699|0.52
+795.2630	140.1	b6i/0.87	2/2 0.0250|0.35
+812.0685	260.1	?	3/2 0.1101|0.11
+813.1313	162.0	?	2/2 0.0511|0.72
+814.5082	75.0	?	2/2 0.0246|0.28
+843.3935	306.1	y7/-0.03	3/2 0.0292|0.43
+844.2050	184.0	y7i/-0.22	2/2 0.1387|0.41
+891.4008	141.6	b7-17/0.00,b7-18/0.99	3/2 0.0535|0.31
+895.1919	215.0	y8-46/0.72	2/2 0.2838|0.24
+900.1415	101.7	?	2/2 0.0232|0.81
+908.4444	428.6	b7/0.02	3/2 0.2141|0.44
+909.3757	277.7	b7i/-0.05	3/2 0.0644|0.50
+922.4430	297.6	y8-18/-0.02	3/2 0.0648|0.25
+923.3659	157.8	y8-17/-0.09	3/2 0.1067|0.28
+939.7819	660.7	?	2/2 0.0084|0.52
+940.3979	10000.0	y8/-0.08	3/2 0.0244|0.00
+941.4274	5759.2	y8i/-0.05	3/2 0.0237|0.23
+942.4104	1021.7	y8i/-0.07	3/2 0.0453|0.07
+943.4886	125.9	b8-127/-1.00	2/2 0.0039|0.03
+975.2937	70.9	?	2/2 0.0254|0.17
+1051.3158	1102.5	y9-18/-0.19	3/2 0.0272|0.10
+1052.3299	287.6	y9-17/-0.16	3/2 0.0693|0.18
+1069.3931	2268.5	y9/-0.13	3/2 0.0253|0.18
+1070.3835	1310.1	y9i/-0.14	3/2 0.0662|0.06
+1071.4104	534.8	y9i/-0.11,b8/-0.08	3/2 0.1490|0.34
+1072.3665	304.4	b8i/-0.12	2/2 0.0462|0.09
+1089.2654	133.2	?	2/2 0.0190|0.54
+1128.4901	176.2	?	2/2 0.1331|0.59
+1129.3238	163.7	?	2/2 0.0082|1.01
+1155.5561	56.4	?	2/2 0.0449|0.33
+1170.3649	322.3	b9/-0.19	2/2 0.1138|0.06
+1171.3276	566.3	b9i/-0.23	2/2 0.2057|0.70
+1172.5512	230.7	b9i/-0.00	2/2 0.0051|0.43
+1192.4395	125.4	?	2/2 0.0385|0.23
+1230.3553	96.3	b10-102/-0.86	2/2 0.0295|0.17
+1232.4228	160.4	?	2/2 0.1749|0.33
+1334.5236	103.3	b10/0.91	2/2 0.0582|0.63
+
+Name: AC[339]EPGVDYVYK/3
+LibID: 2
+MW: 1481.7381
+PrecursorMZ: 493.9127
+Status: Normal
+FullName: X.AC[339]EPGVDYVYK.X/3 (CID)
+Comment: AvePrecursorMz=494.2044 BinaryFileOffset=29662 CollisionEnergy=0.0 FracUnassigned=0.18,1/5;0.35,9/20;0.20,43/132 Inst=1/UNKNOWN,1 MassDiff=0.5600 Mods=1/1,C,ICAT-C:13C(9) NAA=11 NISTProtein=5/IPI00942927/IPI00783987/IPI00739237/ENSP00000245907/P01024 NMC=0 NTT=1 Nreps=1/1 OrigMaxIntensity=1.3e+05 Parent=493.913 Pep=Tryptic PrecursorIntensity=8.7e+06 Prob=1.0000 Protein=1/5/IPI00942927/IPI00783987/IPI00739237/ENSP00000245907/P01024 RawSpectrum=serum33.01704.01704 RetentionTime=3575.3,3575.3,3575.3 Sample=1/PID_serum,1,1 Se=1^K1:pb=0.9998/0,fv=2.3354/0,hs=441/0,ns=366/0,ex=0.8600/0 Spec=Single TotalIonCurrent=1.8e+06
+NumPeaks: 132
+166.9577	1082.5	b3-44^3/0.87	
+176.8849	671.6	y4-44^3/0.11,y4-46^3/0.78	
+182.9951	702.0	y3-44^2/-0.14,y3-46^2/0.87	
+197.0587	934.1	y3-17^2/0.45,y3-18^2/0.94,b2-17^2/-0.54,b4-46^3/-0.71,b5-102^3/-0.92	
+209.1381	650.4	?	
+211.1024	587.5	?	
+222.8289	142.4	y5-18^3/-0.95,a5^3/0.05,b6-127^3/0.03	
+240.5461	257.2	?	
+245.2284	350.6	?	
+246.7267	1012.6	y6-46^3/-0.74,b3-46^2/-0.90	
+249.7553	115.5	b6-46^3/-0.05,b6-44^3/-0.72	
+253.8956	763.5	b6-35^3/0.44,b3-35^2/0.78	
+263.2322	330.0	y6^3/0.43,y2-46/-0.94,y4-46^2/-0.42	
+265.2750	106.5	b6^3/0.14,y2-44/-0.91,y4-44^2/0.61	
+268.8241	827.4	y4-35^2/-0.31,b4-102^2/0.87,b7-102^3/-0.52,y7-36^3/-0.98	
+272.0803	887.7	?	
+281.2155	135.6	y7^3/-0.60	
+289.1541	697.1	b7-44^3/0.34	
+292.0881	215.4	y2-18/-0.08,b7-35^3/0.29,b7-36^3/0.62	
+304.2629	511.7	b7^3/0.78,a4^2/-0.90	
+307.3214	1014.7	y8-18^3/-0.84	
+310.0618	2970.8	y2/-0.11,b4-17^2/-0.58,b4-18^2/-0.09	
+312.2454	536.9	?	
+319.1427	259.5	b4^2/-0.01	
+321.1188	839.1	y5-46^2/-0.05	
+323.2678	1225.2	b8-102^3/-0.43	
+329.0795	264.3	?	
+330.4944	922.8	b5-35^2/0.35	
+333.8099	451.8	b6-127^2/0.11,a5^2/0.14	
+335.0503	1553.6	y5-18^2/-0.12,y5-17^2/-0.61	
+347.4829	447.9	b5^2/-0.18	
+350.2500	746.1	y9-18^3/-0.92	
+353.1027	446.7	b8-17^3/0.94	
+359.1492	279.5	?	
+359.9015	222.8	?	
+364.7015	439.5	y3-44/-0.55	
+366.0850	511.0	?	
+367.8979	338.9	?	
+368.8140	954.4	?	
+369.8367	1054.0	y6-46^2/-0.87	
+371.2726	197.2	?	
+372.4462	2233.9	y6-44^2/0.74	
+379.7695	947.6	b6-35^2/0.09,b9-35^3/0.59,b9-36^3/0.92	
+380.7637	2990.9	a9^3/-0.76	
+381.4627	485.0	?	
+382.8998	4868.6	a2/-0.32,a6^2/-0.30	
+387.7991	2499.0	b6-18^2/-0.40,b6-17^2/-0.89	
+391.4217	1008.5	y3-18/0.19,y3-17/-0.80,b9^3/0.57,b7-127^2/0.21	
+397.3707	3607.5	b6^2/0.17	
+398.0167	0.6	?	
+403.2952	1484.9	b7-102^2/-0.22,y7-36^2/-0.91,b10-127^3/0.42	
+405.9086	87.7	?	
+406.8494	572.1	?	
+407.8199	788.7	?	
+409.5999	398.8	y3/0.36	
+411.3236	203.9	b2/0.11,b10-102^3/0.25	
+411.9911	428.4	?	
+418.5608	699.4	?	
+421.0281	665.5	?	
+422.1254	695.5	y7^2/-0.09	
+422.8133	471.5	y7^2i/0.10	
+423.4333	0.2	?	
+425.9720	1663.6	?	
+428.0353	3831.2	y10-127^3/0.13	
+429.3826	254.2	b10-46^3/-0.49	
+435.3969	503.4	a10^3/-0.48	
+436.2788	354.4	y10-102^3/0.18,b7-36^2/-0.43,b7-35^2/-0.92	
+439.0101	309.0	b10-18^3/-0.20,b10-17^3/-0.53	
+443.9985	1198.0	?	
+444.7723	543.5	b10^3/-0.44	
+446.1472	1450.5	b7-17^2/-0.05,b7-18^2/0.44	
+448.2025	3955.2	y8-46^2/0.46,y8-44^2/-0.54	
+448.9516	345.4	y8-44^2i/-0.30	
+454.9142	3546.6	b7^2/0.20,y10-44^3/-0.66,y10-46^3/0.02	
+455.5296	1.4	b7^2i/0.31	
+461.2227	255.2	y8-18^2/-0.51	
+465.3459	894.3	y10-17^3/0.79	
+470.8877	4777.7	y8^2/0.15,y10^3/0.65	
+471.6147	0.7	?	
+472.7448	1135.4	b8-127^2/-0.00	
+475.9171	1028.9	?	
+478.2982	1466.0	p-46^3/-0.28	
+479.3643	802.0	p-44^3/0.11	
+484.1340	1855.5	b8-102^2/-0.91	
+485.8842	393.5	?	
+489.0222	995.7	p-17^3/0.79	
+493.9097	191.3	p^3/-0.00,b3-46/-0.34	
+495.3246	482.4	b3-44/-0.94	
+501.2201	1393.4	?	
+508.3822	1191.3	?	
+512.2888	973.3	a3/0.03,b8-46^2/-0.96,y9-44^2/-0.98,y9-46^2/0.03	
+522.2363	1550.1	b3-18/-0.01,a8^2/-0.01,b9-127^2/-0.04	
+523.0604	558.4	b3-17/-0.17	
+524.0551	2254.0	b3-17i/-0.17	
+526.4175	1786.7	y9-18^2/0.16,y9-17^2/-0.33,b8-18^2/-0.82,y4-46/0.12	
+534.4785	244.8	b9-102^2/-0.10,b4-102/-0.43	
+536.1433	541.1	y9^2/0.88,b8^2/-0.10	
+540.1621	725.9	b3/-0.09	
+541.1672	891.0	b3i/-0.09	
+548.4319	1505.7	?	
+566.1096	628.8	?	
+567.0170	393.1	b5-127/-0.31,b9-36^2/-0.75	
+571.0602	1369.1	[a9^2/-0.7233]	
+572.2891	2637.2	y4/-0.02,a9^2/0.51	
+586.2849	507.0	b9^2/0.50	
+588.0881	136.0	?	
+600.2826	801.0	?	
+603.2690	516.9	b10-127^2/-0.54,b4-35/1.00	
+606.3643	187.5	?	
+611.9160	75.3	?	
+637.0220	522.7	b4/-0.28	
+653.1891	294.8	a10^2/-0.13,y5-35/0.89,y10-102^2/-0.46	
+666.2354	552.7	a5/-0.10,b6-127/-0.16	
+676.4266	342.2	b10+18^2/0.11,b5-18/0.11,b5-17/-0.87	
+683.9277	194.8	?	
+687.3077	10000.0	y5/-0.03,y10-35^2/-0.02,y10-36^2/0.47	
+688.2158	1409.0	y5i/-0.12	
+693.1113	1532.5	?	
+694.0155	4911.5	b5/-0.31	
+695.0273	3030.5	b5i/-0.30,y10-18^2/-0.81	
+739.5100	637.5	y6-46/-0.89	
+744.5304	914.4	?	
+756.3082	827.5	?	
+774.0411	1340.1	?	
+780.3457	363.0	?	
+786.3558	902.7	y6/-0.05	
+806.0834	262.9	b7-102/0.06	
+821.5615	2407.8	?	
+844.1727	1415.2	y7/0.75	
+907.7101	1418.8	b7/-0.71	
+915.1899	559.4	?	
+940.3259	651.8	y8/-0.15	
+
