@@ -489,7 +489,7 @@ def mz_diff_handler(key, value, container: Attributed) -> bool:
         # We must be dealing with a unit-less entry.
         group_identifier = container.get_next_group_identifier()
         container.add_attribute(
-            "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
+            "MS:1001975|delta m/z", value, group_identifier)
         container.add_attribute(
             "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
     else:
