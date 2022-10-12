@@ -1,11 +1,12 @@
 import re
 from sys import intern
-from typing import Any, List, Pattern, Dict, NewType, Union
+from typing import Any, List, Pattern, Dict, NewType, Tuple, Union
 
 
 JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
 
-
+# TODO: Add unknown ion series (?) to the pattern and data model
+# TODO: Update external_ion pattern to use enclosing quotes
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
    (?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
@@ -18,7 +19,8 @@ annotation_pattern = re.compile(r"""
     \])
    ))|
    (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
-   (?:_(?P<external_ion>[^\s,/]+))
+   (?:_(?P<external_ion>(?:[^"\s,/]+)|(?:"(?:[^"]+)")))|
+   (?P<unknown>\?)
 )
 (?P<neutral_losses>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|
@@ -484,7 +486,7 @@ class ExternalIonAnnotation(IonAnnotationBase):
         self.label = label
 
     def _format_ion(self):
-        return f"_{self.label}"
+        return f"_\"{self.label}\""
 
     def _molecule_description(self):
         d = super()._molecule_description()
@@ -580,6 +582,13 @@ class AnnotationStringParser(object):
         except ValueError as err:
             return [InvalidAnnotation(annotation_string, str(err))]
 
+    def _parse_string(self, annotation_string: str, **kwargs) -> Tuple[re.Match, Dict[str, str]]:
+        match = self.pattern.search(annotation_string)
+        if match is None:
+            raise ValueError(f"Invalid annotation string {annotation_string!r}")
+        data = match.groupdict()
+        return match, data
+
     def parse_annotation(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
         if annotation_string == "?" or not annotation_string:
             return []
@@ -587,10 +596,7 @@ class AnnotationStringParser(object):
         if annotation_string[0] == '[':
             is_auxiliary = True
             annotation_string = annotation_string[1:]
-        match = self.pattern.search(annotation_string)
-        if match is None:
-            raise ValueError(f"Invalid annotation string {annotation_string!r}")
-        data = match.groupdict()
+        match, data = self._parse_string(annotation_string)
         adducts = tokenize_signed_symbol_list(data.get("adducts"))
         charge = (data.get("charge", 1))
         if charge is None:

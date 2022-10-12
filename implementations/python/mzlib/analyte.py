@@ -8,7 +8,7 @@ except ImportError:
 import textwrap
 from typing import Iterable, KeysView, ItemsView, ValuesView, Dict
 
-from mzlib.attributes import AttributedEntity, AttributeManager, IdentifiedAttributeManager
+from mzlib.attributes import AttributedEntity, IdentifiedAttributeManager, AttributeManagedProperty
 
 
 FIRST_ANALYTE_KEY = '1'
@@ -86,6 +86,9 @@ class InterpretationCollection(MutableMapping):
 
     def values(self) -> ValuesView['Interpretation']:
         return self.interpretations.values()
+
+    def items(self) -> ItemsView[str, 'Interpretation']:
+        return self.interpretations.items()
 
     @property
     def analytes(self) -> '_AnalyteMappingProxy':
@@ -188,3 +191,6 @@ class InterpretationMember(IdentifiedAttributeManager):
 
 class Analyte(IdentifiedAttributeManager):
     __slots__ = ()
+
+    mass = AttributeManagedProperty[float]("MS:1001117|theoretical mass")
+    peptide = AttributeManagedProperty[str]("MS:1003169|proforma peptidoform sequence")

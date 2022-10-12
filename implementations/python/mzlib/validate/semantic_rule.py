@@ -9,7 +9,7 @@ from importlib import resources
 
 from xml.etree import ElementTree as etree
 
-from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, Sequence, Set, Tuple, Union
 
 from mzlib.attributes import Attributed
 from mzlib.utils import flatten, ensure_iter

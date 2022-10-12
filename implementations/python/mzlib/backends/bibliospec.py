@@ -149,8 +149,8 @@ class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
             pass
 
         try:
-            spectrum.add_attribute("MS:1009021|number of replicate spectra available", info['copies'])
-            spectrum.add_attribute("MS:1009020|number of replicate spectra used", 1)
+            spectrum.add_attribute("MS:1003069|number of replicate spectra available", info['copies'])
+            spectrum.add_attribute("MS:1003070|number of replicate spectra used", 1)
         except KeyError:
             pass
 
@@ -159,7 +159,7 @@ class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
 
         try:
             spectrum.add_attribute(
-                "MS:1009008|source file",
+                "MS:1003203|constituent spectrum file",
                 self.connection.execute("SELECT fileName FROM SpectrumSourceFiles WHERE id = ?",
                                         (info['fileID'], )).fetchone()['fileName']
             )

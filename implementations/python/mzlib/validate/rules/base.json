@@ -48,7 +48,7 @@
     {
       "attr": [
         {
-          "accession": "MS:1003061",
+          "accession": "MS:1003062",
           "allow_children": false,
           "name": "library spectrum index",
           "repeatable": false,
@@ -63,7 +63,7 @@
     {
       "attr": [
         {
-          "accession": "MS:1003061",
+          "accession": "MS:1003062",
           "allow_children": false,
           "name": "library spectrum index",
           "repeatable": false,
