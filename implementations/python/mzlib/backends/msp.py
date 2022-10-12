@@ -3,7 +3,7 @@ import io
 import os
 import logging
 
-from typing import Any, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable
+from typing import Any, Callable, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable
 import warnings
 
 from pyteomics import proforma
@@ -26,6 +26,7 @@ leader_terms = {
     "Name": SPECTRUM_NAME,
 }
 
+STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 
 analyte_terms = {
     "MW": "MS:1000224|molecular mass",
@@ -184,28 +185,6 @@ parse_annotation = MSPAnnotationStringParser(annotation_pattern)
 MODIFICATION_LIST_PARSER = re.compile(r"(\d+),([ARNDCEQGHKMFPSTWYVIL_\-]),([A-Za-z0-9_\-]+)")
 
 
-def parse_modification_notation(text: str) -> List[Tuple[int, str, str]]:
-    if not isinstance(text, str) or not text:
-        return []
-    i = 0
-    n = len(text)
-
-    mods = []
-    while i < n and text[i].isdigit():
-        i += 1
-
-    for position, residue, mod in MODIFICATION_LIST_PARSER.findall(text):
-        position = int(position)
-        if mod not in MODIFICATION_NAME_MAP:
-            warnings.warn(f"{mod} is not found in the known MSP modification mapping. Using this name verbatim")
-            modification_name = mod
-            MODIFICATION_NAME_MAP[mod] = mod
-        else:
-            modification_name = MODIFICATION_NAME_MAP[mod]
-        mods.append((position, residue, modification_name))
-    return mods
-
-
 class ModificationParser:
     pattern: re.Pattern
     modification_map: Dict[str, str]
@@ -332,11 +311,18 @@ class AttributeHandlerChain:
                 return True
         return False
 
+    def __iter__(self):
+        return iter(self.chain)
+
     def __call__(self, key: str, value: Any, container: Attributed) -> bool:
         return self.handle(key, value, container)
 
     def chain(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
         return self.__class__(self.chain + [handler])
+
+    def add(self, handler: AttributeHandler):
+        self.chain.append(handler)
+        return handler
 
 
 class RegexAttributeHandler(AttributeHandler):
@@ -362,6 +348,243 @@ class RegexAttributeHandler(AttributeHandler):
                 self.add_value(self.variable_attributes[0], match.group(1), container)
             return True
         return False
+
+
+class FunctionAttributeHandler(AttributeHandler):
+    func: Callable[[str, Any, Attributed], bool]
+
+    def __init__(self, keys: Collection[str], func: Callable[[str, Any, Attributed], bool]):
+        super().__init__(keys)
+        self.func = func
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        return self.func(key, value, container)
+
+    @classmethod
+    def wraps(cls, *keys):
+        def wrapper(func):
+            return cls(keys, func)
+        return wrapper
+
+
+class DispatchingAttributeHandler(AttributeHandlerChain):
+    mapping: Dict[str, AttributeHandler]
+
+    def __init__(self, chain: List[AttributeHandler]=None):
+        if not chain:
+            chain = []
+        super().__init__(chain)
+        self.mapping = {}
+        for handler in self:
+            for key in handler.keys:
+                self.mapping[key] = handler
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        handler = self.mapping[key]
+        return handler(key, value, container)
+
+    def __contains__(self, key):
+        return key in self.mapping
+
+    def add(self, handler: AttributeHandler):
+        super().add(handler)
+        for key in handler.keys:
+            self.mapping[key] = handler
+        return handler
+
+
+msp_spectrum_attribute_handler = DispatchingAttributeHandler()
+msp_analyte_attribute_handler = DispatchingAttributeHandler()
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("HCD")
+def dissociation_method_handler(key: str, value: str, container: Attributed) -> bool:
+    container.add_attribute("MS:1000044|dissociation method",
+                            "MS:1000422|beam-type collision-induced dissociation")
+    found_match = False
+    if value is not None:
+        match = re.match(r"([\d\.]+)\s*ev", value, flags=re.IGNORECASE)
+        if match is not None:
+            found_match = True
+            group_identifier = container.get_next_group_identifier()
+            container.add_attribute("MS:1000045|collision energy",
+                                try_cast(match.group(1)), group_identifier)
+            container.add_attribute("UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
+        match = re.match(r"([\d\.]+)\s*%", value)
+        if match is not None:
+            found_match = True
+            group_identifier = container.get_next_group_identifier()
+            container.add_attribute("MS:1000045|collision energy",
+                                try_cast(match.group(1)), group_identifier)
+            container.add_attribute("UO:0000000|unit", "UO:0000187|percent", group_identifier)
+    return found_match
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("Collision_energy", "CE")
+def collision_energy_handler(key: str, value: str, container: Attributed) -> bool:
+    if isinstance(value, str):
+        match = re.match(r"([\d\.]+)", value)
+        if match is not None:
+            value = try_cast(match.group(1))
+    if value is not None:
+        if match is not None:
+            group_identifier = container.get_next_group_identifier()
+            container.add_attribute(
+                "MS:1000045|collision energy", value, group_identifier)
+            container.add_attribute(
+                "UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
+            return True
+    return False
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("RT")
+def rt_handler(key, value, container) -> bool:
+    match = re.match(r"([\d\.]+)\s*(\D*)",
+                     value)
+    if match is not None:
+        if match.group(2):
+            container.add_attribute(
+                "ERROR", f"Need more RT parsing code to handle this value")
+            return False
+        else:
+            group_identifier = container.get_next_group_identifier()
+            container.add_attribute(
+                "MS:1000894|retention time", try_cast(match.group(1)), group_identifier)
+            #### If the value is greater than 250, assume it must be seconds
+            if float(match.group(1)) > 250:
+                container.add_attribute(
+                    "UO:0000000|unit", "UO:0000010|second", group_identifier)
+            #### Although normally assume minutes
+            else:
+                container.add_attribute(
+                    "UO:0000000|unit", "UO:0000031|minute", group_identifier)
+            return True
+    return False
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("ms2IsolationWidth")
+def isolation_width_handler(key, value, container) -> bool:
+    if value is None:
+        return False
+    group_identifier = container.get_next_group_identifier()
+    container.add_attribute("MS:1000828|isolation window lower offset",
+        (float(value) / 2), group_identifier)
+    container.add_attribute("UO:0000000|unit",
+                        "MS:1000040|m/z", group_identifier)
+    group_identifier = container.get_next_group_identifier()
+    container.add_attribute("MS:1000829|isolation window upper offset",
+        (float(value) / 2), group_identifier)
+    container.add_attribute("UO:0000000|unit",
+                        "MS:1000040|m/z", group_identifier)
+    return True
+
+
+@msp_analyte_attribute_handler.add
+@FunctionAttributeHandler.wraps("Mz_diff", "Theo_mz_diff")
+def mz_diff_handler(key, value, container: Attributed) -> bool:
+    if isinstance(value, float):
+        # We must be dealing with a unit-less entry.
+        group_identifier = container.get_next_group_identifier()
+        container.add_attribute(
+            "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
+        container.add_attribute(
+            "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
+    else:
+        match = re.match(
+            r"([\-\+e\d\.]+)\s*ppm", value, flags=re.IGNORECASE)
+        if match is not None:
+            group_identifier = container.get_next_group_identifier()
+            container.add_attribute(
+                "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
+            container.add_attribute(
+                "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
+        else:
+            match = re.match(
+                r"([\-\+e\d\.]+)\s*", value)
+            if match is not None:
+                group_identifier = container.get_next_group_identifier()
+                container.add_attribute(
+                    "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
+                container.add_attribute(
+                    "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
+            else:
+                return False
+    return True
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("Dev_ppm")
+def dev_ppm_handler(key, value, container) -> bool:
+    if value is None:
+        return False
+    group_identifier = container.get_next_group_identifier()
+    container.add_attribute(
+        "MS:1001975|delta m/z", try_cast(value), group_identifier)
+    container.add_attribute(
+        "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
+    return True
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("Nrep", "Nreps")
+def nreps_handler(key, value, container):
+    if value is None:
+        return False
+    if not isinstance(value, str):
+        value = str(value)
+    match = re.match(
+        r"(\d+)/(\d+)", value)
+    if match is not None:
+        container.add_attribute(
+            "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
+        container.add_attribute(
+            "MS:1003069|number of replicate spectra available", try_cast(match.group(2)))
+        return True
+    else:
+        match = re.match(
+            r"(\d+)", value)
+        if match is not None:
+            container.add_attribute(
+                "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
+            container.add_attribute(
+                "MS:1003069|number of replicate spectra available", try_cast(match.group(1)))
+            return True
+        else:
+            return False
+
+
+@msp_analyte_attribute_handler.add
+@FunctionAttributeHandler.wraps("Organism")
+def organism_handler(key, value, container):
+    if value is None:
+        return False
+    value = value.strip('"')
+
+    if value in species_map:
+        group_identifier = container.get_next_group_identifier()
+        for item in species_map[value]:
+            container.add_attribute(
+                item[0], try_cast(item[1]), group_identifier)
+        return True
+    return False
+
+
+@msp_analyte_attribute_handler.add
+@FunctionAttributeHandler.wraps("Protein")
+def protein_handler(key, value, container):
+    if value is None:
+        return False
+    key = "MS:1000885|protein accession"
+    match = re.match(r"\(pre=(.),post=(.)\)", value)
+    if match is not None:
+        value = value[:match.start()]
+        container.add_attribute("MS:1001112|n-terminal flanking residue", match.group(1))
+        container.add_attribute("MS:1001113|c-terminal flanking residue", match.group(2))
+    container.add_attribute(key, value)
+    return True
 
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
@@ -640,6 +863,16 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 attributes[item] = None
 
+    def _make_attribute_handlers(self):
+        other_manager = MappingAttributeHandler(other_terms)
+        analyte_manager = MappingAttributeHandler(analyte_terms)
+        interpretation_member_manager = MappingAttributeHandler(interpretation_member_terms)
+        return (other_manager,
+                analyte_manager,
+                interpretation_member_manager,
+                msp_spectrum_attribute_handler,
+                msp_analyte_attribute_handler)
+
     def _make_spectrum(self, peak_list: List, attributes: Mapping[str, str]):
         spectrum = self._new_spectrum()
         interpretation = self._new_interpretation(FIRST_INTERPRETATION_KEY)
@@ -661,9 +894,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         #### Translate the rest of the known attributes and collect unknown ones
         unknown_terms = []
-        other_manager = MappingAttributeHandler(other_terms)
-        analyte_manager = MappingAttributeHandler(analyte_terms)
-        interpretation_member_manager = MappingAttributeHandler(interpretation_member_terms)
+
+        (other_manager, analyte_manager, interpretation_member_manager,
+         spectrum_func_handler, analyte_func_handler) = self._make_attribute_handlers()
         for attribute in attributes:
 
             #### Skip a leader term that we already processed
@@ -683,146 +916,12 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if not interpretation_member_manager(attribute, attributes[attribute], interpretation_member):
                     unknown_terms.append(attribute)
 
-            elif attribute == "HCD":
-                spectrum.add_attribute("MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation")
-                found_match = 0
-                if attributes[attribute] is not None:
-                    match = re.match(r"([\d\.]+)\s*ev", attributes[attribute], flags=re.IGNORECASE)
-                    if match is not None:
-                        found_match = 1
-                        group_identifier = spectrum.get_next_group_identifier()
-                        spectrum.add_attribute("MS:1000045|collision energy", try_cast(match.group(1)), group_identifier)
-                        spectrum.add_attribute("UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
-                    match = re.match(r"([\d\.]+)\s*%", attributes[attribute])
-                    if match is not None:
-                        found_match = 1
-                        group_identifier = spectrum.get_next_group_identifier()
-                        spectrum.add_attribute("MS:1000045|collision energy", try_cast(match.group(1)), group_identifier)
-                        spectrum.add_attribute("UO:0000000|unit", "UO:0000187|percent", group_identifier)
-                    if found_match == 0:
-                        spectrum.add_attribute("ERROR", f"Unable to parse attributes[attribute] in attribute")
-                        unknown_terms.append(attribute)
-                else:
-                    spectrum.add_attribute("ERROR", f"Attribute {attribute} must have a value")
+            elif attribute in spectrum_func_handler:
+                if not spectrum_func_handler(attribute, attributes[attribute], spectrum):
                     unknown_terms.append(attribute)
 
-            elif attribute == "Collision_energy" or attribute == "CE":
-                value = attributes[attribute]
-                if isinstance(value, str):
-                    match = re.match(r"([\d\.]+)", value)
-                    if match is not None:
-                        value = try_cast(match.group(1))
-                if attributes[attribute] is not None:
-                    if match is not None:
-                        group_identifier = spectrum.get_next_group_identifier()
-                        spectrum.add_attribute(
-                            "MS:1000045|collision energy", value, group_identifier)
-                        spectrum.add_attribute(
-                            "UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
-                    else:
-                        spectrum.add_attribute(
-                            "ERROR", f"Unable to parse {attributes[attribute]} in attribute")
-                        unknown_terms.append(attribute)
-                else:
-                    spectrum.add_attribute(
-                        "ERROR", f"Attribute {attribute} must have a value")
-                    unknown_terms.append(attribute)
-
-            elif attribute == "RT":
-                if attributes[attribute] is not None:
-                    match = re.match(r"([\d\.]+)\s*(\D*)",
-                                     attributes[attribute])
-                    if match is not None:
-                        if match.group(2):
-                            spectrum.add_attribute(
-                                "ERROR", f"Need more RT parsing code to handle this value")
-                            unknown_terms.append(attribute)
-                        else:
-                            group_identifier = spectrum.get_next_group_identifier()
-                            spectrum.add_attribute(
-                                "MS:1000894|retention time", try_cast(match.group(1)), group_identifier)
-                            #### If the value is greater than 250, assume it must be seconds
-                            if float(match.group(1)) > 250:
-                                spectrum.add_attribute(
-                                    "UO:0000000|unit", "UO:0000010|second", group_identifier)
-                            #### Although normally assume minutes
-                            else:
-                                spectrum.add_attribute(
-                                    "UO:0000000|unit", "UO:0000031|minute", group_identifier)
-                    else:
-                        spectrum.add_attribute(
-                            "ERROR", f"Unable to parse attributes[attribute] in attribute")
-                        unknown_terms.append(attribute)
-                else:
-                    spectrum.add_attribute(
-                        "ERROR", f"Attribute {attribute} must have a value")
-                    unknown_terms.append(attribute)
-
-            elif attribute == "ms2IsolationWidth":
-                if attributes[attribute] is not None:
-                    group_identifier = spectrum.get_next_group_identifier()
-                    spectrum.add_attribute("MS:1000828|isolation window lower offset",
-                        (float(attributes[attribute]) / 2), group_identifier)
-                    spectrum.add_attribute("UO:0000000|unit",
-                                       "MS:1000040|m/z", group_identifier)
-                    group_identifier = spectrum.get_next_group_identifier()
-                    spectrum.add_attribute("MS:1000829|isolation window upper offset",
-                        (float(attributes[attribute]) / 2), group_identifier)
-                    spectrum.add_attribute("UO:0000000|unit",
-                                       "MS:1000040|m/z", group_identifier)
-                else:
-                    spectrum.add_attribute(
-                        "ERROR", f"Attribute {attribute} must have a value")
-                    unknown_terms.append(attribute)
-
-            #### Expand the Mz_diff attribute
-            elif attribute == "Mz_diff" or attribute == 'Theo_mz_diff':
-                if attributes[attribute] is not None:
-                    value = attributes[attribute]
-                    if isinstance(value, float):
-                        # We must be dealing with a unit-less entry.
-                        group_identifier = analyte.get_next_group_identifier()
-                        analyte.add_attribute(
-                            "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
-                        analyte.add_attribute(
-                            "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
-                    else:
-                        match = re.match(
-                            r"([\-\+e\d\.]+)\s*ppm", attributes[attribute], flags=re.IGNORECASE)
-                        if match is not None:
-                            group_identifier = analyte.get_next_group_identifier()
-                            analyte.add_attribute(
-                                "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
-                            analyte.add_attribute(
-                                "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
-                        else:
-                            match = re.match(
-                                r"([\-\+e\d\.]+)\s*", attributes[attribute])
-                            if match is not None:
-                                group_identifier = analyte.get_next_group_identifier()
-                                analyte.add_attribute(
-                                    "MS:1001975|delta m/z", try_cast(match.group(1)), group_identifier)
-                                analyte.add_attribute(
-                                    "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
-                            else:
-                                analyte.add_attribute(
-                                    "ERROR", f"Unable to parse {attributes[attribute]} in {attribute}")
-                                unknown_terms.append(attribute)
-                else:
-                    logger.warning(f"Attribute {attribute} must have a value")
-                    unknown_terms.append(attribute)
-
-            #### Expand the Dev_ppm attribute
-            elif attribute == "Dev_ppm":
-                if attributes[attribute] is not None:
-                    group_identifier = spectrum.get_next_group_identifier()
-                    spectrum.add_attribute(
-                        "MS:1001975|delta m/z", try_cast(attributes[attribute]), group_identifier)
-                    spectrum.add_attribute(
-                        "UO:0000000|unit", "UO:0000169|parts per million", group_identifier)
-                else:
-                    spectrum.add_attribute(
-                        "ERROR", f"Attribute {attribute} must have a value")
+            elif attribute in analyte_func_handler:
+                if not analyte_func_handler(attribute, attributes[attribute], analyte):
                     unknown_terms.append(attribute)
 
             #### Expand the Fullname attribute
@@ -849,79 +948,19 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         "ERROR", f"Attribute {attribute} must have a value")
                     unknown_terms.append(attribute)
 
-            #### Expand the Nrep attribute
-            elif attribute == "Nrep" or attribute == "Nreps":
-                if attributes[attribute] is not None:
-                    value = attributes[attribute]
-                    if not isinstance(value, str):
-                        value = str(value)
-                    match = re.match(
-                        r"(\d+)/(\d+)", value)
-                    if match is not None:
-                        spectrum.add_attribute(
-                            "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
-                        spectrum.add_attribute(
-                            "MS:1003069|number of replicate spectra available", try_cast(match.group(2)))
-                    else:
-                        match = re.match(
-                            r"(\d+)", value)
-                        if match is not None:
-                            spectrum.add_attribute(
-                                "MS:1003070|number of replicate spectra used", try_cast(match.group(1)))
-                            spectrum.add_attribute(
-                                "MS:1003069|number of replicate spectra available", try_cast(match.group(1)))
-                        else:
-                            spectrum.add_attribute(
-                                "ERROR", f"Unable to parse {attributes[attribute]} in {attribute} at E2455")
-                            unknown_terms.append(attribute)
-                else:
-                    spectrum.add_attribute(
-                        "ERROR", f"Attribute {attribute} must have a value")
-                    unknown_terms.append(attribute)
-
-            #### Expand the Fullname attribute
-            elif attribute == "Organism":
-                if attributes[attribute] is not None:
-                    value = attributes[attribute]
-                    value = value.strip('"')
-
-                    if value in species_map:
-                        group_identifier = analyte.get_next_group_identifier()
-                        for item in species_map[value]:
-                            analyte.add_attribute(
-                                item[0], try_cast(item[1]), group_identifier)
-
-                    else:
-                        analyte.add_attribute(
-                            "ERROR", f"Unable to parse {attributes[attribute]} in {attribute}")
-                        unknown_terms.append(attribute)
-                else:
-                    spectrum.add_attribute(
-                        "ERROR", f"Attribute {attribute} must have a value")
-                    unknown_terms.append(attribute)
-
-            elif attribute == "Protein":
-                key = "MS:1000885|protein accession"
-                value = attributes[attribute]
-                match = re.match(r"\(pre=(.),post=(.)\)", value)
-                if match is not None:
-                    value = value[:match.start()]
-                    analyte.add_attribute("MS:1001112|n-terminal flanking residue", match.group(1))
-                    analyte.add_attribute("MS:1001113|c-terminal flanking residue", match.group(2))
-                analyte.add_attribute(key, value)
-
             #### Otherwise add this term to the list of attributes that we don't know how to handle
             else:
                 unknown_terms.append(attribute)
 
-        if "MS:1000888|stripped peptide sequence" not in analyte.attribute_dict:
-            if SPECTRUM_NAME in spectrum.attribute_dict:
-                lookup = spectrum.attribute_dict[SPECTRUM_NAME]
-                name = spectrum.attributes[lookup["indexes"][0]][1]
+        if not analyte.has_attribute(STRIPPED_PEPTIDE_TERM):
+            if spectrum.has_attribute(SPECTRUM_NAME):
+                name = spectrum.get_attribute(SPECTRUM_NAME)
+                # lookup = spectrum.attribute_dict[SPECTRUM_NAME]
+                # name = spectrum.attributes[lookup["indexes"][0]][1]
                 match = re.match(r"(.+)/(\d+)", name)
                 if match:
                     analyte.add_attribute(
-                        "MS:1000888|stripped peptide sequence", match.group(1))
+                        STRIPPED_PEPTIDE_TERM, match.group(1))
                     spectrum.add_attribute(
                         "MS:1000041|charge state", try_cast(match.group(2)))
 
