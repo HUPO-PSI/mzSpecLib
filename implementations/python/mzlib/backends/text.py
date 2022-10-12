@@ -351,7 +351,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         interpretation_member: InterpretationMember = None
 
         STATES = SpectrumParserStateEnum
-        state = STATES.header
+        state: SpectrumParserStateEnum = STATES.header
 
         peak_list = []
         line_number = -1
@@ -369,6 +369,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             message += f" in state {state}"
             return message
 
+        line: str
         for line_number, line in enumerate(buffer):
             line = line.strip()
             if not line:
@@ -376,7 +377,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if state == STATES.header:
                 if START_OF_SPECTRUM_MARKER.match(line):
                     match = START_OF_SPECTRUM_MARKER.match(line)
-                    spec.key = match.group(1) or spec.index - 1
+                    spec.key = int(match.group(1)) or spec.index - 1
                     continue
 
                 elif START_OF_PEAKS_MARKER.match(line):
@@ -507,10 +508,14 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     n_tokens = len(tokens)
                     if n_tokens == 3:
                         mz, intensity, annotation = tokens
+                        if not annotation:
+                            annotation = "?"
                         annotation = parse_annotation(annotation)
                         peak_list.append([float(mz), float(intensity), annotation, ""])
                     elif n_tokens > 3:
                         mz, intensity, annotation, *aggregation = tokens
+                        if not annotation:
+                            annotation = "?"
                         annotation = parse_annotation(annotation)
                         peak_list.append(
                             [float(mz), float(intensity), annotation, aggregation])
@@ -633,7 +638,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 '?' if not peak[2] else ",".join(map(str, peak[2]))
             ]
             if peak[3]:
-                peak_parts.append(str(peak[3]))
+                peak_parts.append('\t'.join(map(str, peak[3])))
             self.handle.write("\t".join(peak_parts)+"\n")
         self.handle.write("\n")
 

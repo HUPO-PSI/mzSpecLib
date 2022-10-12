@@ -26,7 +26,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 1710.9076
+              "value": "1710.9076"
             },
             {
               "accession": "MS:1003048",
@@ -40,11 +40,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(4,C,CAM)"
             },
             {
               "accession": "MS:1000888",
@@ -62,19 +57,37 @@
               "value": "L"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": 1.4
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 855.455
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAAC[Carbamidomethyl]ALTPGPLADLAAR"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 1708.89303961159
             }
           ],
           "id": "1"
@@ -108,19 +121,6 @@
           "value": 855.4538
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": 1.4
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -128,13 +128,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 46
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -145,17 +145,17 @@
           "value": 5538
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"CHO-K1_bRPLC_C1.RAW.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 2
         },
@@ -181,37 +181,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 8799173.32
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 25273307.5
         },
@@ -223,41 +223,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 87
+          "value": "87"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=8.13346e-015)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.45
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "4/20"
         }
@@ -543,7 +543,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 1710.9076
+              "value": "1710.9076"
             },
             {
               "accession": "MS:1003048",
@@ -557,11 +557,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(4,C,CAM)"
             },
             {
               "accession": "MS:1000888",
@@ -579,19 +574,37 @@
               "value": "L"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": 4.2
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 855.4574
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAAC[Carbamidomethyl]ALTPGPLADLAAR"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 1708.89303961159
             }
           ],
           "id": "1"
@@ -625,19 +638,6 @@
           "value": 855.4538
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": 4.2
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -645,13 +645,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 53
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -662,17 +662,17 @@
           "value": 6275
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction46.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 14
         },
@@ -698,37 +698,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 1776618.56
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 12167259.65
         },
@@ -740,41 +740,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 204
+          "value": "204"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=1.31932e-020)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.16
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "5/20"
         }
@@ -1411,7 +1411,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 2414.3344
+              "value": "2414.3344"
             },
             {
               "accession": "MS:1003048",
@@ -1425,11 +1425,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": 0
             },
             {
               "accession": "MS:1000888",
@@ -1447,19 +1442,37 @@
               "value": "E"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": -0.9
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 1207.1661
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 2412.319901150229
             }
           ],
           "id": "1"
@@ -1493,19 +1506,6 @@
           "value": 1207.1672
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": -0.9
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -1513,13 +1513,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 76
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -1530,17 +1530,17 @@
           "value": 7528
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction18.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 2
         },
@@ -1566,37 +1566,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 6939079.2
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 7583304.35
         },
@@ -1608,41 +1608,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 122
+          "value": "122"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=1.43642e-012)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.12
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "0/20"
         }
@@ -2033,7 +2033,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 1463.8086
+              "value": "1463.8086"
             },
             {
               "accession": "MS:1003048",
@@ -2047,11 +2047,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": 0
             },
             {
               "accession": "MS:1000888",
@@ -2069,19 +2064,37 @@
               "value": "D"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": -2.7
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 731.9023
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAAGSTSVKPIFSR"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 1461.7939769138902
             }
           ],
           "id": "1"
@@ -2115,19 +2128,6 @@
           "value": 731.9043
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": -2.7
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -2135,13 +2135,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 44
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -2152,17 +2152,17 @@
           "value": 3052
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction26.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 4
         },
@@ -2188,37 +2188,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 324419.29
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 361702.23
         },
@@ -2230,41 +2230,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 111
+          "value": "111"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=6.33525e-018)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.17
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "1/20"
         }
@@ -2622,7 +2622,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 1464.8157
+              "value": "1464.8157"
             },
             {
               "accession": "MS:1003048",
@@ -2636,11 +2636,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": 0
             },
             {
               "accession": "MS:1000888",
@@ -2658,19 +2653,37 @@
               "value": "D"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": 3.8
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 488.2738
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAAGSTSVKPIFSR"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 1461.7939769138902
             }
           ],
           "id": "1"
@@ -2704,19 +2717,6 @@
           "value": 488.2719
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": 3.8
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -2724,13 +2724,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 28
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -2741,17 +2741,17 @@
           "value": 2890
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction26.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 5
         },
@@ -2777,37 +2777,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 3390555.93
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 3965011.86
         },
@@ -2819,41 +2819,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 161
+          "value": "161"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=9.67069e-018)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.09
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "0/20"
         }
@@ -3361,7 +3361,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 1661.7668
+              "value": "1661.7668"
             },
             {
               "accession": "MS:1003048",
@@ -3375,11 +3375,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(10,C,CAM)"
             },
             {
               "accession": "MS:1000888",
@@ -3397,19 +3392,37 @@
               "value": "E"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": 4.1
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 830.8868
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAALGSHGSC[Carbamidomethyl]SSEVEK"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 1659.7522486039798
             }
           ],
           "id": "1"
@@ -3443,19 +3456,6 @@
           "value": 830.8834
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": 4.1
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -3463,13 +3463,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 50
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -3480,17 +3480,17 @@
           "value": 1185
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction18.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 2
         },
@@ -3516,37 +3516,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 30003.73
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 28800.11
         },
@@ -3558,41 +3558,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 68
+          "value": "68"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=6.94218e-013)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.45
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "6/20"
         }
@@ -3821,7 +3821,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": 1661.7668
+              "value": "1661.7668"
             },
             {
               "accession": "MS:1003048",
@@ -3835,11 +3835,6 @@
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1(10,C,CAM)"
             },
             {
               "accession": "MS:1000888",
@@ -3857,19 +3852,37 @@
               "value": "E"
             },
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "2",
+              "name": "delta m/z",
+              "value": -2.0
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "2",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1000885",
               "name": "protein accession",
               "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
-              "accession": "MS:1003053",
-              "name": "theoretical monoisotopic m/z",
+              "accession": "MS:1003208",
+              "name": "experimental precursor monoisotopic m/z",
               "value": 830.8817
             },
             {
               "accession": "MS:1003169",
               "name": "proforma peptidoform sequence",
               "value": "AAAALGSHGSC[Carbamidomethyl]SSEVEK"
+            },
+            {
+              "accession": "MS:1001117",
+              "name": "theoretical mass",
+              "value": 1659.7522486039798
             }
           ],
           "id": "1"
@@ -3903,19 +3916,6 @@
           "value": 830.8834
         },
         {
-          "accession": "MS:1001975",
-          "cv_param_group": "1",
-          "name": "delta m/z",
-          "value": -2.0
-        },
-        {
-          "accession": "UO:0000000",
-          "cv_param_group": "1",
-          "name": "unit",
-          "value": "parts per million",
-          "value_accession": "UO:0000169"
-        },
-        {
           "accession": "MS:1000044",
           "name": "dissociation method",
           "value": "beam-type collision-induced dissociation",
@@ -3923,13 +3923,13 @@
         },
         {
           "accession": "MS:1000045",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "collision energy",
           "value": 52
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "2",
+          "cv_param_group": "1",
           "name": "unit",
           "value": "electronvolt",
           "value_accession": "UO:0000266"
@@ -3940,17 +3940,17 @@
           "value": 868
         },
         {
-          "accession": "MS:1009008",
-          "name": "source file",
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
           "value": "\"RO-QC-141112_Betenbaugh_HK_Fraction19.raw.FT.hcd.ch.MGF\""
         },
         {
-          "accession": "MS:1009020",
+          "accession": "MS:1003070",
           "name": "number of replicate spectra used",
           "value": 1
         },
         {
-          "accession": "MS:1009021",
+          "accession": "MS:1003069",
           "name": "number of replicate spectra available",
           "value": 3
         },
@@ -3976,37 +3976,37 @@
         },
         {
           "accession": "MS:1000828",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "isolation window lower offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "3",
+          "cv_param_group": "2",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
           "accession": "MS:1000829",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "isolation window upper offset",
           "value": 0.95
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "4",
+          "cv_param_group": "3",
           "name": "unit",
           "value": "m/z",
           "value_accession": "MS:1000040"
         },
         {
-          "accession": "MS:1009010",
+          "accession": "MS:1003085",
           "name": "previous MS1 scan precursor intensity",
           "value": 9544513.13
         },
         {
-          "accession": "MS:1009011",
+          "accession": "MS:1003086",
           "name": "precursor apex intensity",
           "value": 26056925.91
         },
@@ -4018,41 +4018,41 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": 402
+          "value": "402"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "5",
+          "accession": "MS:1003275",
+          "cv_param_group": "4",
           "name": "other attribute name",
           "value": "Se"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "5",
+          "accession": "MS:1003276",
+          "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=6.88234e-022)"
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "6",
+          "accession": "MS:1003275",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "max_unassigned_ab"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "6",
+          "accession": "MS:1003276",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": 0.17
         },
         {
-          "accession": "MS:1009900",
-          "cv_param_group": "7",
+          "accession": "MS:1003275",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "num_unassigned_peaks"
         },
         {
-          "accession": "MS:1009902",
-          "cv_param_group": "7",
+          "accession": "MS:1003276",
+          "cv_param_group": "6",
           "name": "other attribute value",
           "value": "3/20"
         }

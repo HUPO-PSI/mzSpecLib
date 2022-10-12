@@ -63,6 +63,15 @@ class IndexRecord(object):
     def __hash__(self):
         return hash(self.name)
 
+    def to_dict(self) -> Dict:
+        return {
+            k: getattr(self, k, None) for k in self.__slots__
+        }
+
+    @classmethod
+    def from_dict(cls, state: Dict) -> 'IndexRecord':
+        return cls(**state)
+
 
 class MemoryIndex(IndexBase):
 

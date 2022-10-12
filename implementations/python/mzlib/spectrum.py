@@ -11,7 +11,7 @@ from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
 
 SPECTRUM_NAME = "MS:1003061|spectrum name"
 LIBRARY_ENTRY_KEY = "MS:1003237|library spectrum key"
-LIBRARY_ENTRY_INDEX = "MS:1003061|library spectrum index"
+LIBRARY_ENTRY_INDEX = "MS:1003062|library spectrum index"
 PRECURSOR_MZ = "MS:1003208|experimental precursor monoisotopic m/z"
 CHARGE_STATE = "MS:1000041|charge state"
 
