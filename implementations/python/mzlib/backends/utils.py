@@ -3,7 +3,7 @@ import io
 import gzip
 
 from collections import deque
-from typing import Any, Iterable, Optional, Union
+from typing import Any, Dict, Iterable, Mapping, Optional, Union
 
 DEFAULT_BUFFER_SIZE = int(2e6)
 GZIP_MAGIC = b'\037\213'
@@ -127,3 +127,29 @@ def open_stream(f: Union[io.IOBase, os.PathLike], mode='rt', buffer_size: Option
     if "b" not in mode and "b" in f.mode:
         handle = io.TextIOWrapper(handle, encoding=encoding, newline=newline)
     return handle
+
+
+class CaseInsensitiveDict(Dict[str, Any]):
+    def __init__(self, base=None, **kwargs):
+        if base is not None:
+            self.update(base)
+        if kwargs:
+            self.update(kwargs)
+
+    def __getitem__(self, key: str):
+        return super().__getitem__(key.lower())
+
+    def __setitem__(self, key: str, value):
+        super().__setitem__(key.lower(), value)
+
+    def __delitem__(self, key: str):
+        super().__delitem__(key.lower())
+
+    def __contains__(self, __o: str) -> bool:
+        return super().__contains__(__o.lower())
+
+    def get(self, key: str, default=None):
+        return super().get(key.lower(), default)
+
+    def update(self, value: Mapping[str, Any]):
+        super().update({k.lower(): v for k, v in value.items()})

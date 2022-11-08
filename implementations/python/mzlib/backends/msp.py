@@ -15,7 +15,7 @@ from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 from mzlib.attributes import AttributeManager, Attributed
 
 from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM
-from .utils import try_cast, open_stream
+from .utils import try_cast, open_stream, CaseInsensitiveDict
 
 
 logger = logging.getLogger(__name__)
@@ -28,9 +28,10 @@ leader_terms = {
 
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 
-analyte_terms = {
+analyte_terms = CaseInsensitiveDict({
     "MW": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
+    "exact_mass": "MS:1000224|molecular mass",
     "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
         "Protein": "MS:1000885|protein accession",
@@ -56,31 +57,42 @@ analyte_terms = {
     "PrecursorMonoisoMZ": "MS:1003208|experimental precursor monoisotopic m/z",
     "Mz_exact": "MS:1003208|experimental precursor monoisotopic m/z",
     "Mz_av": "MS:1003054|theoretical average m/z",
-}
+})
 
 
-other_terms = {
+other_terms = CaseInsensitiveDict({
     "Charge": "MS:1000041|charge state",
+    "precursor_charge": "MS:1000041|charge state",
+    "precursorcharge": "MS:1000041|charge state",
+
     "Parent": "MS:1000744|selected ion m/z",
     "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
+    "precursor": "MS:1000744|selected ion m/z",
+    "precursor_mass": "MS:1000744|selected ion m/z",
+    "precursormass": "MS:1000744|selected ion m/z",
+
     "Single": ["MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"],
     "Consensus": ["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"],
     "Inst": {"it": [["MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation"]],
              "hcd": [["MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"]]},
     "Spec": {"Consensus": [["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"]]},
     "Scan": "MS:1003057|scan number",
-            "Origfile": "MS:1003203|constituent spectrum file",
-            "Sample": "MS:1000002|sample name",
-            "Filter": "MS:1000512|filter string",
-            "FTResolution": "MS:1000028|detector resolution",
-            "ms1PrecursorAb": "MS:1003085|previous MS1 scan precursor intensity",
-            "Precursor1MaxAb": "MS:1003086|precursor apex intensity",
-            "Purity": "MS:1009013|isolation window precursor purity",
-            "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
-            "Unassign_all": "MS:1003079|total unassigned intensity fraction",
-            "BasePeak": "MS:1000505|base peak intensity",
-            "Num peaks": "MS:1003059|number of peaks",
-}
+    "Origfile": "MS:1003203|constituent spectrum file",
+    "filename": "MS:1003203|constituent spectrum file",
+    "file_name": "MS:1003203|constituent spectrum file",
+    "Sample": "MS:1000002|sample name",
+    "Filter": "MS:1000512|filter string",
+    "FTResolution": "MS:1000028|detector resolution",
+    "ms1PrecursorAb": "MS:1003085|previous MS1 scan precursor intensity",
+    "Precursor1MaxAb": "MS:1003086|precursor apex intensity",
+    "Purity": "MS:1009013|isolation window precursor purity",
+    "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
+    "Unassign_all": "MS:1003079|total unassigned intensity fraction",
+    "BasePeak": "MS:1000505|base peak intensity",
+    "Num peaks": "MS:1003059|number of peaks",
+    "num_peaks": "MS:1003059|number of peaks",
+    "numpeaks": "MS:1003059|number of peaks",
+})
 
 
 interpretation_member_terms = {
@@ -374,7 +386,7 @@ class DispatchingAttributeHandler(AttributeHandlerChain):
         if not chain:
             chain = []
         super().__init__(chain)
-        self.mapping = {}
+        self.mapping = CaseInsensitiveDict()
         for handler in self:
             for key in handler.keys:
                 self.mapping[key] = handler
@@ -421,7 +433,7 @@ def dissociation_method_handler(key: str, value: str, container: Attributed) -> 
 
 
 @msp_spectrum_attribute_handler.add
-@FunctionAttributeHandler.wraps("Collision_energy", "CE")
+@FunctionAttributeHandler.wraps("Collision_energy", "CE", "colenergy", "collisionenergy")
 def collision_energy_handler(key: str, value: str, container: Attributed) -> bool:
     if isinstance(value, str):
         match = re.match(r"([\d\.]+)", value)
@@ -439,7 +451,7 @@ def collision_energy_handler(key: str, value: str, container: Attributed) -> boo
 
 
 @msp_spectrum_attribute_handler.add
-@FunctionAttributeHandler.wraps("RT")
+@FunctionAttributeHandler.wraps("RT", "rettime", "retentiontime", "rtinseconds")
 def rt_handler(key, value, container) -> bool:
     match = re.match(r"([\d\.]+)\s*(\D*)",
                      value)
@@ -453,7 +465,7 @@ def rt_handler(key, value, container) -> bool:
             container.add_attribute(
                 "MS:1000894|retention time", try_cast(match.group(1)), group_identifier)
             #### If the value is greater than 250, assume it must be seconds
-            if float(match.group(1)) > 250:
+            if float(match.group(1)) > 250 or key.lower() == 'rtinseconds':
                 container.add_attribute(
                     "UO:0000000|unit", "UO:0000010|second", group_identifier)
             #### Although normally assume minutes
