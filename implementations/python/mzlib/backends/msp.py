@@ -682,6 +682,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 file_offset += len(line) + file_offset_line_ending
 
                 line = line.rstrip()
+                # TODO: Name: could be Compound or SpectrumName
                 if state == 'header':
                     if re.match('Name: ', line):
                         state = 'body'

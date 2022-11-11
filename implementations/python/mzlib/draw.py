@@ -5,6 +5,8 @@ from matplotlib import patheffects as path_effects
 
 import numpy as np
 
+from .annotation import InvalidAnnotation, Unannotated
+
 
 series_to_color = {
     'b': 'crimson',
@@ -53,7 +55,7 @@ def peaklist_to_vector(peaklist, width=0.000001):
     return np.array(mzs), np.array(intensities)
 
 
-def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, **kwargs):
+def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, label_rotation=0, **kwargs):
     """Draw and annotate a Spectrum.
 
     Parameters
@@ -99,14 +101,19 @@ def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, **kwa
         if threshold >= height:
             continue
         height += ypad
-        if peak[2]:
+        if peak[2] and not isinstance(peak[2][0], (Unannotated, )):
             annots = peak[2]
             for annot in annots:
+                if isinstance(annot, InvalidAnnotation):
+                    continue
                 if annot.series_label == 'peptide':
                     by_series[annot.series].append(peak)
                 else:
                     by_series[annot.series_label].append(peak)
-            txt = ax.text(peak[0], height, ',\n'.join(map(str, annots)), ha='center', clip_on=True)
+            txt = ax.text(peak[0], height,
+                          ',\n'.join(filter(lambda x: x != '?', map(str, annots))),
+                          ha='center', rotation=label_rotation,
+                          clip_on=False)
             txt.set_path_effects([path_effects.Stroke(linewidth=0.75, foreground='white'),
                                 path_effects.Normal()])
 
@@ -148,6 +155,8 @@ def _beautify_axes(ax, set_ylim=True, normalize=False):
     if normalize:
         _normalize_ylabels(ax)
         # ax.set_ylim(0, max(ax.get_ylim()) * 1.15)
+    xlim = ax.get_xlim()
+    ax.set_xlim(max(xlim[0] - 100, 0), xlim[1] + 50)
     return ax
 
 
