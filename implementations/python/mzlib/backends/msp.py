@@ -440,13 +440,29 @@ def collision_energy_handler(key: str, value: str, container: Attributed) -> boo
         if match is not None:
             value = try_cast(match.group(1))
     if value is not None:
+        group_identifier = container.get_next_group_identifier()
+        container.add_attribute(
+            "MS:1000045|collision energy", value, group_identifier)
+        container.add_attribute(
+            "UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
+        return True
+    return False
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("NCE", "nce")
+def normalized_collision_energy_handler(key: str, value: str, container: Attributed) -> bool:
+    if isinstance(value, str):
+        match = re.match(r"([\d\.]+)", value)
         if match is not None:
-            group_identifier = container.get_next_group_identifier()
-            container.add_attribute(
-                "MS:1000045|collision energy", value, group_identifier)
-            container.add_attribute(
-                "UO:0000000|unit", "UO:0000266|electronvolt", group_identifier)
-            return True
+            value = try_cast(match.group(1))
+    if value is not None:
+        group_identifier = container.get_next_group_identifier()
+        container.add_attribute(
+            "MS:1000138|normalized collision energy", value, group_identifier)
+        container.add_attribute(
+            "UO:0000000|unit", "UO:0000187|percent", group_identifier)
+        return True
     return False
 
 
