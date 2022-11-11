@@ -42,6 +42,12 @@ class SPTXTAnnotationParser(AnnotationStringParser):
 parse_annotation = SPTXTAnnotationParser(annotation_pattern)
 
 
+sptxt_spectrum_attribute_map = {
+    "TotalIonCurrent": "MS:1000285|total ion current",
+
+}
+
+
 class SPTXTSpectralLibrary(_MSPSpectralLibrary):
     file_format = "sptxt"
     format_name = "sptxt"

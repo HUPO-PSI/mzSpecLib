@@ -204,6 +204,18 @@
                     "type": "string"
                 }
             }
+        },
+        "unannotated": {
+            "description": "Unannotated ion",
+            "type": "object",
+            "required": ["series_label"],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": ["unannotated"]
+                }
+            }
         }
     }
 }

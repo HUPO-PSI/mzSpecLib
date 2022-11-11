@@ -20,7 +20,7 @@ annotation_pattern = re.compile(r"""
    ))|
    (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
    (?:_(?P<external_ion>(?:[^"\s,/]+)|(?:"(?:[^"]+)")))|
-   (?P<unknown>\?)
+   (?P<unannotated>\?)
 )
 (?P<neutral_losses>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|
@@ -532,6 +532,36 @@ class FormulaAnnotation(IonAnnotationBase):
         return self
 
 
+class Unannotated(IonAnnotationBase):
+    series_label = "unannotated"
+    _molecule_description_fields = {}
+
+    def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
+        super().__init__(
+            series, neutral_losses, isotope, adducts, charge, analyte_reference,
+            mass_error, confidence, rest, is_auxiliary)
+
+    def _format_ion(self):
+        return "?"
+
+    def serialize(self) -> str:
+        # mass_error is a required field in the data model, but it is meaningless for unannotated peaks,
+        # so we mask it here
+        mass_error = self.mass_error
+
+        mask = mass_error.mass_error == 0
+        if mask:
+            self.mass_error = None
+
+        val = super().serialize()
+
+        if mask:
+            self.mass_error = mass_error
+        return val
+
+
+
 class InvalidAnnotation(IonAnnotationBase):
     series_label = "!invalid!"
 
@@ -590,7 +620,7 @@ class AnnotationStringParser(object):
         return match, data
 
     def parse_annotation(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
-        if annotation_string == "?" or not annotation_string:
+        if not annotation_string:
             return []
         is_auxiliary = False
         if annotation_string[0] == '[':
@@ -649,38 +679,44 @@ class AnnotationStringParser(object):
 
     def _dispatch(self, annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference,
                   mass_error, confidence, **kwargs):
-        if data['series']:
+        if data.get('series'):
             return self._dispatch_peptide_fragment(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['series_internal']:
+        elif data.get('series_internal'):
             return self._dispatch_internal_peptide_fragment(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['precursor']:
+        elif data.get('precursor'):
             return self._dispatch_precursor(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['immonium']:
+        elif data.get('immonium'):
             return self._dispatch_immonium(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['reporter']:
+        elif data.get('reporter'):
             return self._dispatch_reporter(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['external_ion']:
+        elif data.get('external_ion'):
             return self._dispatch_external(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['formula']:
+        elif data.get('formula'):
             return self._dispatch_formula(
+                data,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
+            )
+        elif data.get('unannotated'):
+            return self._dispatch_unannotated(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
@@ -692,6 +728,13 @@ class AnnotationStringParser(object):
         return PeptideFragmentIonAnnotation(
             data['series'], int(data['ordinal']),
             neutral_losses, isotope, adducts, charge, analyte_reference,
+            mass_error, confidence)
+
+    def _dispatch_unannotated(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
+        if mass_error is None:
+            mass_error = MassError(0)
+        return Unannotated(
+            None, neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
     def _dispatch_internal_peptide_fragment(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):

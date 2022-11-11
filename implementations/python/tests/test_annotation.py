@@ -2,7 +2,7 @@ import os
 import unittest
 import json
 
-from mzlib.annotation import parse_annotation, MassError, IonAnnotationBase
+from mzlib.annotation import parse_annotation, MassError, IonAnnotationBase, Unannotated
 
 from .common import datafile
 
@@ -31,8 +31,8 @@ if schema is None:
     skip_reason += ("Could not accessed `peak-annotation-format.json` from development, cannot test schema compliance. ")
 
 class TestAnnotationParser(unittest.TestCase):
-    def test_parse_failfast(self):
-        assert parse_annotation("?") == []
+    def test_parse_unannotated(self):
+        assert isinstance(parse_annotation("?^2")[0], Unannotated)
 
     def test_parse_annotation_complex(self):
         base = "b14"
