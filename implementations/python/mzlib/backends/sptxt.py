@@ -11,6 +11,7 @@ from mzlib.backends.base import DEFAULT_VERSION, FORMAT_VERSION_TERM, LIBRARY_NA
 from mzlib.backends.utils import open_stream
 
 from .msp import MSPSpectralLibrary as _MSPSpectralLibrary
+from .utils import CaseInsensitiveDict
 
 
 annotation_pattern = re.compile(r"""^
@@ -42,10 +43,9 @@ class SPTXTAnnotationParser(AnnotationStringParser):
 parse_annotation = SPTXTAnnotationParser(annotation_pattern)
 
 
-sptxt_spectrum_attribute_map = {
+sptxt_spectrum_attribute_map = CaseInsensitiveDict({
     "TotalIonCurrent": "MS:1000285|total ion current",
-
-}
+})
 
 
 class SPTXTSpectralLibrary(_MSPSpectralLibrary):
