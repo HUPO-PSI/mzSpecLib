@@ -679,43 +679,43 @@ class AnnotationStringParser(object):
 
     def _dispatch(self, annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference,
                   mass_error, confidence, **kwargs):
-        if data['series']:
+        if data.get('series'):
             return self._dispatch_peptide_fragment(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['series_internal']:
+        elif data.get('series_internal'):
             return self._dispatch_internal_peptide_fragment(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['precursor']:
+        elif data.get('precursor'):
             return self._dispatch_precursor(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['immonium']:
+        elif data.get('immonium'):
             return self._dispatch_immonium(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['reporter']:
+        elif data.get('reporter'):
             return self._dispatch_reporter(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['external_ion']:
+        elif data.get('external_ion'):
             return self._dispatch_external(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs)
-        elif data['formula']:
+        elif data.get('formula'):
             return self._dispatch_formula(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
             )
-        elif data['unannotated']:
+        elif data.get('unannotated'):
             return self._dispatch_unannotated(
                 data,
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,

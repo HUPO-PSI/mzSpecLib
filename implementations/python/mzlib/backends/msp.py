@@ -137,7 +137,8 @@ annotation_pattern = re.compile(r"""^
    (?P<precursor>p)|
    (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:(?P<immonium_modification>CAM)|[A-Z])?)|
    (?P<reporter>(?:TMT|iTRAQ)(?P<reporter_mass>\d+[NC]?))|
-   (?:_(?P<external_ion>[^\s,/]+))
+   (?:_(?P<external_ion>[^\s,/]+))|
+   (?P<unannotated>\?)
 )
 (?P<neutral_losses>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
 (?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
