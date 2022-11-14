@@ -185,6 +185,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         return False, 0
 
     def read_header(self) -> Tuple[bool, int]:
+        if isinstance(self.filename, io.IOBase):
+            return self._parse_header_from_stream(self.filename)
         with open_stream(self.filename, 'rt', encoding='utf8') as stream:
             return self._parse_header_from_stream(stream)
 

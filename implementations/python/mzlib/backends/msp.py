@@ -34,7 +34,6 @@ analyte_terms = CaseInsensitiveDict({
     "exact_mass": "MS:1000224|molecular mass",
     "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
-        "Protein": "MS:1000885|protein accession",
         "Mods": "MS:1001471|peptide modification details",
         "Naa": "MS:1003043|number of residues",
     },
@@ -96,7 +95,9 @@ other_terms = CaseInsensitiveDict({
 
 
 interpretation_member_terms = {
-    "Q-value": "MS:1002354|PSM-level q-value"
+    "Q-value": "MS:1002354|PSM-level q-value",
+    "Unassigned_all_20ppm": "MS:1003079|total unassigned intensity fraction",
+    "Unassigned_20ppm": "MS:1003080|top 20 peak unassigned intensity fraction",
 }
 
 
@@ -612,7 +613,7 @@ def protein_handler(key, value, container):
         value = value[:match.start()]
         container.add_attribute("MS:1001112|n-terminal flanking residue", match.group(1))
         container.add_attribute("MS:1001113|c-terminal flanking residue", match.group(2))
-    container.add_attribute(key, value)
+    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value))
     return True
 
 
@@ -623,8 +624,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     modification_parser: ModificationParser
     unknown_attributes: Set[str]
 
-    def __init__(self, filename, index_type=None, read_metadata=True):
-        super().__init__(filename, index_type, read_metadata)
+    def __init__(self, filename, index_type=None, read_metadata=True, create_index: bool=True):
+        super().__init__(filename, index_type, read_metadata, create_index=create_index)
         self.modification_parser = ModificationParser()
         self.unknown_attributes = set()
 
@@ -646,7 +647,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         first_line = stream.readline()
         attributes = AttributeManager()
         attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
-        attributes.add_attribute(LIBRARY_NAME_TERM, self.filename)
+        if isinstance(self.filename, (str, os.PathLike)):
+            attributes.add_attribute(LIBRARY_NAME_TERM, self.filename)
+        elif hasattr(stream, 'name'):
+            attributes.add_attribute(LIBRARY_NAME_TERM, stream.name)
         self.attributes.clear()
         self.attributes._from_iterable(attributes)
         if re.match("Name: ", first_line):
