@@ -542,7 +542,10 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     "Provide only one of spectrum_number or spectrum_name")
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
-            offset = self.index.offset_for(spectrum_name)
+            index_record = self.index.record_for(spectrum_name)
+            offset = index_record.offset
+            spectrum_number = index_record.number
+
         buffer = self._get_lines_for(offset)
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
