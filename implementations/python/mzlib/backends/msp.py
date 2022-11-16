@@ -85,12 +85,11 @@ other_terms = CaseInsensitiveDict({
     "ms1PrecursorAb": "MS:1003085|previous MS1 scan precursor intensity",
     "Precursor1MaxAb": "MS:1003086|precursor apex intensity",
     "Purity": "MS:1009013|isolation window precursor purity",
-    "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
-    "Unassign_all": "MS:1003079|total unassigned intensity fraction",
     "BasePeak": "MS:1000505|base peak intensity",
     "Num peaks": "MS:1003059|number of peaks",
     "num_peaks": "MS:1003059|number of peaks",
     "numpeaks": "MS:1003059|number of peaks",
+    "Run": "MS:1003203|constituent spectrum file",
 })
 
 
@@ -98,6 +97,8 @@ interpretation_member_terms = {
     "Q-value": "MS:1002354|PSM-level q-value",
     "Unassigned_all_20ppm": "MS:1003079|total unassigned intensity fraction",
     "Unassigned_20ppm": "MS:1003080|top 20 peak unassigned intensity fraction",
+    "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
+    "Unassign_all": "MS:1003079|total unassigned intensity fraction",
 }
 
 
@@ -146,7 +147,7 @@ annotation_pattern = re.compile(r"""^
 (?:\^(?P<charge>[+-]?\d+))?
 (?:(?P<isotope>[+-]\d*)i)?
 (?:@(?P<analyte_reference>[^/\s]+))?
-(?:/(?P<mass_error>[+-]?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
+(?:/(?:Dev=)?(?P<mass_error>[+-]?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
 """, re.X)
 
 
@@ -617,6 +618,18 @@ def protein_handler(key, value, container):
     return True
 
 
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("BasePeak")
+def base_peak_handler(key, value, container: Attributed):
+    if value is None:
+        return False
+    value = float(value)
+    group_id = container.get_next_group_identifier()
+    container.add_attribute("MS:1000505|base peak intensity", value, group_id)
+    container.add_attribute("UO:0000000|unit", "MS:1000131|number of detector counts", group_id)
+    return True
+
+
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
     format_name = "msp"
@@ -1042,7 +1055,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 raise ValueError("Provide only one of spectrum_number or spectrum_name")
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
-            offset = self.index.offset_for(spectrum_name)
+            index_record = self.index.record_for(spectrum_name)
+            spectrum_number = index_record.number
+            offset = index_record.offset
         buffer = self._get_lines_for(offset)
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
