@@ -113,7 +113,7 @@ def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, label
             txt = ax.text(peak[0], height,
                           ',\n'.join(filter(lambda x: x != '?', map(str, annots))),
                           ha='center', rotation=label_rotation,
-                          clip_on=False)
+                          clip_on=True)
             txt.set_path_effects([path_effects.Stroke(linewidth=0.75, foreground='white'),
                                 path_effects.Normal()])
 
