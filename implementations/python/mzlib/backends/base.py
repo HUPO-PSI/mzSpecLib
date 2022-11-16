@@ -91,6 +91,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
 
     _file_extension_to_implementation = {}
 
+    index: IndexBase
+
     entry_attribute_sets: Dict[str, AttributeSet]
     analyte_attribute_sets: Dict[str, AttributeSet]
     interpretation_attribute_sets: Dict[str, AttributeSet]

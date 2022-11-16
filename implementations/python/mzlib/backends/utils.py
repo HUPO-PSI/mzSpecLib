@@ -139,7 +139,11 @@ def open_stream(f: Union[io.IOBase, os.PathLike], mode='rt', buffer_size: Option
             handle = buffered_reader
     else:
         raise NotImplementedError("Haven't implemented automatic output stream determination")
-    if "b" not in mode and "b" in f.mode:
+    try:
+        fmode = f.mode
+    except AttributeError:
+        fmode = 'b'
+    if "b" not in mode and "b" in fmode:
         handle = io.TextIOWrapper(handle, encoding=encoding, newline=newline)
     return handle
 
