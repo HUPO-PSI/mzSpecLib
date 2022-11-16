@@ -1,6 +1,14 @@
 import warnings
 
-from typing import Collection
+from typing import Collection, Union, Any, List
+
+
+class IndexRecordBase:
+    __slots__ = ()
+
+    number: int
+    offset: int
+    name: str
 
 
 class IndexBase(Collection):
@@ -13,7 +21,7 @@ class IndexBase(Collection):
         record = self.record_for(record_label)
         return record.offset
 
-    def record_for(self, record_label):
+    def record_for(self, record_label: Union[int, str]) -> IndexRecordBase:
         record = self.search(record_label)
         if isinstance(record, list):
             warnings.warn(
@@ -21,10 +29,10 @@ class IndexBase(Collection):
             record = record[0]
         return record
 
-    def search(self, i, **kwargs):
+    def search(self, i: Union[str, int, slice], **kwargs) -> Union[IndexRecordBase, List[IndexRecordBase]]:
         raise NotImplementedError()
 
-    def add(self, number, offset, name, analyte, attributes=None):
+    def add(self, number: int, offset: int, name: str, analyte: Any, attributes=None):
         raise NotImplementedError()
 
     def commit(self):
@@ -34,7 +42,7 @@ class IndexBase(Collection):
         for i in range(len(self)):
             yield self[i]
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: Union[int, str, slice]):
         return self.search(i)
 
     def __len__(self):

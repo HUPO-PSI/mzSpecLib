@@ -1,17 +1,18 @@
-from typing import Any, Dict, Optional
 import warnings
 import logging
+
+from typing import Any, Dict, Optional, List, DefaultDict
 
 from numbers import Integral
 from collections import defaultdict
 
-from .base import IndexBase
+from .base import IndexBase, IndexRecordBase
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 
-class IndexRecord(object):
+class IndexRecord(IndexRecordBase):
     __slots__ = ('number', 'offset', 'name', 'analyte', 'attributes')
 
     number: int
@@ -74,6 +75,11 @@ class IndexRecord(object):
 
 
 class MemoryIndex(IndexBase):
+    records: List[IndexRecord]
+    metadata: Dict[str, Any]
+
+    _dirty: bool
+    _by_name: DefaultDict[str, List[IndexRecord]]
 
     @classmethod
     def from_filename(cls, filename, library=None):
@@ -127,7 +133,7 @@ class MemoryIndex(IndexBase):
 
         self._dirty = False
 
-    def add(self, number, offset, name, analyte, attributes=None):
+    def add(self, number: int, offset: int, name: str, analyte: Any, attributes=None):
         record = IndexRecord(number, offset, name, analyte, attributes)
         self.records.append(record)
         self._dirty = True
