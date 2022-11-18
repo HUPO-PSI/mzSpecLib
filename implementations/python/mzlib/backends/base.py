@@ -393,7 +393,11 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             while True:
                 # Will clip the first line of the next spectrum. Needs work
                 buffer = self._buffer_from_stream(buffering_stream)
-                if not buffer:
+
+                # If the buffer is only a single line, then we must have reached
+                # the end, so we're done. We're done because the buffering stream
+                # will contain exactly one line (the buffered line)
+                if len(buffer) <= 1:
                     break
                 buffering_stream.push_line()
                 yield self._parse(buffer, i)
