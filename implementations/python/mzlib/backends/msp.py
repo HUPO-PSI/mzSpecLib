@@ -804,17 +804,18 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     continue
                 elif line.count(":") > 0:
                     key, value = re.split(r":\s*", line, 1)
+                    attributes[key] = value
                 elif line.count("=") > 0:
                     key, value = re.split(r"=\s*", line, 1)
+                    attributes[key] = value
                 elif line.count("\t") > 0:
-                    logger.error("Looks like peaks in the header???")
+                    warnings.warn("Line {line!r} looks like a peak annotation?")
                     in_header = False
                 else:
                     key = line
                     value = None
+                    attributes[key] = value
 
-                #### Adds the key-value pair to the dictionary
-                attributes[key] = value
 
                 #### If the key is "Num peaks" then we're done with the header and peak list follows
                 if key == "Num peaks":
