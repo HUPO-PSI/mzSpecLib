@@ -726,7 +726,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     def __init__(self, filename, index_type=None, read_metadata=True, create_index: bool=True):
         super().__init__(filename, index_type, read_metadata, create_index=create_index)
         self.modification_parser = ModificationParser()
-        self.unknown_attributes = UnknownKeyValueTracker()
+        self.unknown_attributes = UnknownKeyTracker()
 
     @classmethod
     def guess_from_header(cls, filename: str) -> bool:
