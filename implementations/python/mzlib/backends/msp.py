@@ -3,7 +3,7 @@ import io
 import os
 import logging
 
-from typing import Any, Callable, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable
+from typing import Any, Callable, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable, DefaultDict
 import warnings
 
 from pyteomics import proforma
@@ -21,7 +21,7 @@ from .utils import try_cast, open_stream, CaseInsensitiveDict
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
-
+# TODO: Name: could be Compound or SpectrumName
 leader_terms = {
     "Name": SPECTRUM_NAME,
 }
@@ -50,12 +50,22 @@ analyte_terms = CaseInsensitiveDict({
                                         ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
         },
     "MC": "MS:1003044|number of missed cleavages",
-    # "Protein": "MS:1000885|protein accession",
     "Mods": "MS:1001471|peptide modification details",
     "Naa": "MS:1003043|number of residues",
     "PrecursorMonoisoMZ": "MS:1003208|experimental precursor monoisotopic m/z",
     "Mz_exact": "MS:1003208|experimental precursor monoisotopic m/z",
     "Mz_av": "MS:1003054|theoretical average m/z",
+})
+
+
+_HCD = ["MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"]
+
+# TODO: qtof -> CAD
+instrument_dispatch = CaseInsensitiveDict({
+    "it": [["MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation"]],
+    "hcd": [_HCD],
+    "QExactive": [_HCD],
+    "Elite": [_HCD],
 })
 
 
@@ -66,14 +76,15 @@ other_terms = CaseInsensitiveDict({
 
     "Parent": "MS:1000744|selected ion m/z",
     "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
+    "PrecursorMZ": "MS:1000744|selected ion m/z",
     "precursor": "MS:1000744|selected ion m/z",
     "precursor_mass": "MS:1000744|selected ion m/z",
     "precursormass": "MS:1000744|selected ion m/z",
 
     "Single": ["MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"],
     "Consensus": ["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"],
-    "Inst": {"it": [["MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation"]],
-             "hcd": [["MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"]]},
+    "Inst": instrument_dispatch,
+    "Instrument_type": instrument_dispatch,
     "Spec": {"Consensus": [["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"]]},
     "Scan": "MS:1003057|scan number",
     "Origfile": "MS:1003203|constituent spectrum file",
@@ -93,13 +104,25 @@ other_terms = CaseInsensitiveDict({
 })
 
 
-interpretation_member_terms = {
-    "Q-value": "MS:1002354|PSM-level q-value",
+interpretation_terms = CaseInsensitiveDict({
     "Unassigned_all_20ppm": "MS:1003079|total unassigned intensity fraction",
+    "Unassign_all": "MS:1003079|total unassigned intensity fraction",
+
+    "top_20_num_unassigned_peaks_20ppm": "MS:1003290|number of unassigned peaks among top 20 peaks",
+    "num_unassigned_peaks_20ppm": "MS:1003288|number of unassigned peaks",
+    "num_unassigned_peaks": "MS:1003288|number of unassigned peaks",
+
+    "max_unassigned_ab_20ppm": "MS:1003289|intensity of highest unassigned peak",
+    "max_unassigned_ab": "MS:1003289|intensity of highest unassigned peak",
+
     "Unassigned_20ppm": "MS:1003080|top 20 peak unassigned intensity fraction",
     "Unassigned": "MS:1003080|top 20 peak unassigned intensity fraction",
-    "Unassign_all": "MS:1003079|total unassigned intensity fraction",
-}
+})
+
+
+interpretation_member_terms = CaseInsensitiveDict({
+    "Q-value": "MS:1002354|PSM-level q-value",
+})
 
 
 species_map = {
@@ -115,6 +138,12 @@ species_map = {
                 ["MS:1001469|taxonomy: scientific name",
                     "Gallus gallus"],
                 ["MS:1001468|taxonomy: common name", "chicken"]],
+    "rat": [
+        ["MS:1001467|taxonomy: NCBI TaxID", "NCBITaxon:10116|Rattus norvegicus"],
+        ["MS:1001469|taxonomy: scientific name",
+         "Rattus norvegicus"],
+        ["MS:1001468|taxonomy: common name", "rat"]
+    ]
 }
 
 
@@ -135,18 +164,17 @@ MODIFICATION_NAME_MAP = {
 
 annotation_pattern = re.compile(r"""^
 (?:(?:(?P<series>[abyxcz]\.?)(?P<ordinal>\d+))|
-   (:?Int/(?P<series_internal>[ARNDCEQGHKMFPSTWYVILJarndceqghkmfpstwyvilj]+))|
+   (:?(?P<series_internal>(?:Int/[ARNDCEQGHKMFPSTWYVILJarndceqghkmfpstwyvilj]+)|(?:[mM](?P<internal_start>\d+):(?P<internal_end>\d+))))|
    (?P<precursor>p)|
    (:?I(?P<immonium>[ARNDCEQGHKMFPSTWYVIL])(?:(?P<immonium_modification>CAM)|[A-Z])?)|
-   (?P<reporter>(?:TMT|iTRAQ)(?P<reporter_mass>\d+[NC]?))|
+   (?P<reporter>(?P<reporter_label>TMT|ITRAQ|iTRAQ)(?P<reporter_mass>\d+[NC]?))|
    (?:_(?P<external_ion>[^\s,/]+))|
    (?P<unannotated>\?)
 )
-(?P<neutral_losses>(?:[+-]\d*[A-Z][A-Za-z0-9]*)+)?
-(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
+(?P<neutral_losses>((?:[+-]\d*[A-Z][A-Za-z0-9]*)|(?:[+-]iTRAQ|TMT)|(?:[+-]\d+))+)?
+(?:(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
-(?:(?P<isotope>[+-]\d*)i)?
-(?:@(?P<analyte_reference>[^/\s]+))?
+(?:(?P<isotope>[+-]?\d*)i)?)+
 (?:/(?:Dev=)?(?P<mass_error>[+-]?\d+(?:\.\d+))(?P<mass_error_unit>ppm)?)?
 """, re.X)
 
@@ -154,13 +182,21 @@ annotation_pattern = re.compile(r"""^
 class MSPAnnotationStringParser(annotation.AnnotationStringParser):
     def _dispatch_internal_peptide_fragment(self, data: Dict[str, Any], adducts: List, charge: int, isotope: int, neutral_losses: List,
                                             analyte_reference: Any, mass_error: Any, **kwargs):
+        if data['internal_start']:
+            # The hybrid pattern detected an m<start>:<end> type string, not an Int/seq string
+            return super(MSPAnnotationStringParser, self)._dispatch_internal_peptide_fragment(
+                data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs)
+
         spectrum = kwargs.get("spectrum")
         if spectrum is None:
             raise ValueError("Cannot infer sequence coordinates from MSP internal fragmentation notation without"
                              " a reference to the spectrum, please pass spectrum as a keyword argument")
         sequence = self._get_peptide_sequence_for_analyte(
             spectrum, analyte_reference)
-        subseq = data['series_internal'].upper()
+        subseq = data['series_internal']
+        if subseq.startswith("Int/"):
+            subseq = subseq[4:]
+        subseq = subseq.upper()
         try:
             start_index = sequence.index(subseq)
         except ValueError as err:
@@ -171,6 +207,19 @@ class MSPAnnotationStringParser(annotation.AnnotationStringParser):
         data['internal_end'] = end_index
         return super(MSPAnnotationStringParser, self)._dispatch_internal_peptide_fragment(
             data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, **kwargs)
+
+    def _coerce_isotope(self, data):
+        value = data.get('isotope')
+        if value is not None:
+            if value == '':
+                data['isotope'] = '1'
+        return super()._coerce_isotope(data)
+
+    def _coerce_neutral_losses(self, data: Dict[str, str]) -> List:
+        return super()._coerce_neutral_losses(data)
+
+    def _coerce_analyte_reference(self, data: Dict[str, str]) -> str:
+        return None
 
     def _dispatch_immonium(self, data: Dict[str, Any], adducts: List, charge: int, isotope: int, neutral_losses: List,
                            analyte_reference: Any, mass_error: Any, **kwargs):
@@ -244,6 +293,8 @@ class AttributeHandler:
     keys: Collection[str]
 
     def __init__(self, keys: Collection[str]):
+        if isinstance(keys, str):
+            keys = (keys, )
         self.keys = keys
 
     def __contains__(self, key):
@@ -408,8 +459,17 @@ class DispatchingAttributeHandler(AttributeHandlerChain):
         return handler
 
 
+def null_handler(key: str, value: str, container: Attributed) -> bool:
+    return True
+
+
 msp_spectrum_attribute_handler = DispatchingAttributeHandler()
 msp_analyte_attribute_handler = DispatchingAttributeHandler()
+
+
+msp_spectrum_attribute_handler.add(FunctionAttributeHandler("Nprot", null_handler))
+msp_spectrum_attribute_handler.add(FunctionAttributeHandler("Peptype", null_handler))
+
 
 @msp_spectrum_attribute_handler.add
 @FunctionAttributeHandler.wraps("HCD")
@@ -630,17 +690,43 @@ def base_peak_handler(key, value, container: Attributed):
     return True
 
 
+class _UnknownTermTracker:
+    counts: DefaultDict
+
+    def add(self, key: str, value: Optional[str]=None):
+        raise NotImplementedError()
+
+    def items(self):
+        return self.counts.items()
+
+
+class UnknownKeyValueTracker(_UnknownTermTracker):
+    def __init__(self) -> None:
+        self.counts = DefaultDict(lambda: DefaultDict(int))
+
+    def add(self, key: str, value: Optional[str]=None):
+        self.counts[key][value] += 1
+
+
+class UnknownKeyTracker(_UnknownTermTracker):
+    def __init__(self) -> None:
+        self.counts = DefaultDict(int)
+
+    def add(self, key: str, value: Optional[str] = None):
+        self.counts[key] += 1
+
+
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     file_format = "msp"
     format_name = "msp"
 
     modification_parser: ModificationParser
-    unknown_attributes: Set[str]
+    unknown_attributes: _UnknownTermTracker
 
     def __init__(self, filename, index_type=None, read_metadata=True, create_index: bool=True):
         super().__init__(filename, index_type, read_metadata, create_index=create_index)
         self.modification_parser = ModificationParser()
-        self.unknown_attributes = set()
+        self.unknown_attributes = UnknownKeyValueTracker()
 
     @classmethod
     def guess_from_header(cls, filename: str) -> bool:
@@ -651,10 +737,18 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         return False
 
     def read_header(self) -> bool:
-        with open_stream(self.filename, 'r') as stream:
-            match, offset = self._parse_header_from_stream(stream)
-            return match
-        return False
+        filename = self.filename
+        file_like_object = isinstance(filename, io.IOBase)
+
+        stream = open_stream(filename)
+        match, offset = self._parse_header_from_stream(stream)
+        if file_like_object:
+            if stream.seekable():
+                stream.seek(0)
+            stream.detach()
+        else:
+            stream.close()
+        return match
 
     def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         first_line = stream.readline()
@@ -683,79 +777,96 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         #### Check that the spectrum library filename isvalid
         filename = self.filename
 
+        begin_loc = None
+        file_like_object = False
         #### Determine the filesize
-        file_size = os.path.getsize(filename)
+        try:
+            file_size = os.path.getsize(filename)
+        except TypeError:
+            if isinstance(filename, io.IOBase):
+                file_like_object = True
+                if filename.seekable():
+                    begin_loc = filename.tell()
+                    filename.seek(0, os.SEEK_END)
+                    file_size = filename.tell()
+                    filename.seek(0)
+        infile = open_stream(filename, 'r')
 
-        with open_stream(filename, 'r') as infile:
-            state = 'header'
-            spectrum_buffer = []
-            n_spectra = 0
-            start_index = 0
-            file_offset = 0
-            line_beginning_file_offset = 0
-            spectrum_file_offset = 0
-            spectrum_name = ''
+        state = 'header'
+        spectrum_buffer = []
+        n_spectra = 0
+        start_index = 0
+        file_offset = 0
+        line_beginning_file_offset = 0
+        spectrum_file_offset = 0
+        spectrum_name = ''
 
-            # Required for counting file_offset manually (LF vs CRLF)
-            infile.readline()
-            file_offset_line_ending = len(infile.newlines) - 1
-            infile.seek(0)
+        # Required for counting file_offset manually (LF vs CRLF)
+        infile.readline()
+        file_offset_line_ending = len(infile.newlines) - 1
+        infile.seek(0)
 
-            # if debug:
-            #     eprint("INFO: Reading..", end='', flush=True)
-            logger.debug(f"Reading {filename} ({file_size} bytes)...")
-            while 1:
-                line = infile.readline()
+        # if debug:
+        #     eprint("INFO: Reading..", end='', flush=True)
+        logger.debug(f"Reading {filename} ({file_size} bytes)...")
+        while 1:
+            line = infile.readline()
+            if len(line) == 0:
+                break
+
+            line_beginning_file_offset = file_offset
+
+            #### tell() is twice as slow as counting it myself
+            # file_offset = infile.tell()
+            file_offset += len(line) + file_offset_line_ending
+
+            line = line.rstrip()
+            # TODO: Name: could be Compound or SpectrumName
+            if state == 'header':
+                if re.match('Name: ', line):
+                    state = 'body'
+                    spectrum_file_offset = line_beginning_file_offset
+                else:
+                    continue
+            if state == 'body':
                 if len(line) == 0:
-                    break
+                    continue
+                if re.match('Name: ', line):
+                    if len(spectrum_buffer) > 0:
+                        self.index.add(
+                            number=n_spectra + start_index,
+                            offset=spectrum_file_offset,
+                            name=spectrum_name,
+                            analyte=None)
+                        n_spectra += 1
+                        spectrum_buffer = []
+                        #### Commit every now and then
+                        if n_spectra % 10000 == 0:
+                            self.index.commit()
+                            logger.info(f"... Indexed  {file_offset} bytes, {n_spectra} spectra read")
 
-                line_beginning_file_offset = file_offset
+                    spectrum_file_offset = line_beginning_file_offset
+                    spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
 
-                #### tell() is twice as slow as counting it myself
-                # file_offset = infile.tell()
-                file_offset += len(line) + file_offset_line_ending
+                spectrum_buffer.append(line)
+        logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
+        self.index.add(
+            number=n_spectra + start_index,
+            offset=spectrum_file_offset,
+            name=spectrum_name,
+            analyte=None)
+        self.index.commit()
+        n_spectra += 1
 
-                line = line.rstrip()
-                # TODO: Name: could be Compound or SpectrumName
-                if state == 'header':
-                    if re.match('Name: ', line):
-                        state = 'body'
-                        spectrum_file_offset = line_beginning_file_offset
-                    else:
-                        continue
-                if state == 'body':
-                    if len(line) == 0:
-                        continue
-                    if re.match('Name: ', line):
-                        if len(spectrum_buffer) > 0:
-                            self.index.add(
-                                number=n_spectra + start_index,
-                                offset=spectrum_file_offset,
-                                name=spectrum_name,
-                                analyte=None)
-                            n_spectra += 1
-                            spectrum_buffer = []
-                            #### Commit every now and then
-                            if n_spectra % 10000 == 0:
-                                self.index.commit()
-                                logger.info(f"... Indexed  {file_offset} bytes, {n_spectra} spectra read")
+        #### Flush the index
+        self.index.commit()
 
-                        spectrum_file_offset = line_beginning_file_offset
-                        spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
-
-                    spectrum_buffer.append(line)
-            logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
-            self.index.add(
-                number=n_spectra + start_index,
-                offset=spectrum_file_offset,
-                name=spectrum_name,
-                analyte=None)
-            self.index.commit()
-            n_spectra += 1
-
-            #### Flush the index
-            self.index.commit()
-
+        if not file_like_object:
+            infile.close()
+        else:
+            infile.detach()
+            if begin_loc is not None:
+                filename.seek(begin_loc)
         return n_spectra
 
     def _buffer_from_stream(self, infile: Iterable[str]) -> List[str]:
@@ -914,9 +1025,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     def _make_attribute_handlers(self):
         other_manager = MappingAttributeHandler(other_terms)
         analyte_manager = MappingAttributeHandler(analyte_terms)
+        interpretation_manager = MappingAttributeHandler(interpretation_terms)
         interpretation_member_manager = MappingAttributeHandler(interpretation_member_terms)
         return (other_manager,
                 analyte_manager,
+                interpretation_manager,
                 interpretation_member_manager,
                 msp_spectrum_attribute_handler,
                 msp_analyte_attribute_handler)
@@ -943,20 +1056,27 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         #### Translate the rest of the known attributes and collect unknown ones
         unknown_terms = []
 
-        (other_manager, analyte_manager, interpretation_member_manager,
+        (other_manager, analyte_manager, interpretation_manager, interpretation_member_manager,
          spectrum_func_handler, analyte_func_handler) = self._make_attribute_handlers()
         for attribute in attributes:
 
             #### Skip a leader term that we already processed
             if attribute in leader_terms:
                 continue
-
+            if not attribute:
+                continue
             if attribute in other_manager:
                 if not other_manager(attribute, attributes[attribute], spectrum):
                     unknown_terms.append(attribute)
+
             elif attribute in analyte_manager:
                 if not analyte_manager(attribute, attributes[attribute], analyte):
                     unknown_terms.append(attribute)
+
+            elif attribute in interpretation_manager:
+                if not interpretation_manager(attribute, attributes[attribute], interpretation):
+                    unknown_terms.append(attribute)
+
             elif attribute in interpretation_member_manager:
                 if interpretation_member is None:
                     interpretation_member = self._new_interpretation_member(1)
@@ -1014,7 +1134,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         #### Handle the uninterpretable terms
         for attribute in unknown_terms:
-            self.unknown_attributes.add(attribute)
+            self.unknown_attributes.add(attribute, attributes[attribute])
             if attributes[attribute] is None:
                 spectrum.add_attribute(
                     "MS:1003275|other attribute name", try_cast(attribute))
@@ -1034,19 +1154,20 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         return spectrum
 
     def _complete_analyte(self, analyte: Analyte):
-        peptide = proforma.ProForma.parse(analyte.get_attribute("MS:1000888|stripped peptide sequence"))
-        if analyte.has_attribute("MS:1001471|peptide modification details"):
-            modification_details = analyte.get_attribute("MS:1001471|peptide modification details")
-            mods = self.modification_parser(modification_details)
-            for position, residue, mod in mods:
-                seqpos = list(peptide.sequence[position])
-                if not seqpos[1]:
-                    seqpos[1] = [proforma.GenericModification(mod)]
-                peptide.sequence[position] = tuple(seqpos)
-                assert seqpos[0] == residue
-        analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
-        analyte.remove_attribute("MS:1001471|peptide modification details")
-        analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        if analyte.has_attribute("MS:1000888|stripped peptide sequence"):
+            peptide = proforma.ProForma.parse(analyte.get_attribute("MS:1000888|stripped peptide sequence"))
+            if analyte.has_attribute("MS:1001471|peptide modification details"):
+                modification_details = analyte.get_attribute("MS:1001471|peptide modification details")
+                mods = self.modification_parser(modification_details)
+                for position, residue, mod in mods:
+                    seqpos = list(peptide.sequence[position])
+                    if not seqpos[1]:
+                        seqpos[1] = [proforma.GenericModification(mod)]
+                    peptide.sequence[position] = tuple(seqpos)
+                    assert seqpos[0] == residue
+            analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
+            analyte.remove_attribute("MS:1001471|peptide modification details")
+            analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
         # keep the two branches separate for the possibility that this is not possible with all
@@ -1063,3 +1184,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
 
+    def summarize_parsing_errors(self) -> Dict:
+        errors = super().summarize_parsing_errors()
+        errors['unknown attributes'] = DefaultDict(dict)
+        for k, v in self.unknown_attributes.items():
+            errors['unknown atttributes'][k] = v
+        return errors

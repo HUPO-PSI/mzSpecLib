@@ -89,7 +89,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     """
     file_format = None
 
-    _file_extension_to_implementation = {}
+    _file_extension_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
+    _format_name_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
 
     index: IndexBase
 
@@ -288,7 +289,6 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
             for record in self.index:
                 yield self.get_spectrum(record.number)
         else:
-            raise NotImplementedError()
             return self.read()
 
     def __len__(self):
@@ -340,6 +340,9 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
             self.interpretation_attribute_sets[attribute_set.name] = attribute_set
         else:
             raise ValueError(f"Could not map {attribute_set_type}")
+
+    def summarize_parsing_errors(self) -> Dict:
+        return {}
 
 guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
@@ -404,10 +407,18 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 i += 1
 
     def _get_lines_for(self, offset: int) -> List[str]:
-        with open_stream(self.filename, 'r') as infile:
-            infile.seek(offset)
-            spectrum_buffer = self._buffer_from_stream(infile)
-            #### We will end up here if this is the last spectrum in the file
+        filename = self.filename
+        is_file_like_object = isinstance(filename, io.IOBase)
+
+        infile = open_stream(filename, 'r')
+
+        infile.seek(offset)
+        spectrum_buffer = self._buffer_from_stream(infile)
+        #### We will end up here if this is the last spectrum in the file
+        if not is_file_like_object:
+            infile.close()
+        else:
+            infile.detach()
         return spectrum_buffer
 
     def _parse(self, buffer: Iterable, spectrum_index: int=None):

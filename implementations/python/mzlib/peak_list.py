@@ -78,7 +78,7 @@ class PeakList(Sequence[PeakType]):
                     else:
                         high -= 1
                         break
-                outs.append(self.peaks[slice(low, high + 1)])
+                outs.extend(self.peaks[slice(low, high + 1)])
         elif error_unit == ErrorUnit.PPM:
             error_tolerance /= 1e6
             for i, mz_i in zip(ii, mz):
@@ -96,5 +96,5 @@ class PeakList(Sequence[PeakType]):
                     else:
                         high -= 1
                         break
-                outs.append(self.peaks[slice(low, high + 1)])
+                outs.extend(self.peaks[slice(low, high + 1)])
         return outs
