@@ -4,7 +4,6 @@ Generate human-readable documentation from JSON validation rules.
 
 import json
 from glob import glob
-from pathlib import Path
 
 from tomark import Tomark
 
