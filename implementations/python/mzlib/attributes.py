@@ -439,38 +439,12 @@ class IdentifiedAttributeManager(AttributeManager):
         return template
 
 
-class AttributedEntity(object):
-    '''A base type for entities which contain an :class:`AttributeManager`
-    without being completely subsumed by it.
-
-    An :class:`AttributeManager` represents a collection of attributes
-    first and foremost, supplying :class:`~.collections.abc.MutableMapping`-like
-    interface to them, in addition to methods.
-    '''
-    __slots__ = ("attributes", )
+class _ReadAttributes(object):
+    __slots__ = ()
 
     attributes: AttributeManager
 
-    def __init__(self, attributes: Iterable=None, **kwargs):
-        self.attributes = AttributeManager(attributes)
-        super().__init__(**kwargs)
-
-    def add_attribute(self, key, value, group_identifier=None) -> Union[Any, List[Any]]:
-        """Add an attribute to the entity's attributes store.
-
-        Parameters
-        ----------
-        key : str
-            The name of the attribute to add
-        value : object
-            The value of the attribute to add
-        group_identifier : str, optional
-            The attribute group identifier to use, if any. If not provided,
-            no group is assumed.
-        """
-        return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
-
-    def get_attribute(self, key, group_identifier=None, raw: bool=False):
+    def get_attribute(self, key, group_identifier=None, raw: bool = False):
         """Get the value or values associated with a given
         attribute key from the entity's attribute store.
 
@@ -490,25 +464,6 @@ class AttributedEntity(object):
 
     def get_attribute_group(self, group_identifier: str) -> List[Any]:
         return self.attributes.get_attribute_group(group_identifier)
-
-    def replace_attribute(self, key, value, group_identifier=None):
-        return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
-
-    def remove_attribute(self, key, group_identifier=None):
-        """Remove the value or values associated with a given
-        attribute key from the entity's attribute store.
-
-        This rebuilds the entire store, which may be expensive.
-
-        Parameters
-        ----------
-        key : str
-            The name of the attribute to retrieve
-        group_identifier : str, optional
-            The specific group identifier to return from.
-
-        """
-        return self.attributes.remove_attribute(key, group_identifier=group_identifier)
 
     def has_attribute(self, key) -> bool:
         """Test for the presence of a given attribute in the library
@@ -549,6 +504,46 @@ class AttributedEntity(object):
     def _iter_attributes(self) -> Iterator[Attribute]:
         return self.attributes._iter_attributes()
 
+
+class _WriteAttributes(object):
+    __slots__ = ()
+
+    attributes: AttributeManager
+
+    def add_attribute(self, key, value, group_identifier=None) -> Union[Any, List[Any]]:
+        """Add an attribute to the entity's attributes store.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to add
+        value : object
+            The value of the attribute to add
+        group_identifier : str, optional
+            The attribute group identifier to use, if any. If not provided,
+            no group is assumed.
+        """
+        return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
+
+    def replace_attribute(self, key, value, group_identifier=None):
+        return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
+
+    def remove_attribute(self, key, group_identifier=None):
+        """Remove the value or values associated with a given
+        attribute key from the entity's attribute store.
+
+        This rebuilds the entire store, which may be expensive.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to retrieve
+        group_identifier : str, optional
+            The specific group identifier to return from.
+
+        """
+        return self.attributes.remove_attribute(key, group_identifier=group_identifier)
+
     def _attributes_from_iterable(self, attributes):
         return self.attributes._attributes_from_iterable(attributes)
 
@@ -556,12 +551,139 @@ class AttributedEntity(object):
         return self.attributes._clear_attributes()
 
 
+class AttributedEntity(_ReadAttributes, _WriteAttributes):
+    '''A base type for entities which contain an :class:`AttributeManager`
+    without being completely subsumed by it.
+
+    An :class:`AttributeManager` represents a collection of attributes
+    first and foremost, supplying :class:`~.collections.abc.MutableMapping`-like
+    interface to them, in addition to methods.
+    '''
+    __slots__ = ("attributes", )
+
+    attributes: AttributeManager
+
+    def __init__(self, attributes: Iterable=None, **kwargs):
+        self.attributes = AttributeManager(attributes)
+        super().__init__(**kwargs)
+
+
 Attributed = Union[AttributeManager, AttributedEntity]
+
+
+class AttributeManagedProperty(Generic[T]):
+    __slots__ = ("attribute", )
+    attribute: str
+
+    def __init__(self, attribute: str):
+        self.attribute = attribute
+
+    def _get_group_id(self, inst: AttributeManager) -> Optional[str]:
+        return getattr(inst, "group_id", None)
+
+    def __get__(self, inst: AttributeManager, cls: Type) -> T:
+        if inst is None:
+            return self
+        return inst.get_attribute(self.attribute, group_identifier=self._get_group_id(inst))
+
+    def __set__(self, inst: AttributeManager, value: T):
+        attrib = self.attribute
+        if inst.has_attribute(attrib):
+            inst.replace_attribute(attrib, value, group_identifier=self._get_group_id(inst))
+        elif inst._count_attributes() > 0:
+            attribs = [[attrib, value]] + list(inst._iter_attributes())
+            inst._clear_attributes()
+            inst._attributes_from_iterable(attribs)
+        else:
+            inst.add_attribute(attrib, value, group_identifier=self._get_group_id(inst))
+
+    def __delete__(self, inst: AttributeManager, attr):
+        inst.remove_attribute(self.attribute, group_identifier=self._get_group_id(inst))
+
+
+class AttributeListManagedProperty(Generic[T]):
+    __slots__ = ("attributes", )
+    attributes: List[str]
+
+    def __init__(self, attributes: List[str]):
+        self.attributes = attributes
+
+    def __get__(self, inst: AttributeManager, cls: Type) -> T:
+        if inst is None:
+            return self
+        key, val = self._find_key_used(inst)
+        if key is None:
+            raise KeyError(self.attributes[0])
+        return val
+
+    def _find_key_used(self, inst: AttributeManager) -> Optional[Tuple[str, T]]:
+        for attr in self.attributes:
+            try:
+                return attr, inst.get_attribute(attr)
+            except KeyError:
+                continue
+        return None, None
+
+    def __set__(self, inst: AttributeManager, value: T):
+        key, _val = self._find_key_used(inst)
+        if key is None:
+            attrib = self.attributes[0]
+        else:
+            attrib = key
+        if inst.has_attribute(attrib):
+            inst.replace_attribute(attrib, value)
+        elif inst._count_attributes() > 0:
+            attribs = [[attrib, value]] + list(inst._iter_attributes())
+            inst._clear_attributes()
+            inst._attributes_from_iterable(attribs)
+        else:
+            inst.add_attribute(attrib, value)
+
+    def __delete__(self, inst: AttributeManager, attr):
+        key, val = self._find_key_used(inst)
+        if key is not None:
+            inst.remove_attribute(key)
+
+
+class AttributeProxyMeta(type):
+    def __new__(cls, typename, bases, namespace):
+        props = {}
+        for k, v in namespace.items():
+            if isinstance(v, (AttributeManagedProperty, AttributeListManagedProperty)):
+                props[k] = v
+        for base in bases[::-1]:
+            if hasattr(base, '_attribute_props'):
+                for k, v in base._attribute_props.items():
+                    if k not in props:
+                        props[k] = v
+        namespace['_attribute_props'] = props
+        if "__repr__" not in namespace:
+            def __repr__(self):
+                pairs = []
+                for k in self._attribute_props:
+                    try:
+                        value = getattr(self, k)
+                    except KeyError:
+                        value = None
+                    pairs.append((k, value))
+                content = ', '.join(f"{k}={v!r}" for k, v in pairs)
+                return f"{self.__class__.__name__}({content})"
+            namespace['__repr__'] = __repr__
+        return super().__new__(cls, typename, bases, namespace)
+
+
+class ROAttributeProxy(_ReadAttributes, metaclass=AttributeProxyMeta):
+    attributes: Attributed
+
+    def __init__(self, attributes):
+        self.attributes = attributes
+
+
+AttributeProxy = ROAttributeProxy
 
 
 class AttributeSet(AttributedEntity):
     name: str
-    term_index: DefaultDict[str, List[Attribute]]
 
     def __init__(self, name: str, attributes: Iterable = None, **kwargs):
         super().__init__(attributes, **kwargs)
@@ -604,68 +726,43 @@ class AttributeSet(AttributedEntity):
         return template
 
 
-class AttributeManagedProperty(Generic[T]):
-    __slots__ = ("attribute", )
-    attribute: str
+class AttributeFacet(Generic[T]):
+    facet_type: Type[T]
 
-    def __init__(self, attribute: str):
-        self.attribute = attribute
+    def __init__(self, facet_type: Type[T]):
+        self.facet_type = facet_type
 
-    def __get__(self, inst: AttributeManager, cls: Type) -> T:
-        return inst.get_attribute(self.attribute)
-
-    def __set__(self, inst: AttributeManager, value: T):
-        attrib = self.attribute
-        if inst.has_attribute(attrib):
-            inst.replace_attribute(attrib, value)
-        elif inst._count_attributes() > 0:
-            attribs = [[attrib, value]] + list(inst._iter_attributes())
-            inst._clear_attributes()
-            inst._attributes_from_iterable(attribs)
+    def __get__(self, inst: Attributed, klass: Type[Attributed]) -> T:
+        if inst is not None:
+            return self.facet_type(inst)
         else:
-            inst.add_attribute(attrib, value)
-
-    def __delete__(self, inst: AttributeManager, attr):
-        inst.remove_attribute(self.attribute)
+            return self
 
 
-class AttributeListManagedProperty(Generic[T]):
-    __slots__ = ("attributes", )
-    attributes: List[str]
+class AttributeGroupFacet(Generic[T]):
+    facet_type: Type[T]
 
-    def __init__(self, attributes: List[str]):
-        self.attributes = attributes
+    def __init__(self, facet_type: Type[T]):
+        self.facet_type = facet_type
 
-    def __get__(self, inst: AttributeManager, cls: Type) -> T:
-        key, val = self._find_key_used(inst)
-        if key is None:
-            raise KeyError(self.attributes[0])
-        return val
+    def wraps(self, attributed: Attributed) -> List[T]:
+        attribute_groups = []
+        facet_keys = {a.attribute for a in self.facet_type._attribute_props.values()}
+        for group_id in attributed.group_dict:
+            group = attributed.get_attribute_group(group_id)
+            group_keys = {a.key for a in group}
+            if group_keys & facet_keys:
+                attribute_groups.append(group_id)
 
-    def _find_key_used(self, inst: AttributeManager) -> Optional[Tuple[str, T]]:
-        for attr in self.attributes:
-            try:
-                return attr, inst.get_attribute(attr)
-            except KeyError:
-                continue
-        return None, None
+        facets = []
+        for group_id in attribute_groups:
+            facet = self.facet_type(attributed)
+            facet.group_id = group_id
+            facets.append(facet)
+        return facets
 
-    def __set__(self, inst: AttributeManager, value: T):
-        key, _val = self._find_key_used(inst)
-        if key is None:
-            attrib = self.attributes[0]
-        else:
-            attrib = key
-        if inst.has_attribute(attrib):
-            inst.replace_attribute(attrib, value)
-        elif inst._count_attributes() > 0:
-            attribs = [[attrib, value]] + list(inst._iter_attributes())
-            inst._clear_attributes()
-            inst._attributes_from_iterable(attribs)
-        else:
-            inst.add_attribute(attrib, value)
+    def __get__(self, inst: Attributed, klass) -> Union[List[T], 'AttributeGroupFacet']:
+        if inst is not None:
+            return self.wraps(inst)
+        return self
 
-    def __delete__(self, inst: AttributeManager, attr):
-        key, val = self._find_key_used(inst)
-        if key is not None:
-            inst.remove_attribute(key)
