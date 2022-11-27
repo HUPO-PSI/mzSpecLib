@@ -278,6 +278,9 @@ class SpectrumLibrary:
         self._requires_backend()
         return self.backend.has_attribute(key)
 
+    def summarize_parsing_errors(self):
+        return self.backend.summarize_parsing_errors()
+
 
 
 #### Example using this class
