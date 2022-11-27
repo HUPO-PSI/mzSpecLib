@@ -643,12 +643,16 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 '?' if not peak[2] else ",".join(map(str, peak[2]))
             ]
             if peak[3]:
-                peak_parts.append('\t'.join(map(str, peak[3])))
-            self.handle.write("\t".join(peak_parts)+"\n")
+                peak_parts.append('\t'.join(map(format_aggregation, peak[3])))
+            self.handle.write("\t".join(peak_parts) + "\n")
         self.handle.write("\n")
 
     def close(self):
         self.handle.close()
+
+
+def format_aggregation(value: float) -> str:
+    return "%0.4g" % value
 
 
 def format_spectrum(spectrum: Spectrum, **kwargs) -> str:
