@@ -28,6 +28,10 @@ leader_terms = {
 
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 
+PEAK_OBSERVATION_FREQ = "MS:1003279|observation frequency of peak"
+PEAK_ATTRIB = "MS:1003254|peak attribute"
+
+
 analyte_terms = CaseInsensitiveDict({
     "MW": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
@@ -665,16 +669,21 @@ def organism_handler(key, value, container):
 
 @msp_analyte_attribute_handler.add
 @FunctionAttributeHandler.wraps("Protein")
-def protein_handler(key, value, container):
+def protein_handler(key, value, container: Attributed):
     if value is None:
         return False
     key = "MS:1000885|protein accession"
     match = re.match(r"\(pre=(.),post=(.)\)", value)
+    group_identifier = None
     if match is not None:
         value = value[:match.start()]
-        container.add_attribute("MS:1001112|n-terminal flanking residue", match.group(1))
-        container.add_attribute("MS:1001113|c-terminal flanking residue", match.group(2))
-    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value))
+        group_identifier = container.get_next_group_identifier()
+        container.add_attribute("MS:1001112|n-terminal flanking residue",
+                                match.group(1), group_identifier=group_identifier)
+        container.add_attribute("MS:1001113|c-terminal flanking residue",
+                                match.group(2), group_identifier=group_identifier)
+    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value),
+                            group_identifier=group_identifier)
     return True
 
 
@@ -714,6 +723,16 @@ class UnknownKeyTracker(_UnknownTermTracker):
 
     def add(self, key: str, value: Optional[str] = None):
         self.counts[key] += 1
+
+
+protein_attributes_to_group = [
+    "MS:1003048|number of enzymatic termini",
+    "MS:1001045|cleavage agent name",
+    "MS:1001112|n-terminal flanking residue",
+    "MS:1001113|c-terminal flanking residue",
+    "MS:1003044|number of missed cleavages",
+    "MS:1000885|protein accession",
+]
 
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
@@ -981,6 +1000,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         else:
             spectrum.index = -1
         spectrum.key = spectrum.index + 1
+        has_observation_freq = False
         for i, peak in enumerate(spectrum.peak_list):
             try:
                 parsed_interpretation = self._parse_annotation(peak[2], spectrum=spectrum)
@@ -989,6 +1009,20 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 raise ValueError(
                     f"An error occurred while parsing the peak annotation for peak {i}: {message}") from err
             peak[2] = parsed_interpretation
+            for i, agg in enumerate(peak[3]):
+                if '/' in agg:
+                    agg = _parse_fraction(agg)
+                    peak[3][0] = agg
+                    has_observation_freq = True
+
+        aggregation_metrics = []
+        if has_observation_freq:
+            aggregation_metrics.append((PEAK_ATTRIB, PEAK_OBSERVATION_FREQ))
+
+        if aggregation_metrics:
+            spectrum.add_attribute_group(aggregation_metrics)
+
+
 
         return spectrum
 
@@ -1168,6 +1202,42 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
             analyte.remove_attribute("MS:1001471|peptide modification details")
             analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        self._pack_protein_description(analyte)
+
+    def _pack_protein_description(self, analyte: Analyte):
+        table = {}
+        max_len = 0
+
+        # Collect terms that describe a protein
+        for term in protein_attributes_to_group:
+            if not analyte.has_attribute(term):
+                table[term] = []
+                continue
+            values = analyte.get_attribute(term, raw=True)
+            if not isinstance(values, list):
+                values = [values]
+            max_len = max(max_len, len(values))
+            table[term] = values
+
+        # Ensure that all arrays are the same length
+        for k, v in table.items():
+            if len(v) < max_len:
+                v.extend([None] * (max_len - len(v)))
+
+        # Group together terms and remove the previous entries
+        groups = []
+        for i in range(max_len):
+            group = []
+            for k, v in table.items():
+                if v[i] is None:
+                    continue
+                group.append((k, v[i].value))
+                analyte.remove_attribute(v[i].key, v[i].group_id)
+            groups.append(group)
+
+        # Now add back the groups
+        for group in groups:
+            analyte.add_attribute_group(group)
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
         # keep the two branches separate for the possibility that this is not possible with all
@@ -1188,5 +1258,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         errors = super().summarize_parsing_errors()
         errors['unknown attributes'] = DefaultDict(dict)
         for k, v in self.unknown_attributes.items():
-            errors['unknown atttributes'][k] = v
+            errors['unknown attributes'][k] = v
         return errors
+
+
+def _parse_fraction(x: str) -> float:
+    a, b = x.split("/")
+    return int(a) / int(b)
