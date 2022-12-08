@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mzlib',
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests',)),
     version='0.1.0-alpha',
     description='HUPO-PSI Spectral library format',
     entry_points={
