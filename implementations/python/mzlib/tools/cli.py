@@ -17,6 +17,24 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 logger = logging.getLogger(__name__)
 
 
+def info(type, value, tb):
+    if not sys.stderr.isatty():
+        click.secho("Running interactively, not starting debugger", fg='yellow')
+        sys.__excepthook__(type, value, tb)
+    else:
+        import pdb
+        traceback.print_exception(type, value, tb)
+        pdb.post_mortem(tb)
+
+
+def set_breakpoint_hook():
+    try:
+        import pdb
+        sys.breakpointhook = pdb.set_trace
+    except ImportError:
+        pass
+
+
 def _display_tree(tree, indent: int=0):
     if isinstance(tree, dict):
         if not tree:
@@ -38,6 +56,7 @@ def main():
     '''A collection of utilities for inspecting and manipulating
     spectral libraries.
     '''
+    sys.excepthook = info
     format_string = '[%(asctime)s] %(levelname).1s | %(name)s | %(message)s'
 
     logging.basicConfig(

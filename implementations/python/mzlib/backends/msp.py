@@ -24,7 +24,10 @@ logger.addHandler(logging.NullHandler())
 # TODO: Name: could be Compound or SpectrumName
 leader_terms = {
     "Name": SPECTRUM_NAME,
+    "NAME": SPECTRUM_NAME,
 }
+
+leader_terms_pattern = re.compile("(Name|NAME|Compound|COMPOUND):")
 
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 
@@ -32,10 +35,189 @@ PEAK_OBSERVATION_FREQ = "MS:1003279|observation frequency of peak"
 PEAK_ATTRIB = "MS:1003254|peak attribute"
 
 
+class AttributeHandler:
+    keys: Collection[str]
+
+    def __init__(self, keys: Collection[str]):
+        if isinstance(keys, str):
+            keys = (keys, )
+        self.keys = keys
+
+    def __contains__(self, key):
+        return key in self.keys
+
+    def add_value(self, key: str, value: Any, container: Attributed):
+        container.add_attribute(key, value)
+
+    def add_group(self, keys: List[str], values: List[Any], container: Attributed):
+        group_id = container.get_next_group_identifier()
+        for k, v in zip(keys, values):
+            container.add_attribute(k, v, group_id)
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        raise NotImplementedError()
+
+    def __call__(self, key: str, value: Any, container: Attributed) -> bool:
+        return self.handle(key, value, container)
+
+    def chain(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
+        return AttributeHandlerChain([self, handler])
+
+    def __and__(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
+        return self.chain(handler)
+
+
+class MappingAttributeHandler(AttributeHandler):
+    keys: Dict[str, Any]
+
+    def __init__(self, keys: Dict[str, Any]):
+        self.keys = keys
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        trans_key = self.keys[key]
+        if value is None:
+            if isinstance(trans_key, list):
+                k, v = trans_key
+                v = try_cast(v)
+                self.add_value(k, v, container)
+            else:
+                return False
+        elif isinstance(trans_key, str):
+            self.add_value(trans_key, value, container)
+        elif isinstance(trans_key, dict):
+            if value in trans_key:
+                # If the mapping is a plain string, add it
+                if isinstance(trans_key[value], str):
+                    key, value = trans_key[value].split("=")
+                    self.add_value(key, try_cast(value), container)
+                # Or if it is a list, then there are multiple terms to add within a group
+                elif isinstance(trans_key[value], list):
+                    if len(trans_key[value]) == 1:
+                        for item in trans_key[value]:
+                            self.add_value(item[0], try_cast(item[1]), container)
+                    else:
+                        k, v = zip(*trans_key[value])
+                        self.add_group(k, v, container)
+            else:
+                return False
+        elif isinstance(trans_key, AttributeHandler):
+            return trans_key(key, value, container)
+        return True
+
+
+class AttributeHandlerChain:
+    chain: List[AttributeHandler]
+
+    def __init__(self, chain: List[AttributeHandler]):
+        self.chain = chain
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        result = True
+        for handler in self.chain:
+            result |= handler.handle(key, value, container)
+            if not result:
+                return result
+        return result
+
+    def __contains__(self, key):
+        for handler in self.chain:
+            if key in handler:
+                return True
+        return False
+
+    def __iter__(self):
+        return iter(self.chain)
+
+    def __call__(self, key: str, value: Any, container: Attributed) -> bool:
+        return self.handle(key, value, container)
+
+    def chain(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
+        return self.__class__(self.chain + [handler])
+
+    def add(self, handler: AttributeHandler):
+        self.chain.append(handler)
+        return handler
+
+
+class RegexAttributeHandler(AttributeHandler):
+    pattern: re.Pattern
+    variable_attributes: List[str]
+    constant_attributes: Optional[List[Tuple[str, Any]]]
+
+    def __init__(self, keys: Collection[str], pattern: re.Pattern, variable_attributes, constant_attributes=None):
+        super().__init__(keys)
+        self.pattern = pattern
+        self.variable_attributes = variable_attributes
+        self.constant_attributes = constant_attributes
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        match = self.pattern.match(value)
+        if match:
+            if self.constant_attributes:
+                ks, vs = map(list, zip(*self.constant_attributes))
+                ks.extend(self.variable_attributes)
+                vs.extend(match.groups())
+                self.add_group(ks, vs, container)
+            else:
+                self.add_value(self.variable_attributes[0], match.group(1), container)
+            return True
+        return False
+
+
+class FunctionAttributeHandler(AttributeHandler):
+    func: Callable[[str, Any, Attributed], bool]
+
+    def __init__(self, keys: Collection[str], func: Callable[[str, Any, Attributed], bool]):
+        super().__init__(keys)
+        self.func = func
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        return self.func(key, value, container)
+
+    @classmethod
+    def wraps(cls, *keys):
+        def wrapper(func):
+            return cls(keys, func)
+        return wrapper
+
+
+class DispatchingAttributeHandler(AttributeHandlerChain):
+    mapping: Dict[str, AttributeHandler]
+
+    def __init__(self, chain: List[AttributeHandler] = None):
+        if not chain:
+            chain = []
+        super().__init__(chain)
+        self.mapping = CaseInsensitiveDict()
+        for handler in self:
+            for key in handler.keys:
+                self.mapping[key] = handler
+
+    def handle(self, key: str, value: Any, container: Attributed) -> bool:
+        handler = self.mapping[key]
+        return handler(key, value, container)
+
+    def __contains__(self, key):
+        return key in self.mapping
+
+    def add(self, handler: AttributeHandler):
+        super().add(handler)
+        for key in handler.keys:
+            self.mapping[key] = handler
+        return handler
+
+
+
 analyte_terms = CaseInsensitiveDict({
     "MW": "MS:1000224|molecular mass",
+    "total exact mass": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
     "exact_mass": "MS:1000224|molecular mass",
+    "molecular formula": "MS:1000866|molecular formula",
+    "Formula": "MS:1000866|molecular formula",
+    "formula": "MS:1000866|molecular formula",
+    "SMILES": "MS:1000868|SMILES formula",
+    "InChIKey": "MS:1002894|InChIKey",
     "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
         "Mods": "MS:1001471|peptide modification details",
@@ -81,6 +263,7 @@ other_terms = CaseInsensitiveDict({
     "Parent": "MS:1000744|selected ion m/z",
     "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
     "PrecursorMZ": "MS:1000744|selected ion m/z",
+    "PRECURSORMZ": "MS:1000744|selected ion m/z",
     "precursor": "MS:1000744|selected ion m/z",
     "precursor_mass": "MS:1000744|selected ion m/z",
     "precursormass": "MS:1000744|selected ion m/z",
@@ -102,10 +285,27 @@ other_terms = CaseInsensitiveDict({
     "Purity": "MS:1009013|isolation window precursor purity",
     "BasePeak": "MS:1000505|base peak intensity",
     "Num peaks": "MS:1003059|number of peaks",
+    "Num Peaks": "MS:1003059|number of peaks",
     "num_peaks": "MS:1003059|number of peaks",
     "numpeaks": "MS:1003059|number of peaks",
     "Run": "MS:1003203|constituent spectrum file",
 })
+
+
+@FunctionAttributeHandler.wraps("num_unassigned_peaks")
+def unassigned_peaks_handler(key: str, value: str, container: Attributed) -> bool:
+    is_top_20 = False
+    if isinstance(value, str):
+        if "/" in value:
+            if "/20" in value:
+                is_top_20 = True
+            value = value.split("/")[0]
+        value = int(value)
+    if is_top_20:
+        container.add_attribute("MS:1003290|number of unassigned peaks among top 20 peaks", value)
+    else:
+        container.add_attribute("MS:1003288|number of unassigned peaks", value)
+    return True
 
 
 interpretation_terms = CaseInsensitiveDict({
@@ -113,8 +313,8 @@ interpretation_terms = CaseInsensitiveDict({
     "Unassign_all": "MS:1003079|total unassigned intensity fraction",
 
     "top_20_num_unassigned_peaks_20ppm": "MS:1003290|number of unassigned peaks among top 20 peaks",
-    "num_unassigned_peaks_20ppm": "MS:1003288|number of unassigned peaks",
-    "num_unassigned_peaks": "MS:1003288|number of unassigned peaks",
+    "num_unassigned_peaks_20ppm": unassigned_peaks_handler,
+    "num_unassigned_peaks": unassigned_peaks_handler,
 
     "max_unassigned_ab_20ppm": "MS:1003289|intensity of highest unassigned peak",
     "max_unassigned_ab": "MS:1003289|intensity of highest unassigned peak",
@@ -175,7 +375,7 @@ annotation_pattern = re.compile(r"""^
    (?:_(?P<external_ion>[^\s,/]+))|
    (?P<unannotated>\?)
 )
-(?P<neutral_losses>((?:[+-]\d*[A-Z][A-Za-z0-9]*)|(?:[+-]iTRAQ|TMT)|(?:[+-]\d+))+)?
+(?P<neutral_losses>((?:[+-]\d*[A-Z][A-Za-z0-9]*)|(?:[+-]iTRAQ|TMT)|(?:[+-]\d+?(?!i)))+)?
 (?:(?:\[M(?P<adducts>(:?[+-]\d*[A-Z][A-Za-z0-9]*)+)\])?
 (?:\^(?P<charge>[+-]?\d+))?
 (?:(?P<isotope>[+-]?\d*)i)?)+
@@ -293,176 +493,6 @@ class ModificationParser:
         return mods
 
 
-class AttributeHandler:
-    keys: Collection[str]
-
-    def __init__(self, keys: Collection[str]):
-        if isinstance(keys, str):
-            keys = (keys, )
-        self.keys = keys
-
-    def __contains__(self, key):
-        return key in self.keys
-
-    def add_value(self, key: str, value: Any, container: Attributed):
-        container.add_attribute(key, value)
-
-    def add_group(self, keys: List[str], values: List[Any], container: Attributed):
-        group_id = container.get_next_group_identifier()
-        for k, v in zip(keys, values):
-            container.add_attribute(k, v, group_id)
-
-    def handle(self, key: str, value: Any, container: Attributed) -> bool:
-        raise NotImplementedError()
-
-    def __call__(self, key: str, value: Any, container: Attributed) -> bool:
-        return self.handle(key, value, container)
-
-    def chain(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
-        return AttributeHandlerChain([self, handler])
-
-    def __and__(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
-        return self.chain(handler)
-
-
-class MappingAttributeHandler(AttributeHandler):
-    keys: Dict[str, Any]
-
-    def __init__(self, keys: Dict[str, Any]):
-        self.keys = keys
-
-    def handle(self, key: str, value: Any, container: Attributed) -> bool:
-        trans_key = self.keys[key]
-        if value is None:
-            if isinstance(trans_key, list):
-                k, v = trans_key
-                v = try_cast(v)
-                self.add_value(k, v, container)
-            else:
-                return False
-        elif isinstance(trans_key, str):
-            self.add_value(trans_key, value, container)
-        elif isinstance(trans_key, dict):
-            if value in trans_key:
-                # If the mapping is a plain string, add it
-                if isinstance(trans_key[value], str):
-                    key, value = trans_key[value].split("=")
-                    self.add_value(key, try_cast(value), container)
-                # Or if it is a list, then there are multiple terms to add within a group
-                elif isinstance(trans_key[value], list):
-                    if len(trans_key[value]) == 1:
-                        for item in trans_key[value]:
-                            self.add_value(item[0], try_cast(item[1]), container)
-                    else:
-                        k, v = zip(*trans_key[value])
-                        self.add_group(k, v, container)
-            else:
-                return False
-        return True
-
-
-class AttributeHandlerChain:
-    chain: List[AttributeHandler]
-
-    def __init__(self, chain: List[AttributeHandler]):
-        self.chain = chain
-
-    def handle(self, key: str, value: Any, container: Attributed) -> bool:
-        result = True
-        for handler in self.chain:
-            result |= handler.handle(key, value, container)
-            if not result:
-                return result
-        return result
-
-    def __contains__(self, key):
-        for handler in self.chain:
-            if key in handler:
-                return True
-        return False
-
-    def __iter__(self):
-        return iter(self.chain)
-
-    def __call__(self, key: str, value: Any, container: Attributed) -> bool:
-        return self.handle(key, value, container)
-
-    def chain(self, handler: 'AttributeHandler') -> 'AttributeHandlerChain':
-        return self.__class__(self.chain + [handler])
-
-    def add(self, handler: AttributeHandler):
-        self.chain.append(handler)
-        return handler
-
-
-class RegexAttributeHandler(AttributeHandler):
-    pattern: re.Pattern
-    variable_attributes: List[str]
-    constant_attributes: Optional[List[Tuple[str, Any]]]
-
-    def __init__(self, keys: Collection[str], pattern: re.Pattern, variable_attributes, constant_attributes=None):
-        super().__init__(keys)
-        self.pattern = pattern
-        self.variable_attributes = variable_attributes
-        self.constant_attributes = constant_attributes
-
-    def handle(self, key: str, value: Any, container: Attributed) -> bool:
-        match = self.pattern.match(value)
-        if match:
-            if self.constant_attributes:
-                ks, vs = map(list, zip(*self.constant_attributes))
-                ks.extend(self.variable_attributes)
-                vs.extend(match.groups())
-                self.add_group(ks, vs, container)
-            else:
-                self.add_value(self.variable_attributes[0], match.group(1), container)
-            return True
-        return False
-
-
-class FunctionAttributeHandler(AttributeHandler):
-    func: Callable[[str, Any, Attributed], bool]
-
-    def __init__(self, keys: Collection[str], func: Callable[[str, Any, Attributed], bool]):
-        super().__init__(keys)
-        self.func = func
-
-    def handle(self, key: str, value: Any, container: Attributed) -> bool:
-        return self.func(key, value, container)
-
-    @classmethod
-    def wraps(cls, *keys):
-        def wrapper(func):
-            return cls(keys, func)
-        return wrapper
-
-
-class DispatchingAttributeHandler(AttributeHandlerChain):
-    mapping: Dict[str, AttributeHandler]
-
-    def __init__(self, chain: List[AttributeHandler]=None):
-        if not chain:
-            chain = []
-        super().__init__(chain)
-        self.mapping = CaseInsensitiveDict()
-        for handler in self:
-            for key in handler.keys:
-                self.mapping[key] = handler
-
-    def handle(self, key: str, value: Any, container: Attributed) -> bool:
-        handler = self.mapping[key]
-        return handler(key, value, container)
-
-    def __contains__(self, key):
-        return key in self.mapping
-
-    def add(self, handler: AttributeHandler):
-        super().add(handler)
-        for key in handler.keys:
-            self.mapping[key] = handler
-        return handler
-
-
 def null_handler(key: str, value: str, container: Attributed) -> bool:
     return True
 
@@ -500,7 +530,7 @@ def dissociation_method_handler(key: str, value: str, container: Attributed) -> 
 
 
 @msp_spectrum_attribute_handler.add
-@FunctionAttributeHandler.wraps("Collision_energy", "CE", "colenergy", "collisionenergy")
+@FunctionAttributeHandler.wraps("Collision_energy", "CE", "colenergy", "collisionenergy", "ionization energy")
 def collision_energy_handler(key: str, value: str, container: Attributed) -> bool:
     if isinstance(value, str):
         match = re.match(r"([\d\.]+)", value)
@@ -558,6 +588,21 @@ def rt_handler(key, value, container) -> bool:
             return True
     return False
 
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("ionization mode", "IONMODE")
+def ionization_mode_handler(key: str, value: str, container: Attributed):
+    if value is None:
+        return False
+    value = value.lower()
+    if value == "positive":
+        container.add_attribute("MS:1000465|scan polarity", "MS:1000130|positive scan")
+        return True
+    elif value == "negative":
+        container.add_attribute("MS:1000465|scan polarity", "MS:1000129|negative scan")
+        return True
+    else:
+        return False
 
 @msp_spectrum_attribute_handler.add
 @FunctionAttributeHandler.wraps("ms2IsolationWidth")
@@ -751,7 +796,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
     def guess_from_header(cls, filename: str) -> bool:
         with open_stream(filename, 'r') as stream:
             first_line = stream.readline()
-            if re.match("Name: ", first_line):
+            if leader_terms_pattern.match(first_line):
                 return True
         return False
 
@@ -779,7 +824,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             attributes.add_attribute(LIBRARY_NAME_TERM, stream.name)
         self.attributes.clear()
         self.attributes._from_iterable(attributes)
-        if re.match("Name: ", first_line):
+        if leader_terms_pattern.match(first_line):
             return True, 0
         return False, 0
 
@@ -842,7 +887,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             line = line.rstrip()
             # TODO: Name: could be Compound or SpectrumName
             if state == 'header':
-                if re.match('Name: ', line):
+                if leader_terms_pattern.match(line):
                     state = 'body'
                     spectrum_file_offset = line_beginning_file_offset
                 else:
@@ -850,7 +895,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if state == 'body':
                 if len(line) == 0:
                     continue
-                if re.match('Name: ', line):
+                if leader_terms_pattern.match(line):
                     if len(spectrum_buffer) > 0:
                         self.index.add(
                             number=n_spectra + start_index,
@@ -865,7 +910,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             logger.info(f"... Indexed  {file_offset} bytes, {n_spectra} spectra read")
 
                     spectrum_file_offset = line_beginning_file_offset
-                    spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
+                    spectrum_name = re.match(r'(?:Name|NAME|Compound|COMPOUND):\s+(.+)', line).group(1)
 
                 spectrum_buffer.append(line)
         logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
@@ -903,11 +948,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if state == 'body':
                 if len(line) == 0:
                     continue
-                if re.match(r'Name: ', line):
+                if leader_terms_pattern.match(line):
                     if len(spectrum_buffer) > 0:
                         return spectrum_buffer
                     spectrum_file_offset = line_beginning_file_offset
-                    spectrum_name = re.match(r'Name:\s+(.+)', line).group(1)
+                    spectrum_name = re.match(r'(?:Name|NAME|Compound|COMPOUND):\s+(.+)', line).group(1)
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
@@ -939,7 +984,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     key, value = re.split(r"=\s*", line, 1)
                     attributes[key] = value
                 elif line.count("\t") > 0:
-                    warnings.warn("Line {line!r} looks like a peak annotation?")
+                    warnings.warn(f"Line {line!r} looks like a peak annotation?")
                     in_header = False
                 else:
                     key = line
@@ -948,11 +993,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
 
                 #### If the key is "Num peaks" then we're done with the header and peak list follows
-                if key == "Num peaks":
+                if key == "Num peaks" or key == "Num Peaks":
                     in_header = False
 
                 #### The "Comment" key requires special parsing
-                if key == "Comment":
+                if key == "Comment" or key == "Comments":
 
                     #### Remove it from attributes
                     del attributes[key]
@@ -962,36 +1007,51 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             else:
                 #### Split into the expected three values
                 values = re.split(r'\s+', line, maxsplit=2)
-                interpretations = ""
-                aggregation = ""
-                if len(values) == 1:
-                    mz = values
-                    intensity = "1"
-                if len(values) == 2:
-                    mz, intensity = values
-                elif len(values) == 3:
-                    mz, intensity, interpretations = values
-                elif len(values) > 3:
-                    mz, intensity, interpretations = values[0:2]
-                else:
-                    mz = "1"
-                    intensity = "1"
+                # Sometimes MSP files have multiple peaks on the same line, delimited by ';',
+                # so we must potentially parse more than one peak per line.
+                if values[1].endswith(";"):
+                    buffered_peaks = []
+                    buffered_peaks.append(values[:2])
+                    buffered_peaks[0][1] = buffered_peaks[0][1].strip(";")
+                    rest = values[0]
+                    for block in re.split(r";\s?", rest):
+                        if block:
+                            buffered_peaks.append(re.split(r'\s+', block, maxsplit=2))
 
-                interpretations = interpretations.strip('"')
-                if interpretations.startswith("?"):
-                    parts = re.split(r"\s+", interpretations)
-                    if len(parts) > 1:
-                        # Some msp files have a concept for ?i, but this requires a definition
-                        interpretations = "?"
-                        aggregation = parts[1:]
                 else:
-                    if " " in interpretations:
+                    buffered_peaks = [values]
+
+                for values in buffered_peaks:
+                    interpretations = ""
+                    aggregation = ""
+                    if len(values) == 1:
+                        mz = values
+                        intensity = "1"
+                    if len(values) == 2:
+                        mz, intensity = values
+                    elif len(values) == 3:
+                        mz, intensity, interpretations = values
+                    elif len(values) > 3:
+                        mz, intensity, interpretations = values[0:2]
+                    else:
+                        mz = "1"
+                        intensity = "1"
+
+                    interpretations = interpretations.strip('"')
+                    if interpretations.startswith("?"):
                         parts = re.split(r"\s+", interpretations)
-                        interpretations = parts[0]
-                        aggregation = parts[1:]
+                        if len(parts) > 1:
+                            # Some msp files have a concept for ?i, but this requires a definition
+                            interpretations = "?"
+                            aggregation = parts[1:]
+                    else:
+                        if " " in interpretations:
+                            parts = re.split(r"\s+", interpretations)
+                            interpretations = parts[0]
+                            aggregation = parts[1:]
 
-                #### Add to the peak list
-                peak_list.append([float(mz), float(intensity), interpretations, aggregation])
+                    #### Add to the peak list
+                    peak_list.append([float(mz), float(intensity), interpretations, aggregation])
 
         #### Now convert the format attributes to standard ones
         spectrum = self._make_spectrum(peak_list, attributes)
@@ -1000,7 +1060,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         else:
             spectrum.index = -1
         spectrum.key = spectrum.index + 1
-        has_observation_freq = False
+        has_observation_freq = (False, 0)
         for i, peak in enumerate(spectrum.peak_list):
             try:
                 parsed_interpretation = self._parse_annotation(peak[2], spectrum=spectrum)
@@ -1011,18 +1071,21 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             peak[2] = parsed_interpretation
             for i, agg in enumerate(peak[3]):
                 if '/' in agg:
-                    agg = _parse_fraction(agg)
-                    peak[3][0] = agg
-                    has_observation_freq = True
+                    try:
+                        agg = _parse_fraction(agg)
+                        peak[3][i] = agg
+                        has_observation_freq = (True, i)
+                    except ValueError:
+                        pass
+                    except Exception as err:
+                        raise ValueError(f"An error occurred while parsing the peak aggregation for peak {i}: {str(err)}") from err
 
         aggregation_metrics = []
-        if has_observation_freq:
+        if has_observation_freq[0]:
             aggregation_metrics.append((PEAK_ATTRIB, PEAK_OBSERVATION_FREQ))
 
         if aggregation_metrics:
             spectrum.add_attribute_group(aggregation_metrics)
-
-
 
         return spectrum
 
@@ -1050,7 +1113,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             #### If there is an = then split on the first one and store key and value
             if item.count("=") > 0:
                 comment_key, comment_value = item.split("=", 1)
-                attributes[comment_key] = try_cast(comment_value)
+                attributes[comment_key.strip('"')] = try_cast(comment_value)
 
             #### Otherwise just store the key with a null value
             else:
@@ -1083,9 +1146,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if term in attributes:
                 spectrum.add_attribute(
                     leader_terms[term], try_cast(attributes[term]))
-            else:
-                spectrum.add_attribute(
-                    "ERROR", f"Required term {leader_terms[term]} is missing")
+                break
+        else:
+            spectrum.add_attribute(
+                "ERROR", f"Required term {leader_terms[term]} is missing")
 
         #### Translate the rest of the known attributes and collect unknown ones
         unknown_terms = []
@@ -1202,6 +1266,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
             analyte.remove_attribute("MS:1001471|peptide modification details")
             analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        mw_terms = analyte.get_attribute("MS:1000224|molecular mass", raw=True)
+        if isinstance(mw_terms, list):
+            # Sometimes there are multiple entries that map to molecular mass, and one is the nominal
+            # mass. Prefer listing the most precise mass first.
+            mw_terms.sort(key=lambda x: len(str(x.value)), reverse=True)
+            analyte.remove_attribute(mw_terms[0].key)
+            for mw_term in mw_terms:
+                analyte.add_attribute(mw_term.key, mw_term.value, mw_term.group_id)
         self._pack_protein_description(analyte)
 
     def _pack_protein_description(self, analyte: Analyte):
