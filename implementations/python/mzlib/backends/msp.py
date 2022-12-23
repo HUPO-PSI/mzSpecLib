@@ -83,7 +83,7 @@ class MappingAttributeHandler(AttributeHandler):
             else:
                 return False
         elif isinstance(trans_key, str):
-            self.add_value(trans_key, value, container)
+            self.add_value(trans_key, try_cast(value), container)
         elif isinstance(trans_key, dict):
             if value in trans_key:
                 # If the mapping is a plain string, add it
@@ -97,7 +97,7 @@ class MappingAttributeHandler(AttributeHandler):
                             self.add_value(item[0], try_cast(item[1]), container)
                     else:
                         k, v = zip(*trans_key[value])
-                        self.add_group(k, v, container)
+                        self.add_group(k, map(try_cast, v), container)
             else:
                 return False
         elif isinstance(trans_key, AttributeHandler):
@@ -213,6 +213,7 @@ analyte_terms = CaseInsensitiveDict({
     "total exact mass": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
     "exact_mass": "MS:1000224|molecular mass",
+    "exact mass": "MS:1000224|molecular mass",
     "molecular formula": "MS:1000866|molecular formula",
     "Formula": "MS:1000866|molecular formula",
     "formula": "MS:1000866|molecular formula",
@@ -1068,6 +1069,20 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 message = str(err)
                 raise ValueError(
                     f"An error occurred while parsing the peak annotation for peak {i}: {message}") from err
+
+            if parsed_interpretation and isinstance(parsed_interpretation[0], annotation.InvalidAnnotation) and peak[3]:
+                logger.debug("Failed to parse interpretation string %r with assumed %d aggregation fields, trying to parse the combined string",
+                             peak[2], len(peak[3]))
+
+                peak[2] = " ".join([peak[2]] + peak[3])
+                peak[3] = []
+                try:
+                    parsed_interpretation = self._parse_annotation(peak[2], spectrum=spectrum)
+                except ValueError as err:
+                    message = str(err)
+                    raise ValueError(
+                        f"An error occurred while parsing the peak annotation for peak {i}: {message}") from err
+
             peak[2] = parsed_interpretation
             for i, agg in enumerate(peak[3]):
                 if '/' in agg:
@@ -1113,7 +1128,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             #### If there is an = then split on the first one and store key and value
             if item.count("=") > 0:
                 comment_key, comment_value = item.split("=", 1)
-                attributes[comment_key.strip('"')] = try_cast(comment_value)
+                cleaned_key = comment_key.strip('"')
+                if len(cleaned_key) != len(comment_key):
+                    comment_value = comment_value.strip('"')
+                attributes[cleaned_key] = try_cast(comment_value)
 
             #### Otherwise just store the key with a null value
             else:
@@ -1251,6 +1269,26 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             spectrum.add_interpretation(interpretation)
         return spectrum
 
+    def _deduplicate_attr(self, container: Attributed, attribute_name: str) -> int:
+        try:
+            attrs = container.get_attribute(attribute_name, raw=True)
+        except KeyError:
+            return 0
+        if isinstance(attrs, list):
+            # Sometimes there are multiple entries that map to molecular mass, and one is the nominal
+            # mass. Prefer listing the most precise mass first. Apply the same logic to all attributes.
+            attrs.sort(key=lambda x: len(str(x.value)), reverse=True)
+            container.remove_attribute(attrs[0].key)
+            seen_values = set()
+            for attr in attrs:
+                key = (attr.value, attr.group_id)
+                if key in seen_values:
+                    continue
+                seen_values.add(key)
+                container.add_attribute(attr.key, attr.value, attr.group_id)
+            return len(attrs) - len(seen_values)
+        return 0
+
     def _complete_analyte(self, analyte: Analyte):
         if analyte.has_attribute("MS:1000888|stripped peptide sequence"):
             peptide = proforma.ProForma.parse(analyte.get_attribute("MS:1000888|stripped peptide sequence"))
@@ -1266,15 +1304,11 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
             analyte.remove_attribute("MS:1001471|peptide modification details")
             analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
-        mw_terms = analyte.get_attribute("MS:1000224|molecular mass", raw=True)
-        if isinstance(mw_terms, list):
-            # Sometimes there are multiple entries that map to molecular mass, and one is the nominal
-            # mass. Prefer listing the most precise mass first.
-            mw_terms.sort(key=lambda x: len(str(x.value)), reverse=True)
-            analyte.remove_attribute(mw_terms[0].key)
-            for mw_term in mw_terms:
-                analyte.add_attribute(mw_term.key, mw_term.value, mw_term.group_id)
+
         self._pack_protein_description(analyte)
+
+        self._deduplicate_attr(analyte, "MS:1000224|molecular mass")
+        self._deduplicate_attr(analyte, "MS:1000866|molecular formula")
 
     def _pack_protein_description(self, analyte: Analyte):
         table = {}

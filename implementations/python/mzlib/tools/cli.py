@@ -56,7 +56,7 @@ def main():
     '''A collection of utilities for inspecting and manipulating
     spectral libraries.
     '''
-    sys.excepthook = info
+
     format_string = '[%(asctime)s] %(levelname).1s | %(name)s | %(message)s'
 
     logging.basicConfig(

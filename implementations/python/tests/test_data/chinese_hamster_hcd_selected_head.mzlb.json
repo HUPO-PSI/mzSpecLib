@@ -26,7 +26,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1710.9076"
+              "value": 1710.9076
             },
             {
               "accession": "MS:1000888",
@@ -216,7 +216,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "87"
+          "value": 87
         },
         {
           "accession": "MS:1003275",
@@ -533,7 +533,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1710.9076"
+              "value": 1710.9076
             },
             {
               "accession": "MS:1000888",
@@ -723,7 +723,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "204"
+          "value": 204
         },
         {
           "accession": "MS:1003275",
@@ -1391,7 +1391,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "2414.3344"
+              "value": 2414.3344
             },
             {
               "accession": "MS:1000888",
@@ -1581,7 +1581,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "122"
+          "value": 122
         },
         {
           "accession": "MS:1003275",
@@ -2003,7 +2003,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1463.8086"
+              "value": 1463.8086
             },
             {
               "accession": "MS:1000888",
@@ -2193,7 +2193,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "111"
+          "value": 111
         },
         {
           "accession": "MS:1003275",
@@ -2582,7 +2582,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1464.8157"
+              "value": 1464.8157
             },
             {
               "accession": "MS:1000888",
@@ -2772,7 +2772,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "161"
+          "value": 161
         },
         {
           "accession": "MS:1003275",
@@ -3311,7 +3311,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1661.7668"
+              "value": 1661.7668
             },
             {
               "accession": "MS:1000888",
@@ -3501,7 +3501,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "68"
+          "value": 68
         },
         {
           "accession": "MS:1003275",
@@ -3761,7 +3761,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1661.7668"
+              "value": 1661.7668
             },
             {
               "accession": "MS:1000888",
@@ -3951,7 +3951,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "402"
+          "value": 402
         },
         {
           "accession": "MS:1003275",
