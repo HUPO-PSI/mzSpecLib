@@ -56,7 +56,10 @@ class VocabularyResolverMixin(object):
         return self.controlled_vocabularies[name]
 
     def find_term_for(self, curie: str) -> Entity:
-        name, _id = curie.split(":")
+        try:
+            name, _id = curie.split(":")
+        except ValueError as err:
+            raise KeyError(curie) from err
         cv = self.load_cv(name)
         term = cv[curie]
         return term

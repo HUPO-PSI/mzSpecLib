@@ -564,11 +564,12 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     def _write_attributes(self, attributes: Attributed):
         for attribute in attributes:
             value = attribute.value
-            try:
-                term = self.find_term_for(attribute.key.split("|")[0])
-                value = term.value_type.format(value)
-            except KeyError:
-                pass
+            if ":" in attribute.key:
+                try:
+                    term = self.find_term_for(attribute.key.split("|")[0])
+                    value = term.value_type.format(value)
+                except (KeyError, ValueError):
+                    pass
             if attribute.group_id is None:
                 self.handle.write(f"{attribute.key}={value}\n")
             else:
@@ -651,8 +652,11 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.close()
 
 
-def format_aggregation(value: float) -> str:
-    return "%0.4g" % value
+def format_aggregation(value: Union[float, str]) -> str:
+    if isinstance(value, float):
+        return "%0.4g" % value
+    else:
+        return value
 
 
 def format_spectrum(spectrum: Spectrum, **kwargs) -> str:

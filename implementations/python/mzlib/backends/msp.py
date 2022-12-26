@@ -2,6 +2,7 @@ import re
 import io
 import os
 import logging
+import itertools
 
 from typing import Any, Callable, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable, DefaultDict
 import warnings
@@ -25,7 +26,21 @@ logger.addHandler(logging.NullHandler())
 leader_terms = {
     "Name": SPECTRUM_NAME,
     "NAME": SPECTRUM_NAME,
+    "Compound": SPECTRUM_NAME,
+    "COMPOUND": SPECTRUM_NAME,
 }
+
+
+def _generate_numpeaks_keys():
+    w1 = "num"
+    w2 = "peaks"
+    seps = (" ", "")
+    cases = (str.lower, str.title, str.upper)
+    w1_cases = [c(w1) for c in cases]
+    w2_cases = [c(w2) for c in cases]
+    return {(w1c + sep + w2c) for (sep, w1c, w2c) in itertools.product(seps, w1_cases, w2_cases)}
+
+NUM_PEAKS_KEYS = _generate_numpeaks_keys()
 
 leader_terms_pattern = re.compile("(Name|NAME|Compound|COMPOUND):")
 
@@ -940,8 +955,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         file_offset = 0
         line_beginning_file_offset = 0
-        spectrum_file_offset = 0
-        spectrum_name = ''
         for line in infile:
             line_beginning_file_offset = file_offset
             file_offset += len(line)
@@ -952,8 +965,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if leader_terms_pattern.match(line):
                     if len(spectrum_buffer) > 0:
                         return spectrum_buffer
-                    spectrum_file_offset = line_beginning_file_offset
-                    spectrum_name = re.match(r'(?:Name|NAME|Compound|COMPOUND):\s+(.+)', line).group(1)
                 spectrum_buffer.append(line)
         return spectrum_buffer
 
@@ -994,7 +1005,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
 
                 #### If the key is "Num peaks" then we're done with the header and peak list follows
-                if key == "Num peaks" or key == "Num Peaks":
+                if key in NUM_PEAKS_KEYS:
                     in_header = False
 
                 #### The "Comment" key requires special parsing
@@ -1085,6 +1096,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
             peak[2] = parsed_interpretation
             for i, agg in enumerate(peak[3]):
+                # NOTE: Making the potentially unsafe assumption that the only fractional
+                # aggregation statistic is the peak frequency. At this time, we haven't formalized
+                # any other aggregation metric that I also have an MSP example for.
                 if '/' in agg:
                     try:
                         agg = _parse_fraction(agg)
