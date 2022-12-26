@@ -34,7 +34,7 @@ def open_url(url: str, buffer_size: int=2 ** 20):
     return fh
 
 
-def test_url(url: str, n_spectra_to_read: int=100, track_unknown_attribute_values: bool=True):
+def check_url(url: str, n_spectra_to_read: int=100, track_unknown_attribute_values: bool=True):
     buffer = open_url(url)
     backend = msp.MSPSpectralLibrary(buffer, read_metadata=False, create_index=False)
 
