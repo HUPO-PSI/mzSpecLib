@@ -54,7 +54,7 @@ def check_url(url: str, n_spectra_to_read: int=100, track_unknown_attribute_valu
 def main():
     for url in urls:
         print(f"Testing URL {url}")
-        test_url(url)
+        check_url(url)
 
 
 if __name__ == "__main__":
