@@ -2,7 +2,7 @@ import os
 import unittest
 import json
 
-from mzlib.annotation import parse_annotation, MassError, IonAnnotationBase, Unannotated
+from mzlib.annotation import parse_annotation, MassError, IonAnnotationBase, Unannotated, SMILESAnnotation, ExternalIonAnnotation
 
 from .common import datafile
 
@@ -123,6 +123,24 @@ class TestAnnotationParser(unittest.TestCase):
         assert parsed.confidence == 0.05
         assert parsed.is_auxiliary
         assert parsed == base
+
+    def test_parse_unannotated_labeled(self):
+        base = "?17"
+        parsed = parse_annotation(base)[0]
+        assert isinstance(parsed, Unannotated)
+        assert parsed.unannotated_label == '17'
+
+    def test_parse_smiles(self):
+        base = "s{CCC(=O)O}"
+        parsed = parse_annotation(base)[0]
+        assert isinstance(parsed, SMILESAnnotation)
+        assert parsed.smiles == "CCC(=O)O"
+
+    def test_parse_external(self):
+        base = "_{foobar}"
+        parsed = parse_annotation(base)[0]
+        assert isinstance(parsed, ExternalIonAnnotation)
+        assert parsed.label == 'foorbar'
 
     @unittest.skipIf(schema is None or jsonschema is None, skip_reason)
     def test_jsonschema_compliance(self):
