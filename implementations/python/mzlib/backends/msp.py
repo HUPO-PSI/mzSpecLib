@@ -42,7 +42,8 @@ def _generate_numpeaks_keys():
 
 NUM_PEAKS_KEYS = _generate_numpeaks_keys()
 
-leader_terms_pattern = re.compile("(Name|NAME|Compound|COMPOUND):")
+leader_terms_pattern = re.compile(r"(Name|NAME|Compound|COMPOUND)\s*:")
+leader_terms_line_pattern = re.compile(r'(?:Name|NAME|Compound|COMPOUND)\s*:\s+(.+)')
 
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 
@@ -305,6 +306,7 @@ other_terms = CaseInsensitiveDict({
     "num_peaks": "MS:1003059|number of peaks",
     "numpeaks": "MS:1003059|number of peaks",
     "Run": "MS:1003203|constituent spectrum file",
+    "Splash": "MS:1002599|splash key",
 })
 
 
@@ -522,6 +524,39 @@ msp_spectrum_attribute_handler.add(FunctionAttributeHandler("Peptype", null_hand
 
 
 @msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("Spectrum_type")
+def ms_level_handler(key: str, value: str, container: Attributed) -> bool:
+    attr_name = "MS:1000511|ms level"
+    if value is None:
+        return False
+    if isinstance(value, str):
+        if value.lower().startswith("ms"):
+            value = int(value[2:])
+    container.add_attribute(attr_name, value)
+    return True
+
+
+@msp_spectrum_attribute_handler.add
+@FunctionAttributeHandler.wraps("ionmode", "ion_mode")
+def polarity_handler(key: str, value: str, container: Attributed) -> bool:
+    polarity_term = "MS:1000465|scan polarity"
+    positive = "MS:1000130|positive scan"
+    negative = "MS:1000129|negative scan"
+
+    if isinstance(value, str):
+        value = value.lower()
+        if value == 'positive':
+            value = positive
+        elif value == 'negative':
+            value = negative
+        else:
+            raise ValueError(f"Can't infer scan polarity from {value}")
+        container.add_attribute(polarity_term, value)
+        return True
+    return False
+
+
+@msp_spectrum_attribute_handler.add
 @FunctionAttributeHandler.wraps("HCD")
 def dissociation_method_handler(key: str, value: str, container: Attributed) -> bool:
     container.add_attribute("MS:1000044|dissociation method",
@@ -549,6 +584,8 @@ def dissociation_method_handler(key: str, value: str, container: Attributed) -> 
 @FunctionAttributeHandler.wraps("Collision_energy", "CE", "colenergy", "collisionenergy", "ionization energy")
 def collision_energy_handler(key: str, value: str, container: Attributed) -> bool:
     if isinstance(value, str):
+        if "NCE" in value:
+            return normalized_collision_energy_handler(key, value, container)
         match = re.match(r"([\d\.]+)", value)
         if match is not None:
             value = try_cast(match.group(1))
@@ -606,7 +643,7 @@ def rt_handler(key, value, container) -> bool:
 
 
 @msp_spectrum_attribute_handler.add
-@FunctionAttributeHandler.wraps("ionization mode", "IONMODE")
+@FunctionAttributeHandler.wraps("ionization mode", "IONMODE", "Ion_mode")
 def ionization_mode_handler(key: str, value: str, container: Attributed):
     if value is None:
         return False
@@ -926,7 +963,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             logger.info(f"... Indexed  {file_offset} bytes, {n_spectra} spectra read")
 
                     spectrum_file_offset = line_beginning_file_offset
-                    spectrum_name = re.match(r'(?:Name|NAME|Compound|COMPOUND):\s+(.+)', line).group(1)
+                    spectrum_name = leader_terms_line_pattern.match(line).group(1)
 
                 spectrum_buffer.append(line)
         logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
@@ -990,10 +1027,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if match:
                     continue
                 elif line.count(":") > 0:
-                    key, value = re.split(r":\s*", line, 1)
+                    key, value = re.split(r"\s*:\s*", line, 1)
                     attributes[key] = value
                 elif line.count("=") > 0:
-                    key, value = re.split(r"=\s*", line, 1)
+                    key, value = re.split(r"\s*=\s*", line, 1)
                     attributes[key] = value
                 elif line.count("\t") > 0:
                     warnings.warn(f"Line {line!r} looks like a peak annotation?")
@@ -1253,14 +1290,13 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         if not analyte.has_attribute(STRIPPED_PEPTIDE_TERM):
             if spectrum.has_attribute(SPECTRUM_NAME):
                 name = spectrum.get_attribute(SPECTRUM_NAME)
-                # lookup = spectrum.attribute_dict[SPECTRUM_NAME]
-                # name = spectrum.attributes[lookup["indexes"][0]][1]
-                match = re.match(r"(.+)/(\d+)", name)
-                if match:
-                    analyte.add_attribute(
-                        STRIPPED_PEPTIDE_TERM, match.group(1))
-                    spectrum.add_attribute(
-                        "MS:1000041|charge state", try_cast(match.group(2)))
+                if name:
+                    match = re.match(r"([ARNDCEQGHKMFPSTWYVIL]+)/(\d+)", name)
+                    if match:
+                        analyte.add_attribute(
+                            STRIPPED_PEPTIDE_TERM, match.group(1))
+                        spectrum.add_attribute(
+                            "MS:1000041|charge state", try_cast(match.group(2)))
 
         #### Handle the uninterpretable terms
         for attribute in unknown_terms:
