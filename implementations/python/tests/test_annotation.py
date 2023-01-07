@@ -2,7 +2,7 @@ import os
 import unittest
 import json
 
-from mzlib.annotation import parse_annotation, MassError, IonAnnotationBase, Unannotated, SMILESAnnotation, ExternalIonAnnotation
+from mzlib.annotation import parse_annotation, MassError, IonAnnotationBase, Unannotated, SMILESAnnotation, ExternalIonAnnotation, FormulaAnnotation
 
 from .common import datafile
 
@@ -140,7 +140,13 @@ class TestAnnotationParser(unittest.TestCase):
         base = "_{foobar}"
         parsed = parse_annotation(base)[0]
         assert isinstance(parsed, ExternalIonAnnotation)
-        assert parsed.label == 'foorbar'
+        assert parsed.label == 'foobar'
+
+    def test_parse_formula(self):
+        base = "f{C34H53N7O15}"
+        parsed = parse_annotation(base)[0]
+        assert isinstance(parsed, FormulaAnnotation)
+        assert parsed.formula == "C34H53N7O15"
 
     @unittest.skipIf(schema is None or jsonschema is None, skip_reason)
     def test_jsonschema_compliance(self):
