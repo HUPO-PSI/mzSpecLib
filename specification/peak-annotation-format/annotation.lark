@@ -76,7 +76,7 @@ series_external_ion : "_" "{" CHARACTER+ "}"
 
 series_smiles : "s" "{" SMILES+ "}"
 
-series_unknown : "?"
+series_unknown : "?" NUMBER*
 
 ion_series : series_peptide | series_immonium | series_internal | series_reporter | series_formula | series_external_ion | series_smiles | series_unknown
 

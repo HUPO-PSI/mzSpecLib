@@ -119,7 +119,7 @@ ExternalIon = Group(
 )
 
 UnknownIon = Group(
-    "?",
+    Sequence(Terminal("?"), Optional(OneOrMore(NUMBER))),
     "Unknown Ion"
 )
 
