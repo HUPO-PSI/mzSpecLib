@@ -473,20 +473,18 @@ class RuleSet(Sequence[ScopedSemanticRule]):
 
 
 def load_rule_set(name: str) -> List[ScopedSemanticRule]:
-    return RuleSet(
-        name,
-        # ScopedSemanticRule.from_xml(
-        #     resources.open_binary(
-        #         __name__.replace(".semantic_rule", '') + '.rules',
-        #         name + '.xml'
-        #     )
-        # )
-        ScopedSemanticRule.from_dict(
-            json.load(resources.open_text(
-                __name__.replace(".semantic_rule", '') + '.rules',
-                name + '.json'
-            )
-            ),
+    res = resources.open_text(
+        __name__.replace(".semantic_rule", '') + '.rules',
+        name + '.json'
+    )
+
+    with res:
+        rules = ScopedSemanticRule.from_dict(
+            json.load(res),
             VocabularyResolverMixin()
         )
+
+    return RuleSet(
+        name,
+        rules
     )
