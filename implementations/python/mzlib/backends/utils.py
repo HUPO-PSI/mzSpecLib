@@ -20,29 +20,41 @@ except ImportError:
     pass
 
 
-
-
 class LineBuffer(object):
     lines: deque
-    def __init__(self, stream: io.IOBase, lines: Iterable=None):
+    stream: io.IOBase
+    last_line: str
+
+    def __init__(self, stream: io.IOBase, lines: Iterable=None, last_line: str=None):
         if lines is None:
             lines = []
         self.lines = deque(lines)
         self.stream = stream
+        self.last_line = last_line
 
-    def readline(self) -> bytes:
+    def readline(self) -> Union[bytes, str]:
         if self.lines:
-            return self.lines.popleft()
+            line = self.lines.popleft()
         else:
-            return self.stream.readline()
+            line = self.stream.readline()
+        self.last_line = line
+        return line
 
-    def push_line(self, line):
+    def push_line(self, line=None):
+        if line is None:
+            line = self.last_line
+            self.last_line = None
+        if line is None:
+            raise ValueError("Cannot push empty value after the backtrack line is consumed")
         self.lines.appendleft(line)
 
     def __iter__(self):
         while self.lines:
-            yield self.lines.popleft()
+            line = self.lines.popleft()
+            self.last_line = line
+            yield line
         for line in self.stream:
+            self.last_line = line
             yield line
 
     def __getattr__(self, attr):
@@ -79,7 +91,10 @@ def test_gzipped(f):
     """
     if isinstance(f, os.PathLike):
         f = io.open(f, 'rb')
-    current = f.tell()
+    try:
+        current = f.tell()
+    except OSError:
+        return False
     f.seek(0)
     magic = f.read(2)
     f.seek(current)
@@ -124,7 +139,11 @@ def open_stream(f: Union[io.IOBase, os.PathLike], mode='rt', buffer_size: Option
             handle = buffered_reader
     else:
         raise NotImplementedError("Haven't implemented automatic output stream determination")
-    if "b" not in mode and "b" in f.mode:
+    try:
+        fmode = f.mode
+    except AttributeError:
+        fmode = 'b'
+    if "b" not in mode and "b" in fmode:
         handle = io.TextIOWrapper(handle, encoding=encoding, newline=newline)
     return handle
 

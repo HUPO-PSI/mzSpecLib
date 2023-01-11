@@ -185,6 +185,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         return False, 0
 
     def read_header(self) -> Tuple[bool, int]:
+        if isinstance(self.filename, io.IOBase):
+            return self._parse_header_from_stream(self.filename)
         with open_stream(self.filename, 'rt', encoding='utf8') as stream:
             return self._parse_header_from_stream(stream)
 
@@ -540,7 +542,10 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     "Provide only one of spectrum_number or spectrum_name")
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
-            offset = self.index.offset_for(spectrum_name)
+            index_record = self.index.record_for(spectrum_name)
+            offset = index_record.offset
+            spectrum_number = index_record.number
+
         buffer = self._get_lines_for(offset)
         spectrum = self._parse(buffer, spectrum_number)
         return spectrum
@@ -559,11 +564,12 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     def _write_attributes(self, attributes: Attributed):
         for attribute in attributes:
             value = attribute.value
-            try:
-                term = self.find_term_for(attribute.key.split("|")[0])
-                value = term.value_type.format(value)
-            except KeyError:
-                pass
+            if ":" in attribute.key:
+                try:
+                    term = self.find_term_for(attribute.key.split("|")[0])
+                    value = term.value_type.format(value)
+                except (KeyError, ValueError):
+                    pass
             if attribute.group_id is None:
                 self.handle.write(f"{attribute.key}={value}\n")
             else:
@@ -638,12 +644,19 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
                 '?' if not peak[2] else ",".join(map(str, peak[2]))
             ]
             if peak[3]:
-                peak_parts.append('\t'.join(map(str, peak[3])))
-            self.handle.write("\t".join(peak_parts)+"\n")
+                peak_parts.append('\t'.join(map(format_aggregation, peak[3])))
+            self.handle.write("\t".join(peak_parts) + "\n")
         self.handle.write("\n")
 
     def close(self):
         self.handle.close()
+
+
+def format_aggregation(value: Union[float, str]) -> str:
+    if isinstance(value, float):
+        return "%0.4g" % value
+    else:
+        return value
 
 
 def format_spectrum(spectrum: Spectrum, **kwargs) -> str:

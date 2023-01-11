@@ -1,12 +1,12 @@
 """Setup project."""
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='mzlib',
+    packages=find_packages(exclude=('tests',)),
     version='0.1.0-alpha',
     description='HUPO-PSI Spectral library format',
-    packages=['mzlib'],
     entry_points={
         'console_scripts': [
             "mzspeclib = mzlib.tools.cli:main"

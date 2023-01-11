@@ -4,7 +4,7 @@ import textwrap
 
 from typing import Dict,  List
 
-from mzlib.attributes import AttributeManager, AttributeManagedProperty, AttributeListManagedProperty
+from mzlib.attributes import AttributeManager, AttributeManagedProperty, AttributeListManagedProperty, AttributeProxy as _AttributeProxy, AttributeFacet
 from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
@@ -14,6 +14,12 @@ LIBRARY_ENTRY_KEY = "MS:1003237|library spectrum key"
 LIBRARY_ENTRY_INDEX = "MS:1003062|library spectrum index"
 PRECURSOR_MZ = "MS:1003208|experimental precursor monoisotopic m/z"
 CHARGE_STATE = "MS:1000041|charge state"
+
+
+class SpectrumAggregation(_AttributeProxy):
+    aggregation_type = AttributeManagedProperty("MS:1003065|spectrum aggregation type")
+    replicates_used = AttributeManagedProperty[int]("MS:1003070|number of replicate spectra used")
+    replicates_available = AttributeManagedProperty[int]("MS:1003069|number of replicate spectra available")
 
 
 class Spectrum(AttributeManager):
@@ -50,6 +56,9 @@ class Spectrum(AttributeManager):
 
     precursor_mz = AttributeListManagedProperty[float]([PRECURSOR_MZ, "MS:1000744|selected ion m/z"])
     precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
+
+    spectrum_aggregation = AttributeFacet[SpectrumAggregation](SpectrumAggregation)
+    peak_aggregations = AttributeManagedProperty("MS:1003254|peak attribute")
 
     def add_analyte(self, analyte: Analyte):
         self.analytes[str(analyte.id)] = analyte

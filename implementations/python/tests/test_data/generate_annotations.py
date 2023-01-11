@@ -1,6 +1,7 @@
 import os
 
 from mzlib import SpectrumLibrary
+from mzlib import annotation
 
 workspace = os.path.dirname(__file__)
 
@@ -12,6 +13,8 @@ for spec in source:
     print(spec.name)
     for peak in spec.peak_list:
         for a in peak[2]:
+            if isinstance(a, annotation.InvalidAnnotation):
+                breakpoint()
             annots.add(a)
 
 with open(os.path.join(workspace, "annotations.txt"), 'wt') as fh:

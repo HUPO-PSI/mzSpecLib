@@ -8,7 +8,7 @@ except ImportError:
 import textwrap
 from typing import Iterable, KeysView, ItemsView, ValuesView, Dict
 
-from mzlib.attributes import AttributedEntity, IdentifiedAttributeManager, AttributeManagedProperty
+from mzlib.attributes import AttributedEntity, IdentifiedAttributeManager, AttributeManagedProperty, AttributeProxy, AttributeGroupFacet
 
 
 FIRST_ANALYTE_KEY = '1'
@@ -189,8 +189,19 @@ class InterpretationMember(IdentifiedAttributeManager):
     __slots__ = ()
 
 
+class ProteinDescription(AttributeProxy):
+    accession = AttributeManagedProperty("MS:1000885|protein accession")
+    name = AttributeManagedProperty("MS:1000886|protein name")
+    missed_cleavages = AttributeManagedProperty[int]("MS:1003044|number of missed cleavages")
+    cleavage_agent = AttributeManagedProperty("MS:1001045|cleavage agent name")
+    number_of_enzymatic_termini = AttributeManagedProperty[int]("MS:1003048|number of enzymatic termini")
+    flanking_n_terminal_residue = AttributeManagedProperty("MS:1001112|n-terminal flanking residue")
+    flanking_c_terminal_residue = AttributeManagedProperty("MS:1001113|c-terminal flanking residue")
+
+
 class Analyte(IdentifiedAttributeManager):
     __slots__ = ()
 
     mass = AttributeManagedProperty[float]("MS:1001117|theoretical mass")
     peptide = AttributeManagedProperty[str]("MS:1003169|proforma peptidoform sequence")
+    proteins = AttributeGroupFacet[ProteinDescription](ProteinDescription)

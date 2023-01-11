@@ -70,7 +70,7 @@ class SpectrumLibrary:
         self._format = format
         self.filename = filename
 
-    def _init_from_filename(self, filename: str, index_type: Type[IndexBase]=None):
+    def _init_from_filename(self, index_type: Type[IndexBase]=None):
         if index_type is None:
             index_type = self.index_type
         if self.format is None:
@@ -111,7 +111,7 @@ class SpectrumLibrary:
     def filename(self, filename):
         self._filename = filename
         if filename is not None:
-            self._init_from_filename(filename)
+            self._init_from_filename()
 
     #### Define getter/setter for attribute format
     @property
@@ -277,6 +277,9 @@ class SpectrumLibrary:
         """
         self._requires_backend()
         return self.backend.has_attribute(key)
+
+    def summarize_parsing_errors(self):
+        return self.backend.summarize_parsing_errors()
 
 
 

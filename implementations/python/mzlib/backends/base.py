@@ -2,7 +2,7 @@ import io
 import enum
 import logging
 
-from typing import Callable, Dict, Iterable, Union, List, Type
+from typing import Callable, Dict, Iterable, Union, List, Type, Iterator
 from pathlib import Path
 
 
@@ -14,9 +14,9 @@ from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
 from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
 
-from .utils import open_stream
+from .utils import open_stream, LineBuffer
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__.rsplit(".", 1)[0])
 logger.addHandler(logging.NullHandler())
 
 ANALYTE_MIXTURE_CURIE = ANALYTE_MIXTURE_TERM.split("|")[0]
@@ -56,10 +56,14 @@ class VocabularyResolverMixin(object):
         return self.controlled_vocabularies[name]
 
     def find_term_for(self, curie: str) -> Entity:
-        name, _id = curie.split(":")
+        try:
+            name, _id = curie.split(":")
+        except ValueError as err:
+            raise KeyError(curie) from err
         cv = self.load_cv(name)
         term = cv[curie]
         return term
+
 
 class SubclassRegisteringMetaclass(type):
     def __new__(mcs, name, parents, attrs):
@@ -88,7 +92,10 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     """
     file_format = None
 
-    _file_extension_to_implementation = {}
+    _file_extension_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
+    _format_name_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
+
+    index: IndexBase
 
     entry_attribute_sets: Dict[str, AttributeSet]
     analyte_attribute_sets: Dict[str, AttributeSet]
@@ -285,7 +292,6 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
             for record in self.index:
                 yield self.get_spectrum(record.number)
         else:
-            raise NotImplementedError()
             return self.read()
 
     def __len__(self):
@@ -300,7 +306,7 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         return result
 
     @classmethod
-    def has_index_preference(cls, filename) -> Type[IndexBase]:
+    def has_index_preference(cls, filename: str) -> Type[IndexBase]:
         '''Does this backend prefer a particular index for this file?
 
         The base implementation checks to see if there is a SQL index
@@ -338,18 +344,24 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         else:
             raise ValueError(f"Could not map {attribute_set_type}")
 
+    def summarize_parsing_errors(self) -> Dict:
+        return {}
+
 guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
 
 class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
-    def __init__(self, filename, index_type=None, read_metadata=True):
-        if index_type is None:
+    def __init__(self, filename, index_type=None, read_metadata=True, create_index: bool=True):
+        if index_type is None and create_index:
             index_type = self.has_index_preference(filename)
+
         super(_PlainTextSpectralLibraryBackendBase, self).__init__(filename)
-        self.index, was_initialized = index_type.from_filename(filename)
-        if not was_initialized:
-            self.create_index()
+
+        if index_type is not None:
+            self.index, was_initialized = index_type.from_filename(filename)
+            if not was_initialized and create_index:
+                self.create_index()
         if read_metadata:
             self.read_header()
 
@@ -375,7 +387,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         '''
         raise NotImplementedError()
 
-    def read(self):
+    def read(self) -> Iterator[Spectrum]:
         with open_stream(self.filename, 'rt') as stream:
             i = 0
             match, offset = self._parse_header_from_stream(stream)
@@ -383,18 +395,33 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 raise ValueError("Could not locate valid header")
             else:
                 stream.seek(offset)
+            buffering_stream = LineBuffer(stream)
             while True:
                 # Will clip the first line of the next spectrum. Needs work
-                buffer = self._buffer_from_stream(stream)
-                if not buffer:
+                buffer = self._buffer_from_stream(buffering_stream)
+
+                # If the buffer is only a single line, then we must have reached
+                # the end, so we're done. We're done because the buffering stream
+                # will contain exactly one line (the buffered line)
+                if len(buffer) <= 1:
                     break
+                buffering_stream.push_line()
                 yield self._parse(buffer, i)
+                i += 1
 
     def _get_lines_for(self, offset: int) -> List[str]:
-        with open_stream(self.filename, 'r') as infile:
-            infile.seek(offset)
-            spectrum_buffer = self._buffer_from_stream(infile)
-            #### We will end up here if this is the last spectrum in the file
+        filename = self.filename
+        is_file_like_object = isinstance(filename, io.IOBase)
+
+        infile = open_stream(filename, 'r')
+
+        infile.seek(offset)
+        spectrum_buffer = self._buffer_from_stream(infile)
+        #### We will end up here if this is the last spectrum in the file
+        if not is_file_like_object:
+            infile.close()
+        else:
+            infile.detach()
         return spectrum_buffer
 
     def _parse(self, buffer: Iterable, spectrum_index: int=None):
@@ -455,6 +482,8 @@ class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegis
         self.write_header(library)
         n = len(library)
         step = max(min(n // 100, 5000), 1)
+        ident = ''
+        i = 0
         for i, spectrum in enumerate(library):
             if i % step == 0 and i:
                 try:
@@ -463,6 +492,8 @@ class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegis
                     ident = str(spectrum.key)
                 logger.info(f"Wrote {ident} {i}/{n} ({i / n * 100.0:0.2f}%)")
             self.write_spectrum(spectrum)
+        i = n
+        logger.info(f"Wrote {n} spectra")
 
     def write_spectrum(self, spectrum: Spectrum):
         raise NotImplementedError()
@@ -475,3 +506,25 @@ class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegis
 
     def close(self):
         pass
+
+
+class LibrarySpectrumIterator(AttributedEntity, Iterator[Spectrum]):
+    def __init__(self, backend: SpectralLibraryBackendBase) -> None:
+        self.backend = backend
+        self.attributes = backend
+        self.iter = backend.read()
+        self._buffer = next(self.iter)
+
+    @property
+    def format_version(self):
+        return self.backend.format_version
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Spectrum:
+        if self._buffer is not None:
+            result = self._buffer
+            self._buffer = None
+            return result
+        return next(self.iter)

@@ -16,8 +16,6 @@ MS:1003203|constituent spectrum file="CHO-K1_bRPLC_C1.RAW.FT.hcd.ch.MGF"
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=2
 MS:1000002|sample name="jhu_cho_brplc_cam"
-MS:1003079|total unassigned intensity fraction=0.2848
-MS:1003080|top 20 peak unassigned intensity fraction=0.1879
 MS:1000028|detector resolution=7500
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -29,24 +27,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 855.96@hcd35.00 [140.00-1725.0
 MS:1003059|number of peaks=87
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=8.13346e-015)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.45
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=4/20
 <Analyte=1>
 MS:1000224|molecular mass=1710.9076
-[1]MS:1003048|number of enzymatic termini=2
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAACALTPGPLADLAAR
-MS:1001112|n-terminal flanking residue=R
-MS:1001113|c-terminal flanking residue=L
-[2]MS:1001975|delta m/z=1.4
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1"
+[1]MS:1001975|delta m/z=1.4
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=855.455
 MS:1003169|proforma peptidoform sequence=AAAAC[Carbamidomethyl]ALTPGPLADLAAR
 MS:1001117|theoretical mass=1708.89303961159
+[2]MS:1003048|number of enzymatic termini=2
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=R
+[2]MS:1001113|c-terminal flanking residue=L
+[2]MS:1000885|protein accession="tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.2848
+MS:1003080|top 20 peak unassigned intensity fraction=0.1879
+MS:1003289|intensity of highest unassigned peak=0.45
+MS:1003290|number of unassigned peaks among top 20 peaks=4
 <Peaks>
 143.0823	14791.5	b2/5.6ppm
 153.2575	5008.6	?
@@ -149,8 +147,6 @@ MS:1003203|constituent spectrum file="RO-QC-141112_Betenbaugh_HK_Fraction46.raw.
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=14
 MS:1000002|sample name="betenbaugh_hk2"
-MS:1003079|total unassigned intensity fraction=0.3165
-MS:1003080|top 20 peak unassigned intensity fraction=0.142
 MS:1000028|detector resolution=15000
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -162,24 +158,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 855.95@hcd35.00 [140.00-1725.0
 MS:1003059|number of peaks=204
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=1.31932e-020)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.16
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=5/20
 <Analyte=1>
 MS:1000224|molecular mass=1710.9076
-[1]MS:1003048|number of enzymatic termini=2
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAACALTPGPLADLAAR
-MS:1001112|n-terminal flanking residue=R
-MS:1001113|c-terminal flanking residue=L
-[2]MS:1001975|delta m/z=4.2
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1"
+[1]MS:1001975|delta m/z=4.2
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=855.4574
 MS:1003169|proforma peptidoform sequence=AAAAC[Carbamidomethyl]ALTPGPLADLAAR
 MS:1001117|theoretical mass=1708.89303961159
+[2]MS:1003048|number of enzymatic termini=2
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=R
+[2]MS:1001113|c-terminal flanking residue=L
+[2]MS:1000885|protein accession="tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.3165
+MS:1003080|top 20 peak unassigned intensity fraction=0.142
+MS:1003289|intensity of highest unassigned peak=0.16
+MS:1003290|number of unassigned peaks among top 20 peaks=5
 <Peaks>
 143.0814	9555.6	b2/-0.7ppm
 169.097	5174.5	?
@@ -399,8 +395,6 @@ MS:1003203|constituent spectrum file="RO-QC-141112_Betenbaugh_HK_Fraction18.raw.
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=2
 MS:1000002|sample name="betenbaugh_hk1"
-MS:1003079|total unassigned intensity fraction=0.2591
-MS:1003080|top 20 peak unassigned intensity fraction=0.0
 MS:1000028|detector resolution=15000
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -412,24 +406,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 1207.67@hcd35.00 [140.00-2000.
 MS:1003059|number of peaks=122
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=1.43642e-012)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.12
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=0/20
 <Analyte=1>
 MS:1000224|molecular mass=2414.3344
-[1]MS:1003048|number of enzymatic termini=1
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAAGQTGTVPPGAPGALPLPGMAIVK
-MS:1001112|n-terminal flanking residue=A
-MS:1001113|c-terminal flanking residue=E
-[2]MS:1001975|delta m/z=-0.9
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1"
+[1]MS:1001975|delta m/z=-0.9
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=1207.1661
 MS:1003169|proforma peptidoform sequence=AAAAGQTGTVPPGAPGALPLPGMAIVK
 MS:1001117|theoretical mass=2412.319901150229
+[2]MS:1003048|number of enzymatic termini=1
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=A
+[2]MS:1001113|c-terminal flanking residue=E
+[2]MS:1000885|protein accession="tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.2591
+MS:1003080|top 20 peak unassigned intensity fraction=0.0
+MS:1003289|intensity of highest unassigned peak=0.12
+MS:1003290|number of unassigned peaks among top 20 peaks=0
 <Peaks>
 143.0816	2935.3	b2/0.7ppm
 147.1127	2210.5	y1/-0.7ppm
@@ -567,8 +561,6 @@ MS:1003203|constituent spectrum file="RO-QC-141112_Betenbaugh_HK_Fraction26.raw.
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=4
 MS:1000002|sample name="betenbaugh_hk4"
-MS:1003079|total unassigned intensity fraction=0.1681
-MS:1003080|top 20 peak unassigned intensity fraction=0.0217
 MS:1000028|detector resolution=15000
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -580,24 +572,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 731.90@hcd34.00 [110.00-1475.0
 MS:1003059|number of peaks=111
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=6.33525e-018)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.17
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=1/20
 <Analyte=1>
 MS:1000224|molecular mass=1463.8086
-[1]MS:1003048|number of enzymatic termini=1
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAAGSTSVKPIFSR
-MS:1001112|n-terminal flanking residue=Q
-MS:1001113|c-terminal flanking residue=D
-[2]MS:1001975|delta m/z=-2.7
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1"
+[1]MS:1001975|delta m/z=-2.7
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=731.9023
 MS:1003169|proforma peptidoform sequence=AAAAGSTSVKPIFSR
 MS:1001117|theoretical mass=1461.7939769138902
+[2]MS:1003048|number of enzymatic termini=1
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=Q
+[2]MS:1001113|c-terminal flanking residue=D
+[2]MS:1000885|protein accession="tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.1681
+MS:1003080|top 20 peak unassigned intensity fraction=0.0217
+MS:1003289|intensity of highest unassigned peak=0.17
+MS:1003290|number of unassigned peaks among top 20 peaks=1
 <Peaks>
 110.1269	76.26	?
 113.4028	68.16	?
@@ -724,8 +716,6 @@ MS:1003203|constituent spectrum file="RO-QC-141112_Betenbaugh_HK_Fraction26.raw.
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=5
 MS:1000002|sample name="betenbaugh_hk3"
-MS:1003079|total unassigned intensity fraction=0.1804
-MS:1003080|top 20 peak unassigned intensity fraction=0.0
 MS:1000028|detector resolution=15000
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -737,24 +727,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 488.27@hcd34.00 [110.00-1475.0
 MS:1003059|number of peaks=161
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=9.67069e-018)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.09
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=0/20
 <Analyte=1>
 MS:1000224|molecular mass=1464.8157
-[1]MS:1003048|number of enzymatic termini=1
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAAGSTSVKPIFSR
-MS:1001112|n-terminal flanking residue=Q
-MS:1001113|c-terminal flanking residue=D
-[2]MS:1001975|delta m/z=3.8
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1"
+[1]MS:1001975|delta m/z=3.8
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=488.2738
 MS:1003169|proforma peptidoform sequence=AAAAGSTSVKPIFSR
 MS:1001117|theoretical mass=1461.7939769138902
+[2]MS:1003048|number of enzymatic termini=1
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=Q
+[2]MS:1001113|c-terminal flanking residue=D
+[2]MS:1000885|protein accession="tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.1804
+MS:1003080|top 20 peak unassigned intensity fraction=0.0
+MS:1003289|intensity of highest unassigned peak=0.09
+MS:1003290|number of unassigned peaks among top 20 peaks=0
 <Peaks>
 110.4751	880.7	?
 111.5315	809.7	?
@@ -931,8 +921,6 @@ MS:1003203|constituent spectrum file="RO-QC-141112_Betenbaugh_HK_Fraction18.raw.
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=2
 MS:1000002|sample name="betenbaugh_hk5"
-MS:1003079|total unassigned intensity fraction=0.4368
-MS:1003080|top 20 peak unassigned intensity fraction=0.184
 MS:1000028|detector resolution=15000
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -944,24 +932,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 831.38@hcd34.00 [110.00-1675.0
 MS:1003059|number of peaks=68
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=6.94218e-013)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.45
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=6/20
 <Analyte=1>
 MS:1000224|molecular mass=1661.7668
-[1]MS:1003048|number of enzymatic termini=2
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAALGSHGSCSSEVEK
-MS:1001112|n-terminal flanking residue=K
-MS:1001113|c-terminal flanking residue=E
-[2]MS:1001975|delta m/z=4.1
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1"
+[1]MS:1001975|delta m/z=4.1
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=830.8868
 MS:1003169|proforma peptidoform sequence=AAAALGSHGSC[Carbamidomethyl]SSEVEK
 MS:1001117|theoretical mass=1659.7522486039798
+[2]MS:1003048|number of enzymatic termini=2
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=K
+[2]MS:1001113|c-terminal flanking residue=E
+[2]MS:1000885|protein accession="tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.4368
+MS:1003080|top 20 peak unassigned intensity fraction=0.184
+MS:1003289|intensity of highest unassigned peak=0.45
+MS:1003290|number of unassigned peaks among top 20 peaks=6
 <Peaks>
 110.1102	57.808	?
 115.0864	84.449	a2/-1.6ppm
@@ -1045,8 +1033,6 @@ MS:1003203|constituent spectrum file="RO-QC-141112_Betenbaugh_HK_Fraction19.raw.
 MS:1003070|number of replicate spectra used=1
 MS:1003069|number of replicate spectra available=3
 MS:1000002|sample name="betenbaugh_hk2"
-MS:1003079|total unassigned intensity fraction=0.339
-MS:1003080|top 20 peak unassigned intensity fraction=0.0816
 MS:1000028|detector resolution=15000
 [2]MS:1000828|isolation window lower offset=0.95
 [2]UO:0000000|unit=MS:1000040|m/z
@@ -1058,24 +1044,24 @@ MS:1000512|filter string="FTMS + p NSI d Full ms2 830.88@hcd35.00 [140.00-1675.0
 MS:1003059|number of peaks=402
 [4]MS:1003275|other attribute name=Se
 [4]MS:1003276|other attribute value=1(^G1:sc=6.88234e-022)
-[5]MS:1003275|other attribute name=max_unassigned_ab
-[5]MS:1003276|other attribute value=0.17
-[6]MS:1003275|other attribute name=num_unassigned_peaks
-[6]MS:1003276|other attribute value=3/20
 <Analyte=1>
 MS:1000224|molecular mass=1661.7668
-[1]MS:1003048|number of enzymatic termini=2
-[1]MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1000888|stripped peptide sequence=AAAALGSHGSCSSEVEK
-MS:1001112|n-terminal flanking residue=K
-MS:1001113|c-terminal flanking residue=E
-[2]MS:1001975|delta m/z=-2.0
-[2]UO:0000000|unit=UO:0000169|parts per million
-MS:1000885|protein accession="tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1"
+[1]MS:1001975|delta m/z=-2.0
+[1]UO:0000000|unit=UO:0000169|parts per million
 MS:1003208|experimental precursor monoisotopic m/z=830.8817
 MS:1003169|proforma peptidoform sequence=AAAALGSHGSC[Carbamidomethyl]SSEVEK
 MS:1001117|theoretical mass=1659.7522486039798
+[2]MS:1003048|number of enzymatic termini=2
+[2]MS:1001045|cleavage agent name=MS:1001251|Trypsin
+[2]MS:1001112|n-terminal flanking residue=K
+[2]MS:1001113|c-terminal flanking residue=E
+[2]MS:1000885|protein accession="tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1"
 <Interpretation=1>
+MS:1003079|total unassigned intensity fraction=0.339
+MS:1003080|top 20 peak unassigned intensity fraction=0.0816
+MS:1003289|intensity of highest unassigned peak=0.17
+MS:1003290|number of unassigned peaks among top 20 peaks=3
 <Peaks>
 141.1024	1824.4	?
 143.0816	54472.6	b2/0.7ppm

@@ -116,11 +116,16 @@ class SQLIndex(IndexBase):
             # Executing attribute query
             raise NotImplementedError()
         if isinstance(i, numbers.Integral):
+            if i < 0:
+                i = len(self) + i
             if self._cache is not None and self._cache.number == i:
                 return self._cache
             records = self.session.query(SpectrumLibraryIndexRecord).filter(SpectrumLibraryIndexRecord.number == i).all()
+
             if len(records) == 1:
                 return records[0]
+            elif len(records) == 0:
+                raise IndexError(i)
             else:
                 raise ValueError(f"Too many records found for spectrum number {i}")
         elif isinstance(i, slice):

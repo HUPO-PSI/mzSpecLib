@@ -48,7 +48,7 @@ def _sre_to_ecma(pattern):
     return pattern.replace("?P<", "?<").replace("\n", '').replace(" ", "")
 
 
-def tokenize_signed_symbol_list(string):
+def tokenize_signed_symbol_list(string: str) -> List[str]:
     '''Parse a string containing signed lists of symbols into
     a signed token list
 
@@ -85,10 +85,13 @@ def tokenize_signed_symbol_list(string):
     return result
 
 
-def combine_formula(tokens):
+def combine_formula(tokens: List[str], leading_sign: bool=False):
     if not tokens:
         return ''
-    out = [tokens[0]]
+    if not tokens[0].startswith("-") and leading_sign:
+        out = ['+' + tokens[0]]
+    else:
+        out = [tokens[0]]
     for token in tokens[1:]:
         if token.startswith("-") or token.startswith("+"):
             out.append(token)
@@ -225,7 +228,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
             parts.append(f"{self.analyte_reference}@")
         parts.append(self._format_ion())
         if self.neutral_losses:
-            parts.append(combine_formula(self.neutral_losses))
+            parts.append(combine_formula(self.neutral_losses, leading_sign=True))
         if self.isotope != 0:
             sign = "+" if self.isotope > 0 else "-"
             isotope = abs(self.isotope)
@@ -236,7 +239,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
             charge = abs(self.charge)
             parts.append(f"^{charge}")
         if self.adducts:
-            parts.append('[{}]'.format(combine_formula(self.adducts)))
+            parts.append('[{}]'.format(combine_formula(self.adducts, leading_sign=False)))
         if self.mass_error is not None:
             parts.append("/")
             parts.append(self.mass_error.serialize())
@@ -561,7 +564,6 @@ class Unannotated(IonAnnotationBase):
         return val
 
 
-
 class InvalidAnnotation(IonAnnotationBase):
     series_label = "!invalid!"
 
@@ -619,6 +621,46 @@ class AnnotationStringParser(object):
         data = match.groupdict()
         return match, data
 
+    def _coerce_isotope(self, data: Dict[str, str]) -> int:
+        isotope = int_or_sign(data.get('isotope', 0) or 0)
+        return isotope
+
+    def _coerce_charge(self, data: Dict[str, str]) -> int:
+        charge = (data.get("charge", 1))
+        if charge is None:
+            charge = 1
+        elif charge == 0:
+            raise ValueError(
+                f"The charge of an annotation cannot be zero")
+        else:
+            charge = int(charge)
+        return charge
+
+    def _coerce_adducts(self, data: Dict[str, str]) -> List[str]:
+        adducts = tokenize_signed_symbol_list(data.get("adducts"))
+        return adducts
+
+    def _coerce_analyte_reference(self, data: Dict[str, str]) -> str:
+        return data.get("analyte_reference", '1')
+
+    def _coerce_neutral_losses(self, data: Dict[str, str]) -> List:
+        return tokenize_signed_symbol_list(data.get("neutral_losses"))
+
+    def _coerce_mass_error(self, data: Dict[str, str]) -> MassError:
+        mass_error = data.get("mass_error")
+        if mass_error is not None:
+            mass_error = MassError(float(mass_error), data.get("mass_error_unit"))
+        return mass_error
+
+    def _coerce_confidence(self, data: Dict[str, str]) -> float:
+        confidence = data.get('confidence')
+        if confidence is not None:
+            confidence = float(confidence)
+            if confidence > 1.0:
+                raise ValueError(
+                    "A single peak interpretation's confidence cannot be greater than 1.")
+        return confidence
+
     def parse_annotation(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
         if not annotation_string:
             return []
@@ -626,32 +668,33 @@ class AnnotationStringParser(object):
         if annotation_string[0] == '[':
             is_auxiliary = True
             annotation_string = annotation_string[1:]
-        match, data = self._parse_string(annotation_string)
-        adducts = tokenize_signed_symbol_list(data.get("adducts"))
-        charge = (data.get("charge", 1))
-        if charge is None:
-            charge = 1
-        elif charge == 0:
-            raise ValueError(
-                f"The charge of an annotation cannot be zero. {annotation_string}")
-        else:
-            charge = int(charge)
-        isotope = int_or_sign(data.get('isotope', 0) or 0)
-        neutral_losses = tokenize_signed_symbol_list(data.get("neutral_losses"))
-        # FIXME: ensure that neutral loss is not a plain mass, and tokenize separate blocks
-        analyte_reference = data.get("analyte_reference", '1')
 
-        mass_error = data.get("mass_error")
-        if mass_error is not None:
-            mass_error = MassError(float(mass_error), data.get("mass_error_unit"))
-        confidence = data.get('confidence')
-        if confidence is not None:
-            confidence = float(confidence)
-            if confidence > 1.0:
-                raise ValueError(f"A single peak interpretation's confidence cannot be greater than 1. {annotation_string}")
+        match, data = self._parse_string(annotation_string)
+
+        adducts = self._coerce_adducts(data)
+        charge = self._coerce_charge(data)
+        isotope = self._coerce_isotope(data)
+
+        # FIXME: ensure that neutral loss is not a plain mass, and tokenize separate blocks
+        neutral_losses = self._coerce_neutral_losses(data)
+
+        analyte_reference =self._coerce_analyte_reference(data)
+        mass_error = self._coerce_mass_error(data)
+        confidence = self._coerce_confidence(data)
+
         annotation = self._dispatch(
-            annotation_string, data, adducts, charge, isotope, neutral_losses,
-            analyte_reference, mass_error, confidence, **kwargs)
+            annotation_string,
+            data,
+            adducts,
+            charge,
+            isotope,
+            neutral_losses,
+            analyte_reference,
+            mass_error,
+            confidence,
+            **kwargs
+        )
+
         rest = annotation_string[match.end():]
         if is_auxiliary:
             if not rest or rest[0] != ']':

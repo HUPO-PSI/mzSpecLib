@@ -26,20 +26,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1710.9076"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 2
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 1710.9076
             },
             {
               "accession": "MS:1000888",
@@ -47,32 +34,17 @@
               "value": "AAAACALTPGPLADLAAR"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "R"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "L"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": 1.4
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -88,6 +60,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 1708.89303961159
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "R"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "L"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -165,16 +168,6 @@
           "value": "\"jhu_cho_brplc_cam\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.2848
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.1879
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 7500
@@ -223,7 +216,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "87"
+          "value": 87
         },
         {
           "accession": "MS:1003275",
@@ -236,30 +229,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=8.13346e-015)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.45
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "4/20"
         }
       ],
       "intensities": [
@@ -353,7 +322,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.2848
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.1879
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.45
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 4
+            }
+          ],
           "id": "1"
         }
       },
@@ -543,20 +533,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1710.9076"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 2
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 1710.9076
             },
             {
               "accession": "MS:1000888",
@@ -564,32 +541,17 @@
               "value": "AAAACALTPGPLADLAAR"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "R"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "L"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": 4.2
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -605,6 +567,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 1708.89303961159
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "R"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "L"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3IJB9|G3IJB9_CRIGR UDP-N-acetylhexosamine pyrophosphorylase-like protein 1 OS=Cricetulus griseus GN=I79_023952 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -682,16 +675,6 @@
           "value": "\"betenbaugh_hk2\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.3165
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.142
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 15000
@@ -740,7 +723,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "204"
+          "value": 204
         },
         {
           "accession": "MS:1003275",
@@ -753,30 +736,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=1.31932e-020)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.16
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "5/20"
         }
       ],
       "intensities": [
@@ -987,7 +946,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.3165
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.142
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.16
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 5
+            }
+          ],
           "id": "1"
         }
       },
@@ -1411,20 +1391,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "2414.3344"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 1
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 2414.3344
             },
             {
               "accession": "MS:1000888",
@@ -1432,32 +1399,17 @@
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "A"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "E"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": -0.9
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -1473,6 +1425,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 2412.319901150229
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 1
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "A"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "E"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3I2Q7|G3I2Q7_CRIGR Transcription intermediary factor 1-beta OS=Cricetulus griseus GN=I79_017700 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -1550,16 +1533,6 @@
           "value": "\"betenbaugh_hk1\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.2591
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.0
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 15000
@@ -1608,7 +1581,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "122"
+          "value": 122
         },
         {
           "accession": "MS:1003275",
@@ -1621,30 +1594,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=1.43642e-012)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.12
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "0/20"
         }
       ],
       "intensities": [
@@ -1773,7 +1722,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.2591
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.0
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.12
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 0
+            }
+          ],
           "id": "1"
         }
       },
@@ -2033,20 +2003,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1463.8086"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 1
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 1463.8086
             },
             {
               "accession": "MS:1000888",
@@ -2054,32 +2011,17 @@
               "value": "AAAAGSTSVKPIFSR"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "Q"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "D"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": -2.7
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -2095,6 +2037,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 1461.7939769138902
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 1
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "Q"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "D"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -2172,16 +2145,6 @@
           "value": "\"betenbaugh_hk4\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.1681
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.0217
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 15000
@@ -2230,7 +2193,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "111"
+          "value": 111
         },
         {
           "accession": "MS:1003275",
@@ -2243,30 +2206,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=6.33525e-018)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.17
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "1/20"
         }
       ],
       "intensities": [
@@ -2384,7 +2323,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.1681
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.0217
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.17
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 1
+            }
+          ],
           "id": "1"
         }
       },
@@ -2622,20 +2582,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1464.8157"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 1
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 1464.8157
             },
             {
               "accession": "MS:1000888",
@@ -2643,32 +2590,17 @@
               "value": "AAAAGSTSVKPIFSR"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "Q"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "D"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": 3.8
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -2684,6 +2616,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 1461.7939769138902
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 1
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "Q"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "D"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3I0F4|G3I0F4_CRIGR NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 6 OS=Cricetulus griseus GN=I79_016836 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -2761,16 +2724,6 @@
           "value": "\"betenbaugh_hk3\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.1804
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.0
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 15000
@@ -2819,7 +2772,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "161"
+          "value": 161
         },
         {
           "accession": "MS:1003275",
@@ -2832,30 +2785,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=9.67069e-018)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.09
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "0/20"
         }
       ],
       "intensities": [
@@ -3023,7 +2952,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.1804
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.0
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.09
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 0
+            }
+          ],
           "id": "1"
         }
       },
@@ -3361,20 +3311,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1661.7668"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 2
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 1661.7668
             },
             {
               "accession": "MS:1000888",
@@ -3382,32 +3319,17 @@
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "K"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "E"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": 4.1
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -3423,6 +3345,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 1659.7522486039798
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "K"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "E"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -3500,16 +3453,6 @@
           "value": "\"betenbaugh_hk5\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.4368
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.184
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 15000
@@ -3558,7 +3501,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "68"
+          "value": 68
         },
         {
           "accession": "MS:1003275",
@@ -3571,30 +3514,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=6.94218e-013)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.45
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "6/20"
         }
       ],
       "intensities": [
@@ -3669,7 +3588,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.4368
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.184
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.45
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 6
+            }
+          ],
           "id": "1"
         }
       },
@@ -3821,20 +3761,7 @@
             {
               "accession": "MS:1000224",
               "name": "molecular mass",
-              "value": "1661.7668"
-            },
-            {
-              "accession": "MS:1003048",
-              "cv_param_group": "1",
-              "name": "number of enzymatic termini",
-              "value": 2
-            },
-            {
-              "accession": "MS:1001045",
-              "cv_param_group": "1",
-              "name": "cleavage agent name",
-              "value": "Trypsin",
-              "value_accession": "MS:1001251"
+              "value": 1661.7668
             },
             {
               "accession": "MS:1000888",
@@ -3842,32 +3769,17 @@
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
-              "accession": "MS:1001112",
-              "name": "n-terminal flanking residue",
-              "value": "K"
-            },
-            {
-              "accession": "MS:1001113",
-              "name": "c-terminal flanking residue",
-              "value": "E"
-            },
-            {
               "accession": "MS:1001975",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "delta m/z",
               "value": -2.0
             },
             {
               "accession": "UO:0000000",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "unit",
               "value": "parts per million",
               "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1000885",
-              "name": "protein accession",
-              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             },
             {
               "accession": "MS:1003208",
@@ -3883,6 +3795,37 @@
               "accession": "MS:1001117",
               "name": "theoretical mass",
               "value": 1659.7522486039798
+            },
+            {
+              "accession": "MS:1003048",
+              "cv_param_group": "2",
+              "name": "number of enzymatic termini",
+              "value": 2
+            },
+            {
+              "accession": "MS:1001045",
+              "cv_param_group": "2",
+              "name": "cleavage agent name",
+              "value": "Trypsin",
+              "value_accession": "MS:1001251"
+            },
+            {
+              "accession": "MS:1001112",
+              "cv_param_group": "2",
+              "name": "n-terminal flanking residue",
+              "value": "K"
+            },
+            {
+              "accession": "MS:1001113",
+              "cv_param_group": "2",
+              "name": "c-terminal flanking residue",
+              "value": "E"
+            },
+            {
+              "accession": "MS:1000885",
+              "cv_param_group": "2",
+              "name": "protein accession",
+              "value": "\"tr|G3HHY9|G3HHY9_CRIGR V-type proton ATPase subunit G 1 OS=Cricetulus griseus GN=I79_010250 PE=4 SV=1\""
             }
           ],
           "id": "1"
@@ -3960,16 +3903,6 @@
           "value": "\"betenbaugh_hk2\""
         },
         {
-          "accession": "MS:1003079",
-          "name": "total unassigned intensity fraction",
-          "value": 0.339
-        },
-        {
-          "accession": "MS:1003080",
-          "name": "top 20 peak unassigned intensity fraction",
-          "value": 0.0816
-        },
-        {
           "accession": "MS:1000028",
           "name": "detector resolution",
           "value": 15000
@@ -4018,7 +3951,7 @@
         {
           "accession": "MS:1003059",
           "name": "number of peaks",
-          "value": "402"
+          "value": 402
         },
         {
           "accession": "MS:1003275",
@@ -4031,30 +3964,6 @@
           "cv_param_group": "4",
           "name": "other attribute value",
           "value": "1(^G1:sc=6.88234e-022)"
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "5",
-          "name": "other attribute name",
-          "value": "max_unassigned_ab"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "5",
-          "name": "other attribute value",
-          "value": 0.17
-        },
-        {
-          "accession": "MS:1003275",
-          "cv_param_group": "6",
-          "name": "other attribute name",
-          "value": "num_unassigned_peaks"
-        },
-        {
-          "accession": "MS:1003276",
-          "cv_param_group": "6",
-          "name": "other attribute value",
-          "value": "3/20"
         }
       ],
       "intensities": [
@@ -4274,7 +4183,28 @@
       ],
       "interpretations": {
         "1": {
-          "attributes": [],
+          "attributes": [
+            {
+              "accession": "MS:1003079",
+              "name": "total unassigned intensity fraction",
+              "value": 0.339
+            },
+            {
+              "accession": "MS:1003080",
+              "name": "top 20 peak unassigned intensity fraction",
+              "value": 0.0816
+            },
+            {
+              "accession": "MS:1003289",
+              "name": "intensity of highest unassigned peak",
+              "value": 0.17
+            },
+            {
+              "accession": "MS:1003290",
+              "name": "number of unassigned peaks among top 20 peaks",
+              "value": 3
+            }
+          ],
           "id": "1"
         }
       },
