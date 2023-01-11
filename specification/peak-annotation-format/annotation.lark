@@ -44,6 +44,8 @@ REPORTER_LABEL : BRACE_ENCLOSED_CONTENT
 
 SIGN : ("+" | "-")
 
+SMILES : /^([^J][0-9BCOHNSOPrIFla@+\-\[\]\(\)\\\/%=#$]{6,})$/i
+
 neutral_loss : SIGN (CHEMICAL_FORMULA | BRACE_ENCLOSED_CONTENT)
 
 isotope : SIGN ("i" ORDINAL*)
@@ -70,11 +72,13 @@ series_reporter : "r" REPORTER_LABEL
 
 series_formula : "f" "{" CHEMICAL_FORMULA "}"
 
-series_external_ion : "_" CHARACTER+
+series_external_ion : "_" "{" CHARACTER+ "}"
+
+series_smiles : "s" "{" SMILES+ "}"
 
 series_unknown : "?"
 
-ion_series : series_peptide | series_immonium | series_internal | series_reporter | series_formula | series_external_ion | series_unknown
+ion_series : series_peptide | series_immonium | series_internal | series_reporter | series_formula | series_external_ion | series_smiles | series_unknown
 
 analyte_reference_ion_series : (analyte_reference_ ion_series) | ion_series
 

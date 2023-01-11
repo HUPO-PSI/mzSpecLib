@@ -2,11 +2,9 @@ import os
 import pathlib
 import string
 
-from xml.sax.saxutils import escape
 
 from railroad import (Diagram, Choice, Group, Optional, Terminal,
-                      NonTerminal, Sequence, OneOrMore, Comment, ZeroOrMore, Start,
-                      End, Stack)
+                      NonTerminal, Sequence, OneOrMore, ZeroOrMore, Stack)
 import io
 
 from pyteomics.mass import std_aa_comp
@@ -113,7 +111,9 @@ FormulaIon = Group(
 ExternalIon = Group(
     Sequence(
         Terminal("_"),
-        OneOrMore(NonTerminal("CHARACTER"))
+        Terminal('{'),
+        OneOrMore(NonTerminal("CHARACTER")),
+        Terminal('}'),
     ),
     "External Ion"
 )
@@ -121,6 +121,16 @@ ExternalIon = Group(
 UnknownIon = Group(
     "?",
     "Unknown Ion"
+)
+
+SMILESIon = Group(
+    Sequence(
+        Terminal("s"),
+        Terminal('{'),
+        OneOrMore(Terminal("/[^}]/")),
+        Terminal('}')
+    ),
+    "SMILES Ion"
 )
 
 IonType = Group(
@@ -133,6 +143,7 @@ IonType = Group(
         PrecursorIon,
         FormulaIon,
         ExternalIon,
+        SMILESIon,
         UnknownIon,
     ),
     "Ion Type"
