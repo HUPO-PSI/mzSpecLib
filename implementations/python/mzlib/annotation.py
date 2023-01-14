@@ -1,12 +1,13 @@
 import re
 from sys import intern
-from typing import Any, List, Pattern, Dict, NewType, Tuple, Union
+from typing import Any, List, Pattern, Dict, Tuple, Union
 
 
 JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
 
 annotation_pattern = re.compile(r"""
-^(?:(?P<analyte_reference>[^@\s]+)@)?
+^(?P<is_auxiliary>&)?
+   (?:(?P<analyte_reference>\d+)@)?
    (?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
    (?P<series_internal>[m](?P<internal_start>\d+):(?P<internal_end>\d+))|
    (?P<precursor>p)|
@@ -251,7 +252,7 @@ class IonAnnotationBase(object, metaclass=SeriesLabelSubclassRegisteringMeta):
             parts.append(self.rest)
         result = ''.join(parts)
         if self.is_auxiliary:
-            return f'[{result}]'
+            return f'&{result}'
         return result
 
     def __str__(self):
@@ -347,8 +348,10 @@ class InternalPeptideFragmentIonAnnotation(IonAnnotationBase):
     series_label = 'internal'
 
     _molecule_description_fields = {
-        "start_position": "N-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)",
-        "end_position": "C-terminal amino acid residue of the fragment in the original peptide sequence (beginning with 1, counting from the N-terminus)"
+        "start_position": ("N-terminal amino acid residue of the fragment in the "
+                           "original peptide sequence (beginning with 1, counting from the N-terminus)"),
+        "end_position": ("C-terminal amino acid residue of the fragment in the original peptide sequence "
+                         "(beginning with 1, counting from the N-terminus)")
     }
 
     start_position: int
@@ -616,6 +619,7 @@ class Unannotated(IonAnnotationBase):
         self.unannotated_label = descr.get('unannotated_label')
         return self
 
+
 class InvalidAnnotation(IonAnnotationBase):
     series_label = "!invalid!"
 
@@ -683,7 +687,7 @@ class AnnotationStringParser(object):
             charge = 1
         elif charge == 0:
             raise ValueError(
-                f"The charge of an annotation cannot be zero")
+                f"The charge of an annotation cannot be zero (parsed {data['charge']})")
         else:
             charge = int(charge)
         return charge
@@ -716,13 +720,10 @@ class AnnotationStringParser(object):
     def parse_annotation(self, annotation_string: str, **kwargs) -> List[IonAnnotationBase]:
         if not annotation_string:
             return []
-        is_auxiliary = False
-        if annotation_string[0] == '[':
-            is_auxiliary = True
-            annotation_string = annotation_string[1:]
 
         match, data = self._parse_string(annotation_string)
 
+        is_auxiliary = bool(data.get('is_auxiliary'))
         adducts = self._coerce_adducts(data)
         charge = self._coerce_charge(data)
         isotope = self._coerce_isotope(data)
@@ -746,14 +747,10 @@ class AnnotationStringParser(object):
             confidence,
             **kwargs
         )
+        if is_auxiliary:
+            annotation.is_auxiliary = True
 
         rest = annotation_string[match.end():]
-        if is_auxiliary:
-            if not rest or rest[0] != ']':
-                raise ValueError("Malformed auxiliary annotation missing closing ']'")
-            else:
-                rest = rest[1:]
-                annotation.is_auxiliary = True
         if rest == "":
             return [annotation]
         else:
@@ -769,7 +766,8 @@ class AnnotationStringParser(object):
                     total_confidence += annot.confidence
             if total_confidence < 0 or total_confidence > (1 + 1e-3):
                 raise ValueError(
-                    f"The sum of all interpretations of a single peak's confidence cannot be greater than 1 ({total_confidence}). {annotation_string}")
+                    f"The sum of all interpretations of a single peak's confidence cannot be greater than 1"
+                    f" ({total_confidence}). {annotation_string}")
             return result
 
     def _dispatch(self, annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference,

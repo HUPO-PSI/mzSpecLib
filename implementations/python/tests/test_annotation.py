@@ -110,7 +110,7 @@ class TestAnnotationParser(unittest.TestCase):
         assert parsed.confidence == 0.05
         assert parsed == base
 
-        base = '[%s]' % base
+        base = '&%s' % base
         parsed = parse_annotation(base)[0]
         assert parsed.series == 'b'
         assert parsed.position == 14
