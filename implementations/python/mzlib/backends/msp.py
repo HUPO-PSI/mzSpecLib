@@ -1027,10 +1027,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 if match:
                     continue
                 elif line.count(":") > 0:
-                    key, value = re.split(r"\s*:\s*", line, 1)
+                    key, value = re.split(r":\s*", line, 1)
                     attributes[key] = value
                 elif line.count("=") > 0:
-                    key, value = re.split(r"\s*=\s*", line, 1)
+                    key, value = re.split(r"=\s*", line, 1)
                     attributes[key] = value
                 elif line.count("\t") > 0:
                     warnings.warn(f"Line {line!r} looks like a peak annotation?")

@@ -58,7 +58,7 @@ def main():
     '''
 
     format_string = '[%(asctime)s] %(levelname).1s | %(name)s | %(message)s'
-    sys.excepthook = info
+
     logging.basicConfig(
         level='INFO',
         stream=sys.stderr,

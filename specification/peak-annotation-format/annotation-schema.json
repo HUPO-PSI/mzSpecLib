@@ -21,7 +21,9 @@
                 {"$ref": "#/definitions/immonium"},
                 {"$ref": "#/definitions/reporter"},
                 {"$ref": "#/definitions/external"},
-                {"$ref": "#/definitions/formula"}
+                {"$ref": "#/definitions/formula"},
+                {"$ref": "#/definitions/smiles"},
+                {"$ref": "#/definitions/unannotated"}
             ]
         },
         "neutral_losses": {
@@ -77,7 +79,7 @@
         "series_label": {
             "description": "Type of ion being described, specifies the required molecule description keys",
             "type": "string",
-            "enum": ["peptide", "internal", "precursor", "immonium", "reporter", "external", "formula", "unannotated"]
+            "enum": ["peptide", "internal", "precursor", "immonium", "reporter", "external", "formula", "smiles", "unannotated"]
         },
         "peptide": {
             "description": "Canonical peptide fragment ion",
@@ -205,15 +207,40 @@
                 }
             }
         },
+        "smiles": {
+            "description": "Ion described by SMILES molecular structure",
+            "type": "object",
+            "required": [
+                "series_label",
+                "smiles"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "series_label": {
+                    "$ref": "#/definitions/series_label",
+                    "enum": [
+                        "smiles"
+                    ]
+                },
+                "smiles": {
+                    "description": "The SMILES definition of the ion being marked",
+                    "type": "string"
+                }
+            }
+        },
         "unannotated": {
             "description": "Unannotated ion",
             "type": "object",
-            "required": ["series_label"],
+            "required": ["series_label", "unannotated_label"],
             "additionalProperties": false,
             "properties": {
                 "series_label": {
                     "$ref": "#/definitions/series_label",
                     "enum": ["unannotated"]
+                },
+                "unannotated_label": {
+                    "description": "A user-specified numeral label for an unannotated peak",
+                    "type": ["string", "null"]
                 }
             }
         }

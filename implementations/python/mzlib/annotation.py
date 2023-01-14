@@ -5,8 +5,6 @@ from typing import Any, List, Pattern, Dict, NewType, Tuple, Union
 
 JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
 
-# TODO: Add unknown ion series (?) to the pattern and data model
-# TODO: Update external_ion pattern to use enclosing quotes
 annotation_pattern = re.compile(r"""
 ^(?:(?P<analyte_reference>[^@\s]+)@)?
    (?:(?:(?P<series>[axbycz]\.?)(?P<ordinal>\d+))|
@@ -19,8 +17,11 @@ annotation_pattern = re.compile(r"""
     \])
    ))|
    (?:f\{(?P<formula>[A-Za-z0-9]+)\})|
-   (?:_(?P<external_ion>(?:[^"\s,/]+)|(?:"(?:[^"]+)")))|
-   (?P<unannotated>\?)
+   (?:_\{
+    (?P<external_ion>[^\{\}\s,/]+)
+    \})|
+   (?:s\{(?P<smiles>[^\}]+)\})|
+   (?:(?P<unannotated>\?)(?P<unannotated_label>\d+)?)
 )
 (?P<neutral_losses>(?:[+-]\d*
     (?:(?:[A-Z][A-Za-z0-9]*)|
@@ -489,7 +490,7 @@ class ExternalIonAnnotation(IonAnnotationBase):
         self.label = label
 
     def _format_ion(self):
-        return f"_\"{self.label}\""
+        return f"_{{{self.label}}}"
 
     def _molecule_description(self):
         d = super()._molecule_description()
@@ -535,18 +536,64 @@ class FormulaAnnotation(IonAnnotationBase):
         return self
 
 
+class SMILESAnnotation(IonAnnotationBase):
+    __slots__ = ("smiles", )
+
+    series_label = "smiles"
+    _molecule_description_fields = {
+        "smiles": "The SMILES definition of the ion being marked"
+    }
+
+    smiles: str
+
+    def __init__(self, series, smiles, neutral_losses=None, isotope=None, adducts=None, charge=None,
+                 analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
+        super().__init__(
+            series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
+            rest, is_auxiliary)
+        self.smiles = smiles
+
+    def _format_ion(self):
+        return f"s{{{self.smiles}}}"
+
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['smiles'] = self.smiles
+        return d
+
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.smiles = descr['smiles']
+        return self
+
+
 class Unannotated(IonAnnotationBase):
     series_label = "unannotated"
-    _molecule_description_fields = {}
+    _molecule_description_fields = {
+        "unannotated_label": "A user-specified numeral label for an unannotated peak"
+    }
 
-    def __init__(self, series, neutral_losses=None, isotope=None, adducts=None, charge=None,
+    __slots__ = ('unannotated_label', )
+
+    unannotated_label: str
+
+    def __init__(self, series, unannotated_label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
+        self.unannotated_label = unannotated_label
         super().__init__(
             series, neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence, rest, is_auxiliary)
 
     def _format_ion(self):
-        return "?"
+        if not self.unannotated_label:
+            return "?"
+        return f"?{self.unannotated_label}"
+
+    def _molecule_description(self):
+        d = super()._molecule_description()
+        d['unannotated_label'] = self.unannotated_label
+        return d
 
     def serialize(self) -> str:
         # mass_error is a required field in the data model, but it is meaningless for unannotated peaks,
@@ -563,6 +610,11 @@ class Unannotated(IonAnnotationBase):
             self.mass_error = mass_error
         return val
 
+    def _populate_from_dict(self, data):
+        super()._populate_from_dict(data)
+        descr = data['molecule_description']
+        self.unannotated_label = descr.get('unannotated_label')
+        return self
 
 class InvalidAnnotation(IonAnnotationBase):
     series_label = "!invalid!"
@@ -758,6 +810,12 @@ class AnnotationStringParser(object):
                 neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
                 analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
             )
+        elif data.get("smiles"):
+            return self._dispatch_smiles(
+                data,
+                neutral_losses=neutral_losses, isotope=isotope, adducts=adducts, charge=charge,
+                analyte_reference=analyte_reference, mass_error=mass_error, confidence=confidence, **kwargs
+            )
         elif data.get('unannotated'):
             return self._dispatch_unannotated(
                 data,
@@ -777,7 +835,7 @@ class AnnotationStringParser(object):
         if mass_error is None:
             mass_error = MassError(0)
         return Unannotated(
-            None, neutral_losses, isotope, adducts, charge, analyte_reference,
+            None, data.get('unannotated_label'), neutral_losses, isotope, adducts, charge, analyte_reference,
             mass_error, confidence)
 
     def _dispatch_internal_peptide_fragment(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
@@ -816,6 +874,11 @@ class AnnotationStringParser(object):
                 neutral_losses, isotope, adducts, charge, analyte_reference,
                 mass_error, confidence)
 
+    def _dispatch_smiles(self, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
+            return SMILESAnnotation(
+                "smiles", data['smiles'],
+                neutral_losses, isotope, adducts, charge, analyte_reference,
+                mass_error, confidence)
 
 parse_annotation = AnnotationStringParser(annotation_pattern)
 
