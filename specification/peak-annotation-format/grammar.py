@@ -54,6 +54,8 @@ BraceEnclosedContent = Sequence(
     Terminal("]")
 )
 
+IsAuxiliary = Group(Optional(Terminal("&")), "Is Auxiliary")
+
 AnalyteIdentifier = Group(
     Sequence(NonTerminal("ORDINAL"), Terminal("@")), "Analyte Identifier"
 )
@@ -209,6 +211,7 @@ ConfidenceEstimate = Group(
 
 Annotation = (
     Stack(
+        IsAuxiliary,
         Optional(
             AnalyteIdentifier
         ),
