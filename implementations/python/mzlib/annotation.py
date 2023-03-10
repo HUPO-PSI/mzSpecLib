@@ -108,7 +108,7 @@ class MassError(object):
     unit: str
     mass_error: float
 
-    def __init__(self, mass_error, unit=None):
+    def __init__(self, mass_error=0, unit=None):
         if unit is None:
             unit = self._DEFAULT_UNIT
         self.mass_error = float(mass_error)
@@ -581,6 +581,10 @@ class Unannotated(IonAnnotationBase):
 
     unannotated_label: str
 
+    @classmethod
+    def empty(cls):
+        return cls(cls.series_label, None, mass_error=MassError())
+
     def __init__(self, series, unannotated_label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         self.unannotated_label = unannotated_label
@@ -755,9 +759,12 @@ class AnnotationStringParser(object):
             return [annotation]
         else:
             if rest[0] != ",":
-                raise ValueError(f"Malformed trailing string {rest}, expected ',' for {annotation_string}")
+                raise ValueError(
+                    f"Malformed trailing string {rest}, expected ',' for {annotation_string}")
             else:
                 rest = rest[1:]
+                if rest[0].isspace():
+                    rest = rest.lstrip()
             result = [annotation]
             result.extend(self.parse_annotation(rest, **kwargs))
             total_confidence = 0.0

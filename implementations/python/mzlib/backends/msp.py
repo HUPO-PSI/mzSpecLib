@@ -13,9 +13,9 @@ from mzlib import annotation
 
 from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
-from mzlib.attributes import AttributeManager, Attributed
+from mzlib.attributes import AttributeManager, AttributeSet, Attributed
 
-from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM
+from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM, AttributeSetTypes, SpectralLibraryBackendBase, SpectralLibraryWriterBase
 from .utils import try_cast, open_stream, CaseInsensitiveDict
 
 
@@ -38,7 +38,8 @@ def _generate_numpeaks_keys():
     cases = (str.lower, str.title, str.upper)
     w1_cases = [c(w1) for c in cases]
     w2_cases = [c(w2) for c in cases]
-    return {(w1c + sep + w2c) for (sep, w1c, w2c) in itertools.product(seps, w1_cases, w2_cases)}
+    return {(w1c + sep + w2c) for (sep, w1c, w2c) in
+            itertools.product(seps, w1_cases, w2_cases)}
 
 NUM_PEAKS_KEYS = _generate_numpeaks_keys()
 
@@ -1421,3 +1422,113 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 def _parse_fraction(x: str) -> float:
     a, b = x.split("/")
     return int(a) / int(b)
+
+
+class MSPSpectralLibraryWriter(SpectralLibraryWriterBase):
+    file_format = "msp"
+
+    analyte_keys = {
+        "MS:1000866|molecular formula": "Formula",
+        "MS:1003044|number of missed cleavages": "MC",
+        "MS:1001471|peptide modification details": "Mods",
+        "MS:1003043|number of residues": "Naa",
+        "MS:1003208|experimental precursor monoisotopic m/z": "PrecursorMonoisoMZ",
+        "MS:1003054|theoretical average m/z": "Mz_av",
+        "MS:1003169|proforma peptidoform sequence": "ProForma",
+        "MS:1000888|stripped peptide sequence": "Peptide",
+
+    }
+
+    spectrum_keys = {
+        "MS:1000041|charge state": "Charge",
+        ("MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"): "Single",
+        ("MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"): "Consensus",
+        "MS:1003057|scan number": "Scan",
+        "MS:1003203|constituent spectrum file": "Origfile",
+        "MS:1000002|sample name": "Sample",
+        "MS:1000512|filter string": "Filter",
+        "MS:1003086|precursor apex intensity": "Precursor1MaxAb",
+        "MS:1009013|isolation window precursor purity": "Purity",
+        "MS:1000505|base peak intensity": "BasePeak",
+        "MS:1002599|splash key": "Splash",
+        "MS:1003289|intensity of highest unassigned peak": "max_unassigned_ab",
+        "MS:1003080|top 20 peak unassigned intensity fraction": "Unassigned",
+        "MS:1003079|total unassigned intensity fraction": "Unassign_all",
+        "MS:1003290|number of unassigned peaks among top 20 peaks": "top_20_num_unassigned_peaks",
+        ("MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"): "HCD",
+        ("MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation"): "CID",
+    }
+
+    # TODO: add these
+    interpretation_keys = {
+        "MS:1002354|PSM-level q-value": "Q-value",
+    }
+
+
+    def __init__(self, filename, **kwargs):
+        super(MSPSpectralLibraryWriter, self).__init__(filename)
+        self._coerce_handle(self.filename)
+
+    def write_header(self, library: SpectralLibraryBackendBase):
+        pass
+
+    def write_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
+        pass
+
+    def _format_value(self, value):
+        if isinstance(value, str):
+            if not (value.startswith('"') and value.endswith('"')):
+                value = f"\"{value}\""
+        return str(value)
+
+    def _build_comments(self, spectrum: Spectrum, attribute_container: Attributed,
+                        rule_map: Dict) -> List[Tuple[str, str]]:
+        accumulator = []
+
+        for attr_name, msp_name in rule_map.items():
+            if isinstance(attr_name, tuple):
+                if attribute_container.has_attribute(attr_name[0]):
+                    value = attribute_container.get_attribute(attr_name[0])
+                    if value == attr_name[1]:
+                        accumulator.append(msp_name)
+            elif attribute_container.has_attribute(attr_name):
+                value = attribute_container.get_attribute(attr_name)
+                if isinstance(value, list):
+                    logger.warn(
+                        "Spectrum %r contains multiple values for %r, only the first will be saved",
+                        spectrum.name, attr_name
+                    )
+                    accumulator.append(f"{msp_name}={self._format_value(value[0])}")
+                else:
+                    accumulator.append(f"{msp_name}={self._format_value(value)}")
+        return accumulator
+
+
+    def build_spectrum_comments(self, spectrum: Spectrum) -> List[Tuple[str, str]]:
+        accumulator = self._build_comments(spectrum, spectrum, self.spectrum_keys)
+        if spectrum.analytes:
+            analyte = spectrum.get_analyte('1')
+            accumulator += self._build_comments(spectrum, analyte, self.analyte_keys)
+        return accumulator
+
+    def write_spectrum(self, spectrum: Spectrum):
+        if len(spectrum.analytes) > 1:
+            logger.warning(
+                "Spectrum %r contains multiple analytes, MSP will only contain the first",
+                spectrum.name
+            )
+        analyte = spectrum.get_analyte('1')
+        self.handle.write(f"Name: {spectrum.name}\n")
+        self.handle.write(f"MW: {analyte.mass}\n")
+        self.handle.write(f"Comment: {' '.join(self.build_spectrum_comments(spectrum))}\n")
+        self._write_peaks(spectrum)
+        self.handle.write("\n")
+
+
+    def _write_peaks(self, spectrum: Spectrum):
+        self.handle.write(f"Num peaks: {len(spectrum.peak_list)}\n")
+        for peak in spectrum.peak_list:
+            self.handle.write(f"{peak[0]:0.4f}\t{peak[1]:0.4f}\t\"?\"\n")
+
+    def close(self):
+        self.handle.close()
