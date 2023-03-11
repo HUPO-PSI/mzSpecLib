@@ -54,10 +54,7 @@ BraceEnclosedContent = Sequence(
     Terminal("]")
 )
 
-
-IsAuxiliary = Group(
-    Terminal("&"), "Is Auxiliary"
-)
+IsAuxiliary = Group(Optional(Terminal("&")), "Is Auxiliary")
 
 AnalyteIdentifier = Group(
     Sequence(NonTerminal("ORDINAL"), Terminal("@")), "Analyte Identifier"
@@ -124,7 +121,7 @@ ExternalIon = Group(
 )
 
 UnknownIon = Group(
-    Sequence(Terminal("?"), Optional(OneOrMore(NUMBER))),
+    Sequence(Terminal("?"), Optional(OneOrMore(NonTerminal("DIGIT")))),
     "Unknown Ion"
 )
 
@@ -214,6 +211,7 @@ ConfidenceEstimate = Group(
 
 Annotation = (
     Stack(
+        IsAuxiliary,
         Optional(
             IsAuxiliary
         ),

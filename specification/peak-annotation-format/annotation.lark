@@ -26,6 +26,8 @@ BRACE_ENCLOSED_CONTENT : "[" (CONTENT_IN_BRACES)+ "]"
 
 ANALYTE_REFERENCE : (CHARACTER)+
 
+is_auxiliary : "&"
+
 analyte_reference_ : (ANALYTE_REFERENCE) "@"
 
 PEPTIDE_SERIES_SYMBOL : "a" | "x" | "b" | "y" | "c" | "z"
