@@ -577,14 +577,6 @@ class Unannotated(IonAnnotationBase):
         "unannotated_label": "A user-specified numeral label for an unannotated peak"
     }
 
-    __slots__ = ('unannotated_label', )
-
-    unannotated_label: str
-
-    @classmethod
-    def empty(cls):
-        return cls(cls.series_label, None, mass_error=MassError())
-
     def __init__(self, series, unannotated_label, neutral_losses=None, isotope=None, adducts=None, charge=None,
                  analyte_reference=None, mass_error=None, confidence=None, rest=None, is_auxiliary=None):
         self.unannotated_label = unannotated_label
