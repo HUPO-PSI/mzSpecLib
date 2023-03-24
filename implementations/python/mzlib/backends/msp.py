@@ -14,7 +14,7 @@ from pyteomics import proforma
 
 from mzlib import annotation
 
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte, ProteinDescription
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 from mzlib.attributes import AttributeManager, AttributeSet, Attributed
 
@@ -1492,6 +1492,37 @@ class MSPSpectralLibraryWriter(SpectralLibraryWriterBase):
         else:
             return 'Mods=0'
 
+    def _protein_to_comments(self, analyte: Analyte) -> List[str]:
+        acc = []
+        protein: ProteinDescription
+        for protein in analyte.proteins:
+            accession = None
+            pre = None
+            post = None
+            if protein.accession:
+                accession = protein.accession
+            if protein.flanking_n_terminal_residue:
+                pre = protein.flanking_n_terminal_residue
+            if protein.flanking_c_terminal_residue:
+                post = protein.flanking_c_terminal_residue
+            if accession:
+                token = accession
+                if token.startswith('"'):
+                    token = token.strip('"')
+                if pre or post:
+                    token += f"(pre={pre or '-'},post={post or '-'})"
+                acc.append(f"Protein={self._format_value(token)}")
+                if protein.number_of_enzymatic_termini == 2:
+                    if protein.cleavage_agent == "MS:1001251|Trypsin":
+                        acc.append("Pep=Tryptic")
+                elif protein.number_of_enzymatic_termini == 1:
+                    if protein.cleavage_agent == "MS:1001251|Trypsin":
+                        acc.append("Pep=SemiTryptic")
+                if protein.missed_cleavages is not None:
+                    acc.append(f"MC={self._format_value(protein.missed_cleavages)}")
+                break
+        return acc
+
     def _build_comments(self, spectrum: Spectrum, attribute_container: Attributed,
                         rule_map: Dict) -> List[Tuple[str, str]]:
         accumulator = []
@@ -1526,6 +1557,7 @@ class MSPSpectralLibraryWriter(SpectralLibraryWriterBase):
             accumulator += self._build_comments(spectrum, analyte, self.analyte_keys)
             if analyte.peptide:
                 accumulator.append(self._proforma_to_mods(analyte.peptide))
+            accumulator += self._protein_to_comments(analyte)
         if spectrum.interpretations:
             interp = spectrum.get_interpretation('1')
             accumulator += self._build_comments(

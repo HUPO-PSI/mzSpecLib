@@ -1,6 +1,7 @@
 import re
 from sys import intern
 from typing import Any, List, Pattern, Dict, Tuple, Union
+import warnings
 
 
 JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
@@ -555,6 +556,17 @@ class SMILESAnnotation(IonAnnotationBase):
             series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
             rest, is_auxiliary)
         self.smiles = smiles
+        if not self.adducts:
+            warnings.warn(
+                "A SMILES annotation was detected WITHOUT an explicit adduct, assuming it's "
+                "charge carrier is H+ and is positive.")
+            tokens = ["M"]
+            if self.charge > 1:
+                tokens.append(f"{self.charge}H")
+            else:
+                tokens.append("H")
+            self.adducts = tokens
+
 
     def _format_ion(self):
         return f"s{{{self.smiles}}}"
