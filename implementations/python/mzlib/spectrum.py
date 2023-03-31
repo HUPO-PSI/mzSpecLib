@@ -2,10 +2,16 @@ from __future__ import print_function
 
 import textwrap
 
-from typing import Dict,  List
+from typing import Any, Dict,  List, Optional, TYPE_CHECKING
 
-from mzlib.attributes import AttributeManager, AttributeManagedProperty, AttributeListManagedProperty, AttributeProxy as _AttributeProxy, AttributeFacet
+from mzlib.attributes import (
+    AttributeManager, AttributeManagedProperty, AttributeListManagedProperty,
+    AttributeProxy as _AttributeProxy, AttributeFacet
+)
 from mzlib.analyte import Analyte, InterpretationCollection, Interpretation
+
+if TYPE_CHECKING:
+    from mzlib.spectrum_library import SpectrumLibrary
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
 
@@ -26,16 +32,25 @@ class Spectrum(AttributeManager):
     peak_list: List
     analytes: Dict[str, Analyte]
     interpretations: InterpretationCollection
+    _source: Optional['SpectrumLibrary']
 
     #### Constructor
-    def __init__(self, attributes=None, peak_list=None, analytes=None, interpretations=None):
+    def __init__(self, attributes=None, peak_list=None, analytes=None,
+                 interpretations=None):
         """
-        __init__ - SpectrumLibrary constructor
 
         Parameters
         ----------
-        attributes: list
+        attributes : list
             A list of attribute [key, value (, group)] sets to initialize to.
+        peak_list : list
+            A list of tuples representing (annotated) peaks
+        analytes : dict[str, :class:`~.Analyte`]
+            A mapping from identifier to :class:`~.Analyte` unique within this
+            :class:`Spectrum`.
+        interpretations : :class:`~.InterpretationCollection`
+            A mapping from identifier to :class:`~.Interpretation` unique within
+            this :class:`Spectrum`.
         """
         if peak_list is None:
             peak_list = []

@@ -7,7 +7,7 @@ from typing import Dict,  List
 from mzlib.attributes import AttributeManager, AttributeManagedProperty
 from .utils import ensure_iter, flatten
 
-SIMILAR_SPECTRUM_KEYS = ""
+SIMILAR_SPECTRUM_KEYS = "MS:1003263|similar spectrum keys"
 SIMILAR_SPECTRUM_USI = "MS:1003264|similar spectrum USI"
 
 CLUSTER_KEY = "MS:1003267|spectrum cluster key"
@@ -45,6 +45,8 @@ class SpectrumCluster(AttributeManager):
 
     @property
     def members(self) -> List[ClusterMemberRef]:
-        internal_refs = [SpectrumRef(k) for k in flatten(ensure_iter(self._member_references))]
+        internal_refs = [
+            SpectrumRef(k) for k in flatten(ensure_iter(self._member_references))
+        ]
         usi_members = [USIRef(k) for k in ensure_iter(self._cluster_member_usis)]
         return internal_refs + usi_members

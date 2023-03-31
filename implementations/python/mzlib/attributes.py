@@ -7,18 +7,20 @@ T = TypeVar('T')
 
 
 class Attribute(object):
-    __slots__ = ("key", "value", "group_id")
+    __slots__ = ("key", "value", "group_id", "owner_id")
     key: str
     value: Union[str, int, float, 'Attribute', List]
     group_id: Optional[str]
+    owner_id: int = -1
 
-    def __init__(self, key, value, group_id=None):
+    def __init__(self, key, value, group_id=None, owner_id=-1):
         self.key = key
         self.value = value
         self.group_id = group_id
+        self.owner_id = owner_id
 
     def copy(self):
-        return self.__class__(self.key, self.value, self.group_id)
+        return self.__class__(self.key, self.value, self.group_id, self.owner_id)
 
     def __getitem__(self, i):
         if i == 0:
@@ -27,6 +29,8 @@ class Attribute(object):
             return self.value
         elif i == 2:
             return self.group_id
+        elif i == 3:
+            return self.owner_id
         else:
             raise IndexError(i)
 
@@ -35,6 +39,7 @@ class Attribute(object):
         yield self.value
         if self.group_id:
             yield self.group_id
+        yield self.owner_id
 
     def __len__(self):
         if self.group_id is None:
