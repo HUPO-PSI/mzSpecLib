@@ -99,7 +99,7 @@ def build_index(inpath):
 @click.argument('inpath', type=click.Path(exists=True))
 @click.argument("outpath", type=click.Path())
 @click.option("-i", "--input-format", type=click.Choice(sorted(SpectralLibraryBackendBase._file_extension_to_implementation)))
-@click.option("-f", "--format", type=click.Choice(["text", "json"]), default="text")
+@click.option("-f", "--format", type=click.Choice(["text", "json", "msp"]), default="text")
 @click.option("-k", "--library-attribute", "library_attributes", type=(str, str), multiple=True, help="Specify an attribute to add to the library metadata section. May be repeated.")
 def convert(inpath, outpath, format=None, header_file=None, library_attributes=(), input_format=None):
     '''Convert a spectral library from one format to another. If `outpath` is `-`,
@@ -107,6 +107,8 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
     '''
     if format is None:
         format = "text"
+    if format == 'msp':
+        click.secho("MSP conversion is arbitrary and lossy", fg='yellow', err=True)
     if SQLIndex.exists(inpath):
         index_type = SQLIndex
     else:

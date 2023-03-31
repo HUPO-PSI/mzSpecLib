@@ -84,4 +84,6 @@ ion_series : series_peptide | series_immonium | series_internal | series_reporte
 
 analyte_reference_ion_series : (analyte_reference_ ion_series) | ion_series
 
+is_auxiliary : "&"
+
 annotation : is_auxiliary? analyte_reference_? ion_series neutral_loss* isotope? charge? adducts? annotation_qualifiers?

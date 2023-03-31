@@ -3,19 +3,25 @@ import io
 import os
 import logging
 import itertools
-
-from typing import Any, Callable, Collection, Dict, List, Mapping, Optional, Set, Tuple, Iterable, DefaultDict
 import warnings
+
+from typing import (
+    Any, Callable, Collection,
+    Dict, List, Mapping, Optional,
+    Set, Tuple, Iterable, DefaultDict)
 
 from pyteomics import proforma
 
 from mzlib import annotation
 
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte, ProteinDescription
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
-from mzlib.attributes import AttributeManager, Attributed
+from mzlib.attributes import AttributeManager, AttributeSet, Attributed
 
-from .base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase, LIBRARY_NAME_TERM
+from .base import (
+    DEFAULT_VERSION, FORMAT_VERSION_TERM, _PlainTextSpectralLibraryBackendBase,
+    LIBRARY_NAME_TERM, AttributeSetTypes, SpectralLibraryBackendBase,
+    SpectralLibraryWriterBase)
 from .utils import try_cast, open_stream, CaseInsensitiveDict
 
 
@@ -38,7 +44,8 @@ def _generate_numpeaks_keys():
     cases = (str.lower, str.title, str.upper)
     w1_cases = [c(w1) for c in cases]
     w2_cases = [c(w2) for c in cases]
-    return {(w1c + sep + w2c) for (sep, w1c, w2c) in itertools.product(seps, w1_cases, w2_cases)}
+    return {(w1c + sep + w2c) for (sep, w1c, w2c) in
+            itertools.product(seps, w1_cases, w2_cases)}
 
 NUM_PEAKS_KEYS = _generate_numpeaks_keys()
 
@@ -46,6 +53,7 @@ leader_terms_pattern = re.compile(r"(Name|NAME|Compound|COMPOUND)\s*:")
 leader_terms_line_pattern = re.compile(r'(?:Name|NAME|Compound|COMPOUND)\s*:\s+(.+)')
 
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
+PEPTIDE_MODIFICATION_TERM = "MS:1001471|peptide modification details"
 
 PEAK_OBSERVATION_FREQ = "MS:1003279|observation frequency of peak"
 PEAK_ATTRIB = "MS:1003254|peak attribute"
@@ -237,7 +245,7 @@ analyte_terms = CaseInsensitiveDict({
     "InChIKey": "MS:1002894|InChIKey",
     "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
-        "Mods": "MS:1001471|peptide modification details",
+        "Mods": PEPTIDE_MODIFICATION_TERM,
         "Naa": "MS:1003043|number of residues",
     },
     "Pep": {
@@ -253,7 +261,7 @@ analyte_terms = CaseInsensitiveDict({
                                         ["MS:1001045|cleavage agent name", "MS:1001251|Trypsin"]],
         },
     "MC": "MS:1003044|number of missed cleavages",
-    "Mods": "MS:1001471|peptide modification details",
+    "Mods": PEPTIDE_MODIFICATION_TERM,
     "Naa": "MS:1003043|number of residues",
     "PrecursorMonoisoMZ": "MS:1003208|experimental precursor monoisotopic m/z",
     "Mz_exact": "MS:1003208|experimental precursor monoisotopic m/z",
@@ -537,7 +545,7 @@ def ms_level_handler(key: str, value: str, container: Attributed) -> bool:
 
 
 @msp_spectrum_attribute_handler.add
-@FunctionAttributeHandler.wraps("ionmode", "ion_mode")
+@FunctionAttributeHandler.wraps("ionmode", "ion_mode", "ionization mode", "IONMODE", "Ion_mode")
 def polarity_handler(key: str, value: str, container: Attributed) -> bool:
     polarity_term = "MS:1000465|scan polarity"
     positive = "MS:1000130|positive scan"
@@ -641,21 +649,6 @@ def rt_handler(key, value, container) -> bool:
             return True
     return False
 
-
-@msp_spectrum_attribute_handler.add
-@FunctionAttributeHandler.wraps("ionization mode", "IONMODE", "Ion_mode")
-def ionization_mode_handler(key: str, value: str, container: Attributed):
-    if value is None:
-        return False
-    value = value.lower()
-    if value == "positive":
-        container.add_attribute("MS:1000465|scan polarity", "MS:1000130|positive scan")
-        return True
-    elif value == "negative":
-        container.add_attribute("MS:1000465|scan polarity", "MS:1000129|negative scan")
-        return True
-    else:
-        return False
 
 @msp_spectrum_attribute_handler.add
 @FunctionAttributeHandler.wraps("ms2IsolationWidth")
@@ -1340,10 +1333,10 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         return 0
 
     def _complete_analyte(self, analyte: Analyte):
-        if analyte.has_attribute("MS:1000888|stripped peptide sequence"):
-            peptide = proforma.ProForma.parse(analyte.get_attribute("MS:1000888|stripped peptide sequence"))
-            if analyte.has_attribute("MS:1001471|peptide modification details"):
-                modification_details = analyte.get_attribute("MS:1001471|peptide modification details")
+        if analyte.has_attribute(STRIPPED_PEPTIDE_TERM):
+            peptide = proforma.ProForma.parse(analyte.get_attribute(STRIPPED_PEPTIDE_TERM))
+            if analyte.has_attribute(PEPTIDE_MODIFICATION_TERM):
+                modification_details = analyte.get_attribute(PEPTIDE_MODIFICATION_TERM)
                 mods = self.modification_parser(modification_details)
                 for position, residue, mod in mods:
                     seqpos = list(peptide.sequence[position])
@@ -1352,7 +1345,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     peptide.sequence[position] = tuple(seqpos)
                     assert seqpos[0] == residue
             analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
-            analyte.remove_attribute("MS:1001471|peptide modification details")
+            if analyte.has_attribute(PEPTIDE_MODIFICATION_TERM):
+                analyte.remove_attribute(PEPTIDE_MODIFICATION_TERM)
             analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
 
         self._pack_protein_description(analyte)
@@ -1421,3 +1415,201 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 def _parse_fraction(x: str) -> float:
     a, b = x.split("/")
     return int(a) / int(b)
+
+
+class MSPSpectralLibraryWriter(SpectralLibraryWriterBase):
+    file_format = "msp"
+
+    analyte_keys = {
+        "MS:1000866|molecular formula": "Formula",
+        "MS:1003044|number of missed cleavages": "MC",
+        "MS:1001471|peptide modification details": "Mods",
+        "MS:1003043|number of residues": "Naa",
+        "MS:1003208|experimental precursor monoisotopic m/z": "PrecursorMonoisoMZ",
+        "MS:1003054|theoretical average m/z": "Mz_av",
+        "MS:1003169|proforma peptidoform sequence": "ProForma",
+        "MS:1000888|stripped peptide sequence": "Peptide",
+    }
+
+    for species_name, keys in species_map.items():
+        analyte_keys[tuple(keys[0])] = ("Organism", species_name)
+
+    modification_map = {v: k for k, v in MODIFICATION_NAME_MAP.items()}
+
+    spectrum_keys = {
+        "MS:1000041|charge state": "Charge",
+        ("MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"): "Single",
+        ("MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"): "Consensus",
+        "MS:1003057|scan number": "Scan",
+        "MS:1003203|constituent spectrum file": "Origfile",
+        "MS:1000002|sample name": "Sample",
+        "MS:1000512|filter string": "Filter",
+        "MS:1003086|precursor apex intensity": "Precursor1MaxAb",
+        "MS:1009013|isolation window precursor purity": "Purity",
+        "MS:1000505|base peak intensity": "BasePeak",
+        "MS:1002599|splash key": "Splash",
+        "MS:1003289|intensity of highest unassigned peak": "max_unassigned_ab",
+        "MS:1003080|top 20 peak unassigned intensity fraction": "Unassigned",
+        "MS:1003079|total unassigned intensity fraction": "Unassign_all",
+        "MS:1003290|number of unassigned peaks among top 20 peaks": "top_20_num_unassigned_peaks",
+        ("MS:1000044|dissociation method", "MS:1000422|beam-type collision-induced dissociation"): "HCD",
+        ("MS:1000044|dissociation method", "MS:1002472|trap-type collision-induced dissociation"): "CID",
+    }
+
+    # TODO: add these
+    interpretation_keys = {
+        "MS:1002354|PSM-level q-value": "Q-value",
+    }
+
+    def __init__(self, filename, **kwargs):
+        super(MSPSpectralLibraryWriter, self).__init__(filename)
+        self._coerce_handle(self.filename)
+
+    def write_header(self, library: SpectralLibraryBackendBase):
+        pass
+
+    def write_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
+        pass
+
+    def _format_value(self, value):
+        if isinstance(value, str):
+            if not (value.startswith('"') and value.endswith('"')):
+                value = f"\"{value}\""
+        return str(value)
+
+    def _proforma_to_mods(self, proforma_seq: str) -> str:
+        parsed = proforma.ProForma.parse(proforma_seq)
+        mods = [(i, tok) for i, tok in enumerate(parsed) if tok[1]]
+        if mods:
+            tokens = []
+            for i, mod_site in mods:
+                tokens.append(str(i))
+                tokens.append(mod_site[0])
+                mod = mod_site[1][0]
+                mod_name = self.modification_map.get(mod.name, mod.name)
+                tokens.append(mod_name)
+            return f'Mods={len(mods)}({",".join(tokens)})'
+        else:
+            return 'Mods=0'
+
+    def _protein_to_comments(self, analyte: Analyte) -> List[str]:
+        acc = []
+        protein: ProteinDescription
+        for protein in analyte.proteins:
+            accession = None
+            pre = None
+            post = None
+            if protein.accession:
+                accession = protein.accession
+            if protein.flanking_n_terminal_residue:
+                pre = protein.flanking_n_terminal_residue
+            if protein.flanking_c_terminal_residue:
+                post = protein.flanking_c_terminal_residue
+            if accession:
+                token = accession
+                if token.startswith('"'):
+                    token = token.strip('"')
+                if pre or post:
+                    token += f"(pre={pre or '-'},post={post or '-'})"
+                acc.append(f"Protein={self._format_value(token)}")
+                if protein.number_of_enzymatic_termini == 2:
+                    if protein.cleavage_agent == "MS:1001251|Trypsin":
+                        acc.append("Pep=Tryptic")
+                elif protein.number_of_enzymatic_termini == 1:
+                    if protein.cleavage_agent == "MS:1001251|Trypsin":
+                        acc.append("Pep=SemiTryptic")
+                if protein.missed_cleavages is not None:
+                    acc.append(f"MC={self._format_value(protein.missed_cleavages)}")
+                break
+        return acc
+
+    def _build_comments(self, spectrum: Spectrum, attribute_container: Attributed,
+                        rule_map: Dict) -> List[Tuple[str, str]]:
+        accumulator = []
+
+        for attr_name, msp_name in rule_map.items():
+            if isinstance(attr_name, tuple):
+                if attribute_container.has_attribute(attr_name[0]):
+                    value = attribute_container.get_attribute(attr_name[0])
+                    if value == attr_name[1]:
+                        if isinstance(msp_name, str):
+                            accumulator.append(msp_name)
+                        elif isinstance(msp_name, (list, tuple)) and len(msp_name) == 2:
+                            accumulator.append('='.join(msp_name))
+                        else:
+                            raise TypeError(f"Can't infer conversion for {msp_name} given {attr_name}")
+            elif attribute_container.has_attribute(attr_name):
+                value = attribute_container.get_attribute(attr_name)
+                if isinstance(value, list):
+                    logger.warn(
+                        "Spectrum %r contains multiple values for %r, only the first will be saved",
+                        spectrum.name, attr_name
+                    )
+                    accumulator.append(f"{msp_name}={self._format_value(value[0])}")
+                else:
+                    accumulator.append(f"{msp_name}={self._format_value(value)}")
+        return accumulator
+
+    def build_spectrum_comments(self, spectrum: Spectrum) -> List[Tuple[str, str]]:
+        accumulator = self._build_comments(spectrum, spectrum, self.spectrum_keys)
+        if spectrum.analytes:
+            analyte = spectrum.get_analyte('1')
+            accumulator += self._build_comments(spectrum, analyte, self.analyte_keys)
+            if analyte.peptide:
+                accumulator.append(self._proforma_to_mods(analyte.peptide))
+            accumulator += self._protein_to_comments(analyte)
+        if spectrum.interpretations:
+            interp = spectrum.get_interpretation('1')
+            accumulator += self._build_comments(
+                spectrum, interp, self.interpretation_keys)
+        return accumulator
+
+    def write_spectrum(self, spectrum: Spectrum):
+        if len(spectrum.analytes) > 1:
+            logger.warning(
+                "Spectrum %r contains multiple analytes, MSP will only contain the first",
+                spectrum.name
+            )
+        analyte = spectrum.get_analyte('1')
+        self.handle.write(f"Name: {spectrum.name}\n")
+        self.handle.write(f"MW: {analyte.mass}\n")
+        self.handle.write(f"Comment: {' '.join(self.build_spectrum_comments(spectrum))}\n")
+        self._write_peaks(spectrum)
+        self.handle.write("\n")
+
+    def _format_annotation(self, annot: annotation.IonAnnotationBase):
+        parts = []
+        if isinstance(annot, annotation.PeptideFragmentIonAnnotation):
+            parts.append(f"{annot.series}{annot.position}")
+        elif isinstance(annot, annotation.ImmoniumIonAnnotation):
+            parts.append(f"I{annot.amino_acid}{annot.modification if annot.modification else ''}")
+        elif isinstance(annot, annotation.ReporterIonAnnotation):
+            parts.append(annot.reporter_label)
+        if not parts:
+            return "?"
+        if annot.neutral_losses:
+            f = annotation.combine_formula(annot.neutral_losses)
+            if f[0] not in ('-', '+'):
+                f = '+' + f
+            parts.append(f)
+        if annot.adducts:
+            parts.append(f"[{annotation.combine_formula(annot.adducts)}]")
+        if annot.charge > 1:
+            parts.append(f"^{annot.charge}")
+        if annot.isotope:
+            if annot.isotope > 0:
+                parts.append(f'+{annot.isotope}i')
+            else:
+                parts.append(f'{annot.isotope}i')
+        if annot.mass_error:
+            parts.append(f'/{annot.mass_error}')
+        return ''.join(parts)
+
+    def _write_peaks(self, spectrum: Spectrum):
+        self.handle.write(f"Num peaks: {len(spectrum.peak_list)}\n")
+        for peak in spectrum.peak_list:
+            annot = self._format_annotation(peak[2][0]) if peak[2] else '?'
+            self.handle.write(f"{peak[0]:0.4f}\t{peak[1]:0.4f}\t\"{annot}\"\n")
+
+    def close(self):
+        self.handle.close()

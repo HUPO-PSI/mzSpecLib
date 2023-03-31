@@ -213,6 +213,9 @@ Annotation = (
     Stack(
         IsAuxiliary,
         Optional(
+            IsAuxiliary
+        ),
+        Optional(
             AnalyteIdentifier
         ),
         IonType,
