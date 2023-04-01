@@ -1,6 +1,7 @@
 import re
 from sys import intern
 from typing import Any, List, Pattern, Dict, Tuple, Union
+import warnings
 
 
 JSONDict = Dict[str, Union[List, Dict, int, float, str, bool, None]]
@@ -108,7 +109,7 @@ class MassError(object):
     unit: str
     mass_error: float
 
-    def __init__(self, mass_error, unit=None):
+    def __init__(self, mass_error=0, unit=None):
         if unit is None:
             unit = self._DEFAULT_UNIT
         self.mass_error = float(mass_error)
@@ -555,6 +556,17 @@ class SMILESAnnotation(IonAnnotationBase):
             series, neutral_losses, isotope, adducts, charge, analyte_reference, mass_error, confidence,
             rest, is_auxiliary)
         self.smiles = smiles
+        if not self.adducts:
+            warnings.warn(
+                "A SMILES annotation was detected WITHOUT an explicit adduct, assuming it's "
+                "charge carrier is H+ and is positive.")
+            tokens = ["M"]
+            if self.charge > 1:
+                tokens.append(f"{self.charge}H")
+            else:
+                tokens.append("H")
+            self.adducts = tokens
+
 
     def _format_ion(self):
         return f"s{{{self.smiles}}}"
@@ -755,9 +767,12 @@ class AnnotationStringParser(object):
             return [annotation]
         else:
             if rest[0] != ",":
-                raise ValueError(f"Malformed trailing string {rest}, expected ',' for {annotation_string}")
+                raise ValueError(
+                    f"Malformed trailing string {rest}, expected ',' for {annotation_string}")
             else:
                 rest = rest[1:]
+                if rest[0].isspace():
+                    rest = rest.lstrip()
             result = [annotation]
             result.extend(self.parse_annotation(rest, **kwargs))
             total_confidence = 0.0

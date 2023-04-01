@@ -175,7 +175,7 @@ class UniversalSpectrumIdentifier(object):
             self.peptidoform = ''
             self.charge = ''
             if self.interpretation and self.interpretation != '':
-                find = re.match("^\s*(.+)\/(\d+)\s*$", self.interpretation)
+                find = re.match(r"^\s*(.+)\/(\d+)\s*$", self.interpretation)
                 # match
                 if find:
                     # subfields of interpretation

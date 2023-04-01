@@ -589,7 +589,9 @@ class AttributeManagedProperty(Generic[T]):
     def __get__(self, inst: AttributeManager, cls: Type) -> T:
         if inst is None:
             return self
-        return inst.get_attribute(self.attribute, group_identifier=self._get_group_id(inst))
+        if inst.has_attribute(self.attribute):
+            return inst.get_attribute(self.attribute, group_identifier=self._get_group_id(inst))
+        return None
 
     def __set__(self, inst: AttributeManager, value: T):
         attrib = self.attribute
