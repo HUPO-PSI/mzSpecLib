@@ -7,12 +7,16 @@ from pathlib import Path
 
 
 from psims.controlled_vocabulary import Entity
-from psims.controlled_vocabulary.controlled_vocabulary import load_uo, load_unimod, load_psims
+from psims.controlled_vocabulary.controlled_vocabulary import (
+    load_uo, load_unimod, load_psims)
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
-from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
-from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
+from mzlib.analyte import (
+    Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM)
+from mzlib.cluster import SpectrumCluster
+from mzlib.attributes import (
+    Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty)
 
 from .utils import open_stream, LineBuffer
 
@@ -36,6 +40,7 @@ class AttributeSetTypes(enum.Enum):
     spectrum = enum.auto()
     analyte = enum.auto()
     interpretation = enum.auto()
+    cluster = enum.auto()
 
 
 class VocabularyResolverMixin(object):
@@ -86,20 +91,24 @@ class SubclassRegisteringMetaclass(type):
         return cls._file_extension_to_implementation.get(format_or_extension)
 
 
-class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
+                                 metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
     file_format = None
 
-    _file_extension_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
-    _format_name_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
+    _file_extension_to_implementation: Dict[str,
+                                            Type['SpectralLibraryBackendBase']] = {}
+    _format_name_to_implementation: Dict[str,
+                                         Type['SpectralLibraryBackendBase']] = {}
 
     index: IndexBase
 
     entry_attribute_sets: Dict[str, AttributeSet]
     analyte_attribute_sets: Dict[str, AttributeSet]
     interpretation_attribute_sets: Dict[str, AttributeSet]
+    cluster_attribute_sets: Dict[str, AttributeSet]
 
     name = AttributeManagedProperty[str](LIBRARY_NAME_TERM)
     identifier = AttributeManagedProperty[str](LIBRARY_IDENTIFIER_TERM)
@@ -145,7 +154,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         return False
 
     @classmethod
-    def guess_implementation(cls, filename, index_type=None, **kwargs) -> 'SpectralLibraryBackendBase':
+    def guess_implementation(cls, filename, index_type=None,
+                             **kwargs) -> 'SpectralLibraryBackendBase':
         """Guess the backend implementation to use with this file format.
 
         Parameters
@@ -233,8 +243,17 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
             attr_set.apply(analyte)
         return analyte
 
-    def _analyte_interpretation_link(self, spectrum: Spectrum, interpretation: Interpretation):
-        if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
+    def _new_cluster(self) -> SpectrumCluster:
+        cluster = SpectrumCluster()
+        attr_set = self.cluster_attribute_sets.get('all')
+        if attr_set:
+            attr_set.apply(cluster)
+        return cluster
+
+    def _analyte_interpretation_link(self, spectrum: Spectrum,
+                                     interpretation: Interpretation):
+        if (interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and
+            not interpretation.analytes):
             analyte_ids = interpretation.get_attribute(ANALYTE_MIXTURE_TERM)
             if isinstance(analyte_ids, str):
                 term = self.find_term_for(ANALYTE_MIXTURE_CURIE)
@@ -256,7 +275,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
                 for analyte in spectrum.analytes.values():
                     interpretation.add_analyte(analyte)
 
-    def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None):
+    def get_spectrum(self, spectrum_number: int=None,
+                     spectrum_name: str=None) -> Spectrum:
         """Retrieve a single spectrum from the library.
 
         Parameters
@@ -270,6 +290,9 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
         -------
         :class:`~.Spectrum`
         """
+        raise NotImplementedError()
+
+    def get_cluster(self, cluster_number: int) -> SpectrumCluster:
         raise NotImplementedError()
 
     def find_spectra(self, specification, **query_keys):
@@ -334,13 +357,16 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, meta
     def read(self):
         raise NotImplementedError()
 
-    def _add_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
+    def _add_attribute_set(self, attribute_set: AttributeSet,
+                           attribute_set_type: AttributeSetTypes):
         if attribute_set_type == AttributeSetTypes.spectrum:
             self.entry_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.analyte:
             self.analyte_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.interpretation:
             self.interpretation_attribute_sets[attribute_set.name] = attribute_set
+        elif attribute_set_type == AttributeSetTypes.cluster:
+            self.cluster_attribute_sets[attribute_set.name] = attribute_set
         else:
             raise ValueError(f"Could not map {attribute_set_type}")
 
@@ -352,7 +378,8 @@ guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
 class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
-    def __init__(self, filename, index_type=None, read_metadata=True, create_index: bool=True):
+    def __init__(self, filename, index_type=None, read_metadata=True,
+                 create_index: bool=True):
         if index_type is None and create_index:
             index_type = self.has_index_preference(filename)
 
@@ -439,12 +466,14 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return spectra
 
 
-class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryWriterBase(VocabularyResolverMixin,
+                                metaclass=SubclassRegisteringMetaclass):
     def __init__(self, filename, **kwargs):
         self.filename = filename
         super().__init__(**kwargs)
 
-    def _filter_attributes(self, attributes: Attributed, filter_fn: Callable) -> Iterable:
+    def _filter_attributes(self, attributes: Attributed,
+                           filter_fn: Callable) -> Iterable:
         if isinstance(attributes, AttributedEntity):
             attributes = attributes.attributes
         for attrib in attributes:
@@ -496,6 +525,9 @@ class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegis
         logger.info(f"Wrote {n} spectra")
 
     def write_spectrum(self, spectrum: Spectrum):
+        raise NotImplementedError()
+
+    def write_cluster(self, cluster: SpectrumCluster):
         raise NotImplementedError()
 
     def __enter__(self) -> 'SpectralLibraryWriterBase':

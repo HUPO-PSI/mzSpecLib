@@ -1,6 +1,11 @@
 import textwrap
 
-from typing import Any, DefaultDict, Iterable, Iterator, Optional, Tuple, Union, List, Dict, Generic, TypeVar, Type
+from typing import (
+    Any, DefaultDict, Iterable,
+    Iterator, Optional, Tuple,
+    Union, List, Dict,
+    Generic, TypeVar, Type
+)
 
 
 T = TypeVar('T')
@@ -11,7 +16,7 @@ class Attribute(object):
     key: str
     value: Union[str, int, float, 'Attribute', List]
     group_id: Optional[str]
-    owner_id: int = -1
+    owner_id: int
 
     def __init__(self, key, value, group_id=None, owner_id=-1):
         self.key = key
@@ -176,7 +181,9 @@ class AttributeManager(object):
                 key, value = attr
             self.add_attribute(key, value, group_id)
 
-    def get_attribute(self, key: str, group_identifier: Optional[str] = None, raw: bool = False) -> Union[Any, List[Any], Attribute, List[Attribute]]:
+    def get_attribute(self, key: str, group_identifier: Optional[str] = None,
+                      raw: bool = False) -> Union[Any, List[Any], Attribute,
+                                                  List[Attribute]]:
         """Get the value or values associated with a given
         attribute key.
 
@@ -695,6 +702,14 @@ class AttributeSet(AttributedEntity):
     def __init__(self, name: str, attributes: Iterable = None, **kwargs):
         super().__init__(attributes, **kwargs)
         self.name = name
+
+    def member_of(self, target: Attributed) -> bool:
+        for attrib in self.attributes:
+            if attrib.group_id:
+                raise NotImplementedError()
+            if not target.has_attribute(attrib.key):
+                return False
+        return True
 
     def apply(self, target: Attributed):
         terms_to_remove: List[Tuple[str, Union[Attribute, List[Attribute]]]] = []
