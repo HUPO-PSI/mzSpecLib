@@ -153,6 +153,10 @@
                         }
                     ],
                     "default": null
+                },
+                "notes": {
+                    "type": "string",
+                    "description": "Free text describing the rule applicable to this atribute"
                 }
             }
         },
