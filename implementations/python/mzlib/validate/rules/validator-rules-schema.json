@@ -206,6 +206,10 @@
                 },
                 "condition": {
                     "$ref": "#/definitions/semantic_attribute_rule"
+                },
+                "notes": {
+                    "type": "string",
+                    "description": "Free text describing this rule to a human reader"
                 }
             }
         }
