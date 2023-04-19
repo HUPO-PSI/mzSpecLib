@@ -13,7 +13,7 @@ from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, 
 
 from mzlib.attributes import Attributed
 from mzlib.utils import flatten, ensure_iter
-from mzlib.backends.base import VocabularyResolverMixin
+from mzlib.ontology import _VocabularyResolverMixin
 
 from .level import RequirementLevel, CombinationLogic
 
@@ -228,7 +228,7 @@ class AttributeSemanticRule:
         return state
 
     @classmethod
-    def from_dict(cls, state, cv_provider: 'VocabularyResolverMixin') -> 'AttributeSemanticRule':
+    def from_dict(cls, state, cv_provider: _VocabularyResolverMixin) -> 'AttributeSemanticRule':
         if isinstance(state, str):
             state = {
                 "accession": state,
@@ -393,7 +393,7 @@ class ScopedSemanticRule:
         return rules
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any], cv_provider: 'VocabularyResolverMixin') -> List['ScopedSemanticRule']:
+    def from_dict(cls, data: Dict[str, Any], cv_provider: _VocabularyResolverMixin) -> List['ScopedSemanticRule']:
         rules = []
         for rule_spec in data['rules']:
             rule_id = rule_spec['id']
@@ -481,7 +481,7 @@ def load_rule_set(name: str) -> List[ScopedSemanticRule]:
     with res:
         rules = ScopedSemanticRule.from_dict(
             json.load(res),
-            VocabularyResolverMixin()
+            _VocabularyResolverMixin()
         )
 
     return RuleSet(
