@@ -209,6 +209,7 @@ class AttributeSemanticRule:
     allow_children: bool
     value: Optional[AttributeSemanticPredicate] = dataclasses.field(default=None)
     condition: Optional['AttributeSemanticRule'] = dataclasses.field(default=None)
+    notes: Optional[str] = dataclasses.field(default=None)
 
     @property
     def attribute(self) -> str:
@@ -225,6 +226,8 @@ class AttributeSemanticRule:
             state['value'] = self.value.to_dict()
         if self.condition is not None:
             state['condition'] = self.condition.to_dict()
+        if self.notes:
+            state['notes'] = self.notes
         return state
 
     @classmethod
@@ -256,6 +259,7 @@ class AttributeSemanticRule:
             allow_children=allow_children,
             value=value_rule,
             condition=condition,
+            notes=state.get('notes')
         )
         return attr_rule
 
@@ -268,6 +272,7 @@ class ScopedSemanticRule:
     requirement_level: RequirementLevel
     combination_logic: CombinationLogic
     condition: Optional[AttributeSemanticRule] = dataclasses.field(default=None)
+    notes: Optional[str] = dataclasses.field(default=None)
 
     def find_all_children_of(self, attribute_rule: AttributeSemanticRule, obj: Attributed, validator_context: "ValidatorBase") -> Tuple:
         result = []
@@ -418,7 +423,8 @@ class ScopedSemanticRule:
                     attributes=attribute_rules,
                     requirement_level=level,
                     combination_logic=combinator,
-                    condition=condition
+                    condition=condition,
+                    notes=rule_spec.get('rules')
                 )
             )
         return rules
@@ -431,7 +437,8 @@ class ScopedSemanticRule:
             "combination_logic": self.combination_logic.to_str(),
             "attr": [
                 a.to_dict() for a in self.attributes
-            ]
+            ],
+            "notes": self.notes
         }
         if self.condition:
             state['condition'] = self.condition
