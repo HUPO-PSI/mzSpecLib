@@ -1,8 +1,9 @@
 import logging
 import sys
-import traceback
 import click
 import logging
+import json
+import csv
 
 from typing import DefaultDict, List
 
@@ -11,28 +12,11 @@ from mzlib.index import MemoryIndex, SQLIndex
 from mzlib.backends.base import SpectralLibraryBackendBase
 from mzlib.validate import validator
 from mzlib.validate.level import RequirementLevel
+from mzlib.ontology import ControlledVocabularyResolver
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 logger = logging.getLogger(__name__)
-
-
-def info(type, value, tb):
-    if not sys.stderr.isatty():
-        click.secho("Running interactively, not starting debugger", fg='yellow')
-        sys.__excepthook__(type, value, tb)
-    else:
-        import pdb
-        traceback.print_exception(type, value, tb)
-        pdb.post_mortem(tb)
-
-
-def set_breakpoint_hook():
-    try:
-        import pdb
-        sys.breakpointhook = pdb.set_trace
-    except ImportError:
-        pass
 
 
 def _display_tree(tree, indent: int=0):
@@ -53,10 +37,7 @@ def _display_tree(tree, indent: int=0):
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def main():
-    '''A collection of utilities for inspecting and manipulating
-    spectral libraries.
-    '''
-
+    """A collection of utilities for inspecting and manipulating spectral libraries."""
     format_string = '[%(asctime)s] %(levelname).1s | %(name)s | %(message)s'
 
     logging.basicConfig(
@@ -67,13 +48,12 @@ def main():
 
 
 @main.command("describe", short_help=("Produce a minimal textual description"
-                                     " of a spectral library"))
+                                      " of a spectral library"))
 @click.argument('path', type=click.Path(exists=True))
 @click.option("-d", "--diagnostics", is_flag=True,
               help="Run more diagnostics, greatly increasing runtime but producing additional information")
 def describe(path, diagnostics=False):
-    '''Produces a minimal textual description of a spectral library.
-    '''
+    """Produces a minimal textual description of a spectral library."""
     click.echo("Describing \"%s\"" % (path,))
     if SQLIndex.exists(path):
         index_type = SQLIndex
@@ -89,22 +69,20 @@ def describe(path, diagnostics=False):
             click.echo(f"[{attr.group_id}]{attr.key}={attr.value}")
 
 
-@main.command("index", short_help="Build an on-disk index for a spectral library")
-@click.argument('inpath', type=click.Path(exists=True))
-def build_index(inpath):
-    library = SpectrumLibrary(filename=inpath, index_type=SQLIndex)
-
-
 @main.command("convert", short_help=("Convert a spectral library from one format to another"))
 @click.argument('inpath', type=click.Path(exists=True))
 @click.argument("outpath", type=click.Path())
 @click.option("-i", "--input-format", type=click.Choice(sorted(SpectralLibraryBackendBase._file_extension_to_implementation)))
 @click.option("-f", "--format", type=click.Choice(["text", "json", "msp"]), default="text")
-@click.option("-k", "--library-attribute", "library_attributes", type=(str, str), multiple=True, help="Specify an attribute to add to the library metadata section. May be repeated.")
+@click.option("-k", "--library-attribute", "library_attributes", type=(str, str), multiple=True,
+              help="Specify an attribute to add to the library metadata section. May be repeated.")
+@click.option("-K", "--header-file", type=click.Path(readable=True),
+              help="Specify a file to read name-value pairs from. May be JSON or TAB-separated")
 def convert(inpath, outpath, format=None, header_file=None, library_attributes=(), input_format=None):
-    '''Convert a spectral library from one format to another. If `outpath` is `-`,
+    """
+    Convert a spectral library from one format to another. If `outpath` is `-`,
     instead of writing to file, data will instead be sent to STDOUT.
-    '''
+    """
     if format is None:
         format = "text"
     if format == 'msp':
@@ -115,8 +93,18 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
         index_type = MemoryIndex
     click.echo(f"Opening {inpath}", err=True)
     library = SpectrumLibrary(filename=inpath, index_type=index_type, format=input_format)
+    if header_file:
+        library_attributes = list(library_attributes)
+        if header_file.endswith(".json"):
+            library_attributes.extend(
+                json.load(open(header_file, 'rt')).items())
+        else:
+            library_attributes.extend(
+                csv.reader(open(header_file, 'rt'), delimiter='\t'))
     if library_attributes:
+        resolver = ControlledVocabularyResolver()
         for k, v in library_attributes:
+            k = resolver._make_attribute_syntax(k)
             library.add_attribute(k, v)
     click.echo(f"Writing to {outpath}", err=True)
     fh = click.open_file(outpath, mode='w')
@@ -128,11 +116,11 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
 @main.command("index", short_help="Build an on-disk index for a spectral library")
 @click.argument('inpath', type=click.Path(exists=True))
 def build_index(inpath):
+    """Build an external on-disk SQL-based index for the spectral library"""
     library = SpectrumLibrary(filename=inpath, index_type=SQLIndex)
 
 
-
-def progress_logger(iterable, label, increment: int=100):
+def _progress_logger(iterable, label, increment: int=100):
     n = len(iterable)
     for i, item in enumerate(iterable):
         if i % increment == 0 and i:
@@ -147,6 +135,7 @@ def progress_logger(iterable, label, increment: int=100):
     case_sensitive=False),
     multiple=True)
 def validate(inpath, profiles=None):
+    """Semantically and structurally validate a spectral library."""
     if profiles is None:
         profiles = []
     if SQLIndex.exists(inpath):
@@ -169,7 +158,7 @@ def validate(inpath, profiles=None):
     logger.info(f"Validating {inpath}...")
     n_spectra = len(library)
     increment = max(min(n_spectra // 10, 5000), 1)
-    chain.validate_library(library, progress_logger(library, "Validating spectra", increment))
+    chain.validate_library(library, _progress_logger(library, "Validating spectra", increment))
 
     by_level: DefaultDict[RequirementLevel, List[validator.ValidationError]] = DefaultDict(list)
     for message in chain.error_log:
