@@ -13,7 +13,7 @@ from mzlib.spectrum import Spectrum
 from mzlib.analyte import Analyte, Interpretation
 from mzlib.spectrum_library import SpectrumLibrary
 
-from mzlib.backends.base import VocabularyResolverMixin
+from mzlib.ontology import _VocabularyResolverMixin
 
 
 from mzlib.validate.level import RequirementLevel
@@ -61,7 +61,7 @@ class ValidationContext:
 
 
 
-class ValidatorBase(VocabularyResolverMixin):
+class ValidatorBase(_VocabularyResolverMixin):
     error_log: List
     current_context: ValidationContext
 

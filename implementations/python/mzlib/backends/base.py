@@ -12,11 +12,9 @@ from psims.controlled_vocabulary.controlled_vocabulary import (
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
-from mzlib.analyte import (
-    Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM)
-from mzlib.cluster import SpectrumCluster
-from mzlib.attributes import (
-    Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty)
+from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
+from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
+from mzlib.ontology import _VocabularyResolverMixin
 
 from .utils import open_stream, LineBuffer
 
@@ -43,33 +41,6 @@ class AttributeSetTypes(enum.Enum):
     cluster = enum.auto()
 
 
-class VocabularyResolverMixin(object):
-    default_cv_loader_map = {
-        "MS": load_psims,
-        "UO": load_uo,
-        "UNIMOD": load_unimod,
-    }
-
-    def __init__(self, *args, **kwargs):
-        self.controlled_vocabularies = dict()
-        super().__init__(*args, **kwargs)
-
-    def load_cv(self, name):
-        if name in self.controlled_vocabularies:
-            return self.controlled_vocabularies[name]
-        self.controlled_vocabularies[name] = self.default_cv_loader_map[name]()
-        return self.controlled_vocabularies[name]
-
-    def find_term_for(self, curie: str) -> Entity:
-        try:
-            name, _id = curie.split(":")
-        except ValueError as err:
-            raise KeyError(curie) from err
-        cv = self.load_cv(name)
-        term = cv[curie]
-        return term
-
-
 class SubclassRegisteringMetaclass(type):
     def __new__(mcs, name, parents, attrs):
         new_type = type.__new__(mcs, name, parents, attrs)
@@ -91,8 +62,7 @@ class SubclassRegisteringMetaclass(type):
         return cls._file_extension_to_implementation.get(format_or_extension)
 
 
-class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
-                                 metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
@@ -117,7 +87,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
 
     @classmethod
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO]) -> bool:
-        """Guess if the file is of this type by inspecting the file's name and extension.
+        """
+        Guess if the file is of this type by inspecting the file's name and extension.
 
         Parameters
         ----------
@@ -139,7 +110,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
 
     @classmethod
     def guess_from_header(cls, filename) -> bool:
-        """Guess if the file is of this type by inspecting the file's header section
+        """
+        Guess if the file is of this type by inspecting the file's header section
 
         Parameters
         ----------
@@ -156,7 +128,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
     @classmethod
     def guess_implementation(cls, filename, index_type=None,
                              **kwargs) -> 'SpectralLibraryBackendBase':
-        """Guess the backend implementation to use with this file format.
+        """
+        Guess the backend implementation to use with this file format.
 
         Parameters
         ----------
@@ -166,6 +139,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
             The :class:`~.IndexBase` derived type to use for this file. If
             :const:`None` is provided, the instance will decide based upon
             :meth:`has_index_preference`.
+        **kwargs
+            Passed to implementation
 
         Returns
         -------
@@ -211,7 +186,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
             return value
 
     def read_header(self) -> bool:
-        """Read just the header of the whole library
+        """
+        Read just the header of the whole library
 
         Returns
         -------
@@ -277,7 +253,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
 
     def get_spectrum(self, spectrum_number: int=None,
                      spectrum_name: str=None) -> Spectrum:
-        """Retrieve a single spectrum from the library.
+        """
+        Retrieve a single spectrum from the library.
 
         Parameters
         ----------
@@ -299,7 +276,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
         raise NotImplementedError()
 
     def create_index(self) -> int:
-        """Populate the spectrum index.
+        """
+        Populate the spectrum index.
 
         This method may produce a large amount of file I/O.
 
@@ -330,7 +308,8 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
 
     @classmethod
     def has_index_preference(cls, filename: str) -> Type[IndexBase]:
-        '''Does this backend prefer a particular index for this file?
+        """
+        Does this backend prefer a particular index for this file?
 
         The base implementation checks to see if there is a SQL index
         for the filename provided, and if so, prefers :class:`~.SQLIndex`.
@@ -346,7 +325,7 @@ class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin,
         index_type: type
             Returns a :class:`~.IndexBase` derived type which this backend
             would prefer to use.
-        '''
+        """
         try:
             if SQLIndex.exists(filename):
                 return SQLIndex
@@ -399,7 +378,8 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             self.handle = open_stream(filename_or_stream, 'rt')
 
     def _buffer_from_stream(self, stream: io.IOBase) -> List:
-        '''Collect data from the readable stream until
+        """
+        Collect data from the readable stream until
         a complete spectrum entry has been observed.
 
         Parameters
@@ -411,7 +391,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         -------
         line_buffer: List[str]
             A list of lines read from the input stream.
-        '''
+        """
         raise NotImplementedError()
 
     def read(self) -> Iterator[Spectrum]:
@@ -466,8 +446,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return spectra
 
 
-class SpectralLibraryWriterBase(VocabularyResolverMixin,
-                                metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
     def __init__(self, filename, **kwargs):
         self.filename = filename
         super().__init__(**kwargs)
