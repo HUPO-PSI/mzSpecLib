@@ -13,7 +13,7 @@ from typing import Any, ClassVar, Dict, List, TYPE_CHECKING, Mapping, Optional, 
 
 from mzlib.attributes import Attributed
 from mzlib.utils import flatten, ensure_iter
-from mzlib.backends.base import VocabularyResolverMixin
+from mzlib.ontology import _VocabularyResolverMixin
 
 from .level import RequirementLevel, CombinationLogic
 
@@ -209,6 +209,7 @@ class AttributeSemanticRule:
     allow_children: bool
     value: Optional[AttributeSemanticPredicate] = dataclasses.field(default=None)
     condition: Optional['AttributeSemanticRule'] = dataclasses.field(default=None)
+    notes: Optional[str] = dataclasses.field(default=None)
 
     @property
     def attribute(self) -> str:
@@ -225,10 +226,12 @@ class AttributeSemanticRule:
             state['value'] = self.value.to_dict()
         if self.condition is not None:
             state['condition'] = self.condition.to_dict()
+        if self.notes:
+            state['notes'] = self.notes
         return state
 
     @classmethod
-    def from_dict(cls, state, cv_provider: 'VocabularyResolverMixin') -> 'AttributeSemanticRule':
+    def from_dict(cls, state, cv_provider: _VocabularyResolverMixin) -> 'AttributeSemanticRule':
         if isinstance(state, str):
             state = {
                 "accession": state,
@@ -256,6 +259,7 @@ class AttributeSemanticRule:
             allow_children=allow_children,
             value=value_rule,
             condition=condition,
+            notes=state.get('notes')
         )
         return attr_rule
 
@@ -268,6 +272,7 @@ class ScopedSemanticRule:
     requirement_level: RequirementLevel
     combination_logic: CombinationLogic
     condition: Optional[AttributeSemanticRule] = dataclasses.field(default=None)
+    notes: Optional[str] = dataclasses.field(default=None)
 
     def find_all_children_of(self, attribute_rule: AttributeSemanticRule, obj: Attributed, validator_context: "ValidatorBase") -> Tuple:
         result = []
@@ -393,7 +398,7 @@ class ScopedSemanticRule:
         return rules
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any], cv_provider: 'VocabularyResolverMixin') -> List['ScopedSemanticRule']:
+    def from_dict(cls, data: Dict[str, Any], cv_provider: _VocabularyResolverMixin) -> List['ScopedSemanticRule']:
         rules = []
         for rule_spec in data['rules']:
             rule_id = rule_spec['id']
@@ -418,7 +423,8 @@ class ScopedSemanticRule:
                     attributes=attribute_rules,
                     requirement_level=level,
                     combination_logic=combinator,
-                    condition=condition
+                    condition=condition,
+                    notes=rule_spec.get('rules')
                 )
             )
         return rules
@@ -431,7 +437,8 @@ class ScopedSemanticRule:
             "combination_logic": self.combination_logic.to_str(),
             "attr": [
                 a.to_dict() for a in self.attributes
-            ]
+            ],
+            "notes": self.notes
         }
         if self.condition:
             state['condition'] = self.condition
@@ -481,7 +488,7 @@ def load_rule_set(name: str) -> List[ScopedSemanticRule]:
     with res:
         rules = ScopedSemanticRule.from_dict(
             json.load(res),
-            VocabularyResolverMixin()
+            _VocabularyResolverMixin()
         )
 
     return RuleSet(

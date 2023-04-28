@@ -13,6 +13,7 @@ from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
 from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
+from mzlib.ontology import _VocabularyResolverMixin
 
 from .utils import open_stream, LineBuffer
 
@@ -38,33 +39,6 @@ class AttributeSetTypes(enum.Enum):
     interpretation = enum.auto()
 
 
-class VocabularyResolverMixin(object):
-    default_cv_loader_map = {
-        "MS": load_psims,
-        "UO": load_uo,
-        "UNIMOD": load_unimod,
-    }
-
-    def __init__(self, *args, **kwargs):
-        self.controlled_vocabularies = dict()
-        super().__init__(*args, **kwargs)
-
-    def load_cv(self, name):
-        if name in self.controlled_vocabularies:
-            return self.controlled_vocabularies[name]
-        self.controlled_vocabularies[name] = self.default_cv_loader_map[name]()
-        return self.controlled_vocabularies[name]
-
-    def find_term_for(self, curie: str) -> Entity:
-        try:
-            name, _id = curie.split(":")
-        except ValueError as err:
-            raise KeyError(curie) from err
-        cv = self.load_cv(name)
-        term = cv[curie]
-        return term
-
-
 class SubclassRegisteringMetaclass(type):
     def __new__(mcs, name, parents, attrs):
         new_type = type.__new__(mcs, name, parents, attrs)
@@ -86,7 +60,7 @@ class SubclassRegisteringMetaclass(type):
         return cls._file_extension_to_implementation.get(format_or_extension)
 
 
-class SpectralLibraryBackendBase(AttributedEntity, VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
     """A base class for all spectral library formats.
 
     """
@@ -439,7 +413,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return spectra
 
 
-class SpectralLibraryWriterBase(VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
+class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
     def __init__(self, filename, **kwargs):
         self.filename = filename
         super().__init__(**kwargs)
