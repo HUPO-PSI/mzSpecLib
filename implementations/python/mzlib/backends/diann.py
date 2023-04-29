@@ -16,7 +16,7 @@ def rewrite_unimod_peptide_as_proforma(sequence: str) -> str:
 
 
 CHARGE_STATE = "MS:1000041|charge state"
-SELECTED_ION_MZ = "MS:1000744|selected ion m/z"
+SELECTED_ION_MZ = "MS:1003208|experimental precursor monoisotopic m/z"
 SOURCE_FILE = "MS:1003203|constituent spectrum file"
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 PROFORMA_PEPTIDE_TERM = "MS:1003169|proforma peptidoform sequence"

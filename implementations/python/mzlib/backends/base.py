@@ -1,8 +1,9 @@
 import io
+import csv
 import enum
 import logging
 
-from typing import Callable, Dict, Iterable, Union, List, Type, Iterator
+from typing import Any, Callable, Dict, Iterable, Union, List, Type, Iterator
 from pathlib import Path
 
 
@@ -411,6 +412,54 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             spectrum = self._parse(buffer, record.number)
             spectra.append(spectrum)
         return spectra
+
+
+class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
+    def __init__(self, filename: str, index_type=None, delimiter='\t', **kwargs):
+        if index_type is None:
+            index_type = self.has_index_preference(filename)
+        self._delimiter = delimiter
+        super().__init__(filename)
+        self.filename = filename
+        self._headers = None
+        self._read_header_line()
+        self.index, was_initialized = index_type.from_filename(filename)
+        if not was_initialized:
+            self.create_index()
+
+    def _read_header_line(self):
+        with open_stream(self.filename) as stream:
+            reader = csv.reader(stream, delimiter=self._delimiter)
+            headers = next(reader)
+            stream.seek(0)
+        self._headers = headers
+
+    def _open_reader(self, stream: io.TextIOBase):
+        return csv.DictReader(stream, fieldnames=self._headers, delimiter='\t')
+
+    def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None) -> Spectrum:
+        # keep the two branches separate for the possibility that this is not possible with all
+        # index schemes.
+        if spectrum_number is not None:
+            if spectrum_name is not None:
+                raise ValueError("Provide only one of spectrum_number or spectrum_name")
+            offset = self.index.offset_for(spectrum_number)
+        elif spectrum_name is not None:
+            offset = self.index.offset_for(spectrum_name)
+        buffer = self._get_lines_for(offset)
+        spectrum = self._parse_from_buffer(buffer, spectrum_number)
+        return spectrum
+
+    def _batch_rows(self, iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
+        raise NotImplementedError()
+
+    def _get_lines_for(self, offset: int) -> List[Dict[str, Any]]:
+        with open_stream(self.filename, 'r') as infile:
+            infile.seek(offset)
+            reader = self._open_reader(infile)
+            spectrum_buffer = next(self._batch_rows(reader))
+            #### We will end up here if this is the last spectrum in the file
+        return spectrum_buffer
 
 
 class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
