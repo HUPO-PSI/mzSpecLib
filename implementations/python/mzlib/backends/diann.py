@@ -42,9 +42,7 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
     _custom_spectrum_keys = [
         "ExcludeFromAssay",
-        "BGSInferenceId",
         "AllowForNormalization",
-        "Workflow",
     ]
 
     _custom_analyte_keys = [
