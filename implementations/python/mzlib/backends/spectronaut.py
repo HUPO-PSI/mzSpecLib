@@ -2,11 +2,11 @@ import json
 
 from typing import List, Tuple, Dict, Iterator, Any, Deque, Union
 
-from pyteomics import proforma, mass
+from pyteomics import proforma
 
 from mzlib import annotation
 from mzlib.analyte import Analyte
-from mzlib.backends.base import SpectralLibraryBackendBase, _CSVSpectralLibraryBackendBase
+from mzlib.backends.base import _CSVSpectralLibraryBackendBase, FORMAT_VERSION_TERM, DEFAULT_VERSION
 from mzlib.backends.utils import open_stream
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 
@@ -76,6 +76,8 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         "ProteinGroups",
     ]
 
+    _key_columns = ['ModifiedPeptide', 'PrecursorCharge']
+
     def __init__(self, filename: str, index_type=None, **kwargs):
         super().__init__(filename, index_type=index_type, delimiter='\t', **kwargs)
 
@@ -84,11 +86,17 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         value = "MS:1003074|predicted spectrum"
         return key, value
 
+    def read_header(self) -> bool:
+        result = super().read_header()
+        self.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
+        self.add_attribute("MS:1003207|library creation software", "MS:1001327|Spectronaut")
+        return result
+
     def _batch_rows(self, iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
         group_key = None
         group = []
         for row in iterator:
-            key = (row['ModifiedPeptide'], row['PrecursorCharge'], )
+            key = [row[k_i] for k_i in self._key_columns]
             if group_key is None:
                 group_key = key
                 group.append(row)
@@ -103,9 +111,10 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
     def create_index(self):
         key = None
+        delimiter = self._delimiter.encode("ascii")
         with open_stream(self.filename, 'rb') as stream:
             header = stream.readline()
-            header_cols = header.split(b'\t')
+            header_cols = header.split(delimiter)
             column_keys = (
                 header_cols.index(b'ModifiedPeptide'),
                 header_cols.index(b'PrecursorCharge'),
@@ -113,7 +122,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
             offset = stream.tell()
 
             line = stream.readline()
-            tokens = line.split(b'\t')
+            tokens = line.split(delimiter)
             key = (tokens[column_keys[0]].strip(b"_"), tokens[column_keys[1]])
             n = 0
             self.index.add(
@@ -127,7 +136,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
             # To hold previous values
             last_offset = None
             while line:
-                tokens = line.split(b'\t')
+                tokens = line.split(delimiter)
                 next_key = (tokens[column_keys[0]].strip(b"_"), tokens[column_keys[1]])
                 if next_key != key:
                     key = next_key
@@ -260,7 +269,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         spec.peak_list = self._generate_peaks(buffer)
         spec.add_attribute("MS:1003059|number of peaks", len(spec.peak_list))
 
-        if spectrum_index:
+        if spectrum_index is not None:
             spec.index = spectrum_index
         else:
             spec.index = -1

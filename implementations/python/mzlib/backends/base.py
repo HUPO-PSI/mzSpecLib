@@ -415,17 +415,25 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
 
 class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
+    _delimiter: str
+    _header: List[str]
+
     def __init__(self, filename: str, index_type=None, delimiter='\t', **kwargs):
         if index_type is None:
             index_type = self.has_index_preference(filename)
         self._delimiter = delimiter
+        self._headers = None
         super().__init__(filename)
         self.filename = filename
-        self._headers = None
-        self._read_header_line()
+
+        self.read_header()
         self.index, was_initialized = index_type.from_filename(filename)
         if not was_initialized:
             self.create_index()
+
+    def read_header(self) -> bool:
+        self._read_header_line()
+        return True
 
     def _read_header_line(self):
         with open_stream(self.filename) as stream:
@@ -460,6 +468,14 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             spectrum_buffer = next(self._batch_rows(reader))
             #### We will end up here if this is the last spectrum in the file
         return spectrum_buffer
+
+    def read(self) -> Iterator[Spectrum]:
+        with open_stream(self.filename, 'rt') as stream:
+            i = 0
+            reader = self._open_reader(stream)
+            buffering_reader = self._batch_rows(reader)
+            for i, buffer in enumerate(buffering_reader):
+                yield self._parse(buffer, i)
 
 
 class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
