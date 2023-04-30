@@ -147,7 +147,7 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         if "ProteinName" in  descr:
             analyte.add_attribute(
                 "MS:1000886|protein name",
-                descr["Protein Name"],
+                descr["ProteinName"],
                 group_identifier=protein_group_id
             )
 

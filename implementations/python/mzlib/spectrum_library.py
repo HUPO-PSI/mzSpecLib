@@ -77,7 +77,10 @@ class SpectrumLibrary:
             self.backend = guess_implementation(self.filename, index_type)
             self._format = self.backend.format_name
         else:
-            backend_type = SpectralLibraryBackendBase.type_for_format(self.format)
+            if callable(self.format):
+                backend_type = self.format
+            else:
+                backend_type = SpectralLibraryBackendBase.type_for_format(self.format)
             if backend_type is None:
                 raise ValueError(
                     f"Could not find an implementation for {self.format}")
