@@ -2,6 +2,7 @@ import io
 import csv
 import enum
 import logging
+import warnings
 
 from typing import Any, Callable, Dict, Iterable, Union, List, Type, Iterator
 from pathlib import Path
@@ -38,6 +39,10 @@ class AttributeSetTypes(enum.Enum):
     spectrum = enum.auto()
     analyte = enum.auto()
     interpretation = enum.auto()
+
+
+class FormatInferenceFailure(ValueError):
+    """Indicates that we failed to infer the format type for a spectral library."""
 
 
 class SubclassRegisteringMetaclass(type):
@@ -147,7 +152,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
                     return impl(filename, index_type=index_type, **kwargs)
             except (TypeError, UnicodeDecodeError):
                 pass
-        raise ValueError(f"Could not guess backend implementation for {filename}")
+        raise FormatInferenceFailure(f"Could not guess backend implementation for {filename}")
 
     def __init__(self, filename):
         self.filename = filename
@@ -417,6 +422,18 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
     _delimiter: str
     _header: List[str]
+
+    @classmethod
+    def guess_from_header(cls, filename) -> bool:
+        with open_stream(filename, 'rt') as fh:
+            line = fh.readline()
+            tokens = line.split('\t')
+            if len(tokens) > 3:
+                warnings.warn(
+                    "This file looks like a TSV file, but it's not possible to say definitively what"
+                    " type from this alone. Please explicitly specify the format.")
+                return False
+        return False
 
     def __init__(self, filename: str, index_type=None, delimiter='\t', **kwargs):
         if index_type is None:
