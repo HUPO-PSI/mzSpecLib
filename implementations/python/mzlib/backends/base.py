@@ -423,6 +423,8 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
     _delimiter: str
     _header: List[str]
 
+    _required_columns: List[str] = None
+
     @classmethod
     def guess_from_header(cls, filename) -> bool:
         with open_stream(filename, 'rt') as fh:
@@ -435,7 +437,7 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 return False
         return False
 
-    def __init__(self, filename: str, index_type=None, delimiter='\t', **kwargs):
+    def __init__(self, filename: str, index_type=None, delimiter='\t', read_metadata=True, create_index: bool = True, ** kwargs):
         if index_type is None:
             index_type = self.has_index_preference(filename)
         self._delimiter = delimiter
@@ -445,7 +447,7 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
         self.read_header()
         self.index, was_initialized = index_type.from_filename(filename)
-        if not was_initialized:
+        if not was_initialized and create_index:
             self.create_index()
 
     def read_header(self) -> bool:
@@ -453,13 +455,21 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return True
 
     def _read_header_line(self):
+        headers = None
         with open_stream(self.filename) as stream:
             reader = csv.reader(stream, delimiter=self._delimiter)
             headers = next(reader)
             stream.seek(0)
         self._headers = headers
+        if headers and self._required_columns:
+            missing_required = set(self._required_columns) - set(headers)
+            if missing_required:
+                raise TypeError(
+                    f"{self.format_name} requires column{'s' if len(missing_required) > 1 else ''} "
+                    f"{', '.join(missing_required)}, but were not found."
+                )
 
-    def _open_reader(self, stream: io.TextIOBase):
+    def _open_reader(self, stream: io.TextIOBase) -> Union[Iterator[Dict[str, Any]], csv.DictReader]:
         return csv.DictReader(stream, fieldnames=self._headers, delimiter='\t')
 
     def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None) -> Spectrum:
@@ -476,6 +486,22 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         return spectrum
 
     def _batch_rows(self, iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
+        """
+        Gather successive rows by some shared key into a batch to be parsed into a single
+        :class:`~.Spectrum` instance.
+
+        This assumes there are no interleaved rows across spectra.
+
+        Parameters
+        ----------
+        iterator : Iterator[Dict[str, Any]]
+            An iterator over rows of the underlying CSV as dictionaries
+
+        Yields
+        ------
+        batch : List[Dict[str, Any]]
+            The next batch of rows corresponding to a single spectrum
+        """
         raise NotImplementedError()
 
     def _get_lines_for(self, offset: int) -> List[Dict[str, Any]]:

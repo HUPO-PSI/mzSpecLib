@@ -50,8 +50,13 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         "ProteinGroup",
     ]
 
+    _required_columns = ['transition_group_id', 'PrecursorMz', 'PrecursorCharge',
+                         'FullUniModPeptideName', 'ProductMz', 'LibraryIntensity',
+                         'FragmentType', 'FragmentSeriesNumber',
+                         'FragmentCharge', 'FragmentLossType']
+
     def __init__(self, filename: str, index_type=None, **kwargs):
-        super().__init__(filename, index_type=index_type, delimiter='\t')
+        super().__init__(filename, index_type=index_type, delimiter='\t', **kwargs)
 
     def _spectrum_type(self):
         key = "MS:1003072|spectrum origin type"
@@ -119,10 +124,11 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         spec.add_attribute(SPECTRUM_NAME, descr['transition_group_id'])
         spec.add_attribute(SELECTED_ION_MZ, float(descr['PrecursorMz']))
         spec.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
-        spec.add_attribute(SOURCE_FILE, descr['FileName'])
+        if 'FileName' in descr:
+            spec.add_attribute(SOURCE_FILE, descr['FileName'])
         spec.add_attribute(*self._spectrum_type())
 
-        if int(descr['decoy']):
+        if 'decoy' in descr and int(descr['decoy']):
             spec.add_attribute("MS:1003072|spectrum origin type", "MS:1003192|decoy spectrum")
 
         if 'IonMobility' in descr:
@@ -133,7 +139,8 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         pf_seq = _rewrite_unimod_peptide_as_proforma(descr['FullUniModPeptideName'])
         peptide = proforma.ProForma.parse(pf_seq)
 
-        analyte.add_attribute(STRIPPED_PEPTIDE_TERM, descr['PeptideSequence'])
+        if 'PeptideSequence' in descr:
+            analyte.add_attribute(STRIPPED_PEPTIDE_TERM, descr['PeptideSequence'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
 

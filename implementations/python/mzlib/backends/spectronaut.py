@@ -78,6 +78,12 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
     _key_columns = ['ModifiedPeptide', 'PrecursorCharge']
 
+    _required_columns = ['PrecursorMz', 'PrecursorCharge',
+                         'ModifiedPeptide', 'StrippedPeptide',
+                         'FragmentMz', 'RelativeIntensity',
+                         'FragmentType', 'FragmentNumber',
+                         'FragmentCharge', 'FragmentLossType']
+
     def __init__(self, filename: str, index_type=None, **kwargs):
         super().__init__(filename, index_type=index_type, delimiter='\t', **kwargs)
 
@@ -200,21 +206,24 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
         protein_group_id = analyte.get_next_group_identifier()
 
-        analyte.add_attribute(
-            "MS:1000885|protein accession",
-            description['UniProtIds'],
-            group_identifier=protein_group_id
-        )
-        analyte.add_attribute(
-            "MS:1000886|protein name",
-            description["Protein Name"],
-            group_identifier=protein_group_id
-        )
-        analyte.add_attribute(
-            "MS:1001088|protein description",
-            description['ProteinDescription'],
-            group_identifier=protein_group_id
-        )
+        if 'UniProtIds' in description:
+            analyte.add_attribute(
+                "MS:1000885|protein accession",
+                description['UniProtIds'],
+                group_identifier=protein_group_id
+            )
+        if 'Protein Name' in description:
+            analyte.add_attribute(
+                "MS:1000886|protein name",
+                description["Protein Name"],
+                group_identifier=protein_group_id
+            )
+        if 'ProteinDescription' in description:
+            analyte.add_attribute(
+                "MS:1001088|protein description",
+                description['ProteinDescription'],
+                group_identifier=protein_group_id
+            )
 
         if "OrganismId" in description:
             analyte.add_attribute_group([
