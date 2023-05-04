@@ -4,7 +4,10 @@ import pathlib
 import logging
 
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime, Text, LargeBinary
-from sqlalchemy.ext.declarative import declarative_base
+try: # For SQLAlchemy 2.0
+    from sqlalchemy.orm import declarative_base
+except ImportError:
+    from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker

@@ -56,7 +56,8 @@ def peaklist_to_vector(peaklist, width=0.000001):
 
 
 def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, label_rotation=0, **kwargs):
-    """Draw and annotate a Spectrum.
+    """
+    Draw and annotate a Spectrum.
 
     Parameters
     ----------
@@ -70,7 +71,9 @@ def draw_spectrum(spectrum, ax=None, normalize=False, label_threshold=0.1, label
     pretty: bool, optional
         If `True`, will call :func:`_beautify_axes` on `ax`
     label_threshold: float, optional
-        The minimum
+        The minimum intensity to label a peak for
+    label_rotation : float, optional
+        The degrees of rotation to apply to peak labels
     **kwargs
         Passed to :meth:`matplotlib.Axes.plot`
     Returns

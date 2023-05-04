@@ -1,52 +1,73 @@
-import csv
-import io
+import json
 
-from typing import List, Tuple, Dict, Iterator, Any
+from typing import List, Tuple, Dict, Iterator, Any, Union
 
-from pyteomics import proforma, mass
+from pyteomics import proforma
 
 from mzlib import annotation
-from mzlib.backends.base import SpectralLibraryBackendBase
-from mzlib.backends.utils import open_stream
+from mzlib.backends.base import DEFAULT_VERSION, FORMAT_VERSION_TERM, _CSVSpectralLibraryBackendBase
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 
 
-def rewrite_unimod_peptide_as_proforma(sequence: str) -> str:
+def _rewrite_unimod_peptide_as_proforma(sequence: str) -> str:
     return sequence.replace("(", '[').replace(')', ']').replace("UniMod", "UNIMOD")
 
 
 CHARGE_STATE = "MS:1000041|charge state"
-SELECTED_ION_MZ = "MS:1000744|selected ion m/z"
+SELECTED_ION_MZ = "MS:1003208|experimental precursor monoisotopic m/z"
 SOURCE_FILE = "MS:1003203|constituent spectrum file"
 STRIPPED_PEPTIDE_TERM = "MS:1000888|stripped peptide sequence"
 PROFORMA_PEPTIDE_TERM = "MS:1003169|proforma peptidoform sequence"
 
+CUSTOM_ATTRIBUTE_NAME = "MS:1003275|other attribute name"
+CUSTOM_ATTRIBUTE_VALUE = "MS:1003276|other attribute value"
 
-class DiaNNTSVSpectralLibrary(SpectralLibraryBackendBase):
+NO_LOSS = 'noloss'
+
+
+def _parse_value(value: str) -> Union[float, int, str, bool]:
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        lower = value.lower()
+        if lower == "true":
+            return True
+        elif lower == "false":
+            return False
+        return value
+
+
+class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
     format_name = "dia-nn.tsv"
 
+    _custom_spectrum_keys = [
+        "ExcludeFromAssay",
+        "AllowForNormalization",
+    ]
+
+    _custom_analyte_keys = [
+        "Proteotypic",
+        "ProteinGroup",
+    ]
+
+    _required_columns = ['transition_group_id', 'PrecursorMz', 'PrecursorCharge',
+                         'FullUniModPeptideName', 'ProductMz', 'LibraryIntensity',
+                         'FragmentType', 'FragmentSeriesNumber',
+                         'FragmentCharge', 'FragmentLossType']
+
     def __init__(self, filename: str, index_type=None, **kwargs):
-        if index_type is None:
-            index_type = self.has_index_preference(filename)
-        super().__init__(filename)
-        self.filename = filename
-        self._headers = None
-        self._read_header_line()
-        self.index, was_initialized = index_type.from_filename(filename)
-        if not was_initialized:
-            self.create_index()
+        super().__init__(filename, index_type=index_type, delimiter='\t', **kwargs)
 
     def _spectrum_type(self):
         key = "MS:1003072|spectrum origin type"
         value = "MS:1003074|predicted spectrum"
         return key, value
 
-    def _read_header_line(self):
-        with open_stream(self.filename) as stream:
-            reader = csv.reader(stream, delimiter='\t')
-            headers = next(reader)
-            stream.seek(0)
-        self._headers = headers
+    def read_header(self) -> bool:
+        result = super().read_header()
+        self.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
+        self.add_attribute("MS:1003207|library creation software", "MS:1003253|DIA-NN")
+        return result
 
     def create_index(self):
         with open(self.filename, 'rb') as stream:
@@ -96,9 +117,6 @@ class DiaNNTSVSpectralLibrary(SpectralLibraryBackendBase):
         self.index.commit()
         return n
 
-    def _open_reader(self, stream: io.TextIOBase):
-        return csv.DictReader(stream, fieldnames=self._headers, delimiter='\t')
-
     def _parse_from_buffer(self, buffer: List[Dict[str, Any]], spectrum_index: int = None) -> Spectrum:
         spec = self._new_spectrum()
         descr = buffer[0]
@@ -106,24 +124,59 @@ class DiaNNTSVSpectralLibrary(SpectralLibraryBackendBase):
         spec.add_attribute(SPECTRUM_NAME, descr['transition_group_id'])
         spec.add_attribute(SELECTED_ION_MZ, float(descr['PrecursorMz']))
         spec.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
-        spec.add_attribute(SOURCE_FILE, descr['FileName'])
+        if 'FileName' in descr:
+            spec.add_attribute(SOURCE_FILE, descr['FileName'])
         spec.add_attribute(*self._spectrum_type())
+
+        if 'decoy' in descr and int(descr['decoy']):
+            spec.add_attribute("MS:1003072|spectrum origin type", "MS:1003192|decoy spectrum")
+
+        if 'IonMobility' in descr:
+            spec.add_attribute("MS:1002476|ion mobility drift time", float(descr['IonMobility']))
 
         analyte = self._new_analyte('1')
 
-        pf_seq = rewrite_unimod_peptide_as_proforma(descr['FullUniModPeptideName'])
+        pf_seq = _rewrite_unimod_peptide_as_proforma(descr['FullUniModPeptideName'])
         peptide = proforma.ProForma.parse(pf_seq)
 
-        analyte.add_attribute(STRIPPED_PEPTIDE_TERM, descr['PeptideSequence'])
+        if 'PeptideSequence' in descr:
+            analyte.add_attribute(STRIPPED_PEPTIDE_TERM, descr['PeptideSequence'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
-        analyte.add_attribute("MS:1000885|protein accession", descr['UniprotID'])
+
+        protein_group_id = analyte.get_next_group_identifier()
+        if "UniprotID" in descr:
+            analyte.add_attribute(
+                "MS:1000885|protein accession",
+                descr['UniprotID'],
+                group_identifier=protein_group_id
+            )
+        if "ProteinName" in  descr:
+            analyte.add_attribute(
+                "MS:1000886|protein name",
+                descr["ProteinName"],
+                group_identifier=protein_group_id
+            )
+
+        for key in self._custom_analyte_keys:
+            if key in descr:
+                analyte.add_attribute_group([
+                    [CUSTOM_ATTRIBUTE_NAME, key],
+                    [CUSTOM_ATTRIBUTE_VALUE, _parse_value(descr[key])]
+                ])
 
         spec.add_analyte(analyte)
         spec.peak_list = self._generate_peaks(buffer)
         spec.add_attribute("MS:1003059|number of peaks", len(spec.peak_list))
 
-        if spectrum_index:
+        for key in self._custom_spectrum_keys:
+            if key in descr:
+                spec.add_attribute_group([
+                    [CUSTOM_ATTRIBUTE_NAME, key],
+                    [CUSTOM_ATTRIBUTE_VALUE, _parse_value(descr[key])]
+                ])
+
+        if spectrum_index is not None:
             spec.index = spectrum_index
         else:
             spec.index = -1
@@ -140,8 +193,16 @@ class DiaNNTSVSpectralLibrary(SpectralLibraryBackendBase):
             ordinal = int(row['FragmentSeriesNumber'])
             charge = int(row['FragmentCharge'])
 
+            loss_type = row['FragmentLossType']
+            if loss_type != NO_LOSS:
+                loss_type = ['-' + loss_type]
+            else:
+                loss_type = None
+
             annot = annotation.PeptideFragmentIonAnnotation(
-                series, ordinal, charge=charge, mass_error=annotation.MassError(0, 'Da'))
+                series, ordinal, neutral_losses=loss_type, charge=charge,
+                mass_error=annotation.MassError(0, 'Da')
+            )
 
             peak = [
                 mz, intensity, [annot], []
@@ -149,50 +210,22 @@ class DiaNNTSVSpectralLibrary(SpectralLibraryBackendBase):
             peaks.append(peak)
         return peaks
 
-    def read(self):
-        with open_stream(self.filename) as stream:
-            stream.readline()
-            reader = self._open_reader(stream)
-            batch_iter = batch_rows(reader)
-            for rows in batch_iter:
-                spec = self._parse_from_buffer(rows)
-                yield spec
-
-    def _get_lines_for(self, offset: int) -> List[Dict[str, Any]]:
-        with open_stream(self.filename, 'r') as infile:
-            infile.seek(offset)
-            reader = self._open_reader(infile)
-            spectrum_buffer = next(batch_rows(reader))
-            #### We will end up here if this is the last spectrum in the file
-        return spectrum_buffer
-
-    def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None) -> Spectrum:
-        # keep the two branches separate for the possibility that this is not possible with all
-        # index schemes.
-        if spectrum_number is not None:
-            if spectrum_name is not None:
-                raise ValueError("Provide only one of spectrum_number or spectrum_name")
-            offset = self.index.offset_for(spectrum_number)
-        elif spectrum_name is not None:
-            offset = self.index.offset_for(spectrum_name)
-        buffer = self._get_lines_for(offset)
-        spectrum = self._parse_from_buffer(buffer, spectrum_number)
-        return spectrum
-
-
-def batch_rows(iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
-    group_key = None
-    group = []
-    for row in iterator:
-        key = row['transition_group_id']
-        if group_key is None:
-            group_key = key
-            group.append(row)
-        elif group_key == key:
-            group.append(row)
-        else:
+    def _batch_rows(self, iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
+        group_key = None
+        group = []
+        for row in iterator:
+            key = row['transition_group_id']
+            if group_key is None:
+                group_key = key
+                group.append(row)
+            elif group_key == key:
+                group.append(row)
+            else:
+                yield group
+                group = [row]
+                group_key = key
+        if group:
             yield group
-            group = [row]
-            group_key = key
-    if group:
-        yield group
+
+
+DiaNNTSVSpectralLibrary = DIANNTSVSpectralLibrary
