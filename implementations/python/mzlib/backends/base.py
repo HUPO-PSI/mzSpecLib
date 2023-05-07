@@ -1,8 +1,10 @@
 import io
+import csv
 import enum
 import logging
+import warnings
 
-from typing import Callable, Dict, Iterable, Union, List, Type, Iterator
+from typing import Any, Callable, Dict, Iterable, Union, List, Type, Iterator
 from pathlib import Path
 
 
@@ -40,6 +42,10 @@ class AttributeSetTypes(enum.Enum):
     analyte = enum.auto()
     interpretation = enum.auto()
     cluster = enum.auto()
+
+
+class FormatInferenceFailure(ValueError):
+    """Indicates that we failed to infer the format type for a spectral library."""
 
 
 class SubclassRegisteringMetaclass(type):
@@ -157,7 +163,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
                     return impl(filename, index_type=index_type, **kwargs)
             except (TypeError, UnicodeDecodeError):
                 pass
-        raise ValueError(f"Could not guess backend implementation for {filename}")
+        raise FormatInferenceFailure(f"Could not guess backend implementation for {filename}")
 
     def __init__(self, filename):
         self.filename = filename
@@ -444,6 +450,108 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             spectrum = self._parse(buffer, record.number)
             spectra.append(spectrum)
         return spectra
+
+
+class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
+    _delimiter: str
+    _header: List[str]
+
+    _required_columns: List[str] = None
+
+    @classmethod
+    def guess_from_header(cls, filename) -> bool:
+        with open_stream(filename, 'rt') as fh:
+            line = fh.readline()
+            tokens = line.split('\t')
+            if len(tokens) > 3:
+                warnings.warn(
+                    "This file looks like a TSV file, but it's not possible to say definitively what"
+                    " type from this alone. Please explicitly specify the format.")
+                return False
+        return False
+
+    def __init__(self, filename: str, index_type=None, delimiter='\t', read_metadata=True, create_index: bool = True, ** kwargs):
+        if index_type is None:
+            index_type = self.has_index_preference(filename)
+        self._delimiter = delimiter
+        self._headers = None
+        super().__init__(filename)
+        self.filename = filename
+
+        self.read_header()
+        self.index, was_initialized = index_type.from_filename(filename)
+        if not was_initialized and create_index:
+            self.create_index()
+
+    def read_header(self) -> bool:
+        self._read_header_line()
+        return True
+
+    def _read_header_line(self):
+        headers = None
+        with open_stream(self.filename) as stream:
+            reader = csv.reader(stream, delimiter=self._delimiter)
+            headers = next(reader)
+            stream.seek(0)
+        self._headers = headers
+        if headers and self._required_columns:
+            missing_required = set(self._required_columns) - set(headers)
+            if missing_required:
+                raise TypeError(
+                    f"{self.format_name} requires column{'s' if len(missing_required) > 1 else ''} "
+                    f"{', '.join(missing_required)}, but were not found."
+                )
+
+    def _open_reader(self, stream: io.TextIOBase) -> Union[Iterator[Dict[str, Any]], csv.DictReader]:
+        return csv.DictReader(stream, fieldnames=self._headers, delimiter='\t')
+
+    def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None) -> Spectrum:
+        # keep the two branches separate for the possibility that this is not possible with all
+        # index schemes.
+        if spectrum_number is not None:
+            if spectrum_name is not None:
+                raise ValueError("Provide only one of spectrum_number or spectrum_name")
+            offset = self.index.offset_for(spectrum_number)
+        elif spectrum_name is not None:
+            offset = self.index.offset_for(spectrum_name)
+        buffer = self._get_lines_for(offset)
+        spectrum = self._parse_from_buffer(buffer, spectrum_number)
+        return spectrum
+
+    def _batch_rows(self, iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
+        """
+        Gather successive rows by some shared key into a batch to be parsed into a single
+        :class:`~.Spectrum` instance.
+
+        This assumes there are no interleaved rows across spectra.
+
+        Parameters
+        ----------
+        iterator : Iterator[Dict[str, Any]]
+            An iterator over rows of the underlying CSV as dictionaries
+
+        Yields
+        ------
+        batch : List[Dict[str, Any]]
+            The next batch of rows corresponding to a single spectrum
+        """
+        raise NotImplementedError()
+
+    def _get_lines_for(self, offset: int) -> List[Dict[str, Any]]:
+        with open_stream(self.filename, 'r') as infile:
+            infile.seek(offset)
+            reader = self._open_reader(infile)
+            spectrum_buffer = next(self._batch_rows(reader))
+            #### We will end up here if this is the last spectrum in the file
+        return spectrum_buffer
+
+    def read(self) -> Iterator[Spectrum]:
+        with open_stream(self.filename, 'rt') as stream:
+            i = 0
+            reader = self._open_reader(stream)
+            buffering_reader = self._batch_rows(reader)
+            for i, buffer in enumerate(buffering_reader):
+                yield self._parse(buffer, i)
 
 
 class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):

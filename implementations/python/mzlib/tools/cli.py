@@ -9,7 +9,7 @@ from typing import DefaultDict, List
 
 from mzlib.spectrum_library import SpectrumLibrary
 from mzlib.index import MemoryIndex, SQLIndex
-from mzlib.backends.base import SpectralLibraryBackendBase
+from mzlib.backends.base import FormatInferenceFailure, SpectralLibraryBackendBase
 from mzlib.validate import validator
 from mzlib.validate.level import RequirementLevel
 from mzlib.ontology import ControlledVocabularyResolver
@@ -52,14 +52,21 @@ def main():
 @click.argument('path', type=click.Path(exists=True))
 @click.option("-d", "--diagnostics", is_flag=True,
               help="Run more diagnostics, greatly increasing runtime but producing additional information")
-def describe(path, diagnostics=False):
+@click.option("-i", "--input-format",
+              type=click.Choice(sorted(SpectralLibraryBackendBase._file_extension_to_implementation)),
+              help='The file format of the input file. If omitted, will attempt to infer automatically.')
+def describe(path, diagnostics=False, input_format=None):
     """Produces a minimal textual description of a spectral library."""
     click.echo("Describing \"%s\"" % (path,))
     if SQLIndex.exists(path):
         index_type = SQLIndex
     else:
         index_type = MemoryIndex
-    library = SpectrumLibrary(filename=path, index_type=index_type)
+    try:
+        library = SpectrumLibrary(filename=path, index_type=index_type, format=input_format)
+    except FormatInferenceFailure as err:
+        click.echo(f"{err}", err=True)
+        raise click.Abort()
     click.echo(f"Format: {library.format}")
     click.echo(f"Spectrum Count: {library.__len__()}")
     for attr in library.attributes:
@@ -92,7 +99,11 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
     else:
         index_type = MemoryIndex
     click.echo(f"Opening {inpath}", err=True)
-    library = SpectrumLibrary(filename=inpath, index_type=index_type, format=input_format)
+    try:
+        library = SpectrumLibrary(filename=inpath, index_type=index_type, format=input_format)
+    except FormatInferenceFailure as err:
+        click.echo(f"{err}", err=True)
+        raise click.Abort()
     if header_file:
         library_attributes = list(library_attributes)
         if header_file.endswith(".json"):
@@ -108,16 +119,28 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
             library.add_attribute(k, v)
     click.echo(f"Writing to {outpath}", err=True)
     fh = click.open_file(outpath, mode='w')
-    library.write(fh, format)
+    try:
+        library.write(fh, format)
+    except IOError as err:
+        if outpath == '-':
+            return
+        else:
+            raise
+
 
     _display_tree(library.summarize_parsing_errors())
 
 
 @main.command("index", short_help="Build an on-disk index for a spectral library")
 @click.argument('inpath', type=click.Path(exists=True))
-def build_index(inpath):
+@click.option("-i", "--input-format", type=click.Choice(sorted(SpectralLibraryBackendBase._file_extension_to_implementation)))
+def build_index(inpath, input_format=None):
     """Build an external on-disk SQL-based index for the spectral library"""
-    library = SpectrumLibrary(filename=inpath, index_type=SQLIndex)
+    try:
+        library = SpectrumLibrary(filename=inpath, index_type=SQLIndex, format=input_format)
+    except FormatInferenceFailure as err:
+        click.echo(f"{err}", err=True)
+        raise click.Abort()
 
 
 def _progress_logger(iterable, label, increment: int=100):
@@ -134,7 +157,8 @@ def _progress_logger(iterable, label, increment: int=100):
     ["consensus", "single", "silver", "peptide", "gold"],
     case_sensitive=False),
     multiple=True)
-def validate(inpath, profiles=None):
+@click.option("-i", "--input-format", type=click.Choice(sorted(SpectralLibraryBackendBase._file_extension_to_implementation)))
+def validate(inpath, profiles=None, input_format=None):
     """Semantically and structurally validate a spectral library."""
     if profiles is None:
         profiles = []
@@ -144,7 +168,11 @@ def validate(inpath, profiles=None):
         index_type = MemoryIndex
 
     logger.info(f"Loading library {inpath}...")
-    library = SpectrumLibrary(filename=inpath, index_type=index_type)
+    try:
+        library = SpectrumLibrary(filename=inpath, index_type=index_type, format=input_format)
+    except FormatInferenceFailure as err:
+        click.echo(f"{err}", err=True)
+        raise click.Abort()
 
     logger.info(f"Loading validators...")
     chain = validator.get_validator_for("base")
