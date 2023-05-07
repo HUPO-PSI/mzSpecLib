@@ -9,6 +9,7 @@ from pathlib import Path
 from psims.controlled_vocabulary import Entity
 from psims.controlled_vocabulary.controlled_vocabulary import (
     load_uo, load_unimod, load_psims)
+from mzlib.cluster import SpectrumCluster
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
 from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
@@ -63,9 +64,8 @@ class SubclassRegisteringMetaclass(type):
 
 
 class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
-    """A base class for all spectral library formats.
+    """A base class for all spectral library formats."""
 
-    """
     file_format = None
 
     _file_extension_to_implementation: Dict[str,
@@ -447,6 +447,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
 
 class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
+
     def __init__(self, filename, **kwargs):
         self.filename = filename
         super().__init__(**kwargs)
