@@ -4,7 +4,7 @@ MS:1003188|library name=tests/test_data/chinese_hamster_hcd_selected_head.msp
 <AttributeSet Analyte=all>
 <AttributeSet Interpretation=all>
 <Spectrum=1>
-MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
+MS:1003061|library spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=855.4538
@@ -135,7 +135,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=4
 1496.7792	11918.3	y15/-6.5ppm
 
 <Spectrum=2>
-MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_53eV
+MS:1003061|library spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_53eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=855.4538
@@ -383,7 +383,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=5
 1628.3004	719.6	?
 
 <Spectrum=3>
-MS:1003061|spectrum name=AAAAGQTGTVPPGAPGALPLPGMAIVK/2_0_76eV
+MS:1003061|library spectrum name=AAAAGQTGTVPPGAPGALPLPGMAIVK/2_0_76eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=1207.1672
@@ -549,7 +549,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=0
 1980.9857	3567.9	?
 
 <Spectrum=4>
-MS:1003061|spectrum name=AAAAGSTSVKPIFSR/2_0_44eV
+MS:1003061|library spectrum name=AAAAGSTSVKPIFSR/2_0_44eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=731.9043
@@ -704,7 +704,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=1
 1465.9423	113.63	?
 
 <Spectrum=5>
-MS:1003061|spectrum name=AAAAGSTSVKPIFSR/3_0_28eV
+MS:1003061|library spectrum name=AAAAGSTSVKPIFSR/3_0_28eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=3
 MS:1000744|selected ion m/z=488.2719
@@ -909,7 +909,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=0
 1469.9915	925.5	?
 
 <Spectrum=6>
-MS:1003061|spectrum name=AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_50eV
+MS:1003061|library spectrum name=AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_50eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=830.8834
@@ -1021,7 +1021,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=6
 1670.2889	140.136	?
 
 <Spectrum=7>
-MS:1003061|spectrum name=AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_52eV
+MS:1003061|library spectrum name=AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_52eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=830.8834

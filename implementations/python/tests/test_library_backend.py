@@ -22,7 +22,7 @@ class LibraryBehaviorBase(object):
         assert len(lib) == 7
         spec = lib[3]
         assert spec.get_attribute(
-            "MS:1003061|spectrum name") == "AAAAGSTSVKPIFSR/2_0_44eV"
+            "MS:1003061|library spectrum name") == "AAAAGSTSVKPIFSR/2_0_44eV"
 
     # TODO: Fix clipping in _buffer_from_stream first
     # def test_iteration(self):

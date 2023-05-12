@@ -104,7 +104,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV"
         },
         {
@@ -611,7 +611,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAACALTPGPLADLAAR/2_1(4,C,CAM)_53eV"
         },
         {
@@ -1469,7 +1469,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK/2_0_76eV"
         },
         {
@@ -2081,7 +2081,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAAGSTSVKPIFSR/2_0_44eV"
         },
         {
@@ -2660,7 +2660,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAAGSTSVKPIFSR/3_0_28eV"
         },
         {
@@ -3389,7 +3389,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_50eV"
         },
         {
@@ -3839,7 +3839,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_52eV"
         },
         {

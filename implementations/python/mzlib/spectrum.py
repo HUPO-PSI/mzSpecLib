@@ -15,9 +15,9 @@ if TYPE_CHECKING:
 
 #A class that holds data for each spectrum that is read from the SpectralLibrary class
 
-SPECTRUM_NAME = "MS:1003061|spectrum name"
-LIBRARY_ENTRY_KEY = "MS:1003237|library spectrum key"
-LIBRARY_ENTRY_INDEX = "MS:1003062|library spectrum index"
+SPECTRUM_NAME = "MS:1003061|library spectrum name"
+LIBRARY_SPECTRUM_KEY = "MS:1003237|library spectrum key"
+LIBRARY_SPECTRUM_INDEX = "MS:1003062|library spectrum index"
 PRECURSOR_MZ = "MS:1003208|experimental precursor monoisotopic m/z"
 CHARGE_STATE = "MS:1000041|charge state"
 
@@ -66,8 +66,8 @@ class Spectrum(AttributeManager):
         self.interpretations = interpretations
 
     name = AttributeManagedProperty[str](SPECTRUM_NAME)
-    key = AttributeManagedProperty[int](LIBRARY_ENTRY_KEY)
-    index = AttributeManagedProperty[int](LIBRARY_ENTRY_INDEX)
+    key = AttributeManagedProperty[int](LIBRARY_SPECTRUM_KEY)
+    index = AttributeManagedProperty[int](LIBRARY_SPECTRUM_INDEX)
 
     precursor_mz = AttributeListManagedProperty[float]([PRECURSOR_MZ, "MS:1000744|selected ion m/z"])
     precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
@@ -123,9 +123,15 @@ class Spectrum(AttributeManager):
 
     def write(self, format="text", **kwargs):  # pragma: no cover
         """
-        write - Write out the spectrum in any of the supported formats
-        """
+        Write out the spectrum in any of the supported formats
 
+        Parameters
+        ----------
+        format : str
+            The name of the format to write in
+        **kwargs
+            Passed to implementation
+        """
         #### Set a buffer to fill with string data
         buffer = ''
 

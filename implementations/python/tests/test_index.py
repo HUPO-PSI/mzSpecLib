@@ -28,7 +28,7 @@ class IndexBehaviorBase(object):
         index = self._make_index(lib)
         assert len(index) == 7
         record = index[3]
-        assert record.number == 3
+        assert record.number == 4
         assert record.name == "AAAAGSTSVKPIFSR/2_0_44eV"
 
 

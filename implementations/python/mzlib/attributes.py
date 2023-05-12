@@ -418,8 +418,7 @@ class AttributeManager(object):
         return self._from_iterable(attributes)
 
     def copy(self):
-        """Make a deep copy of the object
-        """
+        """Make a deep copy of the object"""
         return self.__class__(self.attributes)
 
     def __repr__(self):
@@ -457,7 +456,8 @@ class _ReadAttributes(object):
     attributes: AttributeManager
 
     def get_attribute(self, key, group_identifier=None, raw: bool = False):
-        """Get the value or values associated with a given
+        """
+        Get the value or values associated with a given
         attribute key from the entity's attribute store.
 
         Parameters
@@ -466,6 +466,9 @@ class _ReadAttributes(object):
             The name of the attribute to retrieve
         group_identifier : str, optional
             The specific group identifier to return from.
+        raw : bool, optional
+            To return the stored value, or an :class:`Attribute` object preserving
+            additional information
 
         Returns
         -------
@@ -478,7 +481,8 @@ class _ReadAttributes(object):
         return self.attributes.get_attribute_group(group_identifier)
 
     def has_attribute(self, key) -> bool:
-        """Test for the presence of a given attribute in the library
+        """
+        Test for the presence of a given attribute in the library
         level store.
 
         Parameters
@@ -493,7 +497,8 @@ class _ReadAttributes(object):
         return self.attributes.has_attribute(key)
 
     def get_by_name(self, name: str):
-        '''Search for an attribute by human-readable name.
+        """
+        Search for an attribute by human-readable name.
 
         Parameters
         ----------
@@ -504,7 +509,7 @@ class _ReadAttributes(object):
         -------
         object:
             The attribute value if found or :const:`None`.
-        '''
+        """
         return self.attributes.get_by_name(name)
 
     def _iter_attribute_groups(self):
@@ -523,7 +528,8 @@ class _WriteAttributes(object):
     attributes: AttributeManager
 
     def add_attribute(self, key, value, group_identifier=None) -> Union[Any, List[Any]]:
-        """Add an attribute to the entity's attributes store.
+        """
+        Add an attribute to the entity's attributes store.
 
         Parameters
         ----------
@@ -541,7 +547,8 @@ class _WriteAttributes(object):
         return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
 
     def remove_attribute(self, key, group_identifier=None):
-        """Remove the value or values associated with a given
+        """
+        Remove the value or values associated with a given
         attribute key from the entity's attribute store.
 
         This rebuilds the entire store, which may be expensive.
@@ -564,13 +571,15 @@ class _WriteAttributes(object):
 
 
 class AttributedEntity(_ReadAttributes, _WriteAttributes):
-    '''A base type for entities which contain an :class:`AttributeManager`
+    """
+    A base type for entities which contain an :class:`AttributeManager`
     without being completely subsumed by it.
 
     An :class:`AttributeManager` represents a collection of attributes
     first and foremost, supplying :class:`~.collections.abc.MutableMapping`-like
     interface to them, in addition to methods.
-    '''
+    """
+
     __slots__ = ("attributes", )
 
     attributes: AttributeManager
@@ -711,10 +720,11 @@ class AttributeSet(AttributedEntity):
                 return False
         return True
 
-    def apply(self, target: Attributed):
+    def apply(self, target: Attributed, ):
         terms_to_remove: List[Tuple[str, Union[Attribute, List[Attribute]]]] = []
         for key in self.attributes.keys():
-            terms_to_remove.append((key, target.get_attribute(key, raw=True)))
+            if target.has_attribute(key):
+                terms_to_remove.append((key, target.get_attribute(key, raw=True)))
 
         group_ids = DefaultDict(int)
         for key, terms in terms_to_remove:
@@ -734,7 +744,7 @@ class AttributeSet(AttributedEntity):
         for group_id, attrs in self._iter_attribute_groups():
             if group_id is None:
                 for a in attrs:
-                    target.add_attribute(a)
+                    target.add_attribute(a.key, a.value, group_identifier=None)
             else:
                 target.add_attribute_group(attrs)
 

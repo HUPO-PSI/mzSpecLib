@@ -883,7 +883,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         n_spectra: int
             The number of entries read
         """
-
         #### Check that the spectrum library filename isvalid
         filename = self.filename
 
@@ -1395,13 +1394,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         if spectrum_number is not None:
             if spectrum_name is not None:
                 raise ValueError("Provide only one of spectrum_number or spectrum_name")
-            offset = self.index.offset_for(spectrum_number)
+            index_record = self.index.record_for(spectrum_number)
+            offset = index_record.offset
         elif spectrum_name is not None:
             index_record = self.index.record_for(spectrum_name)
             spectrum_number = index_record.number
             offset = index_record.offset
         buffer = self._get_lines_for(offset)
-        spectrum = self._parse(buffer, spectrum_number)
+        spectrum = self._parse(buffer, index_record.index)
         return spectrum
 
     def summarize_parsing_errors(self) -> Dict:

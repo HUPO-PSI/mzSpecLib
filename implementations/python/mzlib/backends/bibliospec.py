@@ -81,8 +81,8 @@ class BlibIndex(BibliospecBase, IndexBase):
 
 
 class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
-    '''Read Bibliospec 2 SQLite3 spectral library files.
-    '''
+    """Read Bibliospec 2 SQLite3 spectral library files."""
+
     connection: sqlite3.Connection
 
     file_format = "blib"

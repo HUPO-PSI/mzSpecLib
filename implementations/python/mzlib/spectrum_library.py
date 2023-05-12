@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
-from __future__ import print_function
-import sys
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
-
-import re
-import timeit
 import os
 import pathlib
 
 from typing import Type, List, Union
+from mzlib.cluster import SpectrumCluster
 
 from mzlib.spectrum_library_index import SpectrumLibraryIndex
 from mzlib.spectrum import Spectrum
@@ -60,9 +54,14 @@ class SpectrumLibrary:
 
         Parameters
         ----------
+        identifier : str, optional
+            A universal identifier for a hosted spectral library to fetch.
+        filename : str, os.PathLike, or io.IOBase, optional
+            A path-like or file-like object that holds a spectral library to read.
         format : string
             Name of the format for the current encoding of the library.
-
+        index_type : Type[:class:`~.mzlib.index.base.IndexBase`]
+            The type of index to preferentially construct.
         """
         self.backend = None
         self.identifier = identifier
@@ -99,7 +98,10 @@ class SpectrumLibrary:
     #### Define getter/setter for attribute identifier
     @property
     def identifier(self):
-        return(self._identifier)
+        if self._identifier is None:
+            if self._backend_initialized():
+                return self.backend.identifier
+        return self._identifier
 
     @identifier.setter
     def identifier(self, identifier):
@@ -148,11 +150,22 @@ class SpectrumLibrary:
         self._requires_backend()
         return self.backend.read()
 
-    def write(self, destination, format: str=None):
-        """Write the library to disk
+    def write(self, destination, format: str=None, **kwargs):
+        """
+        Write the library to disk.
+
+        Parameters
+        ----------
+        destination : str, os.PathLike, or io.IOBase
+            The path or stream to write the library to.
+        format : str, Type, or Callable
+            The name of the format or a callable object that returns
+            a :class:`~.SpectrumLibraryWriterBase`.
+        **kwargs
+            Passed to implementation.
         """
         filename = destination
-        if not isinstance(filename, (str, pathlib.Path)):
+        if not isinstance(filename, (str, pathlib.Path, os.PathLike)):
             filename = getattr(destination, "name", None)
 
         if format is None and filename is not None:
@@ -167,7 +180,7 @@ class SpectrumLibrary:
         if writer_type is None:
             raise ValueError(
                 f"Could not find a format writer from file name {filename} or format {format}")
-        writer = writer_type(destination)
+        writer = writer_type(destination, **kwargs)
         if self._backend_initialized():
             with writer:
                 writer.write_library(self.backend)
@@ -176,7 +189,8 @@ class SpectrumLibrary:
             writer.close()
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
-        """Retrieve a single spectrum from the library.
+        """
+        Retrieve a single spectrum from the library.
 
         Parameters
         ----------
@@ -191,6 +205,10 @@ class SpectrumLibrary:
         """
         self._requires_backend()
         return self.backend.get_spectrum(spectrum_number, spectrum_name)
+
+    def get_cluster(self, cluster_number: int) -> SpectrumCluster:
+        self._requires_backend()
+        return self.backend.get_cluster(cluster_number)
 
     def find_spectra(self, specification, **query_keys) -> List[Spectrum]:
         """
@@ -214,7 +232,8 @@ class SpectrumLibrary:
         return iter([])
 
     def add_attribute(self, key, value, group_identifier=None):
-        """Add an attribute to the library level attributes store.
+        """
+        Add an attribute to the library level attributes store.
 
         Parameters
         ----------
@@ -230,7 +249,8 @@ class SpectrumLibrary:
         return self.backend.add_attribute(key, value, group_identifier=group_identifier)
 
     def get_attribute(self, key, group_identifier=None):
-        """Get the value or values associated with a given
+        """
+        Get the value or values associated with a given
         attribute key from the library level attribute store.
 
         Parameters
@@ -249,7 +269,8 @@ class SpectrumLibrary:
         return self.backend.get_attribute(key, group_identifier=group_identifier)
 
     def remove_attribute(self, key, group_identifier=None):
-        """Remove the value or values associated with a given
+        """
+        Remove the value or values associated with a given
         attribute key from the library level attribute store.
 
         This rebuilds the entire store, which may be expensive.
@@ -266,7 +287,8 @@ class SpectrumLibrary:
         return self.backend.remove_attribute(key, group_identifier=group_identifier)
 
     def has_attribute(self, key):
-        """Test for the presence of a given attribute in the library
+        """
+        Test for the presence of a given attribute in the library
         level store.
 
         Parameters

@@ -1,3 +1,4 @@
+from collections import deque
 import re
 import os
 import io
@@ -60,7 +61,7 @@ START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
 START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
-SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|spectrum name=')
+SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|(?:library )?spectrum name=')
 START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:=(.+))>")
 START_OF_ATTRIBUTE_SET = re.compile(
     r"<AttributeSet (Spectrum|Analyte|Interpretation|Cluster)=(.+)>")
@@ -175,7 +176,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             raise ValueError(
                                 f"Malformed grouped attribute {line}")
                     elif "=" in line:
-                        name, value = line.split("=")
+                        name, value = line.split("=", 1)
                         if state == LibraryParserStateEnum.attribute_sets:
                             current_attribute_set.add_attribute(name, value)
                         else:
@@ -207,7 +208,6 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         n_spectra: int
             The number of entries read
         """
-
         #### Check that the spectrum library filename isvalid
         filename = self.filename
 
@@ -216,13 +216,19 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         with open_stream(filename, 'rt', encoding='utf8') as infile:
             state = 'header'
-            spectrum_buffer = []
+            entry_buffer = deque()
+
             n_spectra = 0
+            n_clusters = 0
+
             start_index = 0
             file_offset = 0
+
             line_beginning_file_offset = 0
             spectrum_file_offset = 0
             spectrum_name = ''
+            current_key = None
+            entry_is_cluster = False
 
             # Required for counting file_offset manually (LF vs CRLF)
             infile.readline()
@@ -243,49 +249,80 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 line = line.rstrip()
                 if state == 'header':
 
-                    if START_OF_SPECTRUM_MARKER.match(line):
+                    if is_spec := START_OF_SPECTRUM_MARKER.match(line):
+                        current_key = int(is_spec.group(1))
                         state = 'body'
                         spectrum_file_offset = line_beginning_file_offset
+                        entry_is_cluster = False
+                    elif is_clus := START_OF_CLUSTER.match(line):
+                        current_key = int(is_clus.group(1))
+                        state = 'body'
+                        spectrum_file_offset = line_beginning_file_offset
+                        entry_is_cluster = True
                     else:
                         continue
+
                 if state == 'body':
                     if len(line) == 0:
                         continue
 
-                    if START_OF_SPECTRUM_MARKER.match(line):
-                        if len(spectrum_buffer) > 0:
-                            if not spectrum_name:
-                                raise ValueError("No spectrum name")
-                            self.index.add(
-                                number=n_spectra + start_index,
-                                offset=spectrum_file_offset,
-                                name=spectrum_name,
-                                analyte=None)
-                            n_spectra += 1
-                            spectrum_buffer = []
-                            #### Commit every now and then
-                            if n_spectra % 10000 == 0:
-                                self.index.commit()
-                                logger.info(f"Processed {file_offset} bytes, {n_spectra} spectra read")
+                    is_spec = START_OF_SPECTRUM_MARKER.match(line)
+                    is_clus = START_OF_CLUSTER.match(line)
+                    if (is_spec) or (is_clus):
+                        if len(entry_buffer) > 0:
+                            if not entry_is_cluster:
+                                if not spectrum_name:
+                                    raise ValueError("No spectrum name")
+                                self.index.add(
+                                    number=current_key,
+                                    offset=spectrum_file_offset,
+                                    name=spectrum_name,
+                                    analyte=None)
+                                n_spectra += 1
+                                current_key = int(is_spec.group(1)) if is_spec else int(is_clus.group(1))
+                                #### Commit every now and then
+                                if n_spectra % 10000 == 0:
+                                    self.index.commit()
+                                    logger.info(
+                                        f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+                            else:
+                                self.index.add_cluster(number=n_clusters, offset=spectrum_file_offset)
+                                if n_clusters % 10000 == 0:
+                                    self.index.commit()
+                                    logger.info(
+                                        f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+                                n_clusters += 1
+                                current_key = int(is_spec.group(1)) if is_spec else int(is_clus.group(1))
 
+                        entry_buffer.clear()
+                        entry_is_cluster = bool(is_clus)
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = ''
-                    if re.match(r'MS:1003061\|spectrum name', line):
-                        spectrum_name = re.match(r'MS:1003061\|spectrum name=(.+)', line).group(1)
+                    if re.match(r'MS:1003061\|(?:library )?spectrum name', line):
+                        spectrum_name = re.match(r'MS:1003061\|(?:library )?spectrum name=(.+)', line).group(1)
 
-                    spectrum_buffer.append(line)
+                    entry_buffer.append(line)
 
 
-            if not spectrum_name:
-                raise ValueError("No spectrum name")
-            self.index.add(
-                number=n_spectra + start_index,
-                offset=spectrum_file_offset,
-                name=spectrum_name,
-                analyte=None)
-            self.index.commit()
-            n_spectra += 1
-            logger.debug(f"Processed {file_offset} bytes, {n_spectra} spectra read")
+            if spectrum_name:
+                self.index.add(
+                    number=current_key,
+                    offset=spectrum_file_offset,
+                    name=spectrum_name,
+                    analyte=None)
+                self.index.commit()
+                n_spectra += 1
+                logger.info(
+                    f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+            elif entry_is_cluster:
+                self.index.add_cluster(
+                    number=current_key,
+                    offset=spectrum_file_offset,
+                )
+                self.index.commit()
+                n_clusters += 1
+                logger.info(
+                    f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
 
             #### Flush the index
             self.index.commit()
@@ -301,7 +338,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if state == 'body':
                 if len(line) == 0:
                     continue
-                if START_OF_SPECTRUM_MARKER.match(line):
+                if START_OF_SPECTRUM_MARKER.match(line) or START_OF_CLUSTER.match(line):
                     if len(spectrum_buffer) > 0:
                         return spectrum_buffer
                 spectrum_buffer.append(line)
@@ -351,14 +388,14 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 raise ValueError(
                     f"Malformed grouped attribute {line}{line_number_message()}")
         elif "=" in line:
-            name, value = line.split("=")
+            name, value = line.split("=", 1)
             store.add_attribute(name, try_cast(value))
             return True
         else:
             raise ValueError(f"Malformed attribute line {line}{line_number_message()}")
 
     def _parse(self, buffer: Iterable[str], spectrum_index: int = None,
-               start_line_number: int=None) -> Spectrum:
+               start_line_number: int=None) -> Union[Spectrum, SpectrumCluster]:
         spec: Spectrum = self._new_spectrum()
         spec.index = spectrum_index if spectrum_index is not None else -1
         interpretation: Interpretation = None
@@ -416,6 +453,14 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     analyte = self._new_analyte(match.group(1))
                     spec.add_analyte(analyte)
                     continue
+
+                elif START_OF_CLUSTER.match(line):
+                    state = STATES.cluster
+                    cluster = self._new_cluster()
+                    match = START_OF_CLUSTER.match(line)
+                    cluster.key = int(match.group(1)) or cluster.index - 1
+                    continue
+
                 self._parse_attribute_into(
                     line, spec, real_line_number_or_nothing, state)
 
@@ -542,7 +587,28 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                             f"Malformed peak line {line} with {n_tokens} entries{real_line_number_or_nothing()}")
                 else:
                     raise ValueError(f"Malformed peak line {line}{real_line_number_or_nothing()}")
+
             elif state == STATES.cluster:
+                if START_OF_SPECTRUM_MARKER.match(line):
+                    raise ValueError(
+                        f"Clusters should not include spectrum sections {real_line_number_or_nothing()}")
+
+                elif START_OF_PEAKS_MARKER.match(line):
+                    raise ValueError(
+                        f"Clusters should not include peaks {real_line_number_or_nothing()}")
+
+                elif START_OF_INTERPRETATION_MARKER.match(line):
+                    raise ValueError(
+                        f"Clusters should not include interpretation sections {real_line_number_or_nothing()}")
+
+                elif START_OF_ANALYTE_MARKER.match(line):
+                    raise ValueError(
+                        f"Clusters should not include analyte sections {real_line_number_or_nothing()}")
+
+                elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
+                    raise ValueError(
+                        f"Clusters should not include interpretation member sections {real_line_number_or_nothing()}")
+
                 self._parse_attribute_into(
                     line, cluster, real_line_number_or_nothing, state)
             else:
@@ -563,15 +629,22 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             if spectrum_name is not None:
                 raise ValueError(
                     "Provide only one of spectrum_number or spectrum_name")
-            offset = self.index.offset_for(spectrum_number)
+            index_record = self.index.record_for(spectrum_number)
+            offset = index_record.offset
         elif spectrum_name is not None:
             index_record = self.index.record_for(spectrum_name)
             offset = index_record.offset
             spectrum_number = index_record.number
 
         buffer = self._get_lines_for(offset)
-        spectrum = self._parse(buffer, spectrum_number)
+        spectrum = self._parse(buffer, index_record.index)
         return spectrum
+
+    def get_cluster(self, cluster_number: int) -> SpectrumCluster:
+        offset = self.index.offset_for_cluster(cluster_number)
+        buffer = self._get_lines_for(offset)
+        cluster = self._parse(buffer, cluster_number)
+        return cluster
 
 
 class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
@@ -673,6 +746,15 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
             if peak[3]:
                 peak_parts.append('\t'.join(map(format_aggregation, peak[3])))
             self.handle.write("\t".join(peak_parts) + "\n")
+        self.handle.write("\n")
+
+    def write_cluster(self, cluster: SpectrumCluster):
+        self.handle.write(f"<Cluster={cluster.key}>\n")
+        attribs_of = list(self._filter_attributes(
+            cluster,
+            self._not_entry_key_or_index)
+        )
+        self._write_attributes(attribs_of)
         self.handle.write("\n")
 
     def close(self):

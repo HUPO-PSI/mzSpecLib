@@ -18,15 +18,15 @@ class TestSpectrum(unittest.TestCase):
         return library.get_spectrum(index)
 
     def test_write(self):
-        spectrum = self.get_spectrum(0)
+        spectrum = self.get_spectrum(1)
         buffer = spectrum.write('text')
         lines = buffer.splitlines()
         n_lines = len(lines)
         assert n_lines == 131
-        assert buffer.startswith("<Spectrum=1>\nMS:1003061|spectrum name")
+        assert buffer.startswith("<Spectrum=1>\nMS:1003061|library spectrum name")
 
     def test_equality(self):
-        spectrum = self.get_spectrum(0)
-        spectrum2 = self.get_spectrum(0)
+        spectrum = self.get_spectrum(1)
+        spectrum2 = self.get_spectrum(1)
         assert spectrum == spectrum2
 

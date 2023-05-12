@@ -4,7 +4,7 @@ MS:1003188|library name=tests/test_data/chinese_hamster_hcd_selected_head.msp
 <AttributeSet Analyte=all>
 <AttributeSet Interpretation=all>
 <Spectrum=1>
-MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
+MS:1003061|library spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=855.4538
@@ -137,7 +137,7 @@ MS:1003169|proforma peptidoform sequence=AAAAC[Carbamidomethyl]ALTPGPLADLAAR
 1496.7792	11918.3	q15/-6.5ppm
 
 <Spectrum=1>
-MS:1003061|spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
+MS:1003061|library spectrum name=AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV
 MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 MS:1000041|charge state=2
 MS:1000744|selected ion m/z=855.4538
