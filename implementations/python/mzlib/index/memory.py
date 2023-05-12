@@ -198,7 +198,13 @@ class MemoryIndex(IndexBase):
             except IndexError as err:
                 raise KeyError(i) from err
         elif isinstance(i, slice):
-            return [self._by_key[i] for i in range(i.start, i.stop) if i in self._by_key]
+            start = i.start
+            stop = i.stop
+            if start is None:
+                start = min(self._by_key) if self._by_key else 0
+            if stop is None:
+                stop = max(self._by_key) if self._by_key else 0
+            return [self._by_key[i] for i in range(start, stop) if i in self._by_key]
         if i in self._by_name:
             records = self._by_name[i]
             if len(records) == 1:

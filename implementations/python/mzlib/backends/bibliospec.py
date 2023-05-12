@@ -58,7 +58,7 @@ class BlibIndex(BibliospecBase, IndexBase):
         if isinstance(i, int):
             return self.search(i + 1)
         elif isinstance(i, slice):
-            return [self.search(j + 1) for j in range(i.start, i.stop, i.step)]
+            return [self.search(j + 1) for j in range(i.start or 0, i.stop or len(self), i.step or 1)]
         else:
             raise TypeError(f"Cannot index {self.__class__.__name__} with {i}")
 
