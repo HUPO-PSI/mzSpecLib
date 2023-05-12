@@ -1,4 +1,3 @@
-from collections import deque
 import re
 import os
 import io
@@ -6,6 +5,7 @@ import logging
 import warnings
 import enum
 
+from collections import deque
 from typing import ClassVar, List, Tuple, Union, Iterable
 
 from mzlib.annotation import parse_annotation
@@ -193,11 +193,11 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             return True, nbytes
         return False, 0
 
-    def read_header(self) -> Tuple[bool, int]:
+    def read_header(self) -> bool:
         if isinstance(self.filename, io.IOBase):
-            return self._parse_header_from_stream(self.filename)
+            return self._parse_header_from_stream(self.filename)[0]
         with open_stream(self.filename, 'rt', encoding='utf8') as stream:
-            return self._parse_header_from_stream(stream)
+            return self._parse_header_from_stream(stream)[0]
 
     def create_index(self) -> int:
         """

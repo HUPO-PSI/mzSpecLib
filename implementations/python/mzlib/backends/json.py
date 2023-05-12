@@ -1,5 +1,4 @@
 import io
-import enum
 import json
 import logging
 import warnings
@@ -7,7 +6,6 @@ import warnings
 from typing import Any, Iterable, List, Dict, Mapping, Union
 
 from pathlib import Path
-from xml.dom.minidom import Attr
 from mzlib.cluster import SpectrumCluster
 
 from mzlib.index import MemoryIndex
@@ -17,6 +15,7 @@ from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_VERSION_TERM, AttributeSetTypes
+from .utils import open_stream
 
 
 logger = logging.getLogger(__name__)
@@ -57,10 +56,11 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         self.buffer = {}
         self._load_buffer(self.filename)
         self.attributes = AttributeManager()
-        self._fill_attributes(self.buffer.get(LIBRARY_METADATA_KEY), self.attributes)
         self.index, was_initialized = index_type.from_filename(self.filename)
         if not was_initialized:
             self.create_index()
+        if read_metadata:
+            self.read_header()
 
     @classmethod
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO, Mapping]) -> bool:
@@ -68,24 +68,25 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             return SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
         return super(JSONSpectralLibrary, cls).guess_from_filename(filename)
 
-    def _load_buffer(self, filename_or_stream):
-        if isinstance(filename_or_stream, dict):
+    def _load_buffer(self, filename_or_stream: Union[str, Path, io.FileIO, Mapping]):
+        if isinstance(filename_or_stream, Mapping):
             self.buffer = filename_or_stream
         else:
             if hasattr(filename_or_stream, 'read'):
                 self.handle = filename_or_stream
             else:
-                self.handle = open(filename_or_stream, 'rt')
+                self.handle = open_stream(filename_or_stream, 'rt')
             self.buffer = json.load(self.handle)
             self.handle.close()
 
     def read_header(self) -> bool:
         if self.buffer:
-            pass
+            self._fill_attributes(self.buffer.get(LIBRARY_METADATA_KEY), self.attributes)
+            return True
         return False
 
     def create_index(self):
-        for i, record in enumerate(self.buffer[SPECTRA_KEY]):
+        for i, record in enumerate(self.buffer.get(SPECTRA_KEY, [])):
             name = None
             key = None
             for attrib in record['attributes']:
@@ -101,6 +102,16 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 if not name and not key:
                     raise ValueError(f"Unidentified spectrum at index {i}")
             self.index.add(key, i, name, None, None)
+        for i, record in enumerate(self.buffer.get(CLUSTERS_KEY, [])):
+            key = None
+            for attrib in record[ELEMENT_ATTRIBUTES_KEY]:
+                if attrib["accession"] == "MS:1003267":
+                    key = attrib['value']
+                    break
+            else:
+                if not name and not key:
+                    raise ValueError(f"Unidentified spectrum cluster at index {i}")
+            self.index.add_cluster(key, i, None)
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
         """
@@ -109,7 +120,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         Parameters
         ----------
         spectrum_number : int, optional
-            The index of the specturm in the library
+            The index of the spectrum in the library
         spectrum_name : str, optional
             The name of the spectrum in the library
 
@@ -128,7 +139,14 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         spectrum = self._make_spectrum_from_payload(data)
         return spectrum
 
-    def _fill_attributes(self, attributes: List, store: Attributed, context_type: AttributeSetTypes=None) -> Attributed:
+    def get_cluster(self, cluster_number: int) -> SpectrumCluster:
+        offset = self.index.offset_for_cluster(cluster_number)
+        data = self.buffer[CLUSTERS_KEY][offset]
+        cluster = self._make_cluster_from_payload(data)
+        return cluster
+
+    def _fill_attributes(self, attributes: List[Dict[str, Any]], store: Attributed,
+                         context_type: AttributeSetTypes=None) -> Attributed:
         for attrib in attributes:
             if attrib['accession'] == "MS:1003212":
                 if context_type == AttributeSetTypes.analyte:
@@ -137,6 +155,8 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                     self.entry_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.interpretation:
                     self.interpretation_attribute_sets[attrib['value']].apply(store)
+                elif context_type == AttributeSetTypes.cluster:
+                    self.cluster_attribute_sets[attrib['value']].apply(store)
                 else:
                     raise ValueError(f"Could not infer which attribute set type to use for {context_type}")
             else:

@@ -207,6 +207,18 @@ class SpectrumLibrary:
         return self.backend.get_spectrum(spectrum_number, spectrum_name)
 
     def get_cluster(self, cluster_number: int) -> SpectrumCluster:
+        """
+        Retrieve a single spectrum cluster from the library.
+
+        Parameters
+        ----------
+        cluster_number : int, optional
+            The index of the cluster in the library
+
+        Returns
+        -------
+        :class:`~.SpectrumCluster`
+        """
         self._requires_backend()
         return self.backend.get_cluster(cluster_number)
 
