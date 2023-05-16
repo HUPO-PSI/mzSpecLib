@@ -1,9 +1,9 @@
-from mzlib.spectrum import Spectrum
+import math
 import os
 import unittest
-import tempfile
 
-from mzlib.backends import MSPSpectralLibrary, TextSpectralLibrary, JSONSpectralLibrary
+from mzlib.spectrum import Spectrum
+from mzlib.backends import (MSPSpectralLibrary, TextSpectralLibrary, JSONSpectralLibrary, SpectronautTSVSpectralLibrary, DIANNTSVSpectralLibrary)
 from mzlib.analyte import ANALYTE_MIXTURE_TERM
 
 from .common import datafile
@@ -62,3 +62,37 @@ class TestJSONLibrary(unittest.TestCase, MzSpecLibLibraryBehaviorBase):
     test_file = datafile("chinese_hamster_hcd_selected_head.mzlb.json")
     library_cls = JSONSpectralLibrary
     test_interpretation_file = datafile("complex_interpretations_with_members.mzlb.json")
+
+
+class TestSpectronautLibrary(unittest.TestCase, LibraryBehaviorBase):
+    test_file = datafile("human_serum.head.spectronaut.tsv")
+    library_cls = SpectronautTSVSpectralLibrary
+
+    def test_sequence_behavior(self):
+        lib = self._open_library()
+        assert len(lib) == 10
+
+        spec: Spectrum = lib[0]
+        assert spec.name == 'AQIPILR/2'
+        assert math.isclose(spec.precursor_mz, 405.7634379)
+        assert spec.precursor_charge == 2
+
+        spec = lib[5]
+        assert spec.name == 'QELSEAEQATR/2'
+        assert math.isclose(spec.precursor_mz, 631.3045807)
+        assert spec.get_analyte(1).proteins[0].name == 'CO3_HUMAN'
+
+
+class TestDIANNTSVLibrary(unittest.TestCase, LibraryBehaviorBase):
+    test_file = datafile("phl004_canonical_sall_pv_plasma.head.diann.tsv")
+    library_cls = DIANNTSVSpectralLibrary
+
+    def test_sequence_behavior(self):
+        lib = self._open_library()
+        assert len(lib) == 10
+
+        spec: Spectrum = lib[0]
+        analyte = spec.get_analyte(1)
+        assert analyte.peptide == 'AAAAAAAAAAAAAAAASAGGK'
+        assert spec.name == 'AAAAAAAAAAAAAAAASAGGK2'
+

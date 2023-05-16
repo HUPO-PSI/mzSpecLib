@@ -106,7 +106,7 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
                     self.index.add(
                         number=n,
                         offset=offset,
-                        name=key.decode("utf8"),
+                        name=key.decode("utf8") ,
                         analyte=None
                     )
                     n += 1

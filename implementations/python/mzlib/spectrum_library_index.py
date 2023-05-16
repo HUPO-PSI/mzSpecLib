@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+# pragma: no cover
 from __future__ import print_function
 import sys
 def eprint(*args, **kwargs):
