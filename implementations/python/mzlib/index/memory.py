@@ -158,6 +158,7 @@ class MemoryIndex(IndexBase):
 
     _dirty: bool
     _by_key: Dict[int, IndexRecord]
+    _by_key_cluster: Dict[int, ClusterIndexRecord]
     _by_name: DefaultDict[str, List[IndexRecord]]
     _by_attr: DefaultDict[str, DefaultDict[Any, List[IndexRecord]]]
 
@@ -171,6 +172,7 @@ class MemoryIndex(IndexBase):
         self.cluster_records = list(cluster_records or [])
         self._by_name = defaultdict(list)
         self._by_key = {}
+        self._by_key_cluster = {}
         self._by_attr = defaultdict(lambda: defaultdict(list))
         self.metadata = metadata or {}
         self._dirty = True
@@ -217,16 +219,22 @@ class MemoryIndex(IndexBase):
     def search_clusters(self, i=None, **kwargs):
         if self._dirty:
             self._update_index()
+
         if i is None and kwargs:
             # Executing attribute query
             raise NotImplementedError()
+
         if isinstance(i, Integral):
-            try:
-                return self.cluster_records[i]
-            except IndexError as err:
-                raise KeyError(i) from err
+            return self._by_key_cluster[i]
+
         elif isinstance(i, slice):
-            return self.cluster_records[i]
+            start = i.start
+            stop = i.stop
+            if start is None:
+                start = min(self._by_key_cluster) if self._by_key_cluster else 0
+            if stop is None:
+                stop = max(self._by_key_cluster) if self._by_key_cluster else 0
+            return [self._by_key_cluster[i] for i in range(start, stop) if i in self._by_key_cluster]
 
     def __getitem__(self, i):
         return self._get_by_index(i)
@@ -237,10 +245,17 @@ class MemoryIndex(IndexBase):
     def _update_index(self):
         self.records.sort(key=lambda x: x.number)
 
+        self._by_key.clear()
         self._by_name = defaultdict(list)
         for record in self:
             self._by_key[record.number] = record
             self._by_name[record.name].append(record)
+
+        self.cluster_records.sort(key=lambda x: x.number)
+        self._by_key_cluster.clear()
+        for record in self.cluster_records:
+            self._by_key_cluster[record.number] = record
+
         self._dirty = False
 
     def add(self, number: int, offset: int, name: str, analyte: Any, attributes=None):

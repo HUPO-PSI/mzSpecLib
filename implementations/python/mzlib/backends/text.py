@@ -286,7 +286,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                     logger.info(
                                         f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
                             else:
-                                self.index.add_cluster(number=n_clusters, offset=spectrum_file_offset)
+                                self.index.add_cluster(number=current_key, offset=spectrum_file_offset)
                                 if n_clusters % 10000 == 0:
                                     self.index.commit()
                                     logger.info(
