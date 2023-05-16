@@ -20,10 +20,16 @@ except ImportError:
     pass
 
 
-class LineBuffer(object):
+class _LineBuffer(object):
+    """
+    An implementation detail that treats a stream/iterator over line strings as LIFO
+    queue that can have lines pushed back onto it.
+    """
+
     lines: deque
     stream: io.IOBase
     last_line: str
+    _stream_is_file_like: bool
 
     def __init__(self, stream: io.IOBase, lines: Iterable=None, last_line: str=None):
         if lines is None:
@@ -31,12 +37,13 @@ class LineBuffer(object):
         self.lines = deque(lines)
         self.stream = stream
         self.last_line = last_line
+        self._stream_is_file_like = hasattr(self.stream, 'readline')
 
     def readline(self) -> Union[bytes, str]:
         if self.lines:
             line = self.lines.popleft()
         else:
-            line = self.stream.readline()
+            line = self.stream.readline() if self._stream_is_file_like else next(self.stream)
         self.last_line = line
         return line
 
@@ -77,13 +84,15 @@ def try_cast(value: Any) -> Union[str, int, float, Any]:
     return value
 
 
-def test_gzipped(f):
-    """Checks the first two bytes of the
+def test_gzipped(f) -> bool:
+    """
+    Checks the first two bytes of the
     passed file for gzip magic numbers
 
     Parameters
     ----------
     f : file-like or path-like
+        The file to test
 
     Returns
     -------
@@ -149,6 +158,8 @@ def open_stream(f: Union[io.IOBase, os.PathLike], mode='rt', buffer_size: Option
 
 
 class CaseInsensitiveDict(Dict[str, Any]):
+    """A case sensitive version of a dictionary with string keys."""
+
     def __init__(self, base=None, **kwargs):
         if base is not None:
             self.update(base)

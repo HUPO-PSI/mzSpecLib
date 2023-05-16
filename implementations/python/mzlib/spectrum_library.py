@@ -2,12 +2,14 @@
 import os
 import pathlib
 
-from typing import Type, List, Union
+from typing import Optional, Type, List, Union
+from mzlib.attributes import AttributeManagedProperty
+from mzlib.backends.base import LIBRARY_DESCRIPTION_TERM, LIBRARY_NAME_TERM, LIBRARY_URI_TERM, LIBRARY_VERSION_TERM
 from mzlib.cluster import SpectrumCluster
 
 from mzlib.spectrum_library_index import SpectrumLibraryIndex
 from mzlib.spectrum import Spectrum
-from mzlib.index import MemoryIndex, SQLIndex, IndexBase
+from mzlib.index import IndexBase
 from mzlib.backends import guess_implementation, SpectralLibraryBackendBase, SpectralLibraryWriterBase
 
 
@@ -47,6 +49,10 @@ class SpectrumLibrary:
     format: str
     index_type: Type[IndexBase]
 
+    name = AttributeManagedProperty[str](LIBRARY_NAME_TERM)
+    description = AttributeManagedProperty[str](LIBRARY_DESCRIPTION_TERM)
+    uri = AttributeManagedProperty[str](LIBRARY_URI_TERM)
+    library_version = AttributeManagedProperty[str](LIBRARY_VERSION_TERM)
 
     def __init__(self, identifier=None, filename=None, format=None, index_type=None):
         """
@@ -86,6 +92,7 @@ class SpectrumLibrary:
             self.backend = backend_type(
                 self.filename, index_type=index_type)
             self._format = self.backend.format_name
+        self._identifier = self.backend.identifier
 
     def _backend_initialized(self):
         return self.backend is not None
@@ -97,15 +104,17 @@ class SpectrumLibrary:
 
     #### Define getter/setter for attribute identifier
     @property
-    def identifier(self):
+    def identifier(self) -> Optional[str]:
         if self._identifier is None:
             if self._backend_initialized():
                 return self.backend.identifier
         return self._identifier
 
     @identifier.setter
-    def identifier(self, identifier):
+    def identifier(self, identifier: Optional[str]):
         self._identifier = identifier
+        if self.backend is not None:
+            self.backend.identifier = identifier
 
     #### Define getter/setter for attribute filename
     @property
@@ -136,7 +145,8 @@ class SpectrumLibrary:
         return None
 
     def read_header(self) -> bool:
-        """Read just the header of the whole library
+        """
+        Read just the header of the whole library
 
         Returns
         -------

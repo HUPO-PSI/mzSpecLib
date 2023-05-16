@@ -5,7 +5,7 @@ import os
 import sqlite3
 import zlib
 
-from typing import List, Mapping, Tuple, Iterable, Type
+from typing import Iterator, List, Mapping, Tuple, Iterable, Type
 
 import numpy as np
 
@@ -100,7 +100,6 @@ class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
         self.read_header()
 
     def read_header(self) -> bool:
-        '''Stub implementation, awaiting better understanding of Bibliospec to divine other metadata'''
         attribs = AttributeManager()
         attribs.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         attribs.add_attribute("MS:1003207|library creation software", "Bibliospec")
@@ -116,24 +115,25 @@ class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
         return True
 
     def _populate_analyte(self, analyte: Analyte, row: Mapping):
-        '''Fill an analyte with details describing a peptide sequence and inferring
+        """
+        Fill an analyte with details describing a peptide sequence and inferring
         from context its traits based upon the assumptions Bibliospec makes.
 
         Bibliospec only stores modifications as delta masses.
-        '''
+        """
         peptide = self._correct_modifications_in_sequence(row)
         analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
         analyte.add_attribute("MS:1000888|stripped peptide sequence", row['peptideSeq'])
         analyte.add_attribute(CHARGE_STATE, row['precursorCharge'])
 
-
     def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None):
-        '''Read a spectrum from the spectrum library.
+        """
+        Read a spectrum from the spectrum library.
 
         Bibliospec does not support alternative labeling of spectra with a
         plain text name so looking up by `spectrum_name` is not supported.
-        '''
+        """
         if spectrum_number is None:
             raise ValueError("Only spectrum number queries are supported. spectrum_number must have an integer value")
 
@@ -201,5 +201,7 @@ class BibliospecSpectralLibrary(BibliospecBase, SpectralLibraryBackendBase):
         spectrum.peak_list = peak_list
         return spectrum
 
-
+    def read(self) -> Iterator[Spectrum]:
+        for rec in self.index:
+            yield self.get_spectrum(rec.number)
 

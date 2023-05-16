@@ -322,10 +322,10 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         attributes = []
         for attribute in attributes_manager:
             reformed_attribute = {}
-            if attribute.group_id is None:
-                key, value = attribute
-            else:
-                key, value, cv_param_group = attribute
+            key = attribute.key
+            value = attribute.value
+            if attribute.group_id is not None:
+                cv_param_group = attribute.group_id
                 reformed_attribute['cv_param_group'] = cv_param_group
 
             term = None

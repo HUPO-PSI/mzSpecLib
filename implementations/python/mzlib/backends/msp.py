@@ -285,13 +285,13 @@ other_terms = CaseInsensitiveDict({
     "precursor_charge": "MS:1000041|charge state",
     "precursorcharge": "MS:1000041|charge state",
 
-    "Parent": "MS:1000744|selected ion m/z",
-    "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
-    "PrecursorMZ": "MS:1000744|selected ion m/z",
-    "PRECURSORMZ": "MS:1000744|selected ion m/z",
-    "precursor": "MS:1000744|selected ion m/z",
-    "precursor_mass": "MS:1000744|selected ion m/z",
-    "precursormass": "MS:1000744|selected ion m/z",
+    "Parent": "MS:1003208|experimental precursor monoisotopic m/z",
+    "ObservedPrecursorMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "PrecursorMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "PRECURSORMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "precursor": "MS:1003208|experimental precursor monoisotopic m/z",
+    "precursor_mass": "MS:1003208|experimental precursor monoisotopic m/z",
+    "precursormass": "MS:1003208|experimental precursor monoisotopic m/z",
 
     "Single": ["MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"],
     "Consensus": ["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"],
@@ -865,9 +865,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         attributes = AttributeManager()
         attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         if isinstance(self.filename, (str, os.PathLike)):
-            attributes.add_attribute(LIBRARY_NAME_TERM, self.filename)
+            attributes.add_attribute(LIBRARY_NAME_TERM, self.filename.rsplit('.msp', 1)[0].split(os.sep)[-1])
         elif hasattr(stream, 'name'):
-            attributes.add_attribute(LIBRARY_NAME_TERM, stream.name)
+            attributes.add_attribute(LIBRARY_NAME_TERM, stream.name.rsplit('.msp', 1)[0].split(os.sep)[-1])
         self.attributes.clear()
         self.attributes._from_iterable(attributes)
         if leader_terms_pattern.match(first_line):

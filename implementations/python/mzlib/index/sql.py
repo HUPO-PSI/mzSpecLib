@@ -1,3 +1,4 @@
+import io
 import os
 import numbers
 import pathlib
@@ -12,8 +13,9 @@ try: # For SQLAlchemy 2.0
 except ImportError:
     from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy.engine import Engine
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from .base import IndexBase
 
@@ -61,6 +63,12 @@ class ClusterSpectrumLibraryIndexRecord(Base):
 class SQLIndex(IndexBase):
     extension = '.splindex'
 
+    filename: str
+    index_filename: str
+    _cache: SpectrumLibraryIndexRecord
+    session: scoped_session
+    engine: Engine
+
     @classmethod
     def from_filename(cls, filename, library=None):
         if not isinstance(filename, (str, pathlib.Path)):
@@ -77,7 +85,7 @@ class SQLIndex(IndexBase):
         return inst, exists
 
     @classmethod
-    def exists(cls, filename):
+    def exists(cls, filename: Union[str, pathlib.Path, io.FileIO]):
         if not isinstance(filename, (str, pathlib.Path)):
             if not hasattr(filename, "name"):
                 raise TypeError(f"Could not coerce filename from {filename}")
@@ -104,8 +112,7 @@ class SQLIndex(IndexBase):
         engine = create_engine("sqlite:///"+filename)
         Base.metadata.create_all(engine)
 
-        DBSession = sessionmaker(bind=engine)
-        session = DBSession()
+        session = scoped_session(sessionmaker(bind=engine))
         self.session = session
         self.engine = engine
         self._cache = None

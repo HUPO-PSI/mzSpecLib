@@ -427,6 +427,9 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             line = line.strip()
             if not line:
                 break
+            # Skip comments for now, no round-trip
+            if line.startswith("#"):
+                continue
             if state == STATES.header:
                 if START_OF_SPECTRUM_MARKER.match(line):
                     match = START_OF_SPECTRUM_MARKER.match(line)

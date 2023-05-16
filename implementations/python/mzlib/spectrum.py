@@ -69,7 +69,8 @@ class Spectrum(AttributeManager):
     key = AttributeManagedProperty[int](LIBRARY_SPECTRUM_KEY)
     index = AttributeManagedProperty[int](LIBRARY_SPECTRUM_INDEX)
 
-    precursor_mz = AttributeListManagedProperty[float]([PRECURSOR_MZ, "MS:1000744|selected ion m/z"])
+    precursor_mz = AttributeListManagedProperty[float](
+        [PRECURSOR_MZ, "MS:1003208|experimental precursor monoisotopic m/z"])
     precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
 
     spectrum_aggregation = AttributeFacet[SpectrumAggregation](SpectrumAggregation)

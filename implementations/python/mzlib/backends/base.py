@@ -19,7 +19,7 @@ from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE
 from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
 from mzlib.ontology import _VocabularyResolverMixin
 
-from .utils import open_stream, LineBuffer
+from .utils import open_stream, _LineBuffer
 
 logger = logging.getLogger(__name__.rsplit(".", 1)[0])
 logger.addHandler(logging.NullHandler())
@@ -129,7 +129,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
         return filename.endswith(cls.file_format)
 
     @classmethod
-    def guess_from_header(cls, filename) -> bool:
+    def guess_from_header(cls, filename: Union[str, Path, io.FileIO]) -> bool:
         """
         Guess if the file is of this type by inspecting the file's header section
 
@@ -146,7 +146,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
         return False
 
     @classmethod
-    def guess_implementation(cls, filename, index_type=None,
+    def guess_implementation(cls, filename: Union[str, Path, io.FileIO], index_type=None,
                              **kwargs) -> 'SpectralLibraryBackendBase':
         """
         Guess the backend implementation to use with this file format.
@@ -179,7 +179,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
                 pass
         raise FormatInferenceFailure(f"Could not guess backend implementation for {filename}")
 
-    def __init__(self, filename):
+    def __init__(self, filename: Union[str, Path, io.FileIO]):
         self.filename = filename
         self.index = MemoryIndex()
 
@@ -332,7 +332,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
         return result
 
     @classmethod
-    def has_index_preference(cls, filename: str) -> Type[IndexBase]:
+    def has_index_preference(cls, filename: Union[str, Path, io.FileIO]) -> Type[IndexBase]:
         """
         Does this backend prefer a particular index for this file?
 
@@ -358,7 +358,14 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
         except Exception:
             return MemoryIndex
 
-    def read(self):
+    def read(self) -> Iterator[Union[Spectrum, SpectrumCluster]]:
+        """
+        Create an sequential iterator over the spectrum library.
+
+        Yields
+        ------
+        entry :  Union[:class:`~.Spectrum`, :class:`~.SpectrumCluster`]
+        """
         raise NotImplementedError()
 
     def _add_attribute_set(self, attribute_set: AttributeSet,
@@ -383,8 +390,8 @@ guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
 class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
-    def __init__(self, filename, index_type=None, read_metadata=True,
-                 create_index: bool=True):
+    def __init__(self, filename: Union[str, Path, io.FileIO], index_type=None,
+                 read_metadata: bool=True, create_index: bool=True):
         if index_type is None and create_index:
             index_type = self.has_index_preference(filename)
 
@@ -428,7 +435,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 raise ValueError("Could not locate valid header")
             else:
                 stream.seek(offset)
-            buffering_stream = LineBuffer(stream)
+            buffering_stream = _LineBuffer(stream)
             while True:
                 # Will clip the first line of the next spectrum. Needs work
                 buffer = self._buffer_from_stream(buffering_stream)
@@ -490,7 +497,8 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 return False
         return False
 
-    def __init__(self, filename: str, index_type=None, delimiter='\t', read_metadata=True, create_index: bool = True, ** kwargs):
+    def __init__(self, filename: Union[str, Path, io.FileIO], index_type=None, delimiter='\t',
+                 read_metadata: bool=True, create_index: bool = True, ** kwargs):
         if index_type is None:
             index_type = self.has_index_preference(filename)
         self._delimiter = delimiter
