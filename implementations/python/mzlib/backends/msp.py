@@ -233,6 +233,10 @@ class DispatchingAttributeHandler(AttributeHandlerChain):
 
 
 analyte_terms = CaseInsensitiveDict({
+    "Charge": "MS:1000041|charge state",
+    "precursor_charge": "MS:1000041|charge state",
+    "precursorcharge": "MS:1000041|charge state",
+
     "MW": "MS:1000224|molecular mass",
     "total exact mass": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
@@ -281,10 +285,6 @@ instrument_dispatch = CaseInsensitiveDict({
 
 
 other_terms = CaseInsensitiveDict({
-    "Charge": "MS:1000041|charge state",
-    "precursor_charge": "MS:1000041|charge state",
-    "precursorcharge": "MS:1000041|charge state",
-
     "Parent": "MS:1003208|experimental precursor monoisotopic m/z",
     "ObservedPrecursorMZ": "MS:1003208|experimental precursor monoisotopic m/z",
     "PrecursorMZ": "MS:1003208|experimental precursor monoisotopic m/z",
@@ -773,7 +773,7 @@ def protein_handler(key, value, container: Attributed):
                                 match.group(1), group_identifier=group_identifier)
         container.add_attribute("MS:1001113|c-terminal flanking residue",
                                 match.group(2), group_identifier=group_identifier)
-    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value),
+    container.add_attribute(key.strip('"').strip("'"), re.sub(r"\(pre=(.),post=(.)\)", '', value),
                             group_identifier=group_identifier)
     return True
 
@@ -1162,7 +1162,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 new_item = new_item + " "
             new_item = new_item + item
             n_quotes = new_item.count('"')
-            if n_quotes/2 == int(n_quotes/2):
+            if n_quotes % 2 == 0:
                 fixed_comment_items.append(new_item)
                 new_item = ""
 
@@ -1264,7 +1264,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         analyte.add_attribute(
                             "MS:1001113|c-terminal flanking residue", match.group(3))
                         if match.group(4):
-                            spectrum.add_attribute(
+                            analyte.add_attribute(
                                 "MS:1000041|charge state", try_cast(match.group(4)))
                     else:
                         spectrum.add_attribute(
@@ -1287,7 +1287,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     if match:
                         analyte.add_attribute(
                             STRIPPED_PEPTIDE_TERM, match.group(1))
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "MS:1000041|charge state", try_cast(match.group(2)))
 
         #### Handle the uninterpretable terms
@@ -1429,6 +1429,7 @@ class MSPSpectralLibraryWriter(SpectralLibraryWriterBase):
         "MS:1003054|theoretical average m/z": "Mz_av",
         "MS:1003169|proforma peptidoform sequence": "ProForma",
         "MS:1000888|stripped peptide sequence": "Peptide",
+        "MS:1000041|charge state": "Charge",
     }
 
     for species_name, keys in species_map.items():

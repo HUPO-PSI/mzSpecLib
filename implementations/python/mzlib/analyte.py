@@ -5,8 +5,9 @@ try:
 except ImportError:
     from collections import (MutableMapping, Mapping)
 
-import textwrap
-from typing import Iterable, KeysView, ItemsView, ValuesView, Dict
+from typing import Iterable, KeysView, ItemsView, Optional, ValuesView, Dict
+
+from pyteomics import proforma
 
 from mzlib.attributes import AttributedEntity, IdentifiedAttributeManager, AttributeManagedProperty, AttributeProxy, AttributeGroupFacet
 
@@ -15,6 +16,9 @@ FIRST_ANALYTE_KEY = '1'
 FIRST_INTERPRETATION_KEY = '1'
 
 ANALYTE_MIXTURE_TERM = "MS:1003163|analyte mixture members"
+CHARGE_STATE = "MS:1000041|charge state"
+PROFORMA_ION = "MS:1003270|proforma peptidoform ion notation"
+PROFORMA_SEQ = "MS:1000889|proforma peptidoform sequence"
 
 
 class _AnalyteMappingProxy(Mapping):
@@ -205,3 +209,24 @@ class Analyte(IdentifiedAttributeManager):
     mass = AttributeManagedProperty[float]("MS:1001117|theoretical mass")
     peptide = AttributeManagedProperty[str]("MS:1003169|proforma peptidoform sequence")
     proteins = AttributeGroupFacet[ProteinDescription](ProteinDescription)
+
+    @property
+    def charge(self) -> Optional[int]:
+        if self.has_attribute(CHARGE_STATE):
+            return self.get_attribute(CHARGE_STATE)
+        elif self.has_attribute(PROFORMA_ION):
+            ion_val = self.get_attribute(PROFORMA_ION)
+            val = proforma.ProForma.parse(ion_val)
+            return val.charge_state
+        else:
+            return None
+
+    @charge.setter
+    def charge(self, value):
+        if value is not None:
+            if self.has_attribute(CHARGE_STATE):
+                self.replace_attribute(CHARGE_STATE, value)
+            else:
+                self.add_attribute(CHARGE_STATE, value)
+        else:
+            self.remove_attribute(CHARGE_STATE)

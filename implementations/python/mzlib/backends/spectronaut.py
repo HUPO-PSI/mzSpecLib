@@ -209,8 +209,10 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         analyte.add_attribute(STRIPPED_PEPTIDE_TERM, description['StrippedPeptide'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        analyte.add_attribute(CHARGE_STATE, int(description['PrecursorCharge']))
 
         protein_group_id = analyte.get_next_group_identifier()
+
 
         if 'UniProtIds' in description:
             analyte.add_attribute(

@@ -132,7 +132,8 @@ class AttributeManager(object):
 
     #### Add an attribute to the list and update the lookup tables
     def add_attribute(self, key: str, value, group_identifier: Optional[str] = None):
-        """Add an attribute to the list and update the lookup tables
+        """
+        Add an attribute to the list and update the lookup tables
 
         Parameters
         ----------
@@ -184,7 +185,8 @@ class AttributeManager(object):
     def get_attribute(self, key: str, group_identifier: Optional[str] = None,
                       raw: bool = False) -> Union[Any, List[Any], Attribute,
                                                   List[Attribute]]:
-        """Get the value or values associated with a given
+        """
+        Get the value or values associated with a given
         attribute key.
 
         Parameters
@@ -193,6 +195,8 @@ class AttributeManager(object):
             The name of the attribute to retrieve
         group_identifier : str, optional
             The specific group identifier to return from.
+        raw : bool
+            Whether to return the :class:`Attribute` object or unwrap the value
 
         Returns
         -------
@@ -246,7 +250,8 @@ class AttributeManager(object):
             raise NotImplementedError()
 
     def get_by_name(self, name: str):
-        '''Search for an attribute by human-readable name.
+        """
+        Search for an attribute by human-readable name.
 
         Parameters
         ----------
@@ -257,7 +262,7 @@ class AttributeManager(object):
         -------
         object:
             The attribute value if found or :const:`None`.
-        '''
+        """
         matches = []
         for attr in self:
             if attr.key.split("|")[-1] == name:
@@ -276,7 +281,8 @@ class AttributeManager(object):
         self._clear_attributes()
 
     def remove_attribute(self, key, group_identifier=None):
-        """Remove the value or values associated with a given
+        """
+        Remove the value or values associated with a given
         attribute key from the store.
 
         This rebuilds the entire store, which may be expensive.
@@ -329,7 +335,8 @@ class AttributeManager(object):
         yield None, acc
 
     def has_attribute(self, key):
-        """Test for the presence of a given attribute
+        """
+        Test for the presence of a given attribute
 
         Parameters
         ----------

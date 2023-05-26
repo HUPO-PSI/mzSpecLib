@@ -130,7 +130,7 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
         spec.add_attribute(SPECTRUM_NAME, descr['transition_group_id'])
         spec.add_attribute(SELECTED_ION_MZ, float(descr['PrecursorMz']))
-        spec.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
+
         if 'FileName' in descr:
             spec.add_attribute(SOURCE_FILE, descr['FileName'])
         spec.add_attribute(*self._spectrum_type())
@@ -150,6 +150,7 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
             analyte.add_attribute(STRIPPED_PEPTIDE_TERM, descr['PeptideSequence'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        analyte.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
 
         protein_group_id = analyte.get_next_group_identifier()
         if "UniprotID" in descr:

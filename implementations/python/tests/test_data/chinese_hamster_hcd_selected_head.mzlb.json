@@ -11,7 +11,7 @@
     {
       "accession": "MS:1003188",
       "name": "library name",
-      "value": "tests/test_data/chinese_hamster_hcd_selected_head.msp"
+      "value": "tests/test_data/chinese_hamster_hcd_selected_head"
     }
   ],
   "clusters": [],
@@ -33,6 +33,11 @@
               "accession": "MS:1000888",
               "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
+            },
+            {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
             },
             {
               "accession": "MS:1001975",
@@ -113,11 +118,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
         },
         {
           "accession": "MS:1003208",
@@ -542,6 +542,11 @@
               "value": "AAAACALTPGPLADLAAR"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -620,11 +625,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
         },
         {
           "accession": "MS:1003208",
@@ -1400,6 +1400,11 @@
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -1478,11 +1483,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
         },
         {
           "accession": "MS:1003208",
@@ -2012,6 +2012,11 @@
               "value": "AAAAGSTSVKPIFSR"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -2090,11 +2095,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
         },
         {
           "accession": "MS:1003208",
@@ -2591,6 +2591,11 @@
               "value": "AAAAGSTSVKPIFSR"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 3
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -2669,11 +2674,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 3
         },
         {
           "accession": "MS:1003208",
@@ -3320,6 +3320,11 @@
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -3398,11 +3403,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
         },
         {
           "accession": "MS:1003208",
@@ -3770,6 +3770,11 @@
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -3848,11 +3853,6 @@
           "name": "spectrum aggregation type",
           "value": "singleton spectrum",
           "value_accession": "MS:1003066"
-        },
-        {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
         },
         {
           "accession": "MS:1003208",
