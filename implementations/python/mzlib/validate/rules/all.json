@@ -1,0 +1,1722 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "all_metadata",
+  "rules": [
+    {
+      "id": "has_library_format_version",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003186",
+          "name": "library format version",
+          "repeatable": false,
+          "definition": "\"Version number of the [PSI] library format specification\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_identifier",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003187",
+          "name": "library identifier",
+          "repeatable": false,
+          "definition": "\"Short identifier for the library for easy reference, preferably but not necessarily globally unique\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_library_name",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003188",
+          "name": "library name",
+          "repeatable": false,
+          "definition": "\"A short name identifying the library to potential users. The same name may refer to multiple versions of the same continually updated library.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_description",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003189",
+          "name": "library description",
+          "repeatable": false,
+          "definition": "\"Extended free-text description of the library\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_version",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003190",
+          "name": "library version",
+          "repeatable": false,
+          "definition": "\"Version number of the library, usually refering to a certain release of a continually updated library \" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_uri",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003191",
+          "name": "library URI",
+          "repeatable": false,
+          "definition": "\"URI or URL that uniquely identifies the library\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_release_date",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1001017",
+          "name": "release date",
+          "repeatable": false,
+          "definition": "\"Date and time at which a product was publicly released. For mzIdentML, use the database release date XML attribute instead of this term.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:datetime"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_reference",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1002866",
+          "name": "Reference",
+          "repeatable": true,
+          "definition": "\"Literature reference associated with one dataset (including the authors, title, year and journal details). The value field can be used for the PubMedID, or to specify if one manuscript is just submitted or accepted, but it does not have a PubMedID yet.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_digital_object_identifier_(doi)",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1001922",
+          "name": "Digital Object Identifier (DOI)",
+          "repeatable": true,
+          "definition": "\"DOI unique identifier of a publication.\" [PSI:PI, http://dx.doi.org]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_pubmed_identifier",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000879",
+          "name": "PubMed identifier",
+          "repeatable": true,
+          "definition": "\"A unique identifier for a publication in the PubMed database (MIR:00000015).\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_license_uri",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003197",
+          "name": "license URI",
+          "repeatable": false,
+          "definition": "\"URI of the license controlling use of the library (e.g. https://creativecommons.org/publicdomain/zero/1.0/)\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_copyright_notice",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003198",
+          "name": "copyright notice",
+          "repeatable": false,
+          "definition": "\"Notice of statutorily prescribed form that informs users of the underlying claim to copyright ownership in a published work\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_change_log",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003199",
+          "name": "change log",
+          "repeatable": false,
+          "definition": "\"Extended free-text description of the difference from the previous version\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_name",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000586",
+          "name": "contact name",
+          "repeatable": true,
+          "definition": "\"Name of the contact person or organization.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_address",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000587",
+          "name": "contact address",
+          "repeatable": true,
+          "definition": "\"Postal address of the contact person or organization.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_url",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000588",
+          "name": "contact URL",
+          "repeatable": true,
+          "definition": "\"Uniform Resource Locator related to the contact person or organization.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_affiliation",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000590",
+          "name": "contact affiliation",
+          "repeatable": true,
+          "definition": "\"Home institution of the contact person.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_email",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000589",
+          "name": "contact email",
+          "repeatable": true,
+          "definition": "\"Email address of the contact person or organization.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_role",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1002033",
+          "name": "contact role",
+          "repeatable": true,
+          "definition": "\"Role of the contact person.\" [PSI:PI]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1002033"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_creation_software",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003207",
+          "name": "library creation software",
+          "repeatable": false,
+          "definition": "\"Library creation software\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003207"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_software_version",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003200",
+          "name": "software version",
+          "repeatable": false,
+          "definition": "\"Version number of the software package used for library creation\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_creation_log",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003206",
+          "name": "library creation log",
+          "repeatable": false,
+          "definition": "\"String of logging information generated when the library was constructed from its constituent files. Multiple lines should be separated with escaped \\n\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_command-line_parameters",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1001885",
+          "name": "command-line parameters",
+          "repeatable": false,
+          "definition": "\"Parameters string passed to a command-line interface software application, omitting the executable name.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_constituent_spectrum_file",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
+          "repeatable": true,
+          "definition": "\"Spectrum data file from which (at least) a subset of spectra were extracted from. Should use USI notation mzspec:PXDxxxx:msRunName if possible, or a URI if USI notation is not possible.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_constituent_identification_file",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003205",
+          "name": "constituent identification file",
+          "repeatable": true,
+          "definition": "\"Source library URI which(at least) a subset of spectra were extracted from.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_constituent_library_file",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003205",
+          "name": "constituent library file",
+          "repeatable": true,
+          "definition": "\"Source library URI which(at least) a subset of spectra were extracted from.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_attribute_set_name",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003212",
+          "name": "library attribute set name",
+          "repeatable": true,
+          "definition": "\"A name to refer to a library attribute set\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_cluster_key",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003267",
+          "name": "spectrum cluster key",
+          "repeatable": true,
+          "definition": "\"An ordinal number uniquely identifying a spectrum cluster. It should start with 1.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_cluster_member_spectrum_keys",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003268",
+          "name": "spectrum cluster member spectrum keys",
+          "repeatable": true,
+          "definition": "\"A list of integers corresponding to the library spectrum keys of the members of this cluster. These members must be in the same library.\" [PSI:PI]"
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_cluster_member_usi",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003269",
+          "name": "spectrum cluster member USI",
+          "repeatable": true,
+          "definition": "\"A member of this cluster external to the library, specified using a PSI Universal Spectrum Identifier.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_spectrum_key",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003237",
+          "name": "library spectrum key",
+          "repeatable": false,
+          "definition": "\"An ordinal number uniquely identifying a spectrum in a library. Library spectrum keys should start at 1. Library spectrum keys SHOULD not change if entries are re-ordered or removed from a library.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_spectrum_index",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003062",
+          "name": "library spectrum index",
+          "repeatable": false,
+          "definition": "\"Integer index value that indicates the spectrum's ordered position within a spectral library. By custom, index counters should begin with 0.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_spectrum_name",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003061",
+          "name": "library spectrum name",
+          "repeatable": false,
+          "definition": "\"Label attached to a spectrum uniquely naming it within a collection of spectra, often in a spectral library. It is often a string combination of peptide sequence, charge, mass modifications, collision energy, but will obviously be different for small molecules or unidentified spectra. It must be unique within a collection.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_universal_spectrum_identifier",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003063",
+          "name": "universal spectrum identifier",
+          "repeatable": false,
+          "definition": "\"PSI universal spectrum identifier (USI) multipart key that uniquely identifies a spectrum available in a ProteomeXchange datasets or spectral library.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_splash_key",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002599",
+          "name": "splash key",
+          "repeatable": false,
+          "definition": "\"Spectral Hash key, an unique identifier for spectra.\" [PMID:27824832]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_spectrum_comment",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003168",
+          "name": "library spectrum comment",
+          "repeatable": false,
+          "definition": "\"A free-text string providing additional information of the library spectrum not encoded otherwise, usually for human use and not parsed by software tools.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_ms_level",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000511",
+          "name": "ms level",
+          "repeatable": false,
+          "definition": "\"Stage number achieved in a multi stage mass spectrometry acquisition.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_ionization_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000008",
+          "name": "ionization type",
+          "repeatable": false,
+          "definition": "\"The method by which gas phase ions are generated from the sample.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000008"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_instrument_model",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000031",
+          "name": "instrument model",
+          "repeatable": false,
+          "definition": "\"Instrument model name not including the vendor's name.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000031"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_mass_analyzer_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000443",
+          "name": "mass analyzer type",
+          "repeatable": false,
+          "definition": "\"Mass analyzer separates the ions according to their mass-to-charge ratio.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000443"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_dissociation_method",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000044",
+          "name": "dissociation method",
+          "repeatable": false,
+          "definition": "\"Fragmentation method used for dissociation or fragmentation.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000044"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_mass_spectrometry_acquisition_method",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003213",
+          "name": "mass spectrometry acquisition method",
+          "repeatable": true,
+          "definition": "\"Mode of running a mass spectrometer method by which mass ranges are selected and possibly dissociated.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003213"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_collision_gas",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000419",
+          "name": "collision gas",
+          "repeatable": true,
+          "definition": "\"An inert gas used for collisional excitation. The term target gas is not recommended.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_collision_energy",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000045",
+          "name": "collision energy",
+          "repeatable": false,
+          "definition": "\"Energy for an ion experiencing collision with a stationary gas particle resulting in dissociation of the ion.\" [PSI:MS]",
+          "units": [
+            "electronvolt"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_normalized_collision_energy",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000138",
+          "name": "normalized collision energy",
+          "repeatable": false,
+          "definition": "\"Instrument setting, expressed in percent, for adjusting collisional energies of ions in an effort to provide equivalent excitation of all ions.\" [PSI:PI]",
+          "units": [
+            "percent"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_experimental_precursor_monoisotopic_m/z",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
+          "repeatable": false,
+          "definition": "\"The measured or inferred m/z (as reported by the mass spectrometer acquisition software or post-processing software) of the monoisotopic peak of the precursor ion based on the MSn-1 spectrum.\" [PSI:MS]",
+          "units": [
+            "m/z"
+          ],
+          "notes": "NOTE: This is the preferred term for specification of the precursor m/z in typical use cases. If the specification of the isolation window is desired, the terms MS:1000827|isolation window target m/z, MS:1000828|isolation window lower offset, MS:1000829|isolation window upper offset should be used. The terms MS:1000744|selection ion m/z and MS:1002234|selection precursor m/z are unclear and should be avoided.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_isolation_window_target_m/z",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000827",
+          "name": "isolation window target m/z",
+          "repeatable": false,
+          "definition": "\"The primary or reference m/z about which the isolation window is defined.\" [PSI:MS]",
+          "units": [
+            "m/z"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_isolation_window_lower_offset",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000828",
+          "name": "Isolation window lower offset",
+          "repeatable": false,
+          "definition": "\"The extent of the isolation window in m/z below the isolation window target m/z. The lower and upper offsets may be asymmetric about the target m/z.\" [PSI:MS]",
+          "units": [
+            "m/z"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_isolation_window_upper_offset",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000829",
+          "name": "Isolation window upper offset",
+          "repeatable": false,
+          "definition": "\"The extent of the isolation window in m/z above the isolation window target m/z. The lower and upper offsets may be asymmetric about the target m/z.\" [PSI:MS]",
+          "units": [
+            "m/z"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_retention_time",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000894",
+          "name": "retention time",
+          "repeatable": false,
+          "definition": "\"A time interval from the start of chromatography when an analyte exits a chromatographic column.\" [PSI:MS]",
+          "units": [
+            "second",
+            "minute"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_normalized_retention_time",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000896",
+          "name": "normalized retention time",
+          "repeatable": false,
+          "definition": "\"A time interval from the start of chromatography when an analyte exits a standardized reference chromatographic column and instrumental setup.\" [PSI:MS]",
+          "units": [
+            "second",
+            "minute"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_retention_time_normalization_standard",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000901",
+          "name": "retention time normalization standard",
+          "repeatable": false,
+          "definition": "\"A standard providing the retention times at which a set of reference compounds exit the reference chromatographic column.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000901"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_ion_mobility_drift_time",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002476",
+          "name": "ion mobility drift time",
+          "repeatable": false,
+          "definition": "\"Drift time of an ion or spectrum of ions as measured in an ion mobility mass spectrometer. This time might refer to the central value of a bin into which all ions within a narrow range of drift time have been aggregated.\" [PSI:MS]",
+          "units": [
+            "millisecond"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_inverse_reduced_ion_mobility",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002875",
+          "name": "inverse reduced ion mobility",
+          "repeatable": false,
+          "definition": "\"Thermo Scientific TSQ Quantis Triple Quadrupole MS.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_collision_cross_sectional_area",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002954",
+          "name": "collision cross sectional area",
+          "repeatable": false,
+          "definition": "\"Structural molecular descriptor for the effective interaction area between the ion and neutral gas measured in ion mobility mass spectrometry.\" [PSI:PI]",
+          "units": [
+            "square angstrom"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_faims_compensation_voltage",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1001581",
+          "name": "FAIMS compensation voltage",
+          "repeatable": false,
+          "definition": "\"The DC potential applied to the asymmetric waveform in FAIMS that compensates for the difference between high and low field mobility of an ion.\" [PSI:MS]",
+          "units": [
+            "volt"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_scan_polarity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000465",
+          "name": "scan polarity",
+          "repeatable": false,
+          "definition": "\"Relative orientation of the electromagnetic field during the selection and detection of ions in the mass spectrometer.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000465"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_filter_string",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000512",
+          "name": "filter string",
+          "repeatable": false,
+          "definition": "\"A string unique to Thermo instrument describing instrument settings for the scan.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_mass_resolution",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000011",
+          "name": "mass resolution",
+          "repeatable": false,
+          "definition": "\"Smallest mass difference between two equal magnitude peaks so that the valley between them is a specified fraction of the peak height.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_mass_resolving_power",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000800",
+          "name": "mass resolving power",
+          "repeatable": false,
+          "definition": "\"The observed mass divided by the difference between two masses that can be separated: m/dm. The procedure by which dm was obtained and the mass at which the measurement was made should be reported.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_precursor_apex_intensity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003086",
+          "name": "precursor apex intensity",
+          "repeatable": false,
+          "definition": "\"Intensity of the precursor ion current as measured by its apex point over time and m/z. It is unspecified whether this is the intensity of the selected isotope or the most intense isotope.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_previous_msn-1_scan_precursor_intensity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003085",
+          "name": "previous MSn-1 scan precursor intensity",
+          "repeatable": false,
+          "definition": "\"Intensity of the precursor ion in the previous MSn-1 scan (prior in time to the referencing MSn scan). For an MS2 scan, this means the MS1 precursor intensity. It is unspecified on whether this is an apex (across m/z) intensity, integrated (across m/z) intensity, a centroided peak intensity of unknown origin, or even summed across several isotopes.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_possible_charge_state",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000633",
+          "name": "possible charge state",
+          "repeatable": false,
+          "definition": "\"A possible charge state of the ion in a situation where the charge of an ion is known to be one of several possible values rather than a completely unknown value or determined to be a specific charge with reasonable certainty.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_charge_state",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "repeatable": false,
+          "definition": "\"Number of net charges, positive or negative, on an ion.\" [PSI:MS]",
+          "notes": "The \u201ccharge state\u201d attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_peaks",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "repeatable": false,
+          "definition": "\"Number of peaks or features in a spectrum. For a peak-picked spectrum, this will correspond to the number of data points. For a non-peak-picked spectrum, this corresponds to the number of features discernable in the spectrum, which will be fewer than the number of data points.\" [PSI:PI]",
+          "notes": "This is the preferred term for a peak-picked (centroid) spectrum. Use the term \u201cMS:1003060|number of data point\u201d for a non-peak-picked (profile) spectrum.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_data_points",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003060",
+          "name": "number of data points",
+          "repeatable": false,
+          "definition": "\"Number of data points in a spectrum. For a peak-picked spectrum, this will correspond to the number of peaks. For a non-peak-picked spectrum, this corresponds to the number of values in the data array, which are not all peaks.\" [PSI:PI]",
+          "notes": "This is the preferred term for a non-peak-picked (profile) spectrum. Use the term \u201cMS:1003059|number of peaks\u201d for a peak-picked (centroid) spectrum.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_intensity_unit",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000034",
+          "name": "intensity unit",
+          "repeatable": false,
+          "definition": "\"The determination of the mass of an ion based on the mass spectral peaks that represent multiple-charge ions.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000034"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_base_peak_intensity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000505",
+          "name": "base peak intensity",
+          "repeatable": false,
+          "definition": "\"The intensity of the greatest peak in the mass spectrum.\" [PSI:MS]",
+          "units": [
+            "number of detector counts",
+            "percent of base peak",
+            "counts per second",
+            "percent of base peak times 100",
+            "absorbance unit"
+          ],
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_signal-to-noise_ratio",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1001884",
+          "name": "signal-to-noise ratio",
+          "repeatable": false,
+          "definition": "\"Unitless number providing the ratio of the total measured intensity of a signal relative to the estimated noise level for that signal.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_total_ion_current",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000285",
+          "name": "total ion current",
+          "repeatable": false,
+          "definition": "\"The sum of all the separate ion currents carried by the ions of different m/z contributing to a complete mass spectrum or in a specified m/z range of a mass spectrum.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_representation",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000525",
+          "name": "spectrum representation",
+          "repeatable": false,
+          "definition": "\"Way in which the spectrum is represented, either with regularly spaced data points or with a list of centroided peaks.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000525"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_data_processing_action",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000543",
+          "name": "data processing action",
+          "repeatable": true,
+          "definition": "\"Data processing attribute used to describe the type of data processing performed on the data file.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000543"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_origin_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003072",
+          "name": "spectrum origin type",
+          "repeatable": false,
+          "definition": "\"Categorization of a spectrum based on its origin (e.g., observed spectrum, predicted spectrum, demultiplexed spectrum, etc.).\" [PSI:PI]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003072"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_spectrum_aggregation_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "repeatable": false,
+          "definition": "\"Categorization of a spectrum based on its type of aggregation (e.g., individual spectrum, consensus spectrum, best replicate spectrum, etc.).\" [PSI:PI]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003065"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_ion_annotation_format",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003103",
+          "name": "ion annotation format",
+          "repeatable": false,
+          "definition": "\"Annotation format used for annotating individual spectrum ion peaks.\" [PSI:MS]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003103"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_replicate_spectra_used",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003070",
+          "name": "number of replicate spectra used",
+          "repeatable": false,
+          "definition": "\"Number of replicate spectra used during the aggregation process. This is generally applicable when there are many replicates available, but some are discarded as being low S/N, blended, or otherwise unsuitable, and the remaining set is then used for merging via a consensus algorithm.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_replicate_spectra_available",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003069",
+          "name": "number of replicate spectra available",
+          "repeatable": false,
+          "definition": "\"Number of replicate spectra available for use during the aggregation process.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_summary_statistics_of_replicate_spectra",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003295",
+          "name": "summary statistics of replicate spectra",
+          "repeatable": true,
+          "definition": "\"Summary statistics of an attribute among all replicates that are aggregated to generate this spectrum.\" [PSI:PI]",
+          "notes": "It should appear in a group with MS:1003174 - MS:1003180 to specify the type and value of the summary statistic.",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003295"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_replicate_spectra_from_source",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003296",
+          "name": "number of replicate spectra from source",
+          "repeatable": false,
+          "definition": "\"The number of replicate spectra used during the aggregation process that originate from a specified source (e.g. a file, a dataset, a sample type, etc.). This term must appear in a group alongside a source term, which is one of: 'ProteomeXchange accession number', 'constituent spectrum file', or 'sample name'\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contributing_replicate_spectrum_keys",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003298",
+          "name": "contributing replicate spectrum keys",
+          "repeatable": false,
+          "definition": "\"A list of cross references to contributing replicate spectra in the same library, in the form of library spectrum keys.\" [PSI:PI]"
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contributing_replicate_spectrum_usi",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003299",
+          "name": "contributing replicate spectrum USI",
+          "repeatable": false,
+          "definition": "\"A list of cross references to contributing replicate spectra, in the form of PSI Universal Spectrum Identifiers.\" [PSI:PI]"
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_related_spectrum_keys",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003259",
+          "name": "related spectrum keys",
+          "repeatable": false,
+          "definition": "\"A list of cross references to a related spectrum in the same library, in the form of the library spectrum key.  \" [PSI:PI]"
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_related_spectrum_usi",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003260",
+          "name": "related spectrum USI",
+          "repeatable": false,
+          "definition": "\"A cross reference to a related spectrum in the form of a PSI Universal Spectrum Identifier\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_related_spectrum_description",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003261",
+          "name": "related spectrum description",
+          "repeatable": false,
+          "definition": "\"A free-text string describing the related spectrum and/or its relationship to this spectrum\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_similar_spectrum_keys",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003263",
+          "name": "similar spectrum keys",
+          "repeatable": false,
+          "definition": "\"A list of cross references to a similar spectrum in the same library, in the form of the library spectrum key.  \" [PSI:PI]"
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_similar_spectrum_usi",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003264",
+          "name": "similar spectrum USI",
+          "repeatable": false,
+          "definition": "\"A cross reference to a similar spectrum in the form of a PSI Universal Spectrum Identifier\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_peak_attribute",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003254",
+          "name": "peak attribute",
+          "repeatable": true,
+          "definition": "\"An attribute of a peak in a mass spectrum other than its m/z, intensity, and annotation. \" [PSI:PI]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003254"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_charge_state",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "repeatable": false,
+          "definition": "\"Number of net charges, positive or negative, on an ion.\" [PSI:MS]",
+          "notes": "The \"charge state\" attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_theoretical_mass",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001117",
+          "name": "theoretical mass",
+          "repeatable": false,
+          "definition": "\"The theoretical neutral mass of the molecule (e.g. the peptide sequence and its modifications) not including its charge carrier.\" [PSI:PI]",
+          "units": [
+            "dalton"
+          ],
+          "notes": "This is the theoretical mass of the neutral molecule (does not include the charge-giving moiety. Use the term \u201cMS:1003243|adduct ion mass\u201d to refer to the mass of the adduct ion, which includes the charge-giving moiety.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_adduct_ion_mass",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1003243",
+          "name": "adduct ion mass",
+          "repeatable": false,
+          "definition": "\"The theoretical mass of the adduct ion (e.g. for a singly-charged protonated peptide ion, this value would be the neutral peptide molecule's mass plus the mass of a proton)\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_adduct_ion_formula",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1002813",
+          "name": "adduct ion formula",
+          "repeatable": false,
+          "definition": "\"Adduct formation formula of the form M+X or M-X, as constrained by the provided regular expression.\" [PSI:MS]",
+          "notes": "For peptides, absence of this field implies that the adduct ion is [M+nH]n+ where n is the charge state. The regular expression for this field is given in the definition of MS:1002812|Regular expression for adduct ion formula.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_theoretical_monoisotopic_m/z",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1003053",
+          "name": "theoretical monoisotopic m/z",
+          "repeatable": false,
+          "definition": "\"Mass-to-charge ratio of a peptidoform ion composed of the most common isotope of each atom computed from the putative knowledge of its molecular constituents.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_theoretical_average_m/z",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1003054",
+          "name": "theoretical average m/z",
+          "repeatable": false,
+          "definition": "\"Mass-to-charge ratio of a peptidoform ion computed from the putative knowledge of its molecular constituents, averaged over the distribution of naturally occurring isotopes.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_taxonomy:_scientific_name",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001469",
+          "name": "taxonomy: scientific name",
+          "repeatable": false,
+          "definition": "\"This term is used if a scientific name is specified, e.g. Homo sapiens. Recommend using MS:1001467 (taxonomy: NCBI TaxID) where possible.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_taxonomy:_common_name",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001468",
+          "name": "taxonomy: common name",
+          "repeatable": false,
+          "definition": "\"This term is used if a common name is specified, e.g. human. Recommend using MS:1001467 (taxonomy: NCBI TaxID) where possible.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_taxonomy:_ncbi_taxid",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001467",
+          "name": "taxonomy: NCBI TaxID",
+          "repeatable": false,
+          "definition": "\"This term is used if a NCBI TaxID is specified, e.g. 9606 for Homo sapiens.\" [PSI:PI]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_sample_label",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1002602",
+          "name": "sample label",
+          "repeatable": false,
+          "definition": "\"Reagent used in labeled quantification methods.\" [PSI:PI]",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1002602"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_sample_name",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1000002",
+          "name": "sample name",
+          "repeatable": false,
+          "definition": "\"A reference string relevant to the sample under study.\" [PSI:MS]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_smiles_formula",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1000868",
+          "name": "SMILES formula",
+          "repeatable": false,
+          "definition": "\"The simplified molecular input line entry specification or SMILES is a specification for unambiguously describing the structure of a chemical compound using a short ASCII string.\" [EDAM:2301]",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    }
+  ]
+}

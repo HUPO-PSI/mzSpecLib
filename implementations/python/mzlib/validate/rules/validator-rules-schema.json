@@ -121,6 +121,17 @@
                     "description": "The name of the controlled vocabulary term being used",
                     "default": null
                 },
+                "definition": {
+                    "type": "string",
+                    "description": "The definition of the controlled vocabulary term being used"
+                },
+                "units": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Allowed units for this attribute"
+                },
                 "allow_children": {
                     "type": "boolean",
                     "description": "Whether or not this rule is allowed to match children of the named term",
@@ -156,7 +167,7 @@
                 },
                 "notes": {
                     "type": "string",
-                    "description": "Free text describing the rule applicable to this atribute"
+                    "description": "Free text describing the rule applicable to this attribute"
                 }
             }
         },
@@ -167,7 +178,6 @@
                 "id": {
                     "type": "string",
                     "description": "A unique identifier for this rule"
-
                 },
                 "path": {
                     "type": "string",
