@@ -221,10 +221,10 @@ class Validator(ValidatorBase):
         for rule in itertools.chain(self.semantic_rules, self.object_rules):
             if rule.path == path:
                 v = rule(obj, path, identifier_path, self)
-                result &= v
                 level = logging.DEBUG
                 if not v and rule.requirement_level > RequirementLevel.may:
                     level = logging.WARN
+                    result &= v
                 logger.log(level, f"Applied {rule.id} to {path}:{identifier_path} {v}/{result}")
         return result
 
