@@ -26,7 +26,7 @@ MS:1003072|spectrum origin type=MS:1003073|observed spectrum
 MS:1000002|sample name=human fetal brain
 
 <AttributeSet Analyte=HUMAN_TRYPTIC>
-MS:1001467|taxonomy: NCBI TaxID=9606
+MS:1001467|taxonomy: NCBI TaxID=NCBITaxon:9606|Homo sapiens
 MS:1001468|taxonomy: common name=Human
 MS:1001469|taxonomy: scientific name=Homo sapiens
 MS:1001045|cleavage agent name=MS:1001251|Trypsin
