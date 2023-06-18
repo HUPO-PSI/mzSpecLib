@@ -90,7 +90,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
     def _spectrum_type(self):
         key = "MS:1003072|spectrum origin type"
-        value = "MS:1003074|predicted spectrum"
+        value = "MS:1003073|observed spectrum"
         return key, value
 
     def read_header(self) -> bool:
