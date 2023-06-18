@@ -51,7 +51,7 @@ class ControlledVocabularyResolver(_VocabularyResolverMixin):
         term = self.find_term_by_name(name)
         return term.id
 
-    def _make_attribute_syntax(self, name: str) -> str:
+    def attribute_syntax(self, name: str) -> str:
         if self.is_curie(name):
             if "|" in name:
                 return name

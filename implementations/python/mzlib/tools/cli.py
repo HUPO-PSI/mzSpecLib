@@ -124,7 +124,7 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
     if library_attributes:
         resolver = ControlledVocabularyResolver()
         for k, v in library_attributes:
-            k = resolver._make_attribute_syntax(k)
+            k = resolver.attribute_syntax(k)
             library.add_attribute(k, v)
     click.echo(f"Writing to {outpath}", err=True)
     fh = click.open_file(outpath, mode='w')
