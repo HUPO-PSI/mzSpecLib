@@ -76,7 +76,8 @@ class Attribute(object):
 
 
 class AttributeManager(object):
-    """A key-value pair store with optional attribute grouping
+    """
+    A key-value pair store with optional attribute grouping
 
     Attributes
     ----------
@@ -91,6 +92,7 @@ class AttributeManager(object):
         The number of attribute groups assigned.
 
     """
+
     attributes: List[Attribute]
     attribute_dict: Dict
     group_dict: Dict
@@ -118,14 +120,14 @@ class AttributeManager(object):
             self._from_iterable(attributes)
 
     def get_next_group_identifier(self) -> str:
-        """Retrieve the next un-used attribute group identifier
+        """
+        Retrieve the next un-used attribute group identifier
         and increment the internal counter.
 
         Returns
         -------
         str
         """
-
         next_value = self.group_counter
         self.group_counter += 1
         return str(next_value)
@@ -275,9 +277,7 @@ class AttributeManager(object):
         return None
 
     def clear(self):
-        """Remove all content from the store.
-
-        """
+        """Remove all content from the store."""
         self._clear_attributes()
 
     def remove_attribute(self, key, group_identifier=None):
@@ -600,11 +600,13 @@ Attributed = Union[AttributeManager, AttributedEntity]
 
 
 class AttributeManagedProperty(Generic[T]):
-    __slots__ = ("attribute", )
+    __slots__ = ("attribute", "multiple")
     attribute: str
+    multiple: bool
 
-    def __init__(self, attribute: str):
+    def __init__(self, attribute: str, multiple: bool = False):
         self.attribute = attribute
+        self.multiple = multiple
 
     def _get_group_id(self, inst: AttributeManager) -> Optional[str]:
         return getattr(inst, "group_id", None)
@@ -613,7 +615,10 @@ class AttributeManagedProperty(Generic[T]):
         if inst is None:
             return self
         if inst.has_attribute(self.attribute):
-            return inst.get_attribute(self.attribute, group_identifier=self._get_group_id(inst))
+            value = inst.get_attribute(self.attribute, group_identifier=self._get_group_id(inst))
+            if self.multiple and not isinstance(value, list):
+                value = [value]
+            return value
         return None
 
     def __set__(self, inst: AttributeManager, value: T):
@@ -642,8 +647,6 @@ class AttributeListManagedProperty(Generic[T]):
         if inst is None:
             return self
         key, val = self._find_key_used(inst)
-        if key is None:
-            raise KeyError(self.attributes[0])
         return val
 
     def _find_key_used(self, inst: AttributeManager) -> Optional[Tuple[str, T]]:

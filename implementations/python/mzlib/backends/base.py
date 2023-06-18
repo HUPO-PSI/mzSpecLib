@@ -100,7 +100,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
 
     index: IndexBase
 
-    entry_attribute_sets: Dict[str, AttributeSet]
+    spectrum_attribute_sets: Dict[str, AttributeSet]
     analyte_attribute_sets: Dict[str, AttributeSet]
     interpretation_attribute_sets: Dict[str, AttributeSet]
     cluster_attribute_sets: Dict[str, AttributeSet]
@@ -183,7 +183,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
         self.filename = filename
         self.index = MemoryIndex()
 
-        self.entry_attribute_sets = {
+        self.spectrum_attribute_sets = {
             "all": AttributeSet("all", [])
         }
         self.analyte_attribute_sets = {
@@ -210,7 +210,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
 
     def _new_spectrum(self) -> Spectrum:
         spec = Spectrum()
-        attr_set = self.entry_attribute_sets.get("all")
+        attr_set = self.spectrum_attribute_sets.get("all")
         if attr_set:
             attr_set.apply(spec)
         return spec
@@ -371,7 +371,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
     def _add_attribute_set(self, attribute_set: AttributeSet,
                            attribute_set_type: AttributeSetTypes):
         if attribute_set_type == AttributeSetTypes.spectrum:
-            self.entry_attribute_sets[attribute_set.name] = attribute_set
+            self.spectrum_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.analyte:
             self.analyte_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.interpretation:
@@ -667,6 +667,11 @@ class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegi
 
 
 class LibraryIterator(AttributedEntity, _LibraryViewMixin, Iterator[Spectrum]):
+    backend: SpectralLibraryBackendBase
+    attributes: Attributed
+    iter: Iterator[Spectrum]
+    _buffer: Spectrum
+
     def __init__(self, backend: SpectralLibraryBackendBase) -> None:
         self.backend = backend
         self.attributes = backend

@@ -74,7 +74,7 @@ class Spectrum(AttributeManager):
     precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
 
     spectrum_aggregation = AttributeFacet[SpectrumAggregation](SpectrumAggregation)
-    peak_aggregations = AttributeManagedProperty("MS:1003254|peak attribute")
+    peak_aggregations = AttributeManagedProperty("MS:1003254|peak attribute", multiple=True)
 
     def add_analyte(self, analyte: Analyte):
         self.analytes[str(analyte.id)] = analyte

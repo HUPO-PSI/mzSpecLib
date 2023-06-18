@@ -152,7 +152,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 if context_type == AttributeSetTypes.analyte:
                     self.analyte_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.spectrum:
-                    self.entry_attribute_sets[attrib['value']].apply(store)
+                    self.spectrum_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.interpretation:
                     self.interpretation_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.cluster:
@@ -309,7 +309,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
         self.buffer[SPECTRUM_CLASSES] = {
-            c.name: self._format_attributes(c.attributes) for c in library.entry_attribute_sets.values()
+            c.name: self._format_attributes(c.attributes) for c in library.spectrum_attribute_sets.values()
         }
         self.buffer[ANALYTE_CLASSES] = {
             c.name: self._format_attributes(c.attributes) for c in library.analyte_attribute_sets.values()

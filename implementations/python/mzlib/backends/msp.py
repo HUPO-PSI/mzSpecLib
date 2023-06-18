@@ -773,7 +773,7 @@ def protein_handler(key, value, container: Attributed):
                                 match.group(1), group_identifier=group_identifier)
         container.add_attribute("MS:1001113|c-terminal flanking residue",
                                 match.group(2), group_identifier=group_identifier)
-    container.add_attribute(key.strip('"').strip("'"), re.sub(r"\(pre=(.),post=(.)\)", '', value),
+    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value.strip('"').strip("'")),
                             group_identifier=group_identifier)
     return True
 

@@ -151,12 +151,13 @@ class Interpretation(AttributedEntity, MutableMapping):
         del self.member_interpretations[str(member_id)]
 
     def validate(self) -> bool:
-        '''Perform validation on each component to confirm this object is well formed.
+        """
+        Perform validation on each component to confirm this object is well formed.
 
         Returns
         -------
         bool
-        '''
+        """
         analyte_ids = set(self.analytes)
         member_ids = set(self.member_interpretations)
         valid = True

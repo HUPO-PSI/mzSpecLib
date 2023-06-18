@@ -6,7 +6,7 @@ import warnings
 import enum
 
 from collections import deque
-from typing import ClassVar, List, Tuple, Union, Iterable
+from typing import ClassVar, List, Optional, Tuple, Union, Iterable
 
 from mzlib.annotation import parse_annotation
 from mzlib.spectrum import Spectrum
@@ -55,6 +55,7 @@ class _LibraryParserStateEnum(enum.Enum):
 
 
 ATTRIBUTE_SET_NAME = "MS:1003212|library attribute set name"
+PEAK_ATTRIBUTE = "MS:1003254|peak attribute"
 
 START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum)(?:=(.+))?>")
 START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
@@ -74,6 +75,282 @@ attribute_set_types = {
     "interpretation": AttributeSetTypes.interpretation,
     "cluster": AttributeSetTypes.cluster,
 }
+
+
+class _EntryParser:
+    """
+    Moves the complexity and state management involved in parsing
+    a full entry out of :class:`TextSpectrumLibrary`, allowing it
+    to be factored into a bunch of helper methods around a single
+    piece of shared stated too granular for the main parser.
+    """
+
+    library: 'TextSpectralLibrary'
+    state: _SpectrumParserStateEnum
+    spectrum: Optional[Spectrum]
+    cluster: Optional[SpectrumCluster]
+    analyte: Optional[Analyte]
+    interpretation: Optional[Interpretation]
+    interpretation_member: Optional[InterpretationMember]
+
+    aggregation_types: List[str]
+    peak_list: List[Tuple]
+
+    start_line_number: int
+    line_number: int = -1
+
+    def __init__(self, library, start_line_number: int, spectrum_index: Optional[int]) -> None:
+        self.library = library
+        self.start_line_number = start_line_number
+        self.spectrum_index = spectrum_index
+        self.state = _SpectrumParserStateEnum.header
+
+        self.aggregation_types = None
+        self.peak_list = []
+
+        self.spectrum = None
+        self.cluster = None
+        self.analyte = None
+        self.interpretation = None
+        self.interpretation_member = None
+
+    def real_line_number_or_nothing(self):
+        if self.start_line_number is None:
+            return ''
+        message = f" on line {self.line_number + self.start_line_number}"
+        if self.spectrum_index is not None:
+            message += f" in spectrum {self.spectrum_index}"
+        message += f" in state {self.state}"
+        return message
+
+    def _parse_header(self, line):
+        if START_OF_SPECTRUM_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.header
+            self.spectrum = self.library._new_spectrum()
+            self.spectrum.index = self.spectrum_index
+            match = START_OF_SPECTRUM_MARKER.match(line)
+            self.spectrum.key = int(match.group(1)) or self.spectrum.index - 1
+            return
+
+        elif START_OF_PEAKS_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.peaks
+            return
+
+        elif START_OF_INTERPRETATION_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.interpretation
+            match = START_OF_INTERPRETATION_MARKER.match(line)
+            if self.interpretation is not None:
+                self.spectrum.add_interpretation(self.interpretation)
+            self.interpretation = self.library._new_interpretation(match.group(1))
+            self.spectrum.add_interpretation(self.interpretation)
+            self.analyte = None
+            return
+
+        elif START_OF_ANALYTE_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.analyte
+            match = START_OF_ANALYTE_MARKER.match(line)
+            self.analyte = self.library._new_analyte(match.group(1))
+            self.spectrum.add_analyte(self.analyte)
+            return
+
+        elif START_OF_CLUSTER.match(line):
+            self.state = _SpectrumParserStateEnum.cluster
+            self.cluster = self.library._new_cluster()
+            match = START_OF_CLUSTER.match(line)
+            self.cluster.key = int(match.group(1)) or self.cluster.index - 1
+            return
+
+        self.library._parse_attribute_into(
+            line, self.spectrum, self.real_line_number_or_nothing, self.state)
+
+    def _parse_interpretation(self, line):
+        if START_OF_ANALYTE_MARKER.match(line):
+            warnings.warn(
+                f"An analyte found after an interpretation was encountered, {self.real_line_number_or_nothing()}")
+            self.state = _SpectrumParserStateEnum.analyte
+            match = START_OF_ANALYTE_MARKER.match(line)
+            if self.analyte is not None:
+                self.spectrum.add_analyte(self.analyte)
+            self.analyte = self.library._new_analyte(match.group(1))
+            self.spectrum.add_analyte(self.analyte)
+            return
+        elif START_OF_INTERPRETATION_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.interpretation
+            match = START_OF_INTERPRETATION_MARKER.match(line)
+            if self.interpretation is not None:
+                self.spectrum.add_interpretation(self.interpretation)
+            self.interpretation = self.library._new_interpretation(match.group(1))
+            self.spectrum.add_interpretation(self.interpretation)
+            self.analyte = None
+            return
+        elif START_OF_PEAKS_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.peaks
+            return
+        elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.interpretation_member
+            match = START_OF_INTERPRETATION_MEMBER_MARKER.match(line)
+
+            if self.interpretation_member is not None:
+                self.interpretation.add_member_interpretation(self.interpretation_member)
+
+            self.interpretation_member = InterpretationMember(match.group(1))
+            self.interpretation.add_member_interpretation(self.interpretation_member)
+            return
+
+        self.library._parse_attribute_into(
+            line, self.interpretation.attributes, self.real_line_number_or_nothing)
+        self.library._analyte_interpretation_link(self.spectrum, self.interpretation)
+
+    def _parse_interpretation_member(self, line):
+        if START_OF_PEAKS_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.peaks
+            self.interpretation_member = None
+            self.interpretation = None
+            return
+        elif START_OF_INTERPRETATION_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.interpretation
+            match = START_OF_INTERPRETATION_MARKER.match(line)
+            if self.interpretation is not None:
+                self.spectrum.add_interpretation(self.interpretation)
+            self.interpretation = self.library._new_interpretation(match.group(1))
+            self.spectrum.add_interpretation(self.interpretation)
+            self.interpretation_member = None
+            return
+        elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.interpretation_member
+            match = START_OF_INTERPRETATION_MEMBER_MARKER.match(line)
+            if self.interpretation_member is not None:
+                self.interpretation.add_member_interpretation(self.interpretation_member)
+            self.interpretation_member = InterpretationMember(match.group(1))
+            self.interpretation.add_member_interpretation(self.interpretation_member)
+            return
+
+        self.library._parse_attribute_into(
+            line, self.interpretation_member, self.real_line_number_or_nothing)
+
+    def _parse_analyte(self, line):
+        if START_OF_PEAKS_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.peaks
+            if self.analyte is not None:
+                self.spectrum.add_analyte(self.analyte)
+                self.analyte = None
+            return
+
+        elif START_OF_ANALYTE_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.analyte
+            match = START_OF_ANALYTE_MARKER.match(line)
+            if self.analyte is not None:
+                self.spectrum.add_analyte(self.analyte)
+            self.analyte = self.library._new_analyte(match.group(1))
+            return
+
+        elif START_OF_INTERPRETATION_MARKER.match(line):
+            self.state = _SpectrumParserStateEnum.interpretation
+            match = START_OF_INTERPRETATION_MARKER.match(line)
+            if self.analyte is not None:
+                self.spectrum.add_analyte(self.analyte)
+                self.analyte = None
+
+            # Somehow we have an in-progress Interpretation that hasn't been cleared yet.
+            # This should probably be an error strictly speaking.
+            if self.interpretation is not None:
+                warnings.warn(
+                    f"Interleaved analytes and interpretations detected at {self.real_line_number_or_nothing()}")
+                self.spectrum.add_interpretation(self.interpretation)
+            self.interpretation = self.library._new_interpretation(match.group(1))
+            self.spectrum.add_interpretation(self.interpretation)
+            return
+
+        self.library._parse_attribute_into(line, self.analyte, self.real_line_number_or_nothing)
+
+    def _parse_peaks(self, line):
+        # TODO: When we know more about how different aggregations are formatted,
+        # look that up here once so we remember it and can use it to process the
+        # aggregation columns
+        if self.aggregation_types is None:
+            self.aggregation_types = self.spectrum.peak_aggregations
+        match = float_number.match(line)
+        if match is not None:
+            tokens = line.split("\t")
+            n_tokens = len(tokens)
+            if n_tokens == 2:
+                mz, intensity = tokens
+                annotation = parse_annotation("?")
+                self.peak_list.append([float(mz), float(intensity), annotation, []])
+            elif n_tokens == 3:
+                mz, intensity, annotation = tokens
+                if not annotation:
+                    annotation = "?"
+                annotation = parse_annotation(annotation)
+                self.peak_list.append([float(mz), float(intensity), annotation, []])
+            elif n_tokens > 3:
+                mz, intensity, annotation, *aggregation = tokens
+                if not annotation:
+                    annotation = "?"
+                annotation = parse_annotation(annotation)
+                self.peak_list.append(
+                    [float(mz), float(intensity), annotation, [try_cast(agg) for agg in aggregation]])
+            else:
+                raise ValueError(
+                    f"Malformed peak line {line} with {n_tokens} entries{self.real_line_number_or_nothing()}")
+        else:
+            raise ValueError(f"Malformed peak line {line}{self.real_line_number_or_nothing()}")
+
+    def _parse_cluster(self, line):
+        if START_OF_SPECTRUM_MARKER.match(line):
+            raise ValueError(
+                f"Clusters should not include spectrum sections {self.real_line_number_or_nothing()}")
+
+        elif START_OF_PEAKS_MARKER.match(line):
+            raise ValueError(
+                f"Clusters should not include peaks {self.real_line_number_or_nothing()}")
+
+        elif START_OF_INTERPRETATION_MARKER.match(line):
+            raise ValueError(
+                f"Clusters should not include interpretation sections {self.real_line_number_or_nothing()}")
+
+        elif START_OF_ANALYTE_MARKER.match(line):
+            raise ValueError(
+                f"Clusters should not include analyte sections {self.real_line_number_or_nothing()}")
+
+        elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
+            raise ValueError(
+                f"Clusters should not include interpretation member sections {self.real_line_number_or_nothing()}")
+
+        self.library._parse_attribute_into(
+            line, self.cluster, self.real_line_number_or_nothing, self.state)
+
+    def parse(self, buffer: Iterable[str]):
+        line: str
+        for line_number, line in enumerate(buffer):
+            self.line_number = line_number
+            line = line.strip()
+            if not line:
+                break
+            # Skip comments for now, no round-trip
+            if line.startswith("#"):
+                continue
+            elif self.state == _SpectrumParserStateEnum.header:
+                self._parse_header(line)
+            elif self.state == _SpectrumParserStateEnum.interpretation:
+                self._parse_interpretation(line)
+            elif self.state == _SpectrumParserStateEnum.interpretation_member:
+                self._parse_interpretation_member(line)
+            elif self.state == _SpectrumParserStateEnum.analyte:
+                self._parse_analyte(line)
+            elif self.state == _SpectrumParserStateEnum.peaks:
+                self._parse_peaks(line)
+            elif self.state == _SpectrumParserStateEnum.cluster:
+                self._parse_cluster(line)
+            else:
+                raise ValueError(
+                    f"Unknown state {self.state}{self.real_line_number_or_nothing()}")
+        if self.cluster:
+            return self.cluster
+        self.spectrum.peak_list = self.peak_list
+        # Backfill analytes into interpretations that never explicitly listed them.
+        self.library._default_interpretation_to_analytes(self.spectrum)
+        return self.spectrum
 
 
 def _is_header_line(line: str) -> bool:
@@ -363,7 +640,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             self._prepare_attribute_dict(d)
             if d['term'] == ATTRIBUTE_SET_NAME:
                 if _SpectrumParserStateEnum.header == state:
-                    attr_set = self.entry_attribute_sets[d['value']]
+                    attr_set = self.spectrum_attribute_sets[d['value']]
                 elif _SpectrumParserStateEnum.analyte == state:
                     attr_set = self.analyte_attribute_sets[d['value']]
                 elif _SpectrumParserStateEnum.interpretation == state:
@@ -397,233 +674,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _parse(self, buffer: Iterable[str], spectrum_index: int = None,
                start_line_number: int=None) -> Union[Spectrum, SpectrumCluster]:
-        spec: Spectrum = self._new_spectrum()
-        spec.index = spectrum_index if spectrum_index is not None else -1
-        interpretation: Interpretation = None
-        analyte: Analyte = None
-        interpretation_member: InterpretationMember = None
-        cluster: SpectrumCluster = None
-
-        STATES = _SpectrumParserStateEnum
-        state: _SpectrumParserStateEnum = STATES.header
-
-        peak_list = []
-        line_number = -1
-
-        def real_line_number_or_nothing():
-            nonlocal start_line_number
-            nonlocal line_number
-            nonlocal spectrum_index
-
-            if start_line_number is None:
-                return ''
-            message = f" on line {line_number + start_line_number}"
-            if spectrum_index is not None:
-                message += f" in spectrum {spectrum_index}"
-            message += f" in state {state}"
-            return message
-
-        line: str
-        for line_number, line in enumerate(buffer):
-            line = line.strip()
-            if not line:
-                break
-            # Skip comments for now, no round-trip
-            if line.startswith("#"):
-                continue
-            if state == STATES.header:
-                if START_OF_SPECTRUM_MARKER.match(line):
-                    match = START_OF_SPECTRUM_MARKER.match(line)
-                    spec.key = int(match.group(1)) or spec.index - 1
-                    continue
-
-                elif START_OF_PEAKS_MARKER.match(line):
-                    state = STATES.peaks
-                    continue
-
-                elif START_OF_INTERPRETATION_MARKER.match(line):
-                    state = STATES.interpretation
-                    match = START_OF_INTERPRETATION_MARKER.match(line)
-                    if interpretation is not None:
-                        spec.add_interpretation(interpretation)
-                    interpretation = self._new_interpretation(match.group(1))
-                    spec.add_interpretation(interpretation)
-                    analyte = None
-                    continue
-
-                elif START_OF_ANALYTE_MARKER.match(line):
-                    state = STATES.analyte
-                    match = START_OF_ANALYTE_MARKER.match(line)
-                    analyte = self._new_analyte(match.group(1))
-                    spec.add_analyte(analyte)
-                    continue
-
-                elif START_OF_CLUSTER.match(line):
-                    state = STATES.cluster
-                    cluster = self._new_cluster()
-                    match = START_OF_CLUSTER.match(line)
-                    cluster.key = int(match.group(1)) or cluster.index - 1
-                    continue
-
-                self._parse_attribute_into(
-                    line, spec, real_line_number_or_nothing, state)
-
-            elif state == STATES.interpretation:
-                if START_OF_ANALYTE_MARKER.match(line):
-                    warnings.warn(
-                        f"An analyte found after an interpretation was encountered, {real_line_number_or_nothing()}")
-                    state = STATES.analyte
-                    match = START_OF_ANALYTE_MARKER.match(line)
-                    if analyte is not None:
-                        spec.add_analyte(analyte)
-                    analyte = self._new_analyte(match.group(1))
-                    spec.add_analyte(analyte)
-                    continue
-                elif START_OF_INTERPRETATION_MARKER.match(line):
-                    state = STATES.interpretation
-                    match = START_OF_INTERPRETATION_MARKER.match(line)
-                    if interpretation is not None:
-                        spec.add_interpretation(interpretation)
-                    interpretation = self._new_interpretation(match.group(1))
-                    spec.add_interpretation(interpretation)
-                    analyte = None
-                    continue
-                elif START_OF_PEAKS_MARKER.match(line):
-                    state = STATES.peaks
-                    continue
-                elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
-                    state = STATES.interpretation_member
-                    match = START_OF_INTERPRETATION_MEMBER_MARKER.match(line)
-
-                    if interpretation_member is not None:
-                        interpretation.add_member_interpretation(interpretation_member)
-
-                    interpretation_member = InterpretationMember(match.group(1))
-                    interpretation.add_member_interpretation(interpretation_member)
-                    continue
-
-                self._parse_attribute_into(
-                    line, interpretation.attributes, real_line_number_or_nothing)
-                self._analyte_interpretation_link(spec, interpretation)
-
-            elif state == STATES.interpretation_member:
-                if START_OF_PEAKS_MARKER.match(line):
-                    state = STATES.peaks
-                    interpretation_member = None
-                    interpretation = None
-                    continue
-                elif START_OF_INTERPRETATION_MARKER.match(line):
-                    state = STATES.interpretation
-                    match = START_OF_INTERPRETATION_MARKER.match(line)
-                    if interpretation is not None:
-                        spec.add_interpretation(interpretation)
-                    interpretation = self._new_interpretation(match.group(1))
-                    spec.add_interpretation(interpretation)
-                    interpretation_member = None
-                    continue
-                elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
-                    state = STATES.interpretation_member
-                    match = START_OF_INTERPRETATION_MEMBER_MARKER.match(line)
-                    if interpretation_member is not None:
-                        interpretation.add_member_interpretation(interpretation_member)
-                    interpretation_member = InterpretationMember(match.group(1))
-                    interpretation.add_member_interpretation(interpretation_member)
-                    continue
-
-                self._parse_attribute_into(
-                    line, interpretation_member, real_line_number_or_nothing)
-
-            elif state == STATES.analyte:
-                if START_OF_PEAKS_MARKER.match(line):
-                    state = STATES.peaks
-                    if analyte is not None:
-                        spec.add_analyte(analyte)
-                        analyte = None
-                    continue
-
-                elif START_OF_ANALYTE_MARKER.match(line):
-                    state = STATES.analyte
-                    match = START_OF_ANALYTE_MARKER.match(line)
-                    if analyte is not None:
-                        spec.add_analyte(analyte)
-                    analyte = self._new_analyte(match.group(1))
-                    continue
-
-                elif START_OF_INTERPRETATION_MARKER.match(line):
-                    state = STATES.interpretation
-                    match = START_OF_INTERPRETATION_MARKER.match(line)
-                    if analyte is not None:
-                        spec.add_analyte(analyte)
-                        analyte = None
-
-                    # Somehow we have an in-progress Interpretation that hasn't been cleared yet.
-                    # This should probably be an error strictly speaking.
-                    if interpretation is not None:
-                        warnings.warn(
-                            f"Interleaved analytes and interpretations detected at {real_line_number_or_nothing()}")
-                        spec.add_interpretation(interpretation)
-                    interpretation = self._new_interpretation(match.group(1))
-                    spec.add_interpretation(interpretation)
-                    continue
-
-                self._parse_attribute_into(line, analyte, real_line_number_or_nothing)
-
-            elif state == STATES.peaks:
-                match = float_number.match(line)
-                if match is not None:
-                    tokens = line.split("\t")
-                    n_tokens = len(tokens)
-                    if n_tokens == 3:
-                        mz, intensity, annotation = tokens
-                        if not annotation:
-                            annotation = "?"
-                        annotation = parse_annotation(annotation)
-                        peak_list.append([float(mz), float(intensity), annotation, ""])
-                    elif n_tokens > 3:
-                        mz, intensity, annotation, *aggregation = tokens
-                        if not annotation:
-                            annotation = "?"
-                        annotation = parse_annotation(annotation)
-                        peak_list.append(
-                            [float(mz), float(intensity), annotation, aggregation])
-                    else:
-                        raise ValueError(
-                            f"Malformed peak line {line} with {n_tokens} entries{real_line_number_or_nothing()}")
-                else:
-                    raise ValueError(f"Malformed peak line {line}{real_line_number_or_nothing()}")
-
-            elif state == STATES.cluster:
-                if START_OF_SPECTRUM_MARKER.match(line):
-                    raise ValueError(
-                        f"Clusters should not include spectrum sections {real_line_number_or_nothing()}")
-
-                elif START_OF_PEAKS_MARKER.match(line):
-                    raise ValueError(
-                        f"Clusters should not include peaks {real_line_number_or_nothing()}")
-
-                elif START_OF_INTERPRETATION_MARKER.match(line):
-                    raise ValueError(
-                        f"Clusters should not include interpretation sections {real_line_number_or_nothing()}")
-
-                elif START_OF_ANALYTE_MARKER.match(line):
-                    raise ValueError(
-                        f"Clusters should not include analyte sections {real_line_number_or_nothing()}")
-
-                elif START_OF_INTERPRETATION_MEMBER_MARKER.match(line):
-                    raise ValueError(
-                        f"Clusters should not include interpretation member sections {real_line_number_or_nothing()}")
-
-                self._parse_attribute_into(
-                    line, cluster, real_line_number_or_nothing, state)
-            else:
-                raise ValueError(
-                    f"Unknown state {state}{real_line_number_or_nothing()}")
-        if cluster:
-            return cluster
-        spec.peak_list = peak_list
-        # Backfill analytes into interpretations that never explicitly listed them.
-        self._default_interpretation_to_analytes(spec)
-        return spec
+        parser = _EntryParser(self, start_line_number, spectrum_index)
+        return parser.parse(buffer)
 
     def get_spectrum(self, spectrum_number: int=None,
                      spectrum_name: str=None) -> Spectrum:
@@ -656,10 +708,11 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
     format_name = "text"
     default_version = '1.0'
 
-    def __init__(self, filename, version=None, **kwargs):
+    def __init__(self, filename, version=None, compact_interpretations: bool=True, **kwargs):
         super(TextSpectralLibraryWriter, self).__init__(filename)
         self.version = version
         self._coerce_handle(self.filename)
+        self.compact_interpretations = compact_interpretations
 
     def _write_attributes(self, attributes: Attributed):
         for attribute in attributes:
@@ -687,7 +740,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self._write_attributes(
             self._filter_attributes(library.attributes, lambda x: x.key != FORMAT_VERSION_TERM)
         )
-        for attr_set in library.entry_attribute_sets.values():
+        for attr_set in library.spectrum_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.spectrum)
 
         for attr_set in library.analyte_attribute_sets.values():
@@ -736,10 +789,17 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
             self.handle.write(f"<Interpretation={interpretation.id}>\n")
             self._write_attributes(attribs_of)
 
-            for member in interpretation.member_interpretations.values():
-                member: InterpretationMember
-                self.handle.write(f"<InterpretationMember={member.id}>\n")
-                self._write_attributes(member.attributes)
+            # When there is only one interpretation and only one interpretation member
+            # interpretation member attributes are written out as part of the interpretation
+            # itself.
+            if _n_interps == 1 and len(interpretation.member_interpretations) == 1 and self.compact_interpretations:
+                for member in interpretation.member_interpretations.values():
+                    self._write_attributes(member.attributes)
+            else:
+                for member in interpretation.member_interpretations.values():
+                    member: InterpretationMember
+                    self.handle.write(f"<InterpretationMember={member.id}>\n")
+                    self._write_attributes(member.attributes)
         self.handle.write("<Peaks>\n")
         for peak in spectrum.peak_list:
             peak_parts = [

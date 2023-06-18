@@ -102,6 +102,26 @@ class SpectrumLibrary:
             raise ValueError(
                 "Cannot read library data, library parser not yet initialized")
 
+    @property
+    def spectrum_attribute_sets(self):
+        self._requires_backend()
+        return self.backend.spectrum_attribute_sets
+
+    @property
+    def analyte_attribute_sets(self):
+        self._requires_backend()
+        return self.backend.analyte_attribute_sets
+
+    @property
+    def interpretation_attribute_sets(self):
+        self._requires_backend()
+        return self.backend.interpretation_attribute_sets
+
+    @property
+    def cluster_attribute_sets(self):
+        self._requires_backend()
+        return self.backend.cluster_attribute_sets
+
     #### Define getter/setter for attribute identifier
     @property
     def identifier(self) -> Optional[str]:
@@ -157,6 +177,13 @@ class SpectrumLibrary:
         return self.backend.read_header()
 
     def read(self):
+        """
+        Create a sequential iterator over the spectrum library entries.
+
+        Yields
+        ------
+        Spectrum or SpectrumCluster
+        """
         self._requires_backend()
         return self.backend.read()
 
@@ -234,7 +261,11 @@ class SpectrumLibrary:
 
     def find_spectra(self, specification, **query_keys) -> List[Spectrum]:
         """
-        find_spectra - Return a list of spectra given query constraints
+        Return a list of spectra given query constraints
+
+        Returns
+        -------
+        List[Spectrum]
         """
         self._requires_backend()
         return self.backend.find_spectra(specification, **query_keys)
