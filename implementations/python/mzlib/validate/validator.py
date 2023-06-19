@@ -1,8 +1,8 @@
 import itertools
 import logging
-
-from dataclasses import dataclass, field
+import warnings
 import re
+from dataclasses import dataclass, field
 from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
 from psims.controlled_vocabulary.entity import Entity, ListOfType
@@ -18,7 +18,7 @@ from mzlib.ontology import _VocabularyResolverMixin
 
 from mzlib.validate.level import RequirementLevel
 from mzlib.validate.semantic_rule import ScopedSemanticRule, load_rule_set
-from mzlib.validate.object_rule import ScopedObjectRuleBase, SpectrumPeakAnnotationRule
+from mzlib.validate.object_rule import ScopedObjectRuleBase, SpectrumPeakAnnotationRule, ValidationWarning
 from mzlib.defaults import DEFAULT_UNITS
 
 logger = logging.getLogger(__name__)
@@ -61,6 +61,34 @@ class ValidationContext:
 
 
 
+def _warning_iterator(iterator: Iterator[Spectrum]) -> Iterator[Spectrum]:
+    while True:
+        try:
+            with warnings.catch_warnings(record=True) as w:
+                value = next(iterator)
+            vw = [a for a in w if issubclass(a.category, ValidationWarning)]
+            yield value, vw
+        except StopIteration:
+            break
+        except:
+            raise
+
+
+def _is_of_type(attrib, relation) -> bool:
+    if isinstance(relation.value_type.type_definition, type):
+        return isinstance(attrib.value, relation.value_type.type_definition)
+    else:
+        return _try_convert(attrib.value, relation.value_type.type_definition)
+
+
+def _try_convert(value, converter):
+    try:
+        converter(value)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
 class ValidatorBase(_VocabularyResolverMixin):
     error_log: List
     current_context: ValidationContext
@@ -71,7 +99,7 @@ class ValidatorBase(_VocabularyResolverMixin):
     def add_warning(self, obj: Attributed, path: str, identifier_path: Tuple, attrib: Any, value: Any, requirement_level: RequirementLevel, message: str):
         raise NotImplementedError()
 
-    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
+    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary, parsing_warnings: Optional[List[warnings.WarningMessage]] = None):
         raise NotImplementedError()
 
     def validate_analyte(self, analyte: Analyte, path: str, spectrum: Spectrum, library: SpectrumLibrary):
@@ -127,7 +155,7 @@ class ValidatorBase(_VocabularyResolverMixin):
                                 break
                         if hit:
                             break
-                    elif isinstance(attrib.value, rel.value_type.type_definition):
+                    elif _is_of_type(attrib, rel):
                         break
                 else:
                     self.add_warning(obj, path, identifer_path, attrib.key, attrib.value, RequirementLevel.must,
@@ -177,8 +205,8 @@ class ValidatorBase(_VocabularyResolverMixin):
 
         if spectrum_iterator is None:
             spectrum_iterator = library
-        for spectrum in spectrum_iterator:
-            result &= self.validate_spectrum(spectrum, path, library)
+        for spectrum, warns in _warning_iterator(spectrum_iterator):
+            result &= self.validate_spectrum(spectrum, path, library, parsing_warnings=warns)
         return result
 
     def chain(self, validator: 'ValidatorBase') -> 'ValidatorBase':
@@ -228,12 +256,17 @@ class Validator(ValidatorBase):
                 logger.log(level, f"Applied {rule.id} to {path}:{identifier_path} {v}/{result}")
         return result
 
-    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
+    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary, parsing_warnings: Optional[List[warnings.WarningMessage]] = None):
         path = f"{path}/Spectrum"
         identifier_path = (spectrum.key, )
         result = self.apply_rules(spectrum, path, identifier_path)
         result &= self.check_attributes(spectrum, path, identifier_path)
         self.reset_context()
+
+        if parsing_warnings:
+            result = False
+            for parsing_warning in parsing_warnings:
+                logger.warn(str(parsing_warning.message))
 
         for _key, analyte in spectrum.analytes.items():
             result &= self.validate_analyte(analyte, path, spectrum, library)
@@ -287,10 +320,10 @@ class ValidatorChain(ValidatorBase):
             log.extend(validator.error_log)
         return log
 
-    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary):
+    def validate_spectrum(self, spectrum: Spectrum, path: str, library: SpectrumLibrary, parsing_warnings: Optional[List[warnings.WarningMessage]] = None):
         result = True
         for validator in self.validators:
-            result &= validator.validate_spectrum(spectrum, path, library)
+            result &= validator.validate_spectrum(spectrum, path, library, parsing_warnings)
         return result
 
     def validate_analyte(self, analyte: Analyte, path: str, spectrum: Spectrum, library: SpectrumLibrary):

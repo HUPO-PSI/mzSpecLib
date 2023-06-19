@@ -13,6 +13,7 @@ from mzlib.spectrum import Spectrum
 from mzlib.cluster import SpectrumCluster
 from mzlib.attributes import AttributeManager, Attributed, AttributeSet
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember
+from mzlib.validate.object_rule import ValidationWarning
 
 from .base import (
     SpectralLibraryBackendBase,
@@ -29,9 +30,9 @@ logger.addHandler(logging.NullHandler())
 term_pattern = re.compile(
     r"^(?P<term>(?P<term_accession>\S+:(?:\d|X)+)\|(?P<term_name>[^=]+))")
 key_value_term_pattern = re.compile(
-    r"^(?P<term>(?P<term_accession>[A-Za-z0-9:.]+:(?:\d|X)+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
+    r"^(?P<term>(?P<term_accession>[A-Za-z0-9:.]+:(?:\d|X)+)\|(?P<term_name>[^=]+?))\s*=\s*(?P<value>.+)")
 grouped_key_value_term_pattern = re.compile(
-    r"^\[(?P<group_id>\d+)\](?P<term>(?P<term_accession>\S+:(?:\d|X)+)\|(?P<term_name>[^=]+))=(?P<value>.+)")
+    r"^\[(?P<group_id>\d+)\](?P<term>(?P<term_accession>\S+:(?:\d|X)+)\|(?P<term_name>[^=]+?))\s*=\s*(?P<value>.+)")
 float_number = re.compile(
     r"^\d+(.\d+)?")
 
@@ -57,17 +58,20 @@ class _LibraryParserStateEnum(enum.Enum):
 ATTRIBUTE_SET_NAME = "MS:1003212|library attribute set name"
 PEAK_ATTRIBUTE = "MS:1003254|peak attribute"
 
-START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum)(?:=(.+))?>")
-START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:=(.+))>")
-START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:=(.+))>")
+START_OF_SPECTRUM_MARKER = re.compile(r"^<(?:Spectrum)(?:\s*=\s*(.+))?>")
+START_OF_INTERPRETATION_MARKER = re.compile(r"^<Interpretation(?:\s*=\s*(.+))>")
+START_OF_ANALYTE_MARKER = re.compile(r"^<Analyte(?:\s*=\s*(.+))>")
 START_OF_PEAKS_MARKER = re.compile(r"^<Peaks>")
 START_OF_LIBRARY_MARKER = re.compile(r"^<mzSpecLib\s+(.+)>")
-SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|(?:library )?spectrum name=')
-START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:=(.+))>")
+START_OF_INTERPRETATION_MEMBER_MARKER = re.compile(r"<InterpretationMember(?:\s*=\s*(.+))>")
 START_OF_ATTRIBUTE_SET = re.compile(
-    r"<AttributeSet (Spectrum|Analyte|Interpretation|Cluster)=(.+)>")
-START_OF_CLUSTER = re.compile(r"<Cluster(?:=(.+))>")
+    r"<AttributeSet (Spectrum|Analyte|Interpretation|Cluster)\s*=\s*(.+)>")
+START_OF_CLUSTER = re.compile(r"<Cluster(?:\s*=\s*(.+))>")
 
+SPECTRUM_NAME_PRESENT = re.compile(r'MS:1003061\|(?:library )?spectrum name\s*=\s*')
+SPECTRUM_NAME_MATCH = re.compile(r'MS:1003061\|(?:library )?spectrum name\s*=\s*(.+)')
+
+FALLBACK_PEAK_LINE_PATTERN = re.compile(r'(?P<mz>\d+(?:\.\d+)?)\s+(?P<intensity>\d+(?:\.\d+)?)(?:\s+(?P<rest>.+))?')
 
 attribute_set_types = {
     "spectrum": AttributeSetTypes.spectrum,
@@ -101,7 +105,7 @@ class _EntryParser:
 
     def __init__(self, library, start_line_number: int, spectrum_index: Optional[int]) -> None:
         self.library = library
-        self.start_line_number = start_line_number
+        self.start_line_number = start_line_number or 0
         self.spectrum_index = spectrum_index
         self.state = _SpectrumParserStateEnum.header
 
@@ -115,8 +119,6 @@ class _EntryParser:
         self.interpretation_member = None
 
     def real_line_number_or_nothing(self):
-        if self.start_line_number is None:
-            return ''
         message = f" on line {self.line_number + self.start_line_number}"
         if self.spectrum_index is not None:
             message += f" in spectrum {self.spectrum_index}"
@@ -273,6 +275,14 @@ class _EntryParser:
         if match is not None:
             tokens = line.split("\t")
             n_tokens = len(tokens)
+            if n_tokens == 1 and ' ' in line:
+                if match := FALLBACK_PEAK_LINE_PATTERN.match(line):
+                    tokens = match.groups()
+                    n_tokens = len(tokens)
+                    warnings.warn(
+                        f"Space character delimiter found in peak line{self.real_line_number_or_nothing()}",
+                        ValidationWarning
+                    )
             if n_tokens == 2:
                 mz, intensity = tokens
                 annotation = parse_annotation("?")
@@ -576,8 +586,10 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         entry_is_cluster = bool(is_clus)
                         spectrum_file_offset = line_beginning_file_offset
                         spectrum_name = ''
-                    if re.match(r'MS:1003061\|(?:library )?spectrum name', line):
-                        spectrum_name = re.match(r'MS:1003061\|(?:library )?spectrum name=(.+)', line).group(1)
+
+                    if SPECTRUM_NAME_PRESENT.match(line):
+                        if match := SPECTRUM_NAME_MATCH.match(line):
+                            spectrum_name = match.group(1)
 
                     entry_buffer.append(line)
 

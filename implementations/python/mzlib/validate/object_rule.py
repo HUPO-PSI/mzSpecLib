@@ -1,5 +1,6 @@
 
 import logging
+
 from typing import TYPE_CHECKING, List, Tuple
 
 from mzlib.attributes import Attributed
@@ -15,6 +16,16 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
+
+
+class ValidationWarning(UserWarning):
+    """
+    Indicates that something was parsed that did not halt the parser but
+    which violates the expectations of the parser.
+
+    The parser will make a best-effort attempt to interpret the value
+    correctly but when validating this will count as a violation.
+    """
 
 
 class ScopedObjectRuleBase:

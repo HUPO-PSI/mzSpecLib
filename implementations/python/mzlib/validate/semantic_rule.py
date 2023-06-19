@@ -137,8 +137,11 @@ class ValueIsUnique(AttributeSemanticPredicate):
         self.seen = set()
 
     def validate(self, attribute: 'AttributeSemanticRule', value: str, validator_context: "ValidatorBase"):
-        if isinstance(value, list) and attribute.repeatable:
-            return all(self.validate(attribute, v, validator_context) for v in value)
+        if isinstance(value, list):
+            if attribute.repeatable:
+                return all(self.validate(attribute, v, validator_context) for v in value)
+            else:
+                return False
         if value in self.seen:
             return False
         self.seen.add(value)
