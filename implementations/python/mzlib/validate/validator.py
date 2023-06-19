@@ -62,6 +62,8 @@ class ValidationContext:
 
 
 def _warning_iterator(iterator: Iterator[Spectrum]) -> Iterator[Spectrum]:
+    # coerce to an actual iterator in case we were passed only an iterable
+    iterator = iter(iterator)
     while True:
         try:
             with warnings.catch_warnings(record=True) as w:
