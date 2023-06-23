@@ -4,6 +4,7 @@ import io
 import logging
 import warnings
 import enum
+import numbers
 
 from collections import deque
 from typing import ClassVar, List, Optional, Tuple, Union, Iterable
@@ -837,8 +838,8 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         self.handle.close()
 
 
-def format_aggregation(value: Union[float, str]) -> str:
-    if isinstance(value, float):
+def format_aggregation(value: Union[numbers.Number, str]) -> str:
+    if isinstance(value, numbers.Number):
         return "%0.4g" % value
     else:
         return value
