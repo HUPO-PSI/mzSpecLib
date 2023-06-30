@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+# pragma: no cover
 #from __future__ import print_function
 #import sys
 #def eprint(*args, **kwargs):
@@ -58,7 +58,7 @@ class OntologyTerm(object):
         #### If we have been given an input line_list on construction, parse it right away
         if line_list is not None:
             self.parse(line_list=line_list)
-        
+
 
     #########################################################################
     #### parse the line_list
@@ -400,7 +400,7 @@ class OntologyTerm(object):
         else:
             self.is_valid = False
             logging.critical("Number of errors while parsing term '%s': %i", self.name, self.n_errors)
- 
+
         if self.n_errors > 0 or len(self.unparsable_line_list) > 0:
             print("=====================")
             self.show()

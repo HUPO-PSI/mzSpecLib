@@ -9,15 +9,17 @@ from pathlib import Path
 
 
 from psims.controlled_vocabulary import Entity
-from psims.controlled_vocabulary.controlled_vocabulary import load_uo, load_unimod, load_psims
+from psims.controlled_vocabulary.controlled_vocabulary import (
+    load_uo, load_unimod, load_psims)
+from mzlib.cluster import SpectrumCluster
 
 from mzlib.index import MemoryIndex, SQLIndex, IndexBase
-from mzlib.spectrum import LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY, Spectrum
+from mzlib.spectrum import LIBRARY_SPECTRUM_INDEX, LIBRARY_SPECTRUM_KEY, Spectrum
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember, ANALYTE_MIXTURE_TERM
 from mzlib.attributes import Attributed, AttributedEntity, AttributeSet, AttributeManagedProperty
 from mzlib.ontology import _VocabularyResolverMixin
 
-from .utils import open_stream, LineBuffer
+from .utils import open_stream, _LineBuffer
 
 logger = logging.getLogger(__name__.rsplit(".", 1)[0])
 logger.addHandler(logging.NullHandler())
@@ -39,6 +41,7 @@ class AttributeSetTypes(enum.Enum):
     spectrum = enum.auto()
     analyte = enum.auto()
     interpretation = enum.auto()
+    cluster = enum.auto()
 
 
 class FormatInferenceFailure(ValueError):
@@ -66,29 +69,46 @@ class SubclassRegisteringMetaclass(type):
         return cls._file_extension_to_implementation.get(format_or_extension)
 
 
-class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
-    """A base class for all spectral library formats.
-
-    """
-    file_format = None
-
-    _file_extension_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
-    _format_name_to_implementation: Dict[str, Type['SpectralLibraryBackendBase']] = {}
-
-    index: IndexBase
-
-    entry_attribute_sets: Dict[str, AttributeSet]
-    analyte_attribute_sets: Dict[str, AttributeSet]
-    interpretation_attribute_sets: Dict[str, AttributeSet]
+class _LibraryViewMixin:
 
     name = AttributeManagedProperty[str](LIBRARY_NAME_TERM)
     identifier = AttributeManagedProperty[str](LIBRARY_IDENTIFIER_TERM)
     description = AttributeManagedProperty[str](LIBRARY_DESCRIPTION_TERM)
     uri = AttributeManagedProperty[str](LIBRARY_URI_TERM)
+    library_version = AttributeManagedProperty[str](LIBRARY_VERSION_TERM)
+
+    @property
+    def format_version(self):
+        try:
+            value = self.get_attribute(FORMAT_VERSION_TERM)
+            return value
+        except KeyError:
+            value = DEFAULT_VERSION
+            self.add_attribute(FORMAT_VERSION_TERM, value)
+            return value
+
+
+class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _LibraryViewMixin, metaclass=SubclassRegisteringMetaclass):
+    """A base class for all spectral library formats."""
+
+    file_format = None
+
+    _file_extension_to_implementation: Dict[str,
+                                            Type['SpectralLibraryBackendBase']] = {}
+    _format_name_to_implementation: Dict[str,
+                                         Type['SpectralLibraryBackendBase']] = {}
+
+    index: IndexBase
+
+    spectrum_attribute_sets: Dict[str, AttributeSet]
+    analyte_attribute_sets: Dict[str, AttributeSet]
+    interpretation_attribute_sets: Dict[str, AttributeSet]
+    cluster_attribute_sets: Dict[str, AttributeSet]
 
     @classmethod
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO]) -> bool:
-        """Guess if the file is of this type by inspecting the file's name and extension.
+        """
+        Guess if the file is of this type by inspecting the file's name and extension.
 
         Parameters
         ----------
@@ -109,8 +129,9 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         return filename.endswith(cls.file_format)
 
     @classmethod
-    def guess_from_header(cls, filename) -> bool:
-        """Guess if the file is of this type by inspecting the file's header section
+    def guess_from_header(cls, filename: Union[str, Path, io.FileIO]) -> bool:
+        """
+        Guess if the file is of this type by inspecting the file's header section
 
         Parameters
         ----------
@@ -125,8 +146,10 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         return False
 
     @classmethod
-    def guess_implementation(cls, filename, index_type=None, **kwargs) -> 'SpectralLibraryBackendBase':
-        """Guess the backend implementation to use with this file format.
+    def guess_implementation(cls, filename: Union[str, Path, io.FileIO], index_type=None,
+                             **kwargs) -> 'SpectralLibraryBackendBase':
+        """
+        Guess the backend implementation to use with this file format.
 
         Parameters
         ----------
@@ -136,6 +159,8 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
             The :class:`~.IndexBase` derived type to use for this file. If
             :const:`None` is provided, the instance will decide based upon
             :meth:`has_index_preference`.
+        **kwargs
+            Passed to implementation
 
         Returns
         -------
@@ -154,11 +179,11 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
                 pass
         raise FormatInferenceFailure(f"Could not guess backend implementation for {filename}")
 
-    def __init__(self, filename):
+    def __init__(self, filename: Union[str, Path, io.FileIO]):
         self.filename = filename
         self.index = MemoryIndex()
 
-        self.entry_attribute_sets = {
+        self.spectrum_attribute_sets = {
             "all": AttributeSet("all", [])
         }
         self.analyte_attribute_sets = {
@@ -167,21 +192,15 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         self.interpretation_attribute_sets = {
             "all": AttributeSet("all", [])
         }
+        self.cluster_attribute_sets = {
+            "all": AttributeSet("all", [])
+        }
 
         super().__init__(None)
 
-    @property
-    def format_version(self):
-        try:
-            value = self.get_attribute(FORMAT_VERSION_TERM)
-            return value
-        except KeyError:
-            value = DEFAULT_VERSION
-            self.add_attribute(FORMAT_VERSION_TERM, value)
-            return value
-
     def read_header(self) -> bool:
-        """Read just the header of the whole library
+        """
+        Read just the header of the whole library
 
         Returns
         -------
@@ -191,7 +210,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
 
     def _new_spectrum(self) -> Spectrum:
         spec = Spectrum()
-        attr_set = self.entry_attribute_sets.get("all")
+        attr_set = self.spectrum_attribute_sets.get("all")
         if attr_set:
             attr_set.apply(spec)
         return spec
@@ -213,8 +232,17 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
             attr_set.apply(analyte)
         return analyte
 
-    def _analyte_interpretation_link(self, spectrum: Spectrum, interpretation: Interpretation):
-        if interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and not interpretation.analytes:
+    def _new_cluster(self) -> SpectrumCluster:
+        cluster = SpectrumCluster()
+        attr_set = self.cluster_attribute_sets.get('all')
+        if attr_set:
+            attr_set.apply(cluster)
+        return cluster
+
+    def _analyte_interpretation_link(self, spectrum: Spectrum,
+                                     interpretation: Interpretation):
+        if (interpretation.has_attribute(ANALYTE_MIXTURE_TERM) and
+            not interpretation.analytes):
             analyte_ids = interpretation.get_attribute(ANALYTE_MIXTURE_TERM)
             if isinstance(analyte_ids, str):
                 term = self.find_term_for(ANALYTE_MIXTURE_CURIE)
@@ -236,13 +264,15 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
                 for analyte in spectrum.analytes.values():
                     interpretation.add_analyte(analyte)
 
-    def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None):
-        """Retrieve a single spectrum from the library.
+    def get_spectrum(self, spectrum_number: int=None,
+                     spectrum_name: str=None) -> Spectrum:
+        """
+        Retrieve a single spectrum from the library.
 
         Parameters
         ----------
         spectrum_number : int, optional
-            The index of the specturm in the library
+            The index of the spectrum in the library
         spectrum_name : str, optional
             The name of the spectrum in the library
 
@@ -252,11 +282,27 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         """
         raise NotImplementedError()
 
+    def get_cluster(self, cluster_number: int) -> SpectrumCluster:
+        """
+        Retrieve a single spectrum cluster from the library.
+
+        Parameters
+        ----------
+        cluster_number : int, optional
+            The index of the cluster in the library
+
+        Returns
+        -------
+        :class:`~.SpectrumCluster`
+        """
+        raise NotImplementedError()
+
     def find_spectra(self, specification, **query_keys):
         raise NotImplementedError()
 
     def create_index(self) -> int:
-        """Populate the spectrum index.
+        """
+        Populate the spectrum index.
 
         This method may produce a large amount of file I/O.
 
@@ -286,8 +332,9 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         return result
 
     @classmethod
-    def has_index_preference(cls, filename: str) -> Type[IndexBase]:
-        '''Does this backend prefer a particular index for this file?
+    def has_index_preference(cls, filename: Union[str, Path, io.FileIO]) -> Type[IndexBase]:
+        """
+        Does this backend prefer a particular index for this file?
 
         The base implementation checks to see if there is a SQL index
         for the filename provided, and if so, prefers :class:`~.SQLIndex`.
@@ -303,7 +350,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         index_type: type
             Returns a :class:`~.IndexBase` derived type which this backend
             would prefer to use.
-        '''
+        """
         try:
             if SQLIndex.exists(filename):
                 return SQLIndex
@@ -311,28 +358,40 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, met
         except Exception:
             return MemoryIndex
 
-    def read(self):
+    def read(self) -> Iterator[Union[Spectrum, SpectrumCluster]]:
+        """
+        Create an sequential iterator over the spectrum library.
+
+        Yields
+        ------
+        entry :  Union[:class:`~.Spectrum`, :class:`~.SpectrumCluster`]
+        """
         raise NotImplementedError()
 
-    def _add_attribute_set(self, attribute_set: AttributeSet, attribute_set_type: AttributeSetTypes):
+    def _add_attribute_set(self, attribute_set: AttributeSet,
+                           attribute_set_type: AttributeSetTypes):
         if attribute_set_type == AttributeSetTypes.spectrum:
-            self.entry_attribute_sets[attribute_set.name] = attribute_set
+            self.spectrum_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.analyte:
             self.analyte_attribute_sets[attribute_set.name] = attribute_set
         elif attribute_set_type == AttributeSetTypes.interpretation:
             self.interpretation_attribute_sets[attribute_set.name] = attribute_set
+        elif attribute_set_type == AttributeSetTypes.cluster:
+            self.cluster_attribute_sets[attribute_set.name] = attribute_set
         else:
             raise ValueError(f"Could not map {attribute_set_type}")
 
     def summarize_parsing_errors(self) -> Dict:
         return {}
 
+
 guess_implementation = SpectralLibraryBackendBase.guess_implementation
 
 
 class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
-    def __init__(self, filename, index_type=None, read_metadata=True, create_index: bool=True):
+    def __init__(self, filename: Union[str, Path, io.FileIO], index_type=None,
+                 read_metadata: bool=True, create_index: bool=True):
         if index_type is None and create_index:
             index_type = self.has_index_preference(filename)
 
@@ -352,7 +411,8 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             self.handle = open_stream(filename_or_stream, 'rt')
 
     def _buffer_from_stream(self, stream: io.IOBase) -> List:
-        '''Collect data from the readable stream until
+        """
+        Collect data from the readable stream until
         a complete spectrum entry has been observed.
 
         Parameters
@@ -364,7 +424,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         -------
         line_buffer: List[str]
             A list of lines read from the input stream.
-        '''
+        """
         raise NotImplementedError()
 
     def read(self) -> Iterator[Spectrum]:
@@ -375,7 +435,7 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 raise ValueError("Could not locate valid header")
             else:
                 stream.seek(offset)
-            buffering_stream = LineBuffer(stream)
+            buffering_stream = _LineBuffer(stream)
             while True:
                 # Will clip the first line of the next spectrum. Needs work
                 buffer = self._buffer_from_stream(buffering_stream)
@@ -437,7 +497,8 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
                 return False
         return False
 
-    def __init__(self, filename: str, index_type=None, delimiter='\t', read_metadata=True, create_index: bool = True, ** kwargs):
+    def __init__(self, filename: Union[str, Path, io.FileIO], index_type=None, delimiter='\t',
+                 read_metadata: bool=True, create_index: bool = True, ** kwargs):
         if index_type is None:
             index_type = self.has_index_preference(filename)
         self._delimiter = delimiter
@@ -522,11 +583,13 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
 
 
 class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
+
     def __init__(self, filename, **kwargs):
         self.filename = filename
         super().__init__(**kwargs)
 
-    def _filter_attributes(self, attributes: Attributed, filter_fn: Callable) -> Iterable:
+    def _filter_attributes(self, attributes: Attributed,
+                           filter_fn: Callable) -> Iterable:
         if isinstance(attributes, AttributedEntity):
             attributes = attributes.attributes
         for attrib in attributes:
@@ -543,14 +606,14 @@ class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegi
     def _not_entry_index(self, attrib):
         if attrib:
             key = attrib[0]
-            if key == LIBRARY_ENTRY_INDEX:
+            if key == LIBRARY_SPECTRUM_INDEX:
                 return False
         return True
 
     def _not_entry_key_or_index(self, attrib):
         if attrib:
             key = attrib[0]
-            if key in (LIBRARY_ENTRY_INDEX, LIBRARY_ENTRY_KEY):
+            if key in (LIBRARY_SPECTRUM_INDEX, LIBRARY_SPECTRUM_KEY):
                 return False
         return True
 
@@ -566,18 +629,31 @@ class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegi
         step = max(min(n // 100, 5000), 1)
         ident = ''
         i = 0
-        for i, spectrum in enumerate(library):
+        for i, entry in enumerate(library):
             if i % step == 0 and i:
+                if isinstance(entry, SpectrumCluster):
+                    tag = "cluster "
+                else:
+                    tag = ""
                 try:
-                    ident = f"{spectrum.key}:{spectrum.name}"
+                    ident = f"{tag}{entry.key}:{entry.name}"
                 except Exception:
-                    ident = str(spectrum.key)
+                    ident = f"{tag}{entry.key}"
                 logger.info(f"Wrote {ident} {i}/{n} ({i / n * 100.0:0.2f}%)")
-            self.write_spectrum(spectrum)
+            if isinstance(entry, Spectrum):
+                self.write_spectrum(entry)
+            elif isinstance(entry, SpectrumCluster):
+                self.write_cluster(entry)
+            else:
+                raise TypeError(f"Don't know how to save {entry.__class__}")
+
         i = n
         logger.info(f"Wrote {n} spectra")
 
     def write_spectrum(self, spectrum: Spectrum):
+        raise NotImplementedError()
+
+    def write_cluster(self, cluster: SpectrumCluster):
         raise NotImplementedError()
 
     def __enter__(self) -> 'SpectralLibraryWriterBase':
@@ -590,16 +666,17 @@ class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegi
         pass
 
 
-class LibrarySpectrumIterator(AttributedEntity, Iterator[Spectrum]):
+class LibraryIterator(AttributedEntity, _LibraryViewMixin, Iterator[Spectrum]):
+    backend: SpectralLibraryBackendBase
+    attributes: Attributed
+    iter: Iterator[Spectrum]
+    _buffer: Spectrum
+
     def __init__(self, backend: SpectralLibraryBackendBase) -> None:
         self.backend = backend
         self.attributes = backend
         self.iter = backend.read()
         self._buffer = next(self.iter)
-
-    @property
-    def format_version(self):
-        return self.backend.format_version
 
     def __iter__(self):
         return self

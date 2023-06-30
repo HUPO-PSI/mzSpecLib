@@ -3,6 +3,7 @@
     "all": []
   },
   "attributes": [],
+  "clusters": [],
   "format_version": "1.0",
   "interpretation_attribute_sets": {
     "all": []
@@ -49,7 +50,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "Test"
         },
         {

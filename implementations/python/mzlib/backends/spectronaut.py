@@ -1,4 +1,5 @@
 import json
+import os
 
 from typing import List, Tuple, Dict, Iterator, Any, Deque, Union
 
@@ -6,7 +7,7 @@ from pyteomics import proforma
 
 from mzlib import annotation
 from mzlib.analyte import Analyte
-from mzlib.backends.base import _CSVSpectralLibraryBackendBase, FORMAT_VERSION_TERM, DEFAULT_VERSION
+from mzlib.backends.base import LIBRARY_NAME_TERM, _CSVSpectralLibraryBackendBase, FORMAT_VERSION_TERM, DEFAULT_VERSION
 from mzlib.backends.utils import open_stream
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 
@@ -89,12 +90,17 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
     def _spectrum_type(self):
         key = "MS:1003072|spectrum origin type"
-        value = "MS:1003074|predicted spectrum"
+        value = "MS:1003073|observed spectrum"
         return key, value
 
     def read_header(self) -> bool:
         result = super().read_header()
         self.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
+        if hasattr(self.filename, 'name'):
+            name = self.filename.name.replace(".gz", '').rsplit('.', 1)[0].split(os.sep)[-1]
+        else:
+            name = self.filename.replace(".gz", '').rsplit(".", 1)[0].split(os.sep)[-1]
+        self.add_attribute(LIBRARY_NAME_TERM, name)
         self.add_attribute("MS:1003207|library creation software", "MS:1001327|Spectronaut")
         return result
 
@@ -203,8 +209,10 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         analyte.add_attribute(STRIPPED_PEPTIDE_TERM, description['StrippedPeptide'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        analyte.add_attribute(CHARGE_STATE, int(description['PrecursorCharge']))
 
         protein_group_id = analyte.get_next_group_identifier()
+
 
         if 'UniProtIds' in description:
             analyte.add_attribute(

@@ -233,6 +233,10 @@ class DispatchingAttributeHandler(AttributeHandlerChain):
 
 
 analyte_terms = CaseInsensitiveDict({
+    "Charge": "MS:1000041|charge state",
+    "precursor_charge": "MS:1000041|charge state",
+    "precursorcharge": "MS:1000041|charge state",
+
     "MW": "MS:1000224|molecular mass",
     "total exact mass": "MS:1000224|molecular mass",
     "ExactMass": "MS:1000224|molecular mass",
@@ -281,17 +285,13 @@ instrument_dispatch = CaseInsensitiveDict({
 
 
 other_terms = CaseInsensitiveDict({
-    "Charge": "MS:1000041|charge state",
-    "precursor_charge": "MS:1000041|charge state",
-    "precursorcharge": "MS:1000041|charge state",
-
-    "Parent": "MS:1000744|selected ion m/z",
-    "ObservedPrecursorMZ": "MS:1000744|selected ion m/z",
-    "PrecursorMZ": "MS:1000744|selected ion m/z",
-    "PRECURSORMZ": "MS:1000744|selected ion m/z",
-    "precursor": "MS:1000744|selected ion m/z",
-    "precursor_mass": "MS:1000744|selected ion m/z",
-    "precursormass": "MS:1000744|selected ion m/z",
+    "Parent": "MS:1003208|experimental precursor monoisotopic m/z",
+    "ObservedPrecursorMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "PrecursorMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "PRECURSORMZ": "MS:1003208|experimental precursor monoisotopic m/z",
+    "precursor": "MS:1003208|experimental precursor monoisotopic m/z",
+    "precursor_mass": "MS:1003208|experimental precursor monoisotopic m/z",
+    "precursormass": "MS:1003208|experimental precursor monoisotopic m/z",
 
     "Single": ["MS:1003065|spectrum aggregation type", "MS:1003066|singleton spectrum"],
     "Consensus": ["MS:1003065|spectrum aggregation type", "MS:1003067|consensus spectrum"],
@@ -773,7 +773,7 @@ def protein_handler(key, value, container: Attributed):
                                 match.group(1), group_identifier=group_identifier)
         container.add_attribute("MS:1001113|c-terminal flanking residue",
                                 match.group(2), group_identifier=group_identifier)
-    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value),
+    container.add_attribute(key, re.sub(r"\(pre=(.),post=(.)\)", '', value.strip('"').strip("'")),
                             group_identifier=group_identifier)
     return True
 
@@ -865,9 +865,9 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         attributes = AttributeManager()
         attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         if isinstance(self.filename, (str, os.PathLike)):
-            attributes.add_attribute(LIBRARY_NAME_TERM, self.filename)
+            attributes.add_attribute(LIBRARY_NAME_TERM, self.filename.rsplit('.msp', 1)[0].split(os.sep)[-1])
         elif hasattr(stream, 'name'):
-            attributes.add_attribute(LIBRARY_NAME_TERM, stream.name)
+            attributes.add_attribute(LIBRARY_NAME_TERM, stream.name.rsplit('.msp', 1)[0].split(os.sep)[-1])
         self.attributes.clear()
         self.attributes._from_iterable(attributes)
         if leader_terms_pattern.match(first_line):
@@ -883,7 +883,6 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         n_spectra: int
             The number of entries read
         """
-
         #### Check that the spectrum library filename isvalid
         filename = self.filename
 
@@ -1163,7 +1162,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 new_item = new_item + " "
             new_item = new_item + item
             n_quotes = new_item.count('"')
-            if n_quotes/2 == int(n_quotes/2):
+            if n_quotes % 2 == 0:
                 fixed_comment_items.append(new_item)
                 new_item = ""
 
@@ -1265,7 +1264,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                         analyte.add_attribute(
                             "MS:1001113|c-terminal flanking residue", match.group(3))
                         if match.group(4):
-                            spectrum.add_attribute(
+                            analyte.add_attribute(
                                 "MS:1000041|charge state", try_cast(match.group(4)))
                     else:
                         spectrum.add_attribute(
@@ -1288,7 +1287,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     if match:
                         analyte.add_attribute(
                             STRIPPED_PEPTIDE_TERM, match.group(1))
-                        spectrum.add_attribute(
+                        analyte.add_attribute(
                             "MS:1000041|charge state", try_cast(match.group(2)))
 
         #### Handle the uninterpretable terms
@@ -1395,13 +1394,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         if spectrum_number is not None:
             if spectrum_name is not None:
                 raise ValueError("Provide only one of spectrum_number or spectrum_name")
-            offset = self.index.offset_for(spectrum_number)
+            index_record = self.index.record_for(spectrum_number)
+            offset = index_record.offset
         elif spectrum_name is not None:
             index_record = self.index.record_for(spectrum_name)
             spectrum_number = index_record.number
             offset = index_record.offset
         buffer = self._get_lines_for(offset)
-        spectrum = self._parse(buffer, spectrum_number)
+        spectrum = self._parse(buffer, index_record.index)
         return spectrum
 
     def summarize_parsing_errors(self) -> Dict:
@@ -1429,6 +1429,7 @@ class MSPSpectralLibraryWriter(SpectralLibraryWriterBase):
         "MS:1003054|theoretical average m/z": "Mz_av",
         "MS:1003169|proforma peptidoform sequence": "ProForma",
         "MS:1000888|stripped peptide sequence": "Peptide",
+        "MS:1000041|charge state": "Charge",
     }
 
     for species_name, keys in species_map.items():

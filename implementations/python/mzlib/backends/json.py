@@ -1,13 +1,12 @@
 import io
-import enum
 import json
 import logging
 import warnings
 
-from typing import Iterable, List, Dict, Mapping, Union
+from typing import Any, Iterable, List, Dict, Mapping, Union
 
 from pathlib import Path
-from xml.dom.minidom import Attr
+from mzlib.cluster import SpectrumCluster
 
 from mzlib.index import MemoryIndex
 from mzlib.attributes import AttributeManager, Attributed
@@ -16,6 +15,7 @@ from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum
 
 from .base import SpectralLibraryBackendBase, SpectralLibraryWriterBase, FORMAT_VERSION_TERM, AttributeSetTypes
+from .utils import open_stream
 
 
 logger = logging.getLogger(__name__)
@@ -25,18 +25,22 @@ logger.addHandler(logging.NullHandler())
 LIBRARY_METADATA_KEY = "attributes"
 ELEMENT_ATTRIBUTES_KEY = "attributes"
 SPECTRA_KEY = "spectra"
+CLUSTERS_KEY = "clusters"
 FORMAT_VERSION_KEY = "format_version"
 ANALYTES_KEY = 'analytes'
 INTERPRETATIONS_KEY = 'interpretations'
 INTERPRETATION_MEMBERS_KEY = 'members'
-PEAK_ANNOTATIONS_KEY = 'peak_annotations'
 ID_KEY = 'id'
+
 MZ_KEY = "mzs"
 INTENSITY_KEY = "intensities"
 AGGREGATIONS_KEY = "aggregations"
+PEAK_ANNOTATIONS_KEY = 'peak_annotations'
+
 SPECTRUM_CLASSES = "spectrum_attribute_sets"
 ANALYTE_CLASSES = "analyte_attribute_sets"
 INTERPRETATION_CLASSES = "interpretation_attribute_sets"
+CLUSTER_CLASSES = "cluster_attribute_sets"
 
 FORMAT_VERSION_ACC = FORMAT_VERSION_TERM.split("|")[0]
 
@@ -52,10 +56,11 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         self.buffer = {}
         self._load_buffer(self.filename)
         self.attributes = AttributeManager()
-        self._fill_attributes(self.buffer.get(LIBRARY_METADATA_KEY), self.attributes)
         self.index, was_initialized = index_type.from_filename(self.filename)
         if not was_initialized:
             self.create_index()
+        if read_metadata:
+            self.read_header()
 
     @classmethod
     def guess_from_filename(cls, filename: Union[str, Path, io.FileIO, Mapping]) -> bool:
@@ -63,38 +68,59 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             return SPECTRA_KEY in filename and LIBRARY_METADATA_KEY in filename
         return super(JSONSpectralLibrary, cls).guess_from_filename(filename)
 
-    def _load_buffer(self, filename_or_stream):
-        if isinstance(filename_or_stream, dict):
+    def _load_buffer(self, filename_or_stream: Union[str, Path, io.FileIO, Mapping]):
+        if isinstance(filename_or_stream, Mapping):
             self.buffer = filename_or_stream
         else:
             if hasattr(filename_or_stream, 'read'):
                 self.handle = filename_or_stream
             else:
-                self.handle = open(filename_or_stream, 'rt')
+                self.handle = open_stream(filename_or_stream, 'rt')
             self.buffer = json.load(self.handle)
             self.handle.close()
 
     def read_header(self) -> bool:
         if self.buffer:
-            pass
+            self._fill_attributes(self.buffer.get(LIBRARY_METADATA_KEY), self.attributes)
+            return True
         return False
 
     def create_index(self):
-        for i, record in enumerate(self.buffer[SPECTRA_KEY]):
+        for i, record in enumerate(self.buffer.get(SPECTRA_KEY, [])):
+            name = None
+            key = None
             for attrib in record['attributes']:
                 if attrib["accession"] == "MS:1003061":
-                    self.index.add(i, i, attrib['value'], None, None)
+                    name = attrib['value']
+                    if name and key:
+                        break
+                if attrib["accession"] == "MS:1003237":
+                    key = attrib['value']
+                    if name and key:
+                        break
+            else:
+                if not name and not key:
+                    raise ValueError(f"Unidentified spectrum at index {i}")
+            self.index.add(key, i, name, None, None)
+        for i, record in enumerate(self.buffer.get(CLUSTERS_KEY, [])):
+            key = None
+            for attrib in record[ELEMENT_ATTRIBUTES_KEY]:
+                if attrib["accession"] == "MS:1003267":
+                    key = attrib['value']
                     break
             else:
-                raise ValueError(f"Unidentified spectrum at index {i}")
+                if not name and not key:
+                    raise ValueError(f"Unidentified spectrum cluster at index {i}")
+            self.index.add_cluster(key, i, None)
 
     def get_spectrum(self, spectrum_number: int=None, spectrum_name: str=None) -> Spectrum:
-        """Retrieve a single spectrum from the library.
+        """
+        Retrieve a single spectrum from the library.
 
         Parameters
         ----------
         spectrum_number : int, optional
-            The index of the specturm in the library
+            The index of the spectrum in the library
         spectrum_name : str, optional
             The name of the spectrum in the library
 
@@ -102,7 +128,6 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         -------
         :class:`~.Spectrum`
         """
-
         if spectrum_number is not None:
             if spectrum_name is not None:
                 raise ValueError(
@@ -111,18 +136,27 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         elif spectrum_name is not None:
             offset = self.index.offset_for(spectrum_name)
         data = self.buffer[SPECTRA_KEY][offset]
-        spectrum = self.make_spectrum_from_payload(data)
+        spectrum = self._make_spectrum_from_payload(data)
         return spectrum
 
-    def _fill_attributes(self, attributes: List, store: Attributed, context_type: AttributeSetTypes=None) -> Attributed:
+    def get_cluster(self, cluster_number: int) -> SpectrumCluster:
+        offset = self.index.offset_for_cluster(cluster_number)
+        data = self.buffer[CLUSTERS_KEY][offset]
+        cluster = self._make_cluster_from_payload(data)
+        return cluster
+
+    def _fill_attributes(self, attributes: List[Dict[str, Any]], store: Attributed,
+                         context_type: AttributeSetTypes=None) -> Attributed:
         for attrib in attributes:
             if attrib['accession'] == "MS:1003212":
                 if context_type == AttributeSetTypes.analyte:
                     self.analyte_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.spectrum:
-                    self.entry_attribute_sets[attrib['value']].apply(store)
+                    self.spectrum_attribute_sets[attrib['value']].apply(store)
                 elif context_type == AttributeSetTypes.interpretation:
                     self.interpretation_attribute_sets[attrib['value']].apply(store)
+                elif context_type == AttributeSetTypes.cluster:
+                    self.cluster_attribute_sets[attrib['value']].apply(store)
                 else:
                     raise ValueError(f"Could not infer which attribute set type to use for {context_type}")
             else:
@@ -140,7 +174,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                     store.group_counter = int(group)
         return store
 
-    def make_analyte_from_payload(self, analyte_id, analyte_d: Dict) -> Analyte:
+    def _make_analyte_from_payload(self, analyte_id, analyte_d: Dict) -> Analyte:
         if analyte_id != analyte_d.get('id'):
             warnings.warn(
                 f"An analyte with explicit id {analyte_d['id']!r} does not match its key {analyte_id!r}")
@@ -148,7 +182,7 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         self._fill_attributes(analyte_d[ELEMENT_ATTRIBUTES_KEY], analyte, AttributeSetTypes.analyte)
         return analyte
 
-    def make_interpretation_from_payload(self, interpretation_id, interpretation_d: Dict) -> Interpretation:
+    def _make_interpretation_from_payload(self, interpretation_id, interpretation_d: Dict) -> Interpretation:
         if interpretation_id != interpretation_d.get('id'):
             warnings.warn(
                 f"An analyte with explicit id {interpretation_d['id']!r} does not match its key {interpretation_id!r}")
@@ -166,7 +200,13 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                 interpretation.add_member_interpretation(member_d)
         return interpretation
 
-    def make_spectrum_from_payload(self, data: Dict) -> Spectrum:
+    def _make_cluster_from_payload(self, data: Dict[str, Any]) -> SpectrumCluster:
+        cluster = self._new_cluster()
+        self._fill_attributes(
+            data[ELEMENT_ATTRIBUTES_KEY], cluster, AttributeSetTypes.cluster)
+        return cluster
+
+    def _make_spectrum_from_payload(self, data: Dict) -> Spectrum:
         spectrum = self._new_spectrum()
         self._fill_attributes(
             data[ELEMENT_ATTRIBUTES_KEY],
@@ -175,12 +215,12 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         )
         if ANALYTES_KEY in data:
             for analyte_id, analyte in data[ANALYTES_KEY].items():
-                analyte_d = self.make_analyte_from_payload(analyte_id, analyte)
+                analyte_d = self._make_analyte_from_payload(analyte_id, analyte)
                 spectrum.add_analyte(analyte_d)
 
         if INTERPRETATIONS_KEY in data:
             for interpretation_id, interpretation_d in data[INTERPRETATIONS_KEY].items():
-                interpretation = self.make_interpretation_from_payload(
+                interpretation = self._make_interpretation_from_payload(
                     interpretation_id,
                     interpretation_d
                 )
@@ -215,10 +255,16 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
         return spectrum
 
     def read(self):
+        n = len(self.buffer.get(CLUSTERS_KEY, []))
+        for offset in range(n):
+            data = self.buffer[CLUSTERS_KEY][offset]
+            cluster = self._make_cluster_from_payload(data)
+            yield cluster
+
         n = len(self.buffer[SPECTRA_KEY])
         for offset in range(n):
             data = self.buffer[SPECTRA_KEY][offset]
-            spectrum = self.make_spectrum_from_payload(data)
+            spectrum = self._make_spectrum_from_payload(data)
             yield spectrum
 
 
@@ -241,6 +287,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             FORMAT_VERSION_KEY: self.version,
             LIBRARY_METADATA_KEY: [],
             SPECTRA_KEY: [],
+            CLUSTERS_KEY: [],
             SPECTRUM_CLASSES: {},
             ANALYTE_CLASSES: {},
             INTERPRETATION_CLASSES: {},
@@ -262,7 +309,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
         attributes = self._format_attributes(library.attributes)
         self.buffer[LIBRARY_METADATA_KEY] = attributes
         self.buffer[SPECTRUM_CLASSES] = {
-            c.name: self._format_attributes(c.attributes) for c in library.entry_attribute_sets.values()
+            c.name: self._format_attributes(c.attributes) for c in library.spectrum_attribute_sets.values()
         }
         self.buffer[ANALYTE_CLASSES] = {
             c.name: self._format_attributes(c.attributes) for c in library.analyte_attribute_sets.values()
@@ -271,15 +318,14 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             c.name: self._format_attributes(c.attributes) for c in library.interpretation_attribute_sets.values()
         }
 
-
     def _format_attributes(self, attributes_manager: Iterable) -> List:
         attributes = []
         for attribute in attributes_manager:
             reformed_attribute = {}
-            if attribute.group_id is None:
-                key, value = attribute
-            else:
-                key, value, cv_param_group = attribute
+            key = attribute.key
+            value = attribute.value
+            if attribute.group_id is not None:
+                cv_param_group = attribute.group_id
                 reformed_attribute['cv_param_group'] = cv_param_group
 
             term = None
@@ -310,6 +356,15 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
                     f"Unsupported number of items in components: {components}")
             attributes.append(reformed_attribute)
         return attributes
+
+    def write_cluster(self, cluster: SpectrumCluster):
+        attributes = self._format_attributes(
+            cluster.attributes
+        )
+        payload = {
+            ELEMENT_ATTRIBUTES_KEY: attributes
+        }
+        self.buffer[CLUSTERS_KEY].append(payload)
 
     def write_spectrum(self, spectrum: Spectrum):
         mzs = []
@@ -361,7 +416,7 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
                         ELEMENT_ATTRIBUTES_KEY: self._format_attributes(member)
                     }
 
-        spectrum = {
+        payload = {
             ELEMENT_ATTRIBUTES_KEY: attributes,
             MZ_KEY: mzs,
             INTENSITY_KEY: intensities,
@@ -371,9 +426,9 @@ class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
             INTERPRETATIONS_KEY: interpretations
         }
         if not any(aggregations):
-            spectrum.pop(AGGREGATIONS_KEY)
+            payload.pop(AGGREGATIONS_KEY)
 
-        self.buffer[SPECTRA_KEY].append(spectrum)
+        self.buffer[SPECTRA_KEY].append(payload)
 
     def flush(self):
         # If we know we're writing a complete library, skip the probably-doing-too-many-things

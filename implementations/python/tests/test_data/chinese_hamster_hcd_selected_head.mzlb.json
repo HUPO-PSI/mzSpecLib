@@ -11,9 +11,10 @@
     {
       "accession": "MS:1003188",
       "name": "library name",
-      "value": "tests/test_data/chinese_hamster_hcd_selected_head.msp"
+      "value": "tests/test_data/chinese_hamster_hcd_selected_head"
     }
   ],
+  "clusters": [],
   "format_version": "1.0",
   "interpretation_attribute_sets": {
     "all": []
@@ -32,6 +33,11 @@
               "accession": "MS:1000888",
               "name": "stripped peptide sequence",
               "value": "AAAACALTPGPLADLAAR"
+            },
+            {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
             },
             {
               "accession": "MS:1001975",
@@ -104,7 +110,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAACALTPGPLADLAAR/2_1(4,C,CAM)_46eV"
         },
         {
@@ -114,13 +120,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 855.4538
         },
         {
@@ -541,6 +542,11 @@
               "value": "AAAACALTPGPLADLAAR"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -611,7 +617,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAACALTPGPLADLAAR/2_1(4,C,CAM)_53eV"
         },
         {
@@ -621,13 +627,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 855.4538
         },
         {
@@ -1399,6 +1400,11 @@
               "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -1469,7 +1475,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAAGQTGTVPPGAPGALPLPGMAIVK/2_0_76eV"
         },
         {
@@ -1479,13 +1485,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 1207.1672
         },
         {
@@ -2011,6 +2012,11 @@
               "value": "AAAAGSTSVKPIFSR"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -2081,7 +2087,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAAGSTSVKPIFSR/2_0_44eV"
         },
         {
@@ -2091,13 +2097,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 731.9043
         },
         {
@@ -2590,6 +2591,11 @@
               "value": "AAAAGSTSVKPIFSR"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 3
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -2660,7 +2666,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAAGSTSVKPIFSR/3_0_28eV"
         },
         {
@@ -2670,13 +2676,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 3
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 488.2719
         },
         {
@@ -3319,6 +3320,11 @@
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -3389,7 +3395,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_50eV"
         },
         {
@@ -3399,13 +3405,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 830.8834
         },
         {
@@ -3769,6 +3770,11 @@
               "value": "AAAALGSHGSCSSEVEK"
             },
             {
+              "accession": "MS:1000041",
+              "name": "charge state",
+              "value": 2
+            },
+            {
               "accession": "MS:1001975",
               "cv_param_group": "1",
               "name": "delta m/z",
@@ -3839,7 +3845,7 @@
         },
         {
           "accession": "MS:1003061",
-          "name": "spectrum name",
+          "name": "library spectrum name",
           "value": "AAAALGSHGSCSSEVEK/2_1(10,C,CAM)_52eV"
         },
         {
@@ -3849,13 +3855,8 @@
           "value_accession": "MS:1003066"
         },
         {
-          "accession": "MS:1000041",
-          "name": "charge state",
-          "value": 2
-        },
-        {
-          "accession": "MS:1000744",
-          "name": "selected ion m/z",
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 830.8834
         },
         {

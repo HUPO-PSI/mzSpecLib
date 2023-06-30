@@ -14,6 +14,8 @@ from mzlib.validate import validator
 from mzlib.validate.level import RequirementLevel
 from mzlib.ontology import ControlledVocabularyResolver
 
+from mzlib.tools.utils import ColoringFormatter
+
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 logger = logging.getLogger(__name__)
@@ -45,6 +47,13 @@ def main():
         stream=sys.stderr,
         format=format_string,
         datefmt="%H:%M:%S")
+
+    fmtr = ColoringFormatter(format_string, datefmt='%H:%M:%S')
+
+    for handler in logging.getLogger().handlers:
+        handler.setFormatter(
+            fmtr
+        )
 
 
 @main.command("describe", short_help=("Produce a minimal textual description"
@@ -115,7 +124,7 @@ def convert(inpath, outpath, format=None, header_file=None, library_attributes=(
     if library_attributes:
         resolver = ControlledVocabularyResolver()
         for k, v in library_attributes:
-            k = resolver._make_attribute_syntax(k)
+            k = resolver.attribute_syntax(k)
             library.add_attribute(k, v)
     click.echo(f"Writing to {outpath}", err=True)
     fh = click.open_file(outpath, mode='w')
