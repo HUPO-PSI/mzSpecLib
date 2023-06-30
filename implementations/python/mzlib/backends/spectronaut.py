@@ -256,7 +256,8 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
         spec.add_attribute(SPECTRUM_NAME, ID_SEP.join(key))
         spec.add_attribute(SELECTED_ION_MZ, float(descr['PrecursorMz']))
-        spec.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
+        # Charge does not belong in the spectrum
+        # spec.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
         spec.add_attribute(SOURCE_FILE, descr['ReferenceRun'])
         spec.add_attribute(*self._spectrum_type())
 
