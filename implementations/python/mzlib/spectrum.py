@@ -71,10 +71,18 @@ class Spectrum(AttributeManager):
 
     precursor_mz = AttributeListManagedProperty[float](
         [PRECURSOR_MZ, "MS:1003208|experimental precursor monoisotopic m/z"])
-    precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
+    _precursor_charge = AttributeManagedProperty[int](CHARGE_STATE)
 
     spectrum_aggregation = AttributeFacet[SpectrumAggregation](SpectrumAggregation)
     peak_aggregations = AttributeManagedProperty("MS:1003254|peak attribute", multiple=True)
+
+    @property
+    def precursor_charge(self) -> int:
+        if self._precursor_charge:
+            self._precursor_charge
+        for analyte in self.analytes.values():
+            if analyte.charge:
+                return analyte.charge
 
     def add_analyte(self, analyte: Analyte):
         self.analytes[str(analyte.id)] = analyte
