@@ -18,19 +18,12 @@ from mzlib.backends.base import SpectralLibraryBackendBase, FORMAT_VERSION_TERM,
 from mzlib.index.base import IndexBase
 
 
-def _compress_array(array: np.ndarray, dtype: str) -> bytes:
-    """Compress the array to the EncyclopeDIA format."""
-    packed = struct.pack(">" + (dtype * len(array)), *array)
-    compressed = zlib.compress(packed, 9)
-    return compressed
-
-
-def _extract_array(byte_array: bytes, type_str="d") -> np.ndarray:
-    dtype = np.dtype(type_str)
-    decompressed = zlib.decompress(byte_array, 32)
-    decompressed_length = len(decompressed) // dtype.itemsize
-    unpacked = struct.unpack(">" + (type_str * decompressed_length), decompressed)
-    return np.array(unpacked, dtype=dtype)
+def _decode_peaks(record: sqlite3.Row):
+    raw_data = zlib.decompress(record['MassArray'])
+    mass_array = np.frombuffer(raw_data, dtype='>d')
+    raw_data = zlib.decompress(record['IntensityArray'])
+    intensity_array = np.frombuffer(raw_data, dtype='>f')
+    return mass_array, intensity_array
 
 
 @dataclass
@@ -41,3 +34,126 @@ class EncyclopediaIndexRecord:
     peptide: str
 
 
+class EncyclopediaIndex(IndexBase):
+    connection: sqlite3.Connection
+
+    def __init__(self, connection):
+        self.connection = connection
+
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            return self.search(i + 1)
+        elif isinstance(i, slice):
+            return [self.search(j + 1) for j in range(i.start or 0, i.stop or len(self), i.step or 1)]
+        else:
+            raise TypeError(f"Cannot index {self.__class__.__name__} with {i}")
+
+    def _record_from(self, row: Mapping) -> EncyclopediaIndexRecord:
+        peptide_sequence = row['PeptideModSeq']
+        return EncyclopediaIndexRecord(row['rowid'], row['PrecursorMz'], row['PrecursorCharge'], peptide_sequence)
+
+    def search(self, i):
+        if isinstance(i, int):
+            info = self.connection.execute("SELECT rowid, PrecursorMz, PrecursorCharge, PeptideModSeq FROM entries WHERE rowid = ?", (i, )).fetchone()
+            return self._record_from(info)
+        elif isinstance(i, str):
+            raise NotImplementedError()
+
+    def __iter__(self):
+        return map(self._record_from, self.connection.execute("SELECT rowid, PrecursorMz, PrecursorCharge, PeptideModSeq FROM entries ORDER BY rowid").fetchall())
+
+    def __len__(self):
+        return self.connection.execute("SELECT count(rowid) FROM entries;").fetchone()[0]
+
+
+class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
+    """Read EncyclopeDIA SQLite3 spectral library files."""
+
+    connection: sqlite3.Connection
+
+    file_format = "dlib"
+    format_name = "encyclopedia"
+
+    @classmethod
+    def has_index_preference(cls, filename) -> Type[IndexBase]:
+        return EncyclopediaIndex
+
+    def __init__(self, filename, **kwargs):
+        super().__init__(filename)
+        self.connection = sqlite3.connect(filename)
+        self.connection.row_factory = sqlite3.Row
+        self.index = EncyclopediaIndex(self.connection)
+        self.read_header()
+
+    def read_header(self) -> bool:
+        attribs = AttributeManager()
+        attribs.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
+        attribs.add_attribute("MS:1003207|library creation software", "EncyclopeDIA")
+        self.attributes = attribs
+        return True
+
+    def _populate_analyte(self, analyte: Analyte, row: Mapping):
+        """
+        Fill an analyte with details describing a peptide sequence and inferring
+        from context its traits based upon the assumptions EncyclopeDIA makes.
+
+        EncyclopeDIA only stores modifications as delta masses.
+        """
+        peptide = proforma.ProForma.parse(row['PeptideModSeq'])
+        analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
+        analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
+        analyte.add_attribute("MS:1000888|stripped peptide sequence", row['PeptideSeq'])
+        analyte.add_attribute(CHARGE_STATE, row['PrecursorCharge'])
+
+    def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None):
+        """
+        Read a spectrum from the spectrum library.
+
+        EncyclopeDIA does not support alternative labeling of spectra with a
+        plain text name so looking up by `spectrum_name` is not supported.
+        """
+        if spectrum_number is None:
+            raise ValueError("Only spectrum number queries are supported. spectrum_number must have an integer value")
+
+        info = self.connection.execute("SELECT rowid, * FROM entries WHERE rowid = ?;", (spectrum_number, )).fetchone()
+        spectrum = self._new_spectrum()
+        spectrum.key = info['rowid']
+        spectrum.index = info['rowid'] - 1
+        spectrum.precursor_mz = info['PrecursorMz']
+        try:
+            spectrum.add_attribute("MS:1000894|retention time", info['RTInSeconds'] / 60.0)
+        except KeyError:
+            pass
+
+        try:
+            spectrum.add_attribute(
+                "MS:1003203|constituent spectrum file",
+                info['SourceFile']
+            )
+        except KeyError:
+            pass
+
+
+        analyte = self._new_analyte(1)
+        self._populate_analyte(analyte, info)
+
+        spectrum.add_analyte(analyte)
+
+        interp = self._new_interpretation(1)
+        interp.add_analyte(analyte)
+        spectrum.add_interpretation(interp)
+
+        mz_array, intensity_array = _decode_peaks(info)
+        n_peaks = len(mz_array)
+        spectrum.add_attribute("MS:1003059|number of peaks", n_peaks)
+
+        peak_list = []
+        for i, mz in enumerate(mz_array):
+            row = (mz, intensity_array[i], [], '')
+            peak_list.append(row)
+        spectrum.peak_list = peak_list
+        return spectrum
+
+    def read(self) -> Iterator[Spectrum]:
+        for rec in self.index:
+            yield self.get_spectrum(rec.number)
