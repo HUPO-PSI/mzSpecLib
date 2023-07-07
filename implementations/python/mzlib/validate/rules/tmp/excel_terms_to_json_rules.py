@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 import pandas as pd
-import psims
 from jsonschema import validate
 
 
@@ -18,26 +17,12 @@ def excel_terms_to_dict(excel_file, sheet_name):
 
 def parse_terms(terms):
     """Translate terms from excel to metadata rules."""
-    cv = psims.load_psims()  # load a fresh copy of the PSI-MS CV mapping
-
     for term in terms:
-        try:
-            cv_term = cv[term["accession"]]
-        except KeyError:
-            cv_term = None
-
         attribute = {
             "accession": term["accession"],
             "name": term["name"],
             "repeatable": term["repeatable"],
         }
-
-        if cv_term:
-            attribute["definition"] = cv_term.definition
-            try:
-                attribute["units"] = [u.comment for u in cv_term.has_units]
-            except AttributeError:
-                pass
 
         if isinstance(term["notes"], str):
             attribute["notes"] = term["notes"]

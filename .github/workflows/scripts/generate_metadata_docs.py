@@ -10,9 +10,12 @@ from glob import glob
 
 from jsonschema import validate
 from tomark import Tomark
+import psims
 
 
 def rules_to_markdown(rules):
+    cv = psims.load_psims()  # load a fresh copy of the PSI-MS CV mapping
+
     rule_dict = defaultdict(lambda: defaultdict(list))
     for rule in rules["rules"]:
         rule_dict[rule["path"]][rule["requirement_level"]].append(rule)
@@ -31,13 +34,19 @@ def rules_to_markdown(rules):
             for attr in rule_attrs:
                 field = dict()
 
+                # Attempt to lookup term in CV
+                try:
+                    cv_term = cv[attr["accession"]]
+                except KeyError:
+                    cv_term = None
+
                 # Parse name and accession fields
                 field["Name"] = f"{attr['name']} ({attr['accession']})"
 
                 # Parse definition field
                 info = []
-                if "definition" in attr:
-                    info.append(attr["definition"])
+                if cv_term:
+                    info.append(cv_term.definition)
                 if "notes" in attr:
                     info.append(f"**Notes:** {attr['notes']}")
                 field["Info"] = "<br /><br />".join(info).replace(
@@ -56,9 +65,15 @@ def rules_to_markdown(rules):
                     field["Value"] = "Undefined"
 
                 # Parse units field
-                field["Allowed units"] = (
-                    ", ".join(attr["units"]) if "units" in attr else "/"
-                )
+                if cv_term:
+                    try:
+                        units = [u.comment for u in cv_term.has_units]
+                    except AttributeError:
+                        units = None
+                else:
+                    units = None
+
+                field["Allowed units"] = ", ".join(units) if units else "/"
 
                 # Parse repeatable field
                 field["Repeatable"] = attr["repeatable"]
