@@ -8,7 +8,7 @@ from pyteomics import proforma
 from mzlib import annotation
 from mzlib.analyte import Analyte
 from mzlib.backends.base import LIBRARY_NAME_TERM, _CSVSpectralLibraryBackendBase, FORMAT_VERSION_TERM, DEFAULT_VERSION
-from mzlib.backends.utils import open_stream
+from mzlib.backends.utils import open_stream, urlify
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME
 
 
@@ -258,7 +258,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
         spec.add_attribute(SELECTED_ION_MZ, float(descr['PrecursorMz']))
         # Charge does not belong in the spectrum
         # spec.add_attribute(CHARGE_STATE, int(descr['PrecursorCharge']))
-        spec.add_attribute(SOURCE_FILE, descr['ReferenceRun'])
+        spec.add_attribute(SOURCE_FILE, urlify(descr['ReferenceRun']))
         spec.add_attribute(*self._spectrum_type())
 
         spec.add_attribute_group([
