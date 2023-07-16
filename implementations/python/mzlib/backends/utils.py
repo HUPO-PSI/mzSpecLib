@@ -190,5 +190,5 @@ def urlify(path: str) -> str:
     """Convert a path into a URL if it is not already one."""
     parsed = urlparse.urlparse(path)
     if parsed.scheme == '':
-        parsed = parsed._replace(scheme='file://')
+        parsed = parsed._replace(scheme='file')
     return urlparse.urlunparse(parsed)
