@@ -2,16 +2,16 @@ import sqlite3
 import zlib
 from dataclasses import dataclass
 
-from typing import Iterator, List, Mapping, Tuple, Iterable, Type
+from typing import Any, Iterator, List, Mapping, Tuple, Iterable, Type
 
 import numpy as np
 
 from pyteomics import proforma
 
 from mzlib import annotation
-from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte
+from mzlib.analyte import FIRST_ANALYTE_KEY, FIRST_INTERPRETATION_KEY, Analyte, ProteinDescription
 from mzlib.spectrum import Spectrum, SPECTRUM_NAME, CHARGE_STATE
-from mzlib.attributes import AttributeManager, Attributed
+from mzlib.attributes import AttributeManager, Attributed, Attribute
 
 from mzlib.backends.base import SpectralLibraryBackendBase, FORMAT_VERSION_TERM, DEFAULT_VERSION
 
@@ -78,7 +78,7 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
     def has_index_preference(cls, filename) -> Type[IndexBase]:
         return EncyclopediaIndex
 
-    def __init__(self, filename, **kwargs):
+    def __init__(self, filename: str, **kwargs):
         super().__init__(filename)
         self.connection = sqlite3.connect(filename)
         self.connection.row_factory = sqlite3.Row
@@ -92,7 +92,7 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
         self.attributes = attribs
         return True
 
-    def _populate_analyte(self, analyte: Analyte, row: Mapping):
+    def _populate_analyte(self, analyte: Analyte, row: Mapping[str, Any]):
         """
         Fill an analyte with details describing a peptide sequence and inferring
         from context its traits based upon the assumptions EncyclopeDIA makes.
@@ -104,6 +104,14 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
         analyte.add_attribute("MS:1000888|stripped peptide sequence", row['PeptideSeq'])
         analyte.add_attribute(CHARGE_STATE, row['PrecursorCharge'])
+
+        cursor = self.connection.execute(
+            "SELECT ProteinAccession FROM peptidetoprotein WHERE PeptideSeq = ?;", (row['PeptideSeq'], ))
+        for protrow in cursor:
+            accession = protrow['ProteinAccession']
+            analyte.add_attribute_group([
+                Attribute('MS:1000885|protein accession', accession)
+            ])
 
     def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None):
         """
@@ -128,7 +136,7 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
         try:
             spectrum.add_attribute(
                 "MS:1003203|constituent spectrum file",
-                info['SourceFile']
+                f"file://{info['SourceFile']}"
             )
         except KeyError:
             pass
@@ -148,8 +156,9 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
         spectrum.add_attribute("MS:1003059|number of peaks", n_peaks)
 
         peak_list = []
+        # EncyclopeDIA does not encode product ion identities
         for i, mz in enumerate(mz_array):
-            row = (mz, intensity_array[i], [], '')
+            row = (mz, intensity_array[i], [], [])
             peak_list.append(row)
         spectrum.peak_list = peak_list
         return spectrum
