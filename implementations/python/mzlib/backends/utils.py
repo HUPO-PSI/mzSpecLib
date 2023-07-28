@@ -3,6 +3,7 @@ import io
 import gzip
 
 from collections import deque
+from urllib import parse as urlparse
 from typing import Any, Dict, Iterable, Mapping, Optional, Union
 
 DEFAULT_BUFFER_SIZE = int(2e6)
@@ -183,3 +184,11 @@ class CaseInsensitiveDict(Dict[str, Any]):
 
     def update(self, value: Mapping[str, Any]):
         super().update({k.lower(): v for k, v in value.items()})
+
+
+def urlify(path: str) -> str:
+    """Convert a path into a URL if it is not already one."""
+    parsed = urlparse.urlparse(path)
+    if parsed.scheme == '':
+        parsed = parsed._replace(scheme='file')
+    return urlparse.urlunparse(parsed)
