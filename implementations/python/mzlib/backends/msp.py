@@ -247,7 +247,7 @@ analyte_terms = CaseInsensitiveDict({
     "formula": "MS:1000866|molecular formula",
     "SMILES": "MS:1000868|SMILES formula",
     "InChIKey": "MS:1002894|InChIKey",
-    "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
+    # "Theo_mz_diff": "MS:1003209|monoisotopic m/z deviation",
     "Scan": {
         "Mods": PEPTIDE_MODIFICATION_TERM,
         "Naa": "MS:1003043|number of residues",
@@ -308,7 +308,6 @@ other_terms = CaseInsensitiveDict({
     "ms1PrecursorAb": "MS:1003085|previous MS1 scan precursor intensity",
     "Precursor1MaxAb": "MS:1003086|precursor apex intensity",
     "Purity": "MS:1009013|isolation window precursor purity",
-    "BasePeak": "MS:1000505|base peak intensity",
     "Num peaks": "MS:1003059|number of peaks",
     "Num Peaks": "MS:1003059|number of peaks",
     "num_peaks": "MS:1003059|number of peaks",
@@ -387,6 +386,11 @@ MODIFICATION_NAME_MAP = {
     "iTRAQ": "iTRAQ",
     "Acetyl": "Acetyl",
     "TMT": "TMT6plex",
+}
+
+TERMINAL_MODIFICATIONS = {
+    "Acetyl",
+    "TMT6plex"
 }
 
 
@@ -675,7 +679,7 @@ def mz_diff_handler(key, value, container: Attributed) -> bool:
         # We must be dealing with a unit-less entry.
         group_identifier = container.get_next_group_identifier()
         container.add_attribute(
-            "MS:1001975|delta m/z", value, group_identifier)
+            "MS:1001975|delta m/z", abs(value), group_identifier)
         container.add_attribute(
             "UO:0000000|unit", "MS:1000040|m/z", group_identifier)
     else:
@@ -1338,11 +1342,14 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 modification_details = analyte.get_attribute(PEPTIDE_MODIFICATION_TERM)
                 mods = self.modification_parser(modification_details)
                 for position, residue, mod in mods:
-                    seqpos = list(peptide.sequence[position])
-                    if not seqpos[1]:
-                        seqpos[1] = [proforma.GenericModification(mod)]
-                    peptide.sequence[position] = tuple(seqpos)
-                    assert seqpos[0] == residue
+                    if position == 0 and mod in TERMINAL_MODIFICATIONS:
+                        peptide.n_term = [proforma.GenericModification(mod)]
+                    else:
+                        seqpos = list(peptide.sequence[position])
+                        if not seqpos[1]:
+                            seqpos[1] = [proforma.GenericModification(mod)]
+                        peptide.sequence[position] = tuple(seqpos)
+                        assert seqpos[0] == residue
             analyte.add_attribute("MS:1003169|proforma peptidoform sequence", str(peptide))
             if analyte.has_attribute(PEPTIDE_MODIFICATION_TERM):
                 analyte.remove_attribute(PEPTIDE_MODIFICATION_TERM)
