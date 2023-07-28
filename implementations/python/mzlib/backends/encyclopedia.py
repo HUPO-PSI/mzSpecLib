@@ -18,6 +18,10 @@ from mzlib.backends.base import SpectralLibraryBackendBase, FORMAT_VERSION_TERM,
 from mzlib.index.base import IndexBase
 
 
+DECOY_SPECTRUM = "MS:1003192|decoy spectrum"
+DECOY_PEPTIDE_SPECTRUM = "MS:1003195|unnatural peptidoform decoy spectrum"
+
+
 def _decode_peaks(record: sqlite3.Row):
     raw_data = zlib.decompress(record['MassArray'])
     mass_array = np.frombuffer(raw_data, dtype='>d')
@@ -106,12 +110,17 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
         analyte.add_attribute(CHARGE_STATE, row['PrecursorCharge'])
 
         cursor = self.connection.execute(
-            "SELECT ProteinAccession FROM peptidetoprotein WHERE PeptideSeq = ?;", (row['PeptideSeq'], ))
+            "SELECT ProteinAccession, isDecoy FROM peptidetoprotein WHERE PeptideSeq = ?;", (row['PeptideSeq'], ))
+
+        had_decoy = False
         for protrow in cursor:
             accession = protrow['ProteinAccession']
+            is_decoy = bool(int(protrow['isDecoy']))
+            had_decoy = had_decoy or is_decoy
             analyte.add_attribute_group([
                 Attribute('MS:1000885|protein accession', accession)
             ])
+        return had_decoy
 
     def get_spectrum(self, spectrum_number: int = None, spectrum_name: str = None):
         """
@@ -143,7 +152,9 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
 
 
         analyte = self._new_analyte(1)
-        self._populate_analyte(analyte, info)
+        had_decoy = self._populate_analyte(analyte, info)
+        if had_decoy:
+            spectrum.add_attribute(DECOY_SPECTRUM, DECOY_PEPTIDE_SPECTRUM)
 
         spectrum.add_analyte(analyte)
 
