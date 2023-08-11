@@ -215,11 +215,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
 
     def _build_analyte(self, description: Dict[str, Any], analyte: Analyte) -> Analyte:
         pf_seq = _rewrite_modified_peptide_as_proforma(description['ModifiedPeptide'])
-        try:
-            peptide = proforma.ProForma.parse(pf_seq)
-        except Exception as err:
-            breakpoint()
-
+        peptide = proforma.ProForma.parse(pf_seq)
         analyte.add_attribute(STRIPPED_PEPTIDE_TERM, description['StrippedPeptide'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)
