@@ -577,9 +577,12 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         with open_stream(self.filename, 'rt') as stream:
             i = 0
             reader = self._open_reader(stream)
+            if self._headers:
+                # Skip the header line if we've already parsed them
+                _ = next(reader)
             buffering_reader = self._batch_rows(reader)
             for i, buffer in enumerate(buffering_reader):
-                yield self._parse(buffer, i)
+                yield self._parse_from_buffer(buffer, i)
 
 
 class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegisteringMetaclass):
@@ -629,7 +632,7 @@ class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegi
         step = max(min(n // 100, 5000), 1)
         ident = ''
         i = 0
-        for i, entry in enumerate(library):
+        for i, entry in enumerate(library.read()):
             if i % step == 0 and i:
                 if isinstance(entry, SpectrumCluster):
                     tag = "cluster "
