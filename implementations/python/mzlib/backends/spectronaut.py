@@ -34,9 +34,12 @@ def _rewrite_modified_peptide_as_proforma(sequence: str) -> str:
     last_paren = None
     for i, c in enumerate(sequence):
         if c == ']':
+            # Erase any text in parentheses as these indicate the modification
+            # rule and not the modificatin name. We could look at the modification
+            # rule to infer N-term and C-term rules, but we don't have enough examples
             if last_paren is not None:
                 k = i - last_paren
-                for j in range(k + 1):
+                for _ in range(k + 1):
                     buffer.pop()
                 last_paren = None
                 buffer.append(c)
@@ -45,7 +48,15 @@ def _rewrite_modified_peptide_as_proforma(sequence: str) -> str:
             buffer.append(c)
         else:
             buffer.append(c)
-    return ''.join(buffer)
+    pf_seq = ''.join(buffer)
+    # A peptide with an N-terminal modification will start with a square brace
+    # but needs to have a "-" added to be well-formed ProForma
+    if pf_seq.startswith("["):
+        i = pf_seq.find(']') + 1
+        if i == 0:
+            raise ValueError(f"Malformed peptide sequence {sequence}")
+        pf_seq = f"{pf_seq[:i]}-{pf_seq[i:]}"
+    return pf_seq
 
 
 def _parse_value(value: str) -> Union[float, int, str, bool]:
@@ -205,7 +216,6 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
     def _build_analyte(self, description: Dict[str, Any], analyte: Analyte) -> Analyte:
         pf_seq = _rewrite_modified_peptide_as_proforma(description['ModifiedPeptide'])
         peptide = proforma.ProForma.parse(pf_seq)
-
         analyte.add_attribute(STRIPPED_PEPTIDE_TERM, description['StrippedPeptide'])
         analyte.add_attribute(PROFORMA_PEPTIDE_TERM, pf_seq)
         analyte.add_attribute("MS:1001117|theoretical mass", peptide.mass)

@@ -1,9 +1,6 @@
-from dataclasses import dataclass
-from multiprocessing import connection
-import re
-import os
 import sqlite3
 import zlib
+from dataclasses import dataclass
 
 from typing import Iterator, List, Mapping, Tuple, Iterable, Type
 
@@ -25,10 +22,11 @@ class BibliospecBase:
     connection: sqlite3.Connection
 
     def _correct_modifications_in_sequence(self, row: Mapping) -> proforma.ProForma:
-        '''Correct the modifications in Bibliospec's modified peptide sequence.
+        """
+        Correct the modifications in Bibliospec's modified peptide sequence.
 
         Bibliospec only stores modifications as delta masses.
-        '''
+        """
         mods = self.connection.execute("SELECT * FROM Modifications WHERE RefSpectraID = ?", (row['id'], )).fetchall()
         peptide = proforma.ProForma.parse(row["peptideModSeq"])
         for mod in mods:
