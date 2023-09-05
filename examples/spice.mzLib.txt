@@ -1,23 +1,22 @@
 <mzSpecLib 1.0>
-MS:1003188|library name=
+MS:1003188|library name=spice
 MS:1003190|library version=1.0
 MS:1001017|release date=7/7/2023 7:06:42 PM
-<Spectrum=1>
-MS:1003061|library spectrum name=JWH-250-5OH
-MS:1003062|library spectrum index=795
-MS:1000894|retention time=3.53813
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
-MS:1003059|number of peaks=51
-<Analyte=1>
-MS:1000744|selected ion m/z=352.19000
-MS:1000045|collision energy=0
-MS:1000041|charge state=1
+MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw
+<AttributeSet Spectrum=all>
 MS:1000008|ionization type=MS:1000073|electrosprary ionization
 MS:1000465|scan polarity=MS:1000130|positive scan
+<Spectrum=1>
+MS:1003061|library spectrum name=JWH-250-5OH
+MS:1003057|scan number=795
+MS:1000894|retention time=3.53813
+MS:1003208|experimental precursor monoisotopic m/z =352.19000
+MS:1000045|collision energy=40.0
+UO:0000000|unit=UO:0000266|electronvolt
+MS:1003059|number of peaks=51
+<Analyte=1>
+MS:1000041|charge state=1
+MS:1000866|molecular formula=C22H25NO2
 <Peaks>
 51.0236	41921.14
 52.3338	18399.55
@@ -73,20 +72,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=2>
 MS:1003061|library spectrum name=HU-210
-MS:1003062|library spectrum index=1057
+MS:1003057|scan number=1057
 MS:1000894|retention time=4.63888
-MS:1000864|chemical formula=C25H38O3
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =387.29000
+MS:1000045|collision energy=30.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=31
-<Analyte=2>
-MS:1000744|selected ion m/z=387.29000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C25H38O3
 <Peaks>
 55.9397	1711.95
 57.0708	4178.89
@@ -122,20 +116,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=3>
 MS:1003061|library spectrum name=JWH-018
-MS:1003062|library spectrum index=1154
+MS:1003057|scan number=1154
 MS:1000894|retention time=5.06180
-MS:1000864|chemical formula=C24H23NO
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =342.18000
+MS:1000045|collision energy=40.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=36
-<Analyte=3>
-MS:1000744|selected ion m/z=342.18000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C24H23NO
 <Peaks>
 59.0615	1990.68
 60.1686	1451.89
@@ -176,20 +165,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=4>
 MS:1003061|library spectrum name=JWH-073
-MS:1003062|library spectrum index=1111
+MS:1003057|scan number=1111
 MS:1000894|retention time=4.87640
-MS:1000864|chemical formula=C23H21NO
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =328.17000
+MS:1000045|collision energy=30.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=45
-<Analyte=4>
-MS:1000744|selected ion m/z=328.17000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C23H21NO
 <Peaks>
 51.4339	1353.64
 53.5000	1596.98
@@ -239,20 +223,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=5>
 MS:1003061|library spectrum name=JWH-018-COOH
-MS:1003062|library spectrum index=891
+MS:1003057|scan number=891
 MS:1000894|retention time=3.93728
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =372.16000
+MS:1000045|collision energy=30.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=43
-<Analyte=5>
-MS:1000744|selected ion m/z=372.16000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C25H24NO3
 <Peaks>
 59.0612	15324.01
 67.2382	8108.25
@@ -300,20 +279,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=6>
 MS:1003061|library spectrum name=JWH-019-5,6OH
-MS:1003062|library spectrum index=930
+MS:1003057|scan number=930
 MS:1000894|retention time=4.09513
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =372.19000
+MS:1000045|collision energy=35.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=36
-<Analyte=6>
-MS:1000744|selected ion m/z=372.19000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C25H25NO
 <Peaks>
 50.8111	22739.57
 51.0237	44250.79
@@ -354,20 +328,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=7>
 MS:1003061|library spectrum name=JWH-018-4OH
-MS:1003062|library spectrum index=894
+MS:1003057|scan number=894
 MS:1000894|retention time=3.94745
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =358.18000
+MS:1000045|collision energy=35.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=43
-<Analyte=7>
-MS:1000744|selected ion m/z=358.18000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C24H24NO5
 <Peaks>
 51.0236	26543.89
 57.9584	14904.36
@@ -415,20 +384,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=8>
 MS:1003061|library spectrum name=JWH-073-COOH
-MS:1003062|library spectrum index=863
+MS:1003057|scan number=863
 MS:1000894|retention time=3.82846
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =358.14000
+MS:1000045|collision energy=45.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=39
-<Analyte=8>
-MS:1000744|selected ion m/z=358.14000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C25H22NO3
 <Peaks>
 51.0217	6218.31
 51.0236	10572.90
@@ -472,20 +436,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=9>
 MS:1003061|library spectrum name=JWH-073-3OH
-MS:1003062|library spectrum index=874
+MS:1003057|scan number=874
 MS:1000894|retention time=3.87110
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =344.16000
+MS:1000045|collision energy=35.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=68
-<Analyte=9>
-MS:1000744|selected ion m/z=344.16000
-MS:1000045|collision energy=0
+<Analyte=19>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=C24H22NO3
 <Peaks>
 51.0237	3561.28
 55.0550	8421.19
@@ -558,20 +517,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=10>
 MS:1003061|library spectrum name=JWH-018-4OH-D5
-MS:1003062|library spectrum index=912
+MS:1003057|scan number=912
 MS:1000894|retention time=4.02449
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =363.21000
+MS:1000045|collision energy=35.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=33
-<Analyte=10>
-MS:1000744|selected ion m/z=363.21000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=
 <Peaks>
 55.8589	1492.34
 59.0612	29520.89
@@ -609,20 +563,15 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 
 <Spectrum=11>
 MS:1003061|library spectrum name=JWH-073-3OH-D5
-MS:1003062|library spectrum index=876
+MS:1003057|scan number=876
 MS:1000894|retention time=3.87681
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
+MS:1003208|experimental precursor monoisotopic m/z =349.20000
+MS:1000045|collision energy=35.0
+UO:0000000|unit=UO:0000266|electronvolt
 MS:1003059|number of peaks=74
-<Analyte=11>
-MS:1000744|selected ion m/z=349.20000
-MS:1000045|collision energy=0
+<Analyte=1>
 MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
+MS:1000866|molecular formula=
 <Peaks>
 50.0136	6112.16
 50.0158	7548.90
@@ -698,96 +647,3 @@ MS:1000465|scan polarity=MS:1000130|positive scan
 348.1878	90111.50
 349.1952	4856722.50
 350.1979	196809.92
-
-<Spectrum=12>
-MS:1003061|library spectrum name=JWH-073-3OH-D5
-MS:1003062|library spectrum index=876
-MS:1000894|retention time=3.87681
-MS:1000864|chemical formula=
-MS:1002894|InChiKey=
-MS:1009100|CASNo=
-MS:1000868|Smiles formula=
-MS:1009101|compound class=
-MS:1003059|number of peaks=74
-<Analyte=12>
-MS:1000744|selected ion m/z=349.20000
-MS:1000045|collision energy=0
-MS:1000041|charge state=1
-MS:1000008|ionization type=MS:1000073|electrosprary ionization
-MS:1000465|scan polarity=MS:1000130|positive scan
-<Peaks>
-50.0136	6112.16
-50.0158	7548.90
-50.9933	6369.03
-51.0217	9002.23
-51.0238	24598.78
-59.0610	18940.02
-60.5347	7726.85
-71.3661	7504.50
-74.0154	10532.47
-75.0233	14942.28
-77.0394	62170.25
-79.7510	7899.70
-81.0638	7591.58
-101.0388	12789.70
-109.0844	77324.68
-110.0904	472305.41
-126.0456	44791.07
-127.0403	11295.24
-127.0418	13897.93
-127.0534	414827.31
-127.0626	14123.51
-128.0601	55956.32
-133.0834	10906.86
-134.0906	107820.46
-135.0965	118723.38
-139.0520	12625.64
-141.0699	75807.27
-142.0757	203937.42
-143.0821	18997.60
-145.0646	490468.44
-146.0711	73204.58
-148.0686	20034.40
-149.0757	37759.40
-154.0416	16453.31
-154.8451	12114.13
-155.0489	43269912.00
-156.0549	6115923.50
-157.0600	182803.89
-161.0794	16119.55
-162.0852	165784.66
-163.0911	326103.69
-176.1364	42654.01
-177.1432	44181.22
-201.1102	55655.40
-202.1156	56143.93
-219.1212	74090.01
-220.1266	902168.69
-221.1329	2315545.50
-222.1357	54900.77
-258.1202	35012.64
-259.1297	12533.21
-260.1367	45077.89
-261.1447	18788.08
-263.1584	49242.76
-269.1142	10216.40
-270.1201	17884.51
-271.1293	14824.12
-272.1365	115283.68
-273.1442	106990.98
-274.1200	9999.67
-275.1236	15385.52
-276.1313	47199.88
-287.1253	158500.27
-288.1313	1151654.75
-289.1376	1187331.50
-290.1441	78298.49
-291.1536	344801.00
-292.1565	11956.25
-312.1644	9887.75
-330.1770	43139.06
-331.1829	72594.64
-348.1878	90111.50
-349.1952	4856722.50
-350.1979	196809.92
-
