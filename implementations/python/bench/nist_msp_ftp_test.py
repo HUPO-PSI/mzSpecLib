@@ -11,12 +11,12 @@ from mzlib import annotation
 
 urls = [
     "https://chemdata.nist.gov/download/peptide_library/libraries/human/HCD/2020_05_19/human_hcd_tryp_good.msp.tar.gz",
-#    "https://chemdata.nist.gov/download/peptide_library/libraries/human/HCD/2019_02_14/human_hcd_labelfree_phospho_selected_passed.msp.tar.gz",
-#    "https://chemdata.nist.gov/download/peptide_library/libraries/cptaclib/2015/cptac2_human_hcd_itraq_phospho_selected.msp.tar.gz",
-#    "https://chemdata.nist.gov/download/peptide_library/libraries/human/HCD/2022_03_16/cptac3_tmt_selected_passed_best.msp.tar.gz",
-#    "https://chemdata.nist.gov/download/peptide_library/libraries/sigmaups1/ION_TRAP/2011_05_24/2011_05_24_sigmaups1_consensus_final_true_lib.tar.gz",
-#    "https://chemdata.nist.gov/download/peptide_library/libraries/proteins/ion_trap/bsa/strict/2011_04_01/2011_04_01_bsa_consensus_final_true_lib.tar.gz",
-#    "https://chemdata.nist.gov/download/peptide_library/libraries/cptaclib/2015/cptac2_mouse_hcd_itraq_phospho_selected.msp.tar.gz",
+    "https://chemdata.nist.gov/download/peptide_library/libraries/human/HCD/2019_02_14/human_hcd_labelfree_phospho_selected_passed.msp.tar.gz",
+    "https://chemdata.nist.gov/download/peptide_library/libraries/cptaclib/2015/cptac2_human_hcd_itraq_phospho_selected.msp.tar.gz",
+    "https://chemdata.nist.gov/download/peptide_library/libraries/human/HCD/2022_03_16/cptac3_tmt_selected_passed_best.msp.tar.gz",
+    "https://chemdata.nist.gov/download/peptide_library/libraries/sigmaups1/ION_TRAP/2011_05_24/2011_05_24_sigmaups1_consensus_final_true_lib.tar.gz",
+    "https://chemdata.nist.gov/download/peptide_library/libraries/proteins/ion_trap/bsa/strict/2011_04_01/2011_04_01_bsa_consensus_final_true_lib.tar.gz",
+    "https://chemdata.nist.gov/download/peptide_library/libraries/cptaclib/2015/cptac2_mouse_hcd_itraq_phospho_selected.msp.tar.gz",
 ]
 
 
