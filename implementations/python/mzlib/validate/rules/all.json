@@ -1,0 +1,1578 @@
+{
+  "$schema": "./validator-rules-schema.json",
+  "name": "all_metadata",
+  "rules": [
+    {
+      "id": "has_library_format_version",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003186",
+          "name": "library format version",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_identifier",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003187",
+          "name": "library identifier",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_library_name",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003188",
+          "name": "library name",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_description",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003189",
+          "name": "library description",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_version",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003190",
+          "name": "library version",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_uri",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003191",
+          "name": "library URI",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_release_date",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1001017",
+          "name": "release date",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:datetime"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_reference",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1002866",
+          "name": "Reference",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_digital_object_identifier_(doi)",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1001922",
+          "name": "Digital Object Identifier (DOI)",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_pubmed_identifier",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000879",
+          "name": "PubMed identifier",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_license_uri",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003197",
+          "name": "license URI",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_copyright_notice",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003198",
+          "name": "copyright notice",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_change_log",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003199",
+          "name": "change log",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_name",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000586",
+          "name": "contact name",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_address",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000587",
+          "name": "contact address",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_url",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000588",
+          "name": "contact URL",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_affiliation",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000590",
+          "name": "contact affiliation",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_email",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1000589",
+          "name": "contact email",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contact_role",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1002033",
+          "name": "contact role",
+          "repeatable": true,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1002033"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_creation_software",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003207",
+          "name": "library creation software",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003207"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_software_version",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003200",
+          "name": "software version",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_creation_log",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003206",
+          "name": "library creation log",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_command-line_parameters",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1001885",
+          "name": "command-line parameters",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_constituent_spectrum_file",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003203",
+          "name": "constituent spectrum file",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_constituent_identification_file",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003205",
+          "name": "constituent identification file",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_constituent_library_file",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003205",
+          "name": "constituent library file",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_attribute_set_name",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003212",
+          "name": "library attribute set name",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_cluster_key",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003267",
+          "name": "spectrum cluster key",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_cluster_member_spectrum_keys",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003268",
+          "name": "spectrum cluster member spectrum keys",
+          "repeatable": true
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_cluster_member_usi",
+      "path": "/Library",
+      "attr": [
+        {
+          "accession": "MS:1003269",
+          "name": "spectrum cluster member USI",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_spectrum_key",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003237",
+          "name": "library spectrum key",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_spectrum_index",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003062",
+          "name": "library spectrum index",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_library_spectrum_name",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003061",
+          "name": "library spectrum name",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_universal_spectrum_identifier",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003063",
+          "name": "universal spectrum identifier",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_splash_key",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002599",
+          "name": "splash key",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_library_spectrum_comment",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003168",
+          "name": "library spectrum comment",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_ms_level",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000511",
+          "name": "ms level",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_ionization_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000008",
+          "name": "ionization type",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000008"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_instrument_model",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000031",
+          "name": "instrument model",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000031"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_mass_analyzer_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000443",
+          "name": "mass analyzer type",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000443"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_dissociation_method",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000044",
+          "name": "dissociation method",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000044"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_mass_spectrometry_acquisition_method",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003213",
+          "name": "mass spectrometry acquisition method",
+          "repeatable": true,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003213"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_collision_gas",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000419",
+          "name": "collision gas",
+          "repeatable": true,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_collision_energy",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000045",
+          "name": "collision energy",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_normalized_collision_energy",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000138",
+          "name": "normalized collision energy",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_experimental_precursor_monoisotopic_m/z",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003208",
+          "name": "experimental precursor monoisotopic m/z",
+          "repeatable": false,
+          "notes": "NOTE: This is the preferred term for specification of the precursor m/z in typical use cases. If the specification of the isolation window is desired, the terms MS:1000827|isolation window target m/z, MS:1000828|isolation window lower offset, MS:1000829|isolation window upper offset should be used. The terms MS:1000744|selection ion m/z and MS:1002234|selection precursor m/z are unclear and should be avoided.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MUST"
+    },
+    {
+      "id": "has_isolation_window_target_m/z",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000827",
+          "name": "isolation window target m/z",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_isolation_window_lower_offset",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000828",
+          "name": "Isolation window lower offset",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_isolation_window_upper_offset",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000829",
+          "name": "Isolation window upper offset",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_retention_time",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000894",
+          "name": "retention time",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_normalized_retention_time",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000896",
+          "name": "normalized retention time",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_retention_time_normalization_standard",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000901",
+          "name": "retention time normalization standard",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000901"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_ion_mobility_drift_time",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002476",
+          "name": "ion mobility drift time",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_inverse_reduced_ion_mobility",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002875",
+          "name": "inverse reduced ion mobility",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_collision_cross_sectional_area",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1002954",
+          "name": "collision cross sectional area",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_faims_compensation_voltage",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1001581",
+          "name": "FAIMS compensation voltage",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_scan_polarity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000465",
+          "name": "scan polarity",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000465"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_filter_string",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000512",
+          "name": "filter string",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_mass_resolution",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000011",
+          "name": "mass resolution",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_mass_resolving_power",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000800",
+          "name": "mass resolving power",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_precursor_apex_intensity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003086",
+          "name": "precursor apex intensity",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_previous_msn-1_scan_precursor_intensity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003085",
+          "name": "previous MSn-1 scan precursor intensity",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_possible_charge_state",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000633",
+          "name": "possible charge state",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_charge_state",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "repeatable": false,
+          "notes": "The \u201ccharge state\u201d attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_peaks",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003059",
+          "name": "number of peaks",
+          "repeatable": false,
+          "notes": "This is the preferred term for a peak-picked (centroid) spectrum. Use the term \u201cMS:1003060|number of data point\u201d for a non-peak-picked (profile) spectrum.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_data_points",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003060",
+          "name": "number of data points",
+          "repeatable": false,
+          "notes": "This is the preferred term for a non-peak-picked (profile) spectrum. Use the term \u201cMS:1003059|number of peaks\u201d for a peak-picked (centroid) spectrum.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_intensity_unit",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000034",
+          "name": "intensity unit",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000034"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_base_peak_intensity",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000505",
+          "name": "base peak intensity",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_signal-to-noise_ratio",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1001884",
+          "name": "signal-to-noise ratio",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_total_ion_current",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000285",
+          "name": "total ion current",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_representation",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000525",
+          "name": "spectrum representation",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000525"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_data_processing_action",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1000543",
+          "name": "data processing action",
+          "repeatable": true,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1000543"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_spectrum_origin_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003072",
+          "name": "spectrum origin type",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003072"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_spectrum_aggregation_type",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003065"
+          }
+        }
+      ],
+      "requirement_level": "SHOULD"
+    },
+    {
+      "id": "has_ion_annotation_format",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003103",
+          "name": "ion annotation format",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003103"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_replicate_spectra_used",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003070",
+          "name": "number of replicate spectra used",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_replicate_spectra_available",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003069",
+          "name": "number of replicate spectra available",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_summary_statistics_of_replicate_spectra",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003295",
+          "name": "summary statistics of replicate spectra",
+          "repeatable": true,
+          "notes": "It should appear in a group with MS:1003174 - MS:1003180 to specify the type and value of the summary statistic.",
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003295"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_number_of_replicate_spectra_from_source",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003296",
+          "name": "number of replicate spectra from source",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contributing_replicate_spectrum_keys",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003298",
+          "name": "contributing replicate spectrum keys",
+          "repeatable": false
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_contributing_replicate_spectrum_usi",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003299",
+          "name": "contributing replicate spectrum USI",
+          "repeatable": false
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_related_spectrum_keys",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003259",
+          "name": "related spectrum keys",
+          "repeatable": false
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_related_spectrum_usi",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003260",
+          "name": "related spectrum USI",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_related_spectrum_description",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003261",
+          "name": "related spectrum description",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_similar_spectrum_keys",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003263",
+          "name": "similar spectrum keys",
+          "repeatable": false
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_similar_spectrum_usi",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003264",
+          "name": "similar spectrum USI",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_peak_attribute",
+      "path": "/Library/Spectrum",
+      "attr": [
+        {
+          "accession": "MS:1003254",
+          "name": "peak attribute",
+          "repeatable": true,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1003254"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_charge_state",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "repeatable": false,
+          "notes": "The \"charge state\" attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:integer"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_theoretical_mass",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001117",
+          "name": "theoretical mass",
+          "repeatable": false,
+          "notes": "This is the theoretical mass of the neutral molecule (does not include the charge-giving moiety. Use the term \u201cMS:1003243|adduct ion mass\u201d to refer to the mass of the adduct ion, which includes the charge-giving moiety.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:double"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_adduct_ion_mass",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1003243",
+          "name": "adduct ion mass",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_adduct_ion_formula",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1002813",
+          "name": "adduct ion formula",
+          "repeatable": false,
+          "notes": "For peptides, absence of this field implies that the adduct ion is [M+nH]n+ where n is the charge state. The regular expression for this field is given in the definition of MS:1002812|Regular expression for adduct ion formula.",
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_theoretical_monoisotopic_m/z",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1003053",
+          "name": "theoretical monoisotopic m/z",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_theoretical_average_m/z",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1003054",
+          "name": "theoretical average m/z",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:float"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_taxonomy:_scientific_name",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001469",
+          "name": "taxonomy: scientific name",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_taxonomy:_common_name",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001468",
+          "name": "taxonomy: common name",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_taxonomy:_ncbi_taxid",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1001467",
+          "name": "taxonomy: NCBI TaxID",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_sample_label",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1002602",
+          "name": "sample label",
+          "repeatable": false,
+          "value": {
+            "name": "value_is_child_of",
+            "accession": "MS:1002602"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_sample_name",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1000002",
+          "name": "sample name",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    },
+    {
+      "id": "has_smiles_formula",
+      "path": "/Library/Spectrum/Analyte",
+      "attr": [
+        {
+          "accession": "MS:1000868",
+          "name": "SMILES formula",
+          "repeatable": false,
+          "value": {
+            "name": "value_of_type",
+            "value": "xsd:string"
+          }
+        }
+      ],
+      "requirement_level": "MAY"
+    }
+  ]
+}

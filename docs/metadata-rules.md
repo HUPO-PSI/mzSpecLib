@@ -1,142 +1,139 @@
-## BASE
-### **`MUST`** /Library: Library has format version
-Combination logic: `OR`
+# ALL_METADATA
+## `/Library`
+### MUST
 
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003186 | False | library format version | False |
-
-### **`MUST`** /Library: Library has name
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003188 | False | library name | False |
-
-### **`MUST`** /Library/Spectrum: Spectrum has unique key
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable | value |
+| Name | Info | Value | Allowed units | Repeatable |
 |-----|-----|-----|-----|-----|
-| MS:1003237 | False | library spectrum key | False | value_is_unique |
+| library format version ([MS:1003186](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003186)) | "Version number of the [PSI] library format specification" [PSI:PI] | xsd:string | / | False |
+| library name ([MS:1003188](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003188)) | "A short name identifying the library to potential users. The same name may refer to multiple versions of the same continually updated library." [PSI:PI] | xsd:string | / | False |
 
-### **`MUST`** /Library/Spectrum: Spectrum has index
-Combination logic: `OR`
+### SHOULD
 
-| accession | allow_children | name | repeatable | value |
+| Name | Info | Value | Allowed units | Repeatable |
 |-----|-----|-----|-----|-----|
-| MS:1003062 | False | library spectrum index | False | value_is_unique |
+| library identifier ([MS:1003187](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003187)) | "Short identifier for the library for easy reference, preferably but not necessarily globally unique" [PSI:PI] | xsd:string | / | False |
 
-### **`MUST`** /Library/Spectrum: Spectrum has index
-Combination logic: `OR`
+### MAY
 
-| accession | allow_children | name | repeatable | value |
+| Name | Info | Value | Allowed units | Repeatable |
 |-----|-----|-----|-----|-----|
-| MS:1003062 | False | library spectrum index | False | value_is_unique |
+| library description ([MS:1003189](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003189)) | "Extended free-text description of the library" [PSI:PI] | xsd:string | / | False |
+| library version ([MS:1003190](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003190)) | "Version number of the library, usually refering to a certain release of a continually updated library " [PSI:PI] | xsd:string | / | False |
+| library URI ([MS:1003191](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003191)) | "URI or URL that uniquely identifies the library" [PSI:PI] | xsd:string | / | False |
+| release date ([MS:1001017](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001017)) | "Date and time at which a product was publicly released. For mzIdentML, use the database release date XML attribute instead of this term." [PSI:PI] | xsd:datetime | / | False |
+| Reference ([MS:1002866](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002866)) | "Literature reference associated with one dataset (including the authors, title, year and journal details). The value field can be used for the PubMedID, or to specify if one manuscript is just submitted or accepted, but it does not have a PubMedID yet." [PSI:PI] | xsd:string | / | True |
+| Digital Object Identifier (DOI) ([MS:1001922](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001922)) | "DOI unique identifier of a publication." [PSI:PI, http://dx.doi.org] | xsd:string | / | True |
+| PubMed identifier ([MS:1000879](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000879)) | "A unique identifier for a publication in the PubMed database (MIR:00000015)." [PSI:MS] | xsd:integer | / | True |
+| license URI ([MS:1003197](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003197)) | "URI of the license controlling use of the library (e.g. https://creativecommons.org/publicdomain/zero/1.0/)" [PSI:PI] | xsd:string | / | False |
+| copyright notice ([MS:1003198](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003198)) | "Notice of statutorily prescribed form that informs users of the underlying claim to copyright ownership in a published work" [PSI:PI] | xsd:string | / | False |
+| change log ([MS:1003199](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003199)) | "Extended free-text description of the difference from the previous version" [PSI:PI] | xsd:string | / | False |
+| contact name ([MS:1000586](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000586)) | "Name of the contact person or organization." [PSI:MS] | xsd:string | / | True |
+| contact address ([MS:1000587](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000587)) | "Postal address of the contact person or organization." [PSI:MS] | xsd:string | / | True |
+| contact URL ([MS:1000588](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000588)) | "Uniform Resource Locator related to the contact person or organization." [PSI:MS] | xsd:string | / | True |
+| contact affiliation ([MS:1000590](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000590)) | "Home institution of the contact person." [PSI:MS] | xsd:string | / | True |
+| contact email ([MS:1000589](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000589)) | "Email address of the contact person or organization." [PSI:MS] | xsd:string | / | True |
+| contact role ([MS:1002033](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002033)) | "Role of the contact person." [PSI:PI] | Children of [MS:1002033](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002033) | / | True |
+| library creation software ([MS:1003207](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003207)) | "Library creation software" [PSI:MS] | Children of [MS:1003207](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003207) | / | False |
+| software version ([MS:1003200](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003200)) | "Version number of the software package used for library creation" [PSI:PI] | xsd:string | / | False |
+| library creation log ([MS:1003206](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003206)) | "String of logging information generated when the library was constructed from its constituent files. Multiple lines should be separated with escaped \n" [PSI:PI] | xsd:string | / | False |
+| command-line parameters ([MS:1001885](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001885)) | "Parameters string passed to a command-line interface software application, omitting the executable name." [PSI:MS] | xsd:string | / | False |
+| constituent spectrum file ([MS:1003203](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003203)) | "Spectrum data file from which (at least) a subset of spectra were extracted from. Should use USI notation mzspec:PXDxxxx:msRunName if possible, or a URI if USI notation is not possible." [PSI:PI] | xsd:string | / | True |
+| constituent identification file ([MS:1003205](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003205)) | "Source library URI which(at least) a subset of spectra were extracted from." [PSI:PI] | xsd:string | / | True |
+| constituent library file ([MS:1003205](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003205)) | "Source library URI which(at least) a subset of spectra were extracted from." [PSI:PI] | xsd:string | / | True |
+| library attribute set name ([MS:1003212](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003212)) | "A name to refer to a library attribute set" [PSI:PI] | xsd:string | / | True |
+| spectrum cluster key ([MS:1003267](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003267)) | "An ordinal number uniquely identifying a spectrum cluster. It should start with 1." [PSI:PI] | xsd:integer | / | True |
+| spectrum cluster member spectrum keys ([MS:1003268](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003268)) | "A list of integers corresponding to the library spectrum keys of the members of this cluster. These members must be in the same library." [PSI:PI] | Undefined | / | True |
+| spectrum cluster member USI ([MS:1003269](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003269)) | "A member of this cluster external to the library, specified using a PSI Universal Spectrum Identifier." [PSI:PI] | xsd:string | / | True |
 
-### **`SHOULD`** /Library/Spectrum: Spectrum has precursor charge
-Combination logic: `OR`
+## `/Library/Spectrum`
+### MUST
 
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1000041 | False | charge state | False |
-| MS:1000633 | False | possible charge state | False |
+| Name | Info | Value | Allowed units | Repeatable |
+|-----|-----|-----|-----|-----|
+| library spectrum key ([MS:1003237](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003237)) | "An ordinal number uniquely identifying a spectrum in a library. Library spectrum keys should start at 1. Library spectrum keys SHOULD not change if entries are re-ordered or removed from a library." [PSI:PI] | xsd:integer | / | False |
+| library spectrum index ([MS:1003062](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003062)) | "Integer index value that indicates the spectrum's ordered position within a spectral library. By custom, index counters should begin with 0." [PSI:PI] | xsd:integer | / | False |
+| experimental precursor monoisotopic m/z ([MS:1003208](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003208)) | "The measured or inferred m/z (as reported by the mass spectrometer acquisition software or post-processing software) of the monoisotopic peak of the precursor ion based on the MSn-1 spectrum." [PSI:MS]<br /><br />**Notes:** NOTE: This is the preferred term for specification of the precursor m/z in typical use cases. If the specification of the isolation window is desired, the terms [MS:1000827](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000827)\|isolation window target m/z, [MS:1000828](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000828)\|isolation window lower offset, [MS:1000829](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000829)\|isolation window upper offset should be used. The terms [MS:1000744](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000744)\|selection ion m/z and [MS:1002234](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002234)\|selection precursor m/z are unclear and should be avoided. | xsd:float | m/z | False |
 
-### **`SHOULD`** /Library/Spectrum: Spectrum has precursor mz
-Combination logic: `OR`
+### MAY
 
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1000744 | False | selected ion m/z | False |
-| MS:1003208 | False | experimental precursor monoisotopic m/z | False |
+| Name | Info | Value | Allowed units | Repeatable |
+|-----|-----|-----|-----|-----|
+| library spectrum name ([MS:1003061](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003061)) | "Label attached to a spectrum uniquely naming it within a collection of spectra, often in a spectral library. It is often a string combination of peptide sequence, charge, mass modifications, collision energy, but will obviously be different for small molecules or unidentified spectra. It must be unique within a collection." [PSI:PI] | xsd:string | / | False |
+| universal spectrum identifier ([MS:1003063](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003063)) | "PSI universal spectrum identifier (USI) multipart key that uniquely identifies a spectrum available in a ProteomeXchange datasets or spectral library." [PSI:PI] | xsd:string | / | False |
+| splash key ([MS:1002599](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002599)) | "Spectral Hash key, an unique identifier for spectra." [PMID:27824832] | xsd:string | / | False |
+| library spectrum comment ([MS:1003168](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003168)) | "A free-text string providing additional information of the library spectrum not encoded otherwise, usually for human use and not parsed by software tools." [PSI:PI] | xsd:string | / | False |
+| ms level ([MS:1000511](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000511)) | "Stage number achieved in a multi stage mass spectrometry acquisition." [PSI:MS] | xsd:integer | / | False |
+| ionization type ([MS:1000008](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000008)) | "The method by which gas phase ions are generated from the sample." [PSI:MS] | Children of [MS:1000008](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000008) | / | False |
+| instrument model ([MS:1000031](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000031)) | "Instrument model name not including the vendor's name." [PSI:MS] | Children of [MS:1000031](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000031) | / | False |
+| mass analyzer type ([MS:1000443](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000443)) | "Mass analyzer separates the ions according to their mass-to-charge ratio." [PSI:MS] | Children of [MS:1000443](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000443) | / | False |
+| mass spectrometry acquisition method ([MS:1003213](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003213)) | "Mode of running a mass spectrometer method by which mass ranges are selected and possibly dissociated." [PSI:MS] | Children of [MS:1003213](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003213) | / | True |
+| collision gas ([MS:1000419](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000419)) | "An inert gas used for collisional excitation. The term target gas is not recommended." [PSI:MS] | xsd:string | / | True |
+| normalized collision energy ([MS:1000138](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000138)) | "Instrument setting, expressed in percent, for adjusting collisional energies of ions in an effort to provide equivalent excitation of all ions." [PSI:PI] | xsd:float | percent | False |
+| isolation window target m/z ([MS:1000827](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000827)) | "The primary or reference m/z about which the isolation window is defined." [PSI:MS] | xsd:float | m/z | False |
+| Isolation window lower offset ([MS:1000828](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000828)) | "The extent of the isolation window in m/z below the isolation window target m/z. The lower and upper offsets may be asymmetric about the target m/z." [PSI:MS] | xsd:float | m/z | False |
+| Isolation window upper offset ([MS:1000829](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000829)) | "The extent of the isolation window in m/z above the isolation window target m/z. The lower and upper offsets may be asymmetric about the target m/z." [PSI:MS] | xsd:float | m/z | False |
+| retention time ([MS:1000894](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000894)) | "A time interval from the start of chromatography when an analyte exits a chromatographic column." [PSI:MS] | xsd:float | second, minute | False |
+| normalized retention time ([MS:1000896](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000896)) | "A time interval from the start of chromatography when an analyte exits a standardized reference chromatographic column and instrumental setup." [PSI:MS] | xsd:float | second, minute | False |
+| retention time normalization standard ([MS:1000901](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000901)) | "A standard providing the retention times at which a set of reference compounds exit the reference chromatographic column." [PSI:MS] | Children of [MS:1000901](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000901) | / | False |
+| ion mobility drift time ([MS:1002476](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002476)) | "Drift time of an ion or spectrum of ions as measured in an ion mobility mass spectrometer. This time might refer to the central value of a bin into which all ions within a narrow range of drift time have been aggregated." [PSI:MS] | xsd:float | millisecond | False |
+| inverse reduced ion mobility ([MS:1002875](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002875)) | "Thermo Scientific TSQ Quantis Triple Quadrupole MS." [PSI:PI] | xsd:float | / | False |
+| collision cross sectional area ([MS:1002954](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002954)) | "Structural molecular descriptor for the effective interaction area between the ion and neutral gas measured in ion mobility mass spectrometry." [PSI:PI] | xsd:double | square angstrom | False |
+| FAIMS compensation voltage ([MS:1001581](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001581)) | "The DC potential applied to the asymmetric waveform in FAIMS that compensates for the difference between high and low field mobility of an ion." [PSI:MS] | xsd:double | volt | False |
+| scan polarity ([MS:1000465](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000465)) | "Relative orientation of the electromagnetic field during the selection and detection of ions in the mass spectrometer." [PSI:MS] | Children of [MS:1000465](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000465) | / | False |
+| filter string ([MS:1000512](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000512)) | "A string unique to Thermo instrument describing instrument settings for the scan." [PSI:MS] | xsd:string | / | False |
+| mass resolution ([MS:1000011](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000011)) | "Smallest mass difference between two equal magnitude peaks so that the valley between them is a specified fraction of the peak height." [PSI:MS] | xsd:string | / | False |
+| mass resolving power ([MS:1000800](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000800)) | "The observed mass divided by the difference between two masses that can be separated: m/dm. The procedure by which dm was obtained and the mass at which the measurement was made should be reported." [PSI:MS] | xsd:string | / | False |
+| precursor apex intensity ([MS:1003086](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003086)) | "Intensity of the precursor ion current as measured by its apex point over time and m/z. It is unspecified whether this is the intensity of the selected isotope or the most intense isotope." [PSI:MS] | xsd:float | / | False |
+| previous MSn-1 scan precursor intensity ([MS:1003085](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003085)) | "Intensity of the precursor ion in the previous MSn-1 scan (prior in time to the referencing MSn scan). For an MS2 scan, this means the MS1 precursor intensity. It is unspecified on whether this is an apex (across m/z) intensity, integrated (across m/z) intensity, a centroided peak intensity of unknown origin, or even summed across several isotopes." [PSI:MS] | xsd:double | / | False |
+| possible charge state ([MS:1000633](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000633)) | "A possible charge state of the ion in a situation where the charge of an ion is known to be one of several possible values rather than a completely unknown value or determined to be a specific charge with reasonable certainty." [PSI:MS] | xsd:integer | / | False |
+| charge state ([MS:1000041](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000041)) | "Number of net charges, positive or negative, on an ion." [PSI:MS]<br /><br />**Notes:** The “charge state” attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead. | xsd:integer | / | False |
+| number of peaks ([MS:1003059](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003059)) | "Number of peaks or features in a spectrum. For a peak-picked spectrum, this will correspond to the number of data points. For a non-peak-picked spectrum, this corresponds to the number of features discernable in the spectrum, which will be fewer than the number of data points." [PSI:PI]<br /><br />**Notes:** This is the preferred term for a peak-picked (centroid) spectrum. Use the term “[MS:1003060](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003060)\|number of data point” for a non-peak-picked (profile) spectrum. | xsd:integer | / | False |
+| number of data points ([MS:1003060](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003060)) | "Number of data points in a spectrum. For a peak-picked spectrum, this will correspond to the number of peaks. For a non-peak-picked spectrum, this corresponds to the number of values in the data array, which are not all peaks." [PSI:PI]<br /><br />**Notes:** This is the preferred term for a non-peak-picked (profile) spectrum. Use the term “[MS:1003059](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003059)\|number of peaks” for a peak-picked (centroid) spectrum. | xsd:integer | / | False |
+| intensity unit ([MS:1000034](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000034)) | "The determination of the mass of an ion based on the mass spectral peaks that represent multiple-charge ions." [PSI:MS] | Children of [MS:1000034](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000034) | / | False |
+| base peak intensity ([MS:1000505](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000505)) | "The intensity of the greatest peak in the mass spectrum." [PSI:MS] | xsd:float | number of detector counts, percent of base peak, counts per second, percent of base peak times 100, absorbance unit | False |
+| signal-to-noise ratio ([MS:1001884](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001884)) | "Unitless number providing the ratio of the total measured intensity of a signal relative to the estimated noise level for that signal." [PSI:MS] | xsd:float | / | False |
+| total ion current ([MS:1000285](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000285)) | "The sum of all the separate ion currents carried by the ions of different m/z contributing to a complete mass spectrum or in a specified m/z range of a mass spectrum." [PSI:MS] | xsd:float | / | False |
+| spectrum representation ([MS:1000525](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000525)) | "Way in which the spectrum is represented, either with regularly spaced data points or with a list of centroided peaks." [PSI:MS] | Children of [MS:1000525](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000525) | / | False |
+| data processing action ([MS:1000543](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000543)) | "Data processing attribute used to describe the type of data processing performed on the data file." [PSI:MS] | Children of [MS:1000543](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000543) | / | True |
+| ion annotation format ([MS:1003103](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003103)) | "Annotation format used for annotating individual spectrum ion peaks." [PSI:MS] | Children of [MS:1003103](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003103) | / | False |
+| number of replicate spectra used ([MS:1003070](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003070)) | "Number of replicate spectra used during the aggregation process. This is generally applicable when there are many replicates available, but some are discarded as being low S/N, blended, or otherwise unsuitable, and the remaining set is then used for merging via a consensus algorithm." [PSI:PI] | xsd:integer | / | False |
+| number of replicate spectra available ([MS:1003069](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003069)) | "Number of replicate spectra available for use during the aggregation process." [PSI:PI] | xsd:integer | / | False |
+| summary statistics of replicate spectra ([MS:1003295](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003295)) | "Summary statistics of an attribute among all replicates that are aggregated to generate this spectrum." [PSI:PI]<br /><br />**Notes:** It should appear in a group with [MS:1003174](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003174) - [MS:1003180](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003180) to specify the type and value of the summary statistic. | Children of [MS:1003295](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003295) | / | True |
+| number of replicate spectra from source ([MS:1003296](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003296)) | "The number of replicate spectra used during the aggregation process that originate from a specified source (e.g. a file, a dataset, a sample type, etc.). This term must appear in a group alongside a source term, which is one of: 'ProteomeXchange accession number', 'constituent spectrum file', or 'sample name'" [PSI:PI] | xsd:string | / | False |
+| contributing replicate spectrum keys ([MS:1003298](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003298)) | "A list of cross references to contributing replicate spectra in the same library, in the form of library spectrum keys." [PSI:PI] | Undefined | / | False |
+| contributing replicate spectrum USI ([MS:1003299](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003299)) | "A list of cross references to contributing replicate spectra, in the form of PSI Universal Spectrum Identifiers." [PSI:PI] | Undefined | / | False |
+| related spectrum keys ([MS:1003259](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003259)) | "A list of cross references to a related spectrum in the same library, in the form of the library spectrum key.  " [PSI:PI] | Undefined | / | False |
+| related spectrum USI ([MS:1003260](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003260)) | "A cross reference to a related spectrum in the form of a PSI Universal Spectrum Identifier" [PSI:PI] | xsd:string | / | False |
+| related spectrum description ([MS:1003261](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003261)) | "A free-text string describing the related spectrum and/or its relationship to this spectrum" [PSI:PI] | xsd:string | / | False |
+| similar spectrum keys ([MS:1003263](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003263)) | "A list of cross references to a similar spectrum in the same library, in the form of the library spectrum key.  " [PSI:PI] | Undefined | / | False |
+| similar spectrum USI ([MS:1003264](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003264)) | "A cross reference to a similar spectrum in the form of a PSI Universal Spectrum Identifier" [PSI:PI] | xsd:string | / | False |
+| peak attribute ([MS:1003254](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003254)) | "An attribute of a peak in a mass spectrum other than its m/z, intensity, and annotation. " [PSI:PI] | Children of [MS:1003254](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003254) | / | True |
 
-### **`SHOULD`** /Library/Spectrum: Spectrum has aggregation
-Combination logic: `OR`
+### SHOULD
 
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003065 | True | spectrum aggregation type | False |
+| Name | Info | Value | Allowed units | Repeatable |
+|-----|-----|-----|-----|-----|
+| dissociation method ([MS:1000044](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000044)) | "Fragmentation method used for dissociation or fragmentation." [PSI:MS] | Children of [MS:1000044](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000044) | / | False |
+| collision energy ([MS:1000045](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000045)) | "Energy for an ion experiencing collision with a stationary gas particle resulting in dissociation of the ion." [PSI:MS] | xsd:float | electronvolt | False |
+| spectrum origin type ([MS:1003072](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003072)) | "Categorization of a spectrum based on its origin (e.g., observed spectrum, predicted spectrum, demultiplexed spectrum, etc.)." [PSI:PI] | Children of [MS:1003072](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003072) | / | False |
+| spectrum aggregation type ([MS:1003065](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003065)) | "Categorization of a spectrum based on its type of aggregation (e.g., individual spectrum, consensus spectrum, best replicate spectrum, etc.)." [PSI:PI] | Children of [MS:1003065](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003065) | / | False |
 
-### **`SHOULD`** /Library/Spectrum/Analyte: Analyte has any mass
-Combination logic: `OR`
+## `/Library/Spectrum/Analyte`
+### MAY
 
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1001117 | True | theoretical mass | False |
-| MS:1000224 | True | molecular mass | False |
+| Name | Info | Value | Allowed units | Repeatable |
+|-----|-----|-----|-----|-----|
+| charge state ([MS:1000041](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000041)) | "Number of net charges, positive or negative, on an ion." [PSI:MS]<br /><br />**Notes:** The "charge state" attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead. | xsd:integer | / | False |
+| theoretical mass ([MS:1001117](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001117)) | "The theoretical neutral mass of the molecule (e.g. the peptide sequence and its modifications) not including its charge carrier." [PSI:PI]<br /><br />**Notes:** This is the theoretical mass of the neutral molecule (does not include the charge-giving moiety. Use the term “[MS:1003243](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003243)\|adduct ion mass” to refer to the mass of the adduct ion, which includes the charge-giving moiety. | xsd:double | dalton | False |
+| adduct ion mass ([MS:1003243](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003243)) | "The theoretical mass of the adduct ion (e.g. for a singly-charged protonated peptide ion, this value would be the neutral peptide molecule's mass plus the mass of a proton)" [PSI:PI] | xsd:float | / | False |
+| adduct ion formula ([MS:1002813](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002813)) | "Adduct formation formula of the form M+X or M-X, as constrained by the provided regular expression." [PSI:MS]<br /><br />**Notes:** For peptides, absence of this field implies that the adduct ion is [M+nH]n+ where n is the charge state. The regular expression for this field is given in the definition of [MS:1002812](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002812)\|Regular expression for adduct ion formula. | xsd:string | / | False |
+| theoretical monoisotopic m/z ([MS:1003053](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003053)) | "Mass-to-charge ratio of a peptidoform ion composed of the most common isotope of each atom computed from the putative knowledge of its molecular constituents." [PSI:PI] | xsd:float | / | False |
+| theoretical average m/z ([MS:1003054](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1003054)) | "Mass-to-charge ratio of a peptidoform ion computed from the putative knowledge of its molecular constituents, averaged over the distribution of naturally occurring isotopes." [PSI:PI] | xsd:float | / | False |
+| taxonomy: scientific name ([MS:1001469](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001469)) | "This term is used if a scientific name is specified, e.g. Homo sapiens. Recommend using [MS:1001467](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001467) (taxonomy: NCBI TaxID) where possible." [PSI:PI] | xsd:string | / | False |
+| taxonomy: common name ([MS:1001468](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001468)) | "This term is used if a common name is specified, e.g. human. Recommend using [MS:1001467](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001467) (taxonomy: NCBI TaxID) where possible." [PSI:PI] | xsd:string | / | False |
+| taxonomy: NCBI TaxID ([MS:1001467](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1001467)) | "This term is used if a NCBI TaxID is specified, e.g. 9606 for Homo sapiens." [PSI:PI] | xsd:string | / | False |
+| sample label ([MS:1002602](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002602)) | "Reagent used in labeled quantification methods." [PSI:PI] | Children of [MS:1002602](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1002602) | / | False |
+| sample name ([MS:1000002](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000002)) | "A reference string relevant to the sample under study." [PSI:MS] | xsd:string | / | False |
+| SMILES formula ([MS:1000868](https://www.ebi.ac.uk/ols4/ontologies/ms/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMS_1000868)) | "The simplified molecular input line entry specification or SMILES is a specification for unambiguously describing the structure of a chemical compound using a short ASCII string." [EDAM:2301] | xsd:string | / | False |
 
-## CONSENSUS
-### **`SHOULD`** /Library/Spectrum: Spectrum has replicates used
-Combination logic: `AND`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003069 | False | number of replicate spectra available | False |
-| MS:1003070 | False | number of replicate spectra used | False |
-
-## GOLD
-### **`SHOULD`** /Library: Library has contact
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1000586 | False | contact name | False |
-| MS:1000587 | False | contact address | False |
-| MS:1000588 | False | contact URL | False |
-| MS:1000589 | False | contact email | False |
-| MS:1000590 | False | contact affilation | False |
-
-### **`SHOULD`** /Library: Library has reference
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1002866 | False | Reference | False |
-
-## PEPTIDE
-### **`MUST`** /Library/Spectrum/Analyte: Analyte has peptide seq
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1000889 | False | proforma peptidoform sequence | False |
-| MS:1000888 | False | stripped peptide sequence | False |
-| MS:1003270 | False | proforma peptidoform ion notation | False |
-
-## SILVER
-### **`SHOULD`** /Library: Library has identifier
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003187 | False | library identifier | False |
-
-### **`SHOULD`** /Library/Spectrum: Spectrum has origin type
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003072 | True | spectrum origin type | False |
-
-### **`SHOULD`** /Library/Spectrum: Spectrum has dissociation
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1000044 | True | dissociation method | False |
-
-## SINGLE
-### **`SHOULD`** /Library/Spectrum: Spectrum has source file
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1000577 | False | source file | False |
-
-### **`SHOULD`** /Library/Spectrum: Spectrum has scan identifier
-Combination logic: `OR`
-
-| accession | allow_children | name | repeatable |
-|-----|-----|-----|-----|
-| MS:1003057 | False | scan number | False |
 
