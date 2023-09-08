@@ -6,7 +6,7 @@ MS:1001017|release date=7/7/2023 7:06:42 PM
 MS:1000008|ionization type=MS:1000073|electrosprary ionization
 MS:1000465|scan polarity=MS:1000130|positive scan
 <Spectrum=1>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:795
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:795
 MS:1003061|library spectrum name=JWH-250-5OH
 MS:1000894|retention time=3.53813
 MS:1003208|experimental precursor monoisotopic m/z=352.19000
@@ -70,7 +70,7 @@ MS:1000866|molecular formula=C22H25NO2
 352.1904	138860.03
 
 <Spectrum=2>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:1057
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:1057
 MS:1003061|library spectrum name=HU-210
 MS:1000894|retention time=4.63888
 MS:1003208|experimental precursor monoisotopic m/z=387.29000
@@ -114,7 +114,7 @@ MS:1000866|molecular formula=C25H38O3
 407.4477	6573.49
 
 <Spectrum=3>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:1154
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:1154
 MS:1003061|library spectrum name=JWH-018
 MS:1000894|retention time=5.06180
 MS:1003208|experimental precursor monoisotopic m/z=342.18000
@@ -163,7 +163,7 @@ MS:1000866|molecular formula=C24H23NO
 343.1881	24044.77
 
 <Spectrum=4>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:1111
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:1111
 MS:1003061|library spectrum name=JWH-073
 MS:1000894|retention time=4.87640
 MS:1003208|experimental precursor monoisotopic m/z=328.17000
@@ -221,7 +221,7 @@ MS:1000866|molecular formula=C23H21NO
 329.1725	141963.44
 
 <Spectrum=5>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:891
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:891
 MS:1003061|library spectrum name=JWH-018-COOH
 MS:1000894|retention time=3.93728
 MS:1003208|experimental precursor monoisotopic m/z=372.16000
@@ -277,7 +277,7 @@ MS:1000866|molecular formula=C25H24NO3
 373.2094	20403.29
 
 <Spectrum=6>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:930
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:930
 MS:1003061|library spectrum name=JWH-019-5,6OH
 MS:1000894|retention time=4.09513
 MS:1003208|experimental precursor monoisotopic m/z=372.19000
@@ -326,7 +326,7 @@ MS:1000866|molecular formula=C25H25NO
 373.1990	218253.50
 
 <Spectrum=7>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:894
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:894
 MS:1003061|library spectrum name=JWH-018-4OH
 MS:1000894|retention time=3.94745
 MS:1003208|experimental precursor monoisotopic m/z=358.18000
@@ -382,7 +382,7 @@ MS:1000866|molecular formula=C24H24NO5
 359.2222	25122.54
 
 <Spectrum=8>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:863
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:863
 MS:1003061|library spectrum name=JWH-073-COOH
 MS:1000894|retention time=3.82846
 MS:1003208|experimental precursor monoisotopic m/z=358.14000
@@ -434,7 +434,7 @@ MS:1000866|molecular formula=C25H22NO3
 359.1455	119712.60
 
 <Spectrum=9>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:874
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:874
 MS:1003061|library spectrum name=JWH-073-3OH
 MS:1000894|retention time=3.87110
 MS:1003208|experimental precursor monoisotopic m/z=344.16000
@@ -515,7 +515,7 @@ MS:1000866|molecular formula=C24H22NO3
 344.1632	37060.93
 
 <Spectrum=10>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:912
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:912
 MS:1003061|library spectrum name=JWH-018-4OH-D5
 MS:1000894|retention time=4.02449
 MS:1003208|experimental precursor monoisotopic m/z=363.21000
@@ -560,7 +560,7 @@ MS:1000041|charge state=1
 363.2108	9793.98
 
 <Spectrum=11>
-MS:1003203|constituent spectrum file=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:876
+MS:1003063|universal spectrum identifier=mzspec:USI000000:spice_ph/cal_10ng.raw:scan:876
 MS:1003061|library spectrum name=JWH-073-3OH-D5
 MS:1000894|retention time=3.87681
 MS:1003208|experimental precursor monoisotopic m/z=349.20000
