@@ -196,7 +196,7 @@
               "items": {
                 "anyOf": [
                   {
-                    "$ref": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/master/specification/peak-annotation-format/annotation-schema.json"
+                    "$ref": "https://github.com/HUPO-PSI/mzPAF/blob/main/specification/annotation-schema.json"
                   },
                   {
                     "type": "string",
