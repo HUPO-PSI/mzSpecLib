@@ -1015,7 +1015,7 @@
           "accession": "MS:1000041",
           "name": "charge state",
           "repeatable": false,
-          "notes": "The \u201ccharge state\u201d attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
+          "notes": "The 'charge state' attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
           "value": {
             "name": "value_of_type",
             "value": "xsd:integer"
@@ -1032,7 +1032,7 @@
           "accession": "MS:1003059",
           "name": "number of peaks",
           "repeatable": false,
-          "notes": "This is the preferred term for a peak-picked (centroid) spectrum. Use the term \u201cMS:1003060|number of data point\u201d for a non-peak-picked (profile) spectrum.",
+          "notes": "This is the preferred term for a peak-picked (centroid) spectrum. Use the term 'MS:1003060|number of data point' for a non-peak-picked (profile) spectrum.",
           "value": {
             "name": "value_of_type",
             "value": "xsd:integer"
@@ -1049,7 +1049,7 @@
           "accession": "MS:1003060",
           "name": "number of data points",
           "repeatable": false,
-          "notes": "This is the preferred term for a non-peak-picked (profile) spectrum. Use the term \u201cMS:1003059|number of peaks\u201d for a peak-picked (centroid) spectrum.",
+          "notes": "This is the preferred term for a non-peak-picked (profile) spectrum. Use the term 'MS:1003059|number of peaks' for a peak-picked (centroid) spectrum.",
           "value": {
             "name": "value_of_type",
             "value": "xsd:integer"
@@ -1387,7 +1387,7 @@
           "accession": "MS:1000041",
           "name": "charge state",
           "repeatable": false,
-          "notes": "The \"charge state\" attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
+          "notes": "The 'charge state' attribute has two different meanings depending on its context. When this attribute is included under <Spectrum=...>, it is used to denote the experimental charge state of the precursor as inferred from the data (e.g. by the isotopic pattern of the precursor peak in the MSn-1 spectrum). If the spectrum is identified to an analyte, the charge state refers to that of the analyte believed to produce this spectrum. In such cases, the charge state attribute should be included in the <Analyte=> section instead.",
           "value": {
             "name": "value_of_type",
             "value": "xsd:integer"
@@ -1404,7 +1404,7 @@
           "accession": "MS:1001117",
           "name": "theoretical mass",
           "repeatable": false,
-          "notes": "This is the theoretical mass of the neutral molecule (does not include the charge-giving moiety. Use the term \u201cMS:1003243|adduct ion mass\u201d to refer to the mass of the adduct ion, which includes the charge-giving moiety.",
+          "notes": "This is the theoretical mass of the neutral molecule (does not include the charge-giving moiety. Use the term 'MS:1003243|adduct ion mass' to refer to the mass of the adduct ion, which includes the charge-giving moiety.",
           "value": {
             "name": "value_of_type",
             "value": "xsd:double"
