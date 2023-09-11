@@ -19,7 +19,7 @@ dependencies = [
 test = [
     "jsonschema"
 ]
-doc = [
+docs = [
     "sphinx",
     "sphinx-autobuild",
     "numpydoc>=1,<2",
