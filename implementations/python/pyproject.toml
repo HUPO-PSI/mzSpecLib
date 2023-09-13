@@ -21,11 +21,11 @@ test = [
 ]
 docs = [
     "sphinx",
-    "sphinx-autobuild",
+    "pydata-sphinx-theme",
     "numpydoc>=1,<2",
     "sphinx_click",
-    "sphinx_rtd_theme",
     "myst-parser",
+    "sphinx-autobuild",
 ]
 
 [project.scripts]
