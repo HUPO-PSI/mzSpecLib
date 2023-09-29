@@ -1,0 +1,33 @@
+{
+  "/Library": {
+    "title": "Metadata specific to the library",
+    "description": "The following attributes describe an entire collection of spectra, the library itself. They should be listed under the tag <mzSpecLib 1.0> and nowhere else in the library.",
+    "subgroups": [
+      "Terms that define the library as a collection and how it was constructed",
+      "Terms that define attribute sets",
+      "Terms that define clusters of spectra"
+    ]
+  },
+  "/Library/Spectrum": {
+    "title": "Metadata specific to library spectra",
+    "description": "The second level of metadata provides information specific to each library spectrum. The attributes SHOULD be organized in subcategories: those that pertain to the library spectrum and the origin of the spectrum, those that pertain to the spectrum itself, those that pertain to the interpretation of the spectrum, and those that pertain to the analyte(s) the spectrum is identified to. The following are attributes pertaining to the library spectrum and the origin of the spectrum, including the acquisition method and information about the precursor ion. They MUST be listed under <Spectrum=_>, or listed in library spectrum attribute sets.",
+    "subgroups": [
+      "Terms that identify the spectrum",
+      "Terms that describe how the spectrum is acquired, including the method and the context",
+      "Terms that describe how the spectrum itself, including steps of data processing leading to it",
+      "Terms that describe an aggregated spectrum (e.g. a consensus spectrum constructed from multiple replicates)",
+      "Terms that cross-reference other spectra in the same library or elsewhere",
+      "Terms that define the additional columns of the peak list"
+    ]
+  },
+  "/Library/Spectrum/Interpretation": {
+    "title": "Metadata specific to the interpretation",
+    "description": "These attributes describe the details of the interpretation of the spectrum. They MUST be listed under <Interpretation=_>. Additional attributes can be children of PSM-level search engine specific statistics [MS:1001143](https://www.ebi.ac.uk/ols/ontologies/ms/terms?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FMS_1001143), e.g., Comet:xcorr.",
+    "subgroups": ["Describing details of the interpretation of the spectrum"]
+  },
+  "/Library/Spectrum/Analyte": {
+    "title": "Metadata specific to the analyte",
+    "description": "These attributes refer to the analyte(s) to which the spectrum is identified. In the present version of the library format, only peptide analytes are supported, but support for other kinds of analytes (e.g. small molecule metabolites) are expected in the future. They MUST be listed under <Analyte=_>",
+    "subgroups": ["Terms that describe the analyte"]
+  }
+}
