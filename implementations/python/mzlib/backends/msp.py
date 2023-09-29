@@ -414,6 +414,11 @@ annotation_pattern = re.compile(r"""^
 
 
 class MSPAnnotationStringParser(annotation.AnnotationStringParser):
+    def _dispatch(self, annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
+        data['sequence_ordinal'] = None
+        data['sequence_internal'] = None
+        return super()._dispatch(annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs)
+
     def _dispatch_internal_peptide_fragment(self, data: Dict[str, Any], adducts: List, charge: int, isotope: int, neutral_losses: List,
                                             analyte_reference: Any, mass_error: Any, **kwargs):
         if data['internal_start']:

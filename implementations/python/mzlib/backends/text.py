@@ -292,13 +292,13 @@ class _EntryParser:
                 mz, intensity, annotation = tokens
                 if not annotation:
                     annotation = "?"
-                annotation = parse_annotation(annotation)
+                annotation = parse_annotation(annotation, wrap_errors=True)
                 self.peak_list.append([float(mz), float(intensity), annotation, []])
             elif n_tokens > 3:
                 mz, intensity, annotation, *aggregation = tokens
                 if not annotation:
                     annotation = "?"
-                annotation = parse_annotation(annotation)
+                annotation = parse_annotation(annotation, wrap_errors=True)
                 self.peak_list.append(
                     [float(mz), float(intensity), annotation, [try_cast(agg) for agg in aggregation]])
             else:
