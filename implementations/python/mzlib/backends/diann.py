@@ -114,12 +114,12 @@ class DIANNTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
                 else:
                     offset = stream.tell()
                 line = stream.readline()
-        self.index.add(
-            number=n,
-            offset=last_offset,
-            name=tokens[column_key].decode('utf8'),
-            analyte=None
-        )
+        # self.index.add(
+        #     number=n,
+        #     offset=last_offset,
+        #     name=tokens[column_key].decode('utf8'),
+        #     analyte=None
+        # )
         n += 1
         self.index.commit()
         return n

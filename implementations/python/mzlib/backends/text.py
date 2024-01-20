@@ -364,7 +364,9 @@ class _EntryParser:
         return self.spectrum
 
 
-def _is_header_line(line: str) -> bool:
+def _is_header_line(line: Union[str, bytes]) -> bool:
+    if isinstance(line, bytes):
+        line = line.decode('utf8')
     if START_OF_SPECTRUM_MARKER.match(line):
         return False
     if START_OF_CLUSTER.match(line):
@@ -388,10 +390,11 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 return True
         return False
 
-    def _parse_header_from_stream(self, stream: io.TextIOBase) -> Tuple[bool, int]:
+    def _parse_header_from_stream(self, stream: io.RawIOBase) -> Tuple[bool, int]:
         nbytes = 0
         first_line = stream.readline()
         nbytes += len(first_line)
+        first_line = first_line.decode('utf8')
 
         state = _LibraryParserStateEnum.unknown
 
@@ -409,7 +412,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             line = stream.readline()
             while _is_header_line(line):
                 nbytes += len(line)
-                line = line.strip()
+                line = line.strip().decode('utf8')
                 if not line:
                     line = stream.readline()
                     continue
@@ -439,7 +442,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                 d['term'], try_cast(d['value']))
 
                         line = stream.readline()
-                        nbytes += len(line)
+                        # nbytes += len(line)
                         continue
 
                     if line.startswith("["):
@@ -459,7 +462,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                 attributes.group_counter = int(d['group_id'])
 
                             line = stream.readline()
-                            nbytes += len(line)
+                            # nbytes += len(line)
                             continue
                         else:
                             raise ValueError(
@@ -479,13 +482,14 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                     current_attribute_set, current_attribute_set_type)
             self.attributes.clear()
             self.attributes._from_iterable(attributes)
+            print(f"Header contained {nbytes} bytes")
             return True, nbytes
         return False, 0
 
     def read_header(self) -> bool:
         if isinstance(self.filename, io.IOBase):
             return self._parse_header_from_stream(self.filename)[0]
-        with open_stream(self.filename, 'rt', encoding='utf8') as stream:
+        with open_stream(self.filename, 'rb') as stream:
             return self._parse_header_from_stream(stream)[0]
 
     def create_index(self) -> int:
@@ -573,13 +577,13 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                                 if n_spectra % 10000 == 0:
                                     self.index.commit()
                                     logger.info(
-                                        f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+                                        f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} clusters read")
                             else:
                                 self.index.add_cluster(number=current_key, offset=spectrum_file_offset)
                                 if n_clusters % 10000 == 0:
                                     self.index.commit()
                                     logger.info(
-                                        f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+                                        f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} clusters read")
                                 n_clusters += 1
                                 current_key = int(is_spec.group(1)) if is_spec else int(is_clus.group(1))
 
@@ -620,7 +624,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
         return n_spectra
 
-    def _buffer_from_stream(self, infile: io.IOBase) -> List:
+    def _buffer_from_stream(self, infile: Iterable[str]) -> List:
         state = 'body'
         spectrum_buffer = []
 

@@ -118,6 +118,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
     def _batch_rows(self, iterator: Iterator[Dict[str, Any]]) -> Iterator[List[Dict[str, Any]]]:
         group_key = None
         group = []
+        i = 0
         for row in iterator:
             key = [row[k_i] for k_i in self._key_columns]
             if group_key is None:
@@ -126,6 +127,7 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
             elif group_key == key:
                 group.append(row)
             else:
+                i += 1
                 yield group
                 group = [row]
                 group_key = key
@@ -174,14 +176,6 @@ class SpectronautTSVSpectralLibrary(_CSVSpectralLibraryBackendBase):
                 else:
                     offset = stream.tell()
                 line = stream.readline()
-
-        if key is not None:
-            self.index.add(
-                number=n,
-                offset=last_offset,
-                name=_ID_SEP.join(key).decode('utf8'),
-                analyte=None
-            )
         n += 1
         self.index.commit()
         return n

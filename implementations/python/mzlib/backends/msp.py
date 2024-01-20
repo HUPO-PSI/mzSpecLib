@@ -859,7 +859,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         filename = self.filename
         file_like_object = isinstance(filename, io.IOBase)
 
-        stream = open_stream(filename)
+        stream = open_stream(filename, 'rt')
         match, offset = self._parse_header_from_stream(stream)
         if file_like_object:
             if stream.seekable():
@@ -871,6 +871,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         first_line = stream.readline()
+        if isinstance(first_line, bytes):
+            first_line = first_line.decode('utf8')
         attributes = AttributeManager()
         attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         if isinstance(self.filename, (str, os.PathLike)):

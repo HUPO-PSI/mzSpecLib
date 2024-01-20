@@ -30,14 +30,16 @@ class _LineBuffer(object):
     lines: deque
     stream: io.IOBase
     last_line: str
+    encoding: Optional[str]
     _stream_is_file_like: bool
 
-    def __init__(self, stream: io.IOBase, lines: Iterable=None, last_line: str=None):
+    def __init__(self, stream: io.IOBase, lines: Iterable=None, last_line: str=None, encoding: Optional[str]=None):
         if lines is None:
             lines = []
         self.lines = deque(lines)
         self.stream = stream
         self.last_line = last_line
+        self.encoding = encoding
         self._stream_is_file_like = hasattr(self.stream, 'readline')
 
     def readline(self) -> Union[bytes, str]:
@@ -46,6 +48,8 @@ class _LineBuffer(object):
         else:
             line = self.stream.readline() if self._stream_is_file_like else next(self.stream)
         self.last_line = line
+        if self.encoding:
+            return line.decode(self.encoding)
         return line
 
     def push_line(self, line=None):
@@ -60,10 +64,16 @@ class _LineBuffer(object):
         while self.lines:
             line = self.lines.popleft()
             self.last_line = line
-            yield line
+            if self.encoding:
+                yield line.decode(self.encoding)
+            else:
+                yield line
         for line in self.stream:
             self.last_line = line
-            yield line
+            if self.encoding:
+                yield line.decode(self.encoding)
+            else:
+                yield line
 
     def __getattr__(self, attr):
         return getattr(self.stream, attr)
