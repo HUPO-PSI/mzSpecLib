@@ -414,6 +414,11 @@ annotation_pattern = re.compile(r"""^
 
 
 class MSPAnnotationStringParser(annotation.AnnotationStringParser):
+    def _dispatch(self, annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs):
+        data['sequence_ordinal'] = None
+        data['sequence_internal'] = None
+        return super()._dispatch(annotation_string, data, adducts, charge, isotope, neutral_losses, analyte_reference, mass_error, confidence, **kwargs)
+
     def _dispatch_internal_peptide_fragment(self, data: Dict[str, Any], adducts: List, charge: int, isotope: int, neutral_losses: List,
                                             analyte_reference: Any, mass_error: Any, **kwargs):
         if data['internal_start']:
@@ -854,7 +859,7 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         filename = self.filename
         file_like_object = isinstance(filename, io.IOBase)
 
-        stream = open_stream(filename)
+        stream = open_stream(filename, 'rt')
         match, offset = self._parse_header_from_stream(stream)
         if file_like_object:
             if stream.seekable():
@@ -866,6 +871,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
     def _parse_header_from_stream(self, stream: io.IOBase) -> Tuple[bool, int]:
         first_line = stream.readline()
+        if isinstance(first_line, bytes):
+            first_line = first_line.decode('utf8')
         attributes = AttributeManager()
         attributes.add_attribute(FORMAT_VERSION_TERM, DEFAULT_VERSION)
         if isinstance(self.filename, (str, os.PathLike)):

@@ -428,14 +428,14 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         raise NotImplementedError()
 
     def read(self) -> Iterator[Spectrum]:
-        with open_stream(self.filename, 'rt') as stream:
+        with open_stream(self.filename, 'rb') as stream:
             i = 0
             match, offset = self._parse_header_from_stream(stream)
             if not match:
                 raise ValueError("Could not locate valid header")
             else:
                 stream.seek(offset)
-            buffering_stream = _LineBuffer(stream)
+            buffering_stream = _LineBuffer(stream, encoding="utf8")
             while True:
                 # Will clip the first line of the next spectrum. Needs work
                 buffer = self._buffer_from_stream(buffering_stream)
