@@ -65,7 +65,7 @@ def main():
               type=click.Choice(sorted(SpectralLibraryBackendBase._file_extension_to_implementation)),
               help='The file format of the input file. If omitted, will attempt to infer automatically.')
 def describe(path, diagnostics=False, input_format=None):
-    """Produces a minimal textual description of a spectral library."""
+    """Produce a minimal textual description of a spectral library."""
     click.echo("Describing \"%s\"" % (path,))
     if SQLIndex.exists(path):
         index_type = SQLIndex

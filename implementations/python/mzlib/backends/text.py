@@ -6,13 +6,14 @@ import warnings
 import enum
 import numbers
 
+from dataclasses import dataclass
 from collections import deque
 from typing import ClassVar, List, Optional, Tuple, Union, Iterable
 
 from mzlib.annotation import parse_annotation
 from mzlib.spectrum import Spectrum
 from mzlib.cluster import SpectrumCluster
-from mzlib.attributes import AttributeManager, Attributed, AttributeSet
+from mzlib.attributes import Attribute, AttributeManager, Attributed, AttributeSet
 from mzlib.analyte import Analyte, Interpretation, InterpretationMember
 from mzlib.validate.object_rule import ValidationWarning
 
@@ -82,7 +83,23 @@ attribute_set_types = {
 }
 
 
-class _EntryParser:
+class _Scope:
+    state: _SpectrumParserStateEnum
+    attribute_group: Optional[str]
+    working_attribute_group: Optional[str]
+
+    def __init__(self, state: _SpectrumParserStateEnum, attribute_group: Optional[str] = None, working_attribute_group: Optional[str] = None) -> None:
+        if working_attribute_group is None:
+            working_attribute_group = attribute_group
+        self.state = state
+        self.attribute_group = attribute_group
+        self.working_attribute_group = working_attribute_group
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.state}, {self.attribute_group}, {self.working_attribute_group})"
+
+
+class _EntryParser(_Scope):
     """
     Moves the complexity and state management involved in parsing
     a full entry out of :class:`TextSpectrumLibrary`, allowing it
@@ -92,12 +109,13 @@ class _EntryParser:
 
     library: 'TextSpectralLibrary'
     state: _SpectrumParserStateEnum
+
     spectrum: Optional[Spectrum]
     cluster: Optional[SpectrumCluster]
     analyte: Optional[Analyte]
     interpretation: Optional[Interpretation]
     interpretation_member: Optional[InterpretationMember]
-
+    attribute_group: Optional[str]
     aggregation_types: List[str]
     peak_list: List[Tuple]
 
@@ -105,10 +123,11 @@ class _EntryParser:
     line_number: int = -1
 
     def __init__(self, library, start_line_number: int, spectrum_index: Optional[int]) -> None:
+        super().__init__(_SpectrumParserStateEnum.header, None)
+
         self.library = library
         self.start_line_number = start_line_number or 0
         self.spectrum_index = spectrum_index
-        self.state = _SpectrumParserStateEnum.header
 
         self.aggregation_types = None
         self.peak_list = []
@@ -118,6 +137,9 @@ class _EntryParser:
         self.analyte = None
         self.interpretation = None
         self.interpretation_member = None
+
+    def _parse_attribute_into(self, line: str, store: Attributed, line_number_message: str):
+        self.library._parse_attribute_into(line, store, line_number_message, self)
 
     def real_line_number_or_nothing(self):
         message = f" on line {self.line_number + self.start_line_number}"
@@ -163,8 +185,8 @@ class _EntryParser:
             self.cluster.key = int(match.group(1)) or self.cluster.index - 1
             return
 
-        self.library._parse_attribute_into(
-            line, self.spectrum, self.real_line_number_or_nothing, self.state)
+        self._parse_attribute_into(
+            line, self.spectrum, self.real_line_number_or_nothing)
 
     def _parse_interpretation(self, line):
         if START_OF_ANALYTE_MARKER.match(line):
@@ -200,7 +222,7 @@ class _EntryParser:
             self.interpretation.add_member_interpretation(self.interpretation_member)
             return
 
-        self.library._parse_attribute_into(
+        self._parse_attribute_into(
             line, self.interpretation.attributes, self.real_line_number_or_nothing)
         self.library._analyte_interpretation_link(self.spectrum, self.interpretation)
 
@@ -228,7 +250,7 @@ class _EntryParser:
             self.interpretation.add_member_interpretation(self.interpretation_member)
             return
 
-        self.library._parse_attribute_into(
+        self._parse_attribute_into(
             line, self.interpretation_member, self.real_line_number_or_nothing)
 
     def _parse_analyte(self, line):
@@ -264,7 +286,7 @@ class _EntryParser:
             self.spectrum.add_interpretation(self.interpretation)
             return
 
-        self.library._parse_attribute_into(line, self.analyte, self.real_line_number_or_nothing)
+        self._parse_attribute_into(line, self.analyte, self.real_line_number_or_nothing)
 
     def _parse_peaks(self, line):
         # TODO: When we know more about how different aggregations are formatted,
@@ -328,8 +350,8 @@ class _EntryParser:
             raise ValueError(
                 f"Clusters should not include interpretation member sections {self.real_line_number_or_nothing()}")
 
-        self.library._parse_attribute_into(
-            line, self.cluster, self.real_line_number_or_nothing, self.state)
+        self._parse_attribute_into(
+            line, self.cluster, self.real_line_number_or_nothing)
 
     def parse(self, buffer: Iterable[str]):
         line: str
@@ -377,7 +399,15 @@ def _is_header_line(line: Union[str, bytes]) -> bool:
 
 
 class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
-    file_format: ClassVar[str] = "mzlb.txt"
+    """
+    A reader for the plain text serialization of the mzSpecLib spectral library foramt.
+
+    This implementation may operate on a stream opened in binary mode or a file path.
+    If using a non-seekable stream, the random access or search methods may not be
+    supported.
+    """
+
+    file_format: ClassVar[List[str]] = ["mzlb.txt", "mzlib.txt"]
     format_name: ClassVar[str] = "text"
 
     @classmethod
@@ -608,7 +638,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 self.index.commit()
                 n_spectra += 1
                 logger.info(
-                    f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+                    f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} clusters read")
             elif entry_is_cluster:
                 self.index.add_cluster(
                     number=current_key,
@@ -617,7 +647,7 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 self.index.commit()
                 n_clusters += 1
                 logger.info(
-                    f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} read")
+                    f"Processed {file_offset} bytes, {n_spectra} spectra read, {n_clusters} clusters read")
 
             #### Flush the index
             self.index.commit()
@@ -648,46 +678,61 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
         except KeyError:
             match['value'] = try_cast(value)
 
-    def _parse_attribute_into(self, line: str, store: Attributed,
-                              line_number_message=lambda:'',
-                              state: _SpectrumParserStateEnum=None) -> bool:
+    def _parse_attribute(self, line: str, line_number_message=lambda: '', scope: Optional[_Scope]=None) -> Union[Attribute, AttributeSet]:
         match = key_value_term_pattern.match(line)
+        if scope is None:
+            scope = _Scope(None, None)
         if match is not None:
             d = match.groupdict()
             self._prepare_attribute_dict(d)
             if d['term'] == ATTRIBUTE_SET_NAME:
-                if _SpectrumParserStateEnum.header == state:
+                if _SpectrumParserStateEnum.header == scope.state:
                     attr_set = self.spectrum_attribute_sets[d['value']]
-                elif _SpectrumParserStateEnum.analyte == state:
+                elif _SpectrumParserStateEnum.analyte == scope.state:
                     attr_set = self.analyte_attribute_sets[d['value']]
-                elif _SpectrumParserStateEnum.interpretation == state:
+                elif _SpectrumParserStateEnum.interpretation == scope.state:
                     attr_set = self.interpretation_attribute_sets[d['value']]
-                elif _SpectrumParserStateEnum.cluster == state:
+                elif _SpectrumParserStateEnum.cluster == scope.state:
                     attr_set = self.cluster_attribute_sets[d['value']]
                 else:
-                    raise ValueError(f"Cannot define attribute sets for {state}")
-                attr_set.apply(store)
-            else:
-                store.add_attribute(d['term'], try_cast(d['value']))
-            return True
-        if line.startswith("["):
+                    raise ValueError(f"Cannot define attribute sets for {scope.state}")
+                return attr_set
+            attr = Attribute(d["term"], try_cast(d["value"]))
+            return attr
+        elif line.startswith("["):
             match = grouped_key_value_term_pattern.match(line)
             if match is not None:
                 d = match.groupdict()
                 self._prepare_attribute_dict(d)
-                store.add_attribute(
-                    d['term'], try_cast(d['value']), d['group_id'])
-                store.group_counter = int(d['group_id'])
-                return True
+                attr = Attribute(d['term'], try_cast(d['value']), d['group_id'])
+                return attr
             else:
-                raise ValueError(
-                    f"Malformed grouped attribute {line}{line_number_message()}")
+                raise ValueError(f"Malformed grouped attribute {line}{line_number_message()}")
         elif "=" in line:
             name, value = line.split("=", 1)
-            store.add_attribute(name, try_cast(value))
-            return True
+            attr = Attribute(name, try_cast(value))
+            return attr
         else:
             raise ValueError(f"Malformed attribute line {line}{line_number_message()}")
+
+    def _parse_attribute_into(self, line: str, store: Attributed,
+                              line_number_message=lambda:'',
+                              scope: Optional[_Scope]=None) -> bool:
+        if scope is None:
+            scope = _Scope(None, None)
+        attr = self._parse_attribute(line, line_number_message, scope)
+        if isinstance(attr, AttributeSet):
+            attr.apply(store)
+        else:
+            if attr.group_id:
+                if attr.group_id != scope.attribute_group:
+                    scope.attribute_group = attr.group_id
+                    scope.working_attribute_group = store.get_next_group_identifier()
+                    attr.group_id = scope.working_attribute_group
+                else:
+                    attr.group_id = scope.working_attribute_group
+            store.add_attribute(attr.key, attr.value, attr.group_id)
+        return True
 
     def _parse(self, buffer: Iterable[str], spectrum_index: int = None,
                start_line_number: int=None) -> Union[Spectrum, SpectrumCluster]:
@@ -708,6 +753,8 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             index_record = self.index.record_for(spectrum_name)
             offset = index_record.offset
             spectrum_number = index_record.number
+        else:
+            raise ValueError("Must provide either spectrum_number or spectrum_name argument")
 
         buffer = self._get_lines_for(offset)
         spectrum = self._parse(buffer, index_record.index)
@@ -721,6 +768,20 @@ class TextSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
 
 
 class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
+    """
+    Write a spectral library to the plain text serialization of the mzSpecLib spectral library format.
+
+    Attributes
+    ----------
+    version : str
+        The format version to write in semver-compatible notation
+    compact_interpretation : bool, default :const:`True`
+        Whether to elect to write compact interpretation member sections when there is only
+        one interpretation and only one interpretation member by inlining the interpretation
+        member attributes into the interpretation. Both forms are valid, one is just less
+        verbose.
+    """
+
     file_format = "mzlb.txt"
     format_name = "text"
     default_version = '1.0'
@@ -754,9 +815,7 @@ class TextSpectralLibraryWriter(SpectralLibraryWriterBase):
         else:
             version = self.version
         self.handle.write("<mzSpecLib %s>\n" % (version, ))
-        self._write_attributes(
-            self._filter_attributes(library.attributes, lambda x: x.key != FORMAT_VERSION_TERM)
-        )
+        self._write_attributes(library.attributes)
         for attr_set in library.spectrum_attribute_sets.values():
             self.write_attribute_set(attr_set, AttributeSetTypes.spectrum)
 

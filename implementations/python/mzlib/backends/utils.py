@@ -80,6 +80,10 @@ class _LineBuffer(object):
 
 
 def try_cast(value: Any) -> Union[str, int, float, Any]:
+    """
+    Given a value, if it is a string, attempt to convert it to a numeric type,
+    or else return it as is.
+    """
     if value is None:
         return value
     if not isinstance(value, str):
@@ -122,7 +126,8 @@ def test_gzipped(f) -> bool:
 
 
 def starts_with_gz_magic(bytestring):
-    '''Tests whether or not a byte string starts with
+    """
+    Test whether or not a byte string starts with
     the GZIP magic bytes.
 
     Parameters
@@ -133,22 +138,21 @@ def starts_with_gz_magic(bytestring):
     Returns
     -------
     bool
-    '''
+    """
     return bytestring.startswith(GZIP_MAGIC)
 
 
 def open_stream(f: Union[io.IOBase, os.PathLike], mode='rt', buffer_size: Optional[int]=None, encoding: Optional[str]='utf8', newline=None):
-    '''Select the file reading type for the given path or stream.
+    """
+    Select the file reading type for the given path or stream.
 
     Detects whether the file is gzip encoded.
-    '''
+    """
     if buffer_size is None:
         buffer_size = DEFAULT_BUFFER_SIZE
     if 'r' in mode:
         if not hasattr(f, 'read'):
             f = io.open(f, 'rb')
-        # On Py2, dill doesn't behave correctly with io-derived objects, so we have to
-        # patch it below. Don't try to wrap an io.TextIOWrapper on Py3.
         if not isinstance(f, io.BufferedReader) and not isinstance(f, io.TextIOWrapper):
             buffered_reader = io.BufferedReader(f, buffer_size)
         else:

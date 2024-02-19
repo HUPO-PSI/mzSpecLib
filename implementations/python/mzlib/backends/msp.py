@@ -803,6 +803,7 @@ class _UnknownTermTracker:
     counts: DefaultDict
 
     def add(self, key: str, value: Optional[str]=None):
+        """Add an unknown attribute to the tracker"""
         raise NotImplementedError()
 
     def items(self):
@@ -810,6 +811,12 @@ class _UnknownTermTracker:
 
 
 class UnknownKeyValueTracker(_UnknownTermTracker):
+    """
+    A diagnostic tool for tracking attributes with values that the parser doesn't know how to interpret.
+
+    This tracker holds both keys and values, and can grow quite large. For debugging purposes only.
+    """
+
     def __init__(self) -> None:
         self.counts = DefaultDict(lambda: DefaultDict(int))
 
@@ -818,6 +825,8 @@ class UnknownKeyValueTracker(_UnknownTermTracker):
 
 
 class UnknownKeyTracker(_UnknownTermTracker):
+    """A diagnostic tool for tracking attributes that the parser doesn't know how to interpret."""
+
     def __init__(self) -> None:
         self.counts = DefaultDict(int)
 
@@ -836,6 +845,28 @@ protein_attributes_to_group = [
 
 
 class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
+    """
+    A reader for the plain text NIST MSP spectral library format.
+
+    The MSP format is only roughly defined, and does places few
+    constraints on the meanings of spectrum attributes. This parser
+    attempts to cover a variety of different ways that MSPs found
+    "in the wild" have denoted different spectrum properties, but
+    is neither exhaustive nor nuanced enough to know from context
+    exactly what those files' authors intended, making a best guess
+    at when they correspond to in the controlled vocabulary mapping
+    for :mod:`mzlib`
+
+
+    Attributes
+    ----------
+    modification_parser : :class:`ModificationParser`
+        A parser for peptide modifications
+    unknown_attributes : :class:`_UnknownTermTracker`
+        A tracker for unknown attributes. Used to tell how much information
+        the reader is unable to map onto the controlled vocabulary.
+    """
+
     file_format = "msp"
     format_name = "msp"
 
@@ -1192,6 +1223,35 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
                 attributes[item] = None
 
     def _make_attribute_handlers(self):
+        """
+        Create the attribute handling scopes that map this flavor of MSP's
+        attributes onto controlled vocabulary terms in context.
+
+        This method should be overridden in sub-classes to allow them
+        to change the meanings of attributes, add new ones, or otherwise
+        redirect how they are interpreted.
+
+        See the :class:`AttributeHandler` type tree for more details about
+        how the distributed predicates are resolved.
+
+        Returns
+        -------
+        other_manager : :class:`AttributeHandler`
+            The attribute handler for uncategorized attributes that will be added
+            to a :class:`Spectrum`.
+        analyte_manager : :class:`AttributeHandler`
+            The attribute handler for attributes that will be added to a :class:`Analyte`
+        interpretation_manager : :class:`AttributeHandler`
+            The attribute handler for attributes that will be added to a :class:`Interpretation`
+        interpretation_member_manager : :class:`AttributeHandler`
+            The attribute handler for attributes that will be added to a :class:`InterpretationMember`
+        spectrum_manager : :class:`AttributeHandler`
+            The attribute handler for attributes that will be added to a :class:`Spectrum`
+        analyte_fallback_manager : :class:`AttributeHandler`
+            The attribute handler for attributes that will be tried for any attribute
+            that fails to be categorized by all of the other managers to be added to the
+            :class:`Analyte` before labeling the attribute as "unknown".
+        """
         other_manager = MappingAttributeHandler(other_terms)
         analyte_manager = MappingAttributeHandler(analyte_terms)
         interpretation_manager = MappingAttributeHandler(interpretation_terms)
@@ -1414,6 +1474,8 @@ class MSPSpectralLibrary(_PlainTextSpectralLibraryBackendBase):
             index_record = self.index.record_for(spectrum_name)
             spectrum_number = index_record.number
             offset = index_record.offset
+        else:
+            raise ValueError("Must provide either spectrum_number or spectrum_name argument")
         buffer = self._get_lines_for(offset)
         spectrum = self._parse(buffer, index_record.index)
         return spectrum
