@@ -9,7 +9,7 @@ from pathlib import Path
 from mzlib.cluster import SpectrumCluster
 
 from mzlib.index import MemoryIndex
-from mzlib.attributes import AttributeManager, Attributed
+from mzlib.attributes import AttributeManager, Attributed, AttributeSet
 from mzlib.annotation import parse_annotation, IonAnnotationBase
 from mzlib.analyte import Analyte, Interpretation, FIRST_INTERPRETATION_KEY
 from mzlib.spectrum import Spectrum
@@ -46,7 +46,21 @@ FORMAT_VERSION_ACC = FORMAT_VERSION_TERM.split("|")[0]
 
 
 class JSONSpectralLibrary(SpectralLibraryBackendBase):
-    file_format = "mzlb.json"
+    """
+    A reader for the JSON serialization of the mzSpecLib spectral library foramt.
+
+    .. note::
+
+        Unlike other formats readers, this type does not parse incrementally, it instead
+        parses the entire JSON document in-memory and stores the parsed object structure.
+        The JSON objects are then converted into :mod:`mzlib` types upon request. This is
+        because incremental JSON parsing is substantially more difficult to do in a byte
+        aware manner, not to mention slow, in Python.
+
+        This may lead to large memory overhead when reading large libraries in JSON format.
+    """
+
+    file_format = ["mzlb.json", "mzlib.json"]
     format_name = "json"
 
     def __init__(self, filename, index_type=None, read_metadata=True):
@@ -79,9 +93,17 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             self.buffer = json.load(self.handle)
             self.handle.close()
 
+    def _load_attribute_sets(self, attribute_sets: dict):
+        return {
+            k: self._fill_attributes(v, AttributeSet(k, [])) for k, v in attribute_sets.items()
+        }
+
     def read_header(self) -> bool:
         if self.buffer:
             self._fill_attributes(self.buffer.get(LIBRARY_METADATA_KEY), self.attributes)
+            self.analyte_attribute_sets.update(self._load_attribute_sets(self.buffer.get(ANALYTE_CLASSES, {})))
+            self.spectrum_attribute_sets.update(self._load_attribute_sets(self.buffer.get(SPECTRUM_CLASSES, {})))
+            self.interpretation_attribute_sets.update(self._load_attribute_sets(self.buffer.get(INTERPRETATION_CLASSES, {})))
             return True
         return False
 
@@ -135,6 +157,8 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
             offset = self.index.offset_for(spectrum_name)
+        else:
+            raise ValueError("Must provide either spectrum_number or spectrum_name argument")
         data = self.buffer[SPECTRA_KEY][offset]
         spectrum = self._make_spectrum_from_payload(data)
         return spectrum
@@ -147,6 +171,8 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
 
     def _fill_attributes(self, attributes: List[Dict[str, Any]], store: Attributed,
                          context_type: AttributeSetTypes=None) -> Attributed:
+        last_group_id = None
+        current_group_id = None
         for attrib in attributes:
             if attrib['accession'] == "MS:1003212":
                 if context_type == AttributeSetTypes.analyte:
@@ -165,13 +191,17 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
                     value = f'{attrib["value_accession"]}|{attrib["value"]}'
                 else:
                     value = attrib['value']
-                # TODO: When applying an attribute set with a group in it, we
-                # may collide with an existing (hard-coded) group identifier.
-                # This behavior probably exists in the text format too.
+
                 group = attrib.get("cv_param_group")
-                store.add_attribute(key, value, group_identifier=group)
                 if group is not None:
-                    store.group_counter = int(group)
+                    if group != last_group_id:
+                        current_group_id = store.get_next_group_identifier()
+                        last_group_id = group
+                        group = current_group_id
+                    else:
+                        group = current_group_id
+
+                store.add_attribute(key, value, group_identifier=group)
         return store
 
     def _make_analyte_from_payload(self, analyte_id, analyte_d: Dict) -> Analyte:
@@ -269,6 +299,18 @@ class JSONSpectralLibrary(SpectralLibraryBackendBase):
 
 
 class JSONSpectralLibraryWriter(SpectralLibraryWriterBase):
+    """
+    Write a spectral library to the JSON serialization of the mzSpecLib spectral library foramt.
+
+    .. note::
+
+        Unlike other format writers, this writer buffers the entire library in memory as JSON-compatible
+        Python objects until the entire library is ready to be written out. This is because incrementally
+        writing JSON is substantially more difficult to do correctly.
+
+        This may lead to large memory overhead when writing large libraries in JSON format.
+    """
+
     file_format = "mzlb.json"
     format_name = "json"
     default_version = '1.0'

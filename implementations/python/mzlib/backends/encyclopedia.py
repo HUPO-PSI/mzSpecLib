@@ -131,6 +131,10 @@ class EncyclopediaSpectralLibrary(SpectralLibraryBackendBase):
         """
         if spectrum_number is None:
             raise ValueError("Only spectrum number queries are supported. spectrum_number must have an integer value")
+        try:
+            spectrum_number = int(spectrum_number)
+        except (TypeError, ValueError):
+            raise ValueError(f"spectrum_number must have an integer value, received {spectrum_number!r}") from None
 
         info = self.connection.execute("SELECT rowid, * FROM entries WHERE rowid = ?;", (spectrum_number, )).fetchone()
         spectrum = self._new_spectrum()
