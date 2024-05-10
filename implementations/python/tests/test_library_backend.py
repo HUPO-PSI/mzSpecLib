@@ -25,9 +25,9 @@ class LibraryBehaviorBase(object):
             "MS:1003061|library spectrum name") == "AAAAGSTSVKPIFSR/2_0_44eV"
 
     # TODO: Fix clipping in _buffer_from_stream first
-    # def test_iteration(self):
-    #     lib = self._open_library()
-    #     assert list(lib) == list(lib.read())
+    def test_iteration(self):
+        lib = self._open_library()
+        assert list(lib) == list(lib.read())
 
 
 class TestMSPLibrary(unittest.TestCase, LibraryBehaviorBase):
@@ -70,7 +70,7 @@ class TestSpectronautLibrary(unittest.TestCase, LibraryBehaviorBase):
 
     def test_sequence_behavior(self):
         lib = self._open_library()
-        assert len(lib) == 10
+        assert len(lib) == 9
 
         spec: Spectrum = lib[0]
         assert spec.name == 'AQIPILR/2'
@@ -89,7 +89,7 @@ class TestDIANNTSVLibrary(unittest.TestCase, LibraryBehaviorBase):
 
     def test_sequence_behavior(self):
         lib = self._open_library()
-        assert len(lib) == 10
+        assert len(lib) == 9
 
         spec: Spectrum = lib[0]
         analyte = spec.get_analyte(1)

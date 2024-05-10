@@ -56,7 +56,11 @@ class SubclassRegisteringMetaclass(type):
 
         file_extension = attrs.get("file_format")
         if file_extension is not None:
-            new_type._file_extension_to_implementation[file_extension] = new_type
+            if isinstance(file_extension, list):
+                for ext in file_extension:
+                    new_type._file_extension_to_implementation[ext] = new_type
+            else:
+                new_type._file_extension_to_implementation[file_extension] = new_type
 
         format_name = attrs.get("format_name")
         if format_name is not None:
@@ -126,6 +130,8 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
             return False
         if filename.endswith(".gz"):
             filename = filename[:-3]
+        if isinstance(cls.file_format, list):
+            return any(filename.endswith(ext) for ext in cls.file_format)
         return filename.endswith(cls.file_format)
 
     @classmethod
@@ -334,7 +340,7 @@ class SpectralLibraryBackendBase(AttributedEntity, _VocabularyResolverMixin, _Li
     @classmethod
     def has_index_preference(cls, filename: Union[str, Path, io.FileIO]) -> Type[IndexBase]:
         """
-        Does this backend prefer a particular index for this file?
+        Check if this backend prefers a particular index for this file.
 
         The base implementation checks to see if there is a SQL index
         for the filename provided, and if so, prefers :class:`~.SQLIndex`.
@@ -428,14 +434,14 @@ class _PlainTextSpectralLibraryBackendBase(SpectralLibraryBackendBase):
         raise NotImplementedError()
 
     def read(self) -> Iterator[Spectrum]:
-        with open_stream(self.filename, 'rt') as stream:
+        with open_stream(self.filename, 'rb') as stream:
             i = 0
             match, offset = self._parse_header_from_stream(stream)
             if not match:
                 raise ValueError("Could not locate valid header")
             else:
                 stream.seek(offset)
-            buffering_stream = _LineBuffer(stream)
+            buffering_stream = _LineBuffer(stream, encoding="utf8")
             while True:
                 # Will clip the first line of the next spectrum. Needs work
                 buffer = self._buffer_from_stream(buffering_stream)
@@ -542,6 +548,8 @@ class _CSVSpectralLibraryBackendBase(SpectralLibraryBackendBase):
             offset = self.index.offset_for(spectrum_number)
         elif spectrum_name is not None:
             offset = self.index.offset_for(spectrum_name)
+        else:
+            raise ValueError("Must provide either spectrum_number or spectrum_name argument")
         buffer = self._get_lines_for(offset)
         spectrum = self._parse_from_buffer(buffer, spectrum_number)
         return spectrum
@@ -670,6 +678,8 @@ class SpectralLibraryWriterBase(_VocabularyResolverMixin, metaclass=SubclassRegi
 
 
 class LibraryIterator(AttributedEntity, _LibraryViewMixin, Iterator[Spectrum]):
+    """An iterator wrapper for a library source that doesn't permit random access"""
+
     backend: SpectralLibraryBackendBase
     attributes: Attributed
     iter: Iterator[Spectrum]

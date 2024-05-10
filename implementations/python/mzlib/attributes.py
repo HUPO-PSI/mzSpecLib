@@ -2,7 +2,7 @@ import textwrap
 
 from typing import (
     Any, DefaultDict, Iterable,
-    Iterator, Optional, Tuple,
+    Iterator, Optional, Set, Tuple,
     Union, List, Dict,
     Generic, TypeVar, Type
 )
@@ -147,6 +147,10 @@ class AttributeManager(object):
             The attribute group identifier to use, if any. If not provided,
             no group is assumed.
         """
+        if group_identifier is not None:
+            int_group_identifier = int(group_identifier)
+            if int_group_identifier <= self.group_counter:
+                self.group_counter = int_group_identifier + 1
         items = Attribute(key, value, group_identifier)
         self.attributes.append(items)
         index = len(self.attributes) - 1
@@ -550,6 +554,9 @@ class _WriteAttributes(object):
         """
         return self.attributes.add_attribute(key, value, group_identifier=group_identifier)
 
+    def add_attribute_group(self, attributes: List[Union[Attribute, Tuple[str, Any]]]):
+        self.attributes.add_attribute_group(attributes)
+
     def replace_attribute(self, key, value, group_identifier=None):
         return self.attributes.replace_attribute(key, value, group_identifier=group_identifier)
 
@@ -717,10 +724,19 @@ AttributeProxy = ROAttributeProxy
 
 class AttributeSet(AttributedEntity):
     name: str
+    _names_to_override: Set[str]
 
     def __init__(self, name: str, attributes: Iterable = None, **kwargs):
         super().__init__(attributes, **kwargs)
         self.name = name
+        self._names_to_override = self._get_names_to_override()
+
+    def _get_names_to_override(self):
+        keys = set()
+        for attr in self.attributes:
+            if attr.group_id is None:
+                keys.add(attr.key)
+        return keys
 
     def member_of(self, target: Attributed) -> bool:
         for attrib in self.attributes:
@@ -730,7 +746,8 @@ class AttributeSet(AttributedEntity):
                 return False
         return True
 
-    def apply(self, target: Attributed, ):
+    def apply(self, target: Attributed):
+
         terms_to_remove: List[Tuple[str, Union[Attribute, List[Attribute]]]] = []
         for key in self.attributes.keys():
             if target.has_attribute(key):
