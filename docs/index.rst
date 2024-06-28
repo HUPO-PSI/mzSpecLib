@@ -9,5 +9,4 @@
 
    Home <self>
    specification/index
-   implementations/index
    contributing

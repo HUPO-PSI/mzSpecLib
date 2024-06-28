@@ -7,7 +7,7 @@
 ![Watchers](https://flat.badgen.net/github/watchers/HUPO-PSI/mzSpecLib)
 ![Stars](https://flat.badgen.net/github/stars/HUPO-PSI/mzSpecLib)
 
-**HUPO-PSI standardized spectral library format**  
+**HUPO-PSI standardized spectral library format**
 mzSpecLib is a formal standard and file format in development at
 [HUPO-PSI](http://www.psidev.info/) to store and distribute
 spectral libraries/archives. The target main target audience for this format are
@@ -61,16 +61,17 @@ is used as a central point of information regarding the format's development:
   - [mzSpecLib general data model schematic](https://drive.google.com/file/d/1OVh5ATfKXA77pM4CYzRfdupeRGu3vt5c/view?usp=sharing)
 
 
-Currently, the project's progress can be split up into the development of the
-[main specification](https://github.com/HUPO-PSI/mzSpecLib/tree/master/specification)
-and into a [Python implementation](https://github.com/HUPO-PSI/mzSpecLib/tree/master/implementations/python)
-of this specification.
+## Reference implementation
+
+A reference implementation of the mzSpecLib format is available in the form of a Python package.
+Check out the [mzspeclib-py](https://github.com/HUPO-PSI/mzspeclib-py) repository or the
+[Python package documentation](https://mzspeclib.readthedocs.io/) for more information.
 
 
 ## Contributing
 
 All community input is welcome! Feel free to join the discussions in the [Issue
 tracker](https://github.com/HUPO-PSI/SpectralLibraryFormat/issues) or to open a
-new issue if you have questions, recommendations or requests. Additionally, 
+new issue if you have questions, recommendations or requests. Additionally,
 everyone is allowed to post comments in the Google documents or to request full
 write access to fully contribute to the specification.
