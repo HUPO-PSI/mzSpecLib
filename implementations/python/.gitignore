@@ -1,7 +1,0 @@
-*.pyc
-__pycache__
-*egg-info*
-*.ipynb
-examples/*splindex
-.coverage
-htmlcov/
