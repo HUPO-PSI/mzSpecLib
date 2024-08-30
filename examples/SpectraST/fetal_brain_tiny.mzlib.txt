@@ -1,8 +1,8 @@
 <mzSpecLib 1.0>
+MS:1003190|library version=1.0
 MS:1003187|library identifier=mzspec:PXL000001:fetal_brain_tiny
 MS:1003188|library name=fetal_brain_tiny
 MS:1003189|library description=A small example MS/MS raw spectral library of 5 human fetal brain peptides
-MS:1003190|library version=1.0
 MS:1001017|release date=2023-05-04T00:00:00
 [1]MS:1003207|library creation software=MS:1001477|SpectraST
 [1]MS:1003200|software version=6.0
@@ -49,7 +49,7 @@ MS:1003059|number of peaks=239
 [3]MS:1003276|other attribute value=570
 
 <Analyte=1>
-MS:1003270|proforma peptidoform ion notation=FAC[Carbamidomethyl]HSASLTVR/3 
+MS:1003270|proforma peptidoform ion notation=FAC[Carbamidomethyl]HSASLTVR/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=11
 MS:1003243|adduct ion mass=1250.6299
@@ -355,7 +355,7 @@ MS:1003288|number of unassigned peaks=131
 MS:1003080|top 20 peak unassigned intensity fraction=0.29
 MS:1003079|total unassigned intensity fraction=0.21
 [1]MS:1003209|monoisotopic m/z deviation=-0.0004
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.767
 MS:1002357|PSM-level probability=1.0
 
@@ -680,7 +680,7 @@ MS:1003288|number of unassigned peaks=162
 MS:1003080|top 20 peak unassigned intensity fraction=0.59
 MS:1003079|total unassigned intensity fraction=0.23
 [1]MS:1003209|monoisotopic m/z deviation=-0.0009
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=2.624
 MS:1002357|PSM-level probability=1.0
 
@@ -1060,7 +1060,7 @@ MS:1003288|number of unassigned peaks=259
 MS:1003080|top 20 peak unassigned intensity fraction=0.51
 MS:1003079|total unassigned intensity fraction=0.21
 [1]MS:1003209|monoisotopic m/z deviation=0.4904
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=2.142
 MS:1002357|PSM-level probability=0.9958
 
@@ -1584,7 +1584,7 @@ MS:1003288|number of unassigned peaks=142
 MS:1003080|top 20 peak unassigned intensity fraction=0.57
 MS:1003079|total unassigned intensity fraction=0.25
 [1]MS:1003209|monoisotopic m/z deviation=0.4906
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.894
 MS:1002357|PSM-level probability=0.9846
 
@@ -1884,7 +1884,7 @@ MS:1003288|number of unassigned peaks=252
 MS:1003080|top 20 peak unassigned intensity fraction=0.54
 MS:1003079|total unassigned intensity fraction=0.36
 [1]MS:1003209|monoisotopic m/z deviation=0.4910
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.894
 MS:1002357|PSM-level probability=0.9925
 
@@ -2321,7 +2321,7 @@ MS:1003288|number of unassigned peaks=62
 MS:1003080|top 20 peak unassigned intensity fraction=0.17
 MS:1003079|total unassigned intensity fraction=0.09
 [1]MS:1003209|monoisotopic m/z deviation=-0.0010
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.565
 MS:1002357|PSM-level probability=1.0
 
@@ -2840,7 +2840,7 @@ MS:1003288|number of unassigned peaks=77
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.09
 [1]MS:1003209|monoisotopic m/z deviation=-0.0016
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.649
 MS:1002357|PSM-level probability=1.0
 
@@ -3135,7 +3135,7 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=76
 MS:1003080|top 20 peak unassigned intensity fraction=0.19
 MS:1003079|total unassigned intensity fraction=0.1
-1003209|monoisotopic m/z deviation=-0.0002 
+1003209|monoisotopic m/z deviation=-0.0002
 MS:1002252|Comet:xcorr=3.726
 MS:1002357|PSM-level probability=1.0
 
@@ -3388,7 +3388,7 @@ MS:1003288|number of unassigned peaks=51
 MS:1003080|top 20 peak unassigned intensity fraction=0.19
 MS:1003079|total unassigned intensity fraction=0.11
 [1]MS:1003209|monoisotopic m/z deviation=-0.0007
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.654
 MS:1002357|PSM-level probability=1.0
 
@@ -3579,7 +3579,7 @@ MS:1003288|number of unassigned peaks=70
 MS:1003080|top 20 peak unassigned intensity fraction=0.21
 MS:1003079|total unassigned intensity fraction=0.19
 [1]MS:1003209|monoisotopic m/z deviation=-0.0012
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.195
 MS:1002357|PSM-level probability=1.0
 
@@ -3763,7 +3763,7 @@ MS:1003288|number of unassigned peaks=74
 MS:1003080|top 20 peak unassigned intensity fraction=0.16
 MS:1003079|total unassigned intensity fraction=0.21
 [1]MS:1003209|monoisotopic m/z deviation=-0.0004
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.217
 MS:1002357|PSM-level probability=1.0
 
@@ -3954,7 +3954,7 @@ MS:1003288|number of unassigned peaks=78
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.19
 [1]MS:1003209|monoisotopic m/z deviation=-0.0013
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.114
 MS:1002357|PSM-level probability=0.9999
 
@@ -4158,7 +4158,7 @@ MS:1003288|number of unassigned peaks=54
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.22
 [1]MS:1003209|monoisotopic m/z deviation=-0.0002
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=2.583
 MS:1002357|PSM-level probability=0.9787
 
@@ -4312,7 +4312,7 @@ MS:1003288|number of unassigned peaks=52
 MS:1003080|top 20 peak unassigned intensity fraction=0.22
 MS:1003079|total unassigned intensity fraction=0.34
 [1]MS:1003209|monoisotopic m/z deviation=-0.0012
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=2.226
 MS:1002357|PSM-level probability=0.9798
 
@@ -4449,7 +4449,7 @@ MS:1003288|number of unassigned peaks=150
 MS:1003080|top 20 peak unassigned intensity fraction=0.53
 MS:1003079|total unassigned intensity fraction=0.3
 [1]MS:1003209|monoisotopic m/z deviation=-0.0018
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.696
 MS:1002357|PSM-level probability=0.9734
 
@@ -4701,7 +4701,7 @@ MS:1003288|number of unassigned peaks=84
 MS:1003080|top 20 peak unassigned intensity fraction=0.53
 MS:1003079|total unassigned intensity fraction=0.23
 [1]MS:1003209|monoisotopic m/z deviation=-0.0010
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.678
 MS:1002357|PSM-level probability=0.9861
 
@@ -4882,7 +4882,7 @@ MS:1003288|number of unassigned peaks=77
 MS:1003080|top 20 peak unassigned intensity fraction=0.53
 MS:1003079|total unassigned intensity fraction=0.23
 [1]MS:1003209|monoisotopic m/z deviation=-0.0015
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.747
 MS:1002357|PSM-level probability=0.9953
 
@@ -5251,7 +5251,7 @@ MS:1003288|number of unassigned peaks=60
 MS:1003080|top 20 peak unassigned intensity fraction=0.69
 MS:1003079|total unassigned intensity fraction=0.51
 [1]MS:1003209|monoisotopic m/z deviation=-0.0014
-[1]UO:0000000|unit=MS:1000040|m/z 
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.455
 MS:1002357|PSM-level probability=0.9171
 
