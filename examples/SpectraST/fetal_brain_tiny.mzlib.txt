@@ -1,8 +1,8 @@
 <mzSpecLib 1.0>
+MS:1003190|library version=1.0
 MS:1003187|library identifier=mzspec:PXL000001:fetal_brain_tiny
 MS:1003188|library name=fetal_brain_tiny
 MS:1003189|library description=A small example MS/MS raw spectral library of 5 human fetal brain peptides
-MS:1003190|library version=1.0
 MS:1001017|release date=2023-05-04
 [1]MS:1003207|library creation software=MS:1001477|SpectraST
 [1]MS:1003200|software version=6.0
