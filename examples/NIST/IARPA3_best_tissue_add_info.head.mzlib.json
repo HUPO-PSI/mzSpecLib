@@ -21,7 +21,7 @@
     {
       "accession": "MS:1001017",
       "name": "release date",
-      "value": "Oct. 01, 2021"
+      "value": "2021-10-01T00:00:00"
     },
     {
       "accession": "MS:1003203",
@@ -3391,8 +3391,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 401.2219
             },
             {
@@ -4219,8 +4219,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 852.9332
             },
             {
@@ -4961,8 +4961,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 989.3815
             },
             {
@@ -6024,8 +6024,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 997.379
             },
             {
@@ -7006,8 +7006,8 @@
               "value": 3
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 439.5529
             },
             {
@@ -7699,8 +7699,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 697.8148
             },
             {
@@ -8245,8 +8245,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 943.4136
             },
             {
@@ -10279,8 +10279,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 999.5469
             },
             {
@@ -11315,8 +11315,8 @@
               "value": 3
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 666.7004
             },
             {
@@ -12119,8 +12119,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 722.365
             },
             {
@@ -12651,8 +12651,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 1044.4864
             },
             {
@@ -13398,8 +13398,8 @@
               "value": 3
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 696.66
             },
             {
@@ -14211,8 +14211,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 390.1934
             },
             {
@@ -15887,8 +15887,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 566.7985
             },
             {
@@ -16461,8 +16461,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 686.287
             },
             {
@@ -18742,8 +18742,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 591.2846
             },
             {
@@ -19424,8 +19424,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 792.3781
             },
             {
@@ -19998,8 +19998,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 851.9512
             },
             {
@@ -20672,8 +20672,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 625.3122
             },
             {
@@ -21099,8 +21099,8 @@
               "value": 2
             },
             {
-              "accession": "MS:1003208",
-              "name": "experimental precursor monoisotopic m/z",
+              "accession": "MS:1000744",
+              "name": "selected ion m/z",
               "value": 414.7505
             },
             {

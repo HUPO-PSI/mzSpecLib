@@ -3,7 +3,7 @@ MS:1003187|library identifier=mzspec:PXL000001:fetal_brain_tiny
 MS:1003188|library name=fetal_brain_tiny
 MS:1003189|library description=A small example MS/MS raw spectral library of 5 human fetal brain peptides
 MS:1003190|library version=1.0
-MS:1001017|release date=2023-05-04
+MS:1001017|release date=2023-05-04T00:00:00
 [1]MS:1003207|library creation software=MS:1001477|SpectraST
 [1]MS:1003200|software version=6.0
 [1]MS:1003206|library creation log=COMPILE FROM "/data/fetal_brain.splib" ; FILTER for entries in probability table "/fetal_brain_tiny.txt"
@@ -19,7 +19,8 @@ MS:1000443|mass analyzer type=MS:1000484|orbitrap
 MS:1000044|dissociation method=MS:1000422|beam-type collision induced dissociation
 MS:1003213|mass spectrometry acquisition method=MS:1003221|data-dependent acquisition
 MS:1000465|scan polarity=MS:1000130|positive scan
-MS:1000034|intensity unit=MS:1000905|percent of base peak times 100
+MS:1000043|intensity unit=MS:1000905|percent of base peak times 100
+MS:1003065|spectrum aggregation type=MS:1003066|singleton spectrum
 [1]MS:1000045|collision energy=39.0
 [1]UO:0000000|unit=UO:0000266|electronvolt
 MS:1003072|spectrum origin type=MS:1003073|observed spectrum
@@ -33,7 +34,6 @@ MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1003048|number of enzymatic termini=2
 
 <Spectrum=1>
-MS:1003062|library spectrum index=0
 MS:1003061|library spectrum name=FAC[Carbamidomethyl]HSASLTVR/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=416.8757
 [1]MS:1000894|retention time=1189.6
@@ -51,9 +51,8 @@ MS:1003059|number of peaks=239
 <Analyte=1>
 MS:1003270|proforma peptidoform ion notation=FAC[Carbamidomethyl]HSASLTVR/3 
 MS:1000041|charge state=3
-MS:1001471|peptide modification details=1/2,C,Carbamidomethyl
 MS:1003043|number of residues=11
-MS:1003247|adduct ion mass=1250.6299
+MS:1003243|adduct ion mass=1250.6299
 MS:1003053|theoretical monoisotopic m/z=416.8766
 MS:1003054|theoretical average m/z=417.148
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -69,7 +68,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=4
 MS:1003288|number of unassigned peaks=126
 MS:1003080|top 20 peak unassigned intensity fraction=0.38
 MS:1003079|total unassigned intensity fraction=0.17
-MS:1003209|monoisotopic m/z deviation=-0.0009
+[1]MS:1003209|monoisotopic m/z deviation=-0.0009
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.455
 MS:1002357|PSM-level probability=0.998
 
@@ -315,7 +315,6 @@ MS:1002357|PSM-level probability=0.998
 1030.5089	31.3	y9/-0.0009
 
 <Spectrum=2>
-MS:1003062|library spectrum index=1
 MS:1003061|library spectrum name=HTGPNSPDTANDGFVR/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=842.8869
 [1]MS:1000894|retention time=1175.3
@@ -334,7 +333,7 @@ MS:1003059|number of peaks=284
 MS:1003169|proforma peptidoform ion notation=HTGPNSPDTANDGFVR/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=16
-MS:1003247|adduct ion mass=1685.7747
+MS:1003243|adduct ion mass=1685.7747
 MS:1003053|theoretical monoisotopic m/z=842.8873
 MS:1003054|theoretical average m/z=843.3785
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -355,7 +354,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=5
 MS:1003288|number of unassigned peaks=131
 MS:1003080|top 20 peak unassigned intensity fraction=0.29
 MS:1003079|total unassigned intensity fraction=0.21
-MS:1003209|monoisotopic m/z deviation=-0.0004 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0004
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.767
 MS:1002357|PSM-level probability=1.0
 
@@ -646,7 +646,6 @@ MS:1002357|PSM-level probability=1.0
 1598.1663	70.4	?
 
 <Spectrum=3>
-MS:1003062|library spectrum index=1
 MS:1003061|library spectrum name=LAQANGWGVM[Oxidation]VSHR/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=771.3848
 [1]MS:1000894|retention time=1501.0
@@ -665,10 +664,9 @@ MS:1003059|number of peaks=339
 MS:1003169|proforma peptidoform ion notation=LAQANGWGVM[Oxidation]VSHR/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=14
-MS:1003247|adduct ion mass=1542.7714
+MS:1003243|adduct ion mass=1542.7714
 MS:1003053|theoretical monoisotopic m/z=771.3857
 MS:1003054|theoretical average m/z=771.8813
-MS:1001471|peptide modification details=1/9,M,Oxidation
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
 [1]MS:1000885|protein accession=sp|P06733|ENOA_HUMAN
 [1]MS:1000886|protein description=Alpha-enolase
@@ -681,7 +679,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=12
 MS:1003288|number of unassigned peaks=162
 MS:1003080|top 20 peak unassigned intensity fraction=0.59
 MS:1003079|total unassigned intensity fraction=0.23
-MS:1003209|monoisotopic m/z deviation=-0.0009 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0009
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=2.624
 MS:1002357|PSM-level probability=1.0
 
@@ -1027,7 +1026,6 @@ MS:1002357|PSM-level probability=1.0
 1428.6746	158.3	y13/-0.0055
 
 <Spectrum=4>
-MS:1003062|library spectrum index=1
 MS:1003061|library spectrum name=LAQANGWGVM[Oxidation]VSHR/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=771.8761
 [1]MS:1000894|retention time=1548.7
@@ -1046,10 +1044,9 @@ MS:1003059|number of peaks=483
 MS:1003169|proforma peptidoform ion notation=LAQANGWGVM[Oxidation]VSHR/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=14
-MS:1003247|adduct ion mass=1542.7714
+MS:1003243|adduct ion mass=1542.7714
 MS:1003053|theoretical monoisotopic m/z=771.3857
 MS:1003054|theoretical average m/z=771.8813
-MS:1001471|peptide modification details=1/9,M,Oxidation
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
 [1]MS:1000885|protein accession=sp|P06733|ENOA_HUMAN
 [1]MS:1000886|protein description=Alpha-enolase
@@ -1062,7 +1059,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=10
 MS:1003288|number of unassigned peaks=259
 MS:1003080|top 20 peak unassigned intensity fraction=0.51
 MS:1003079|total unassigned intensity fraction=0.21
-MS:1003209|monoisotopic m/z deviation=0.4904 
+[1]MS:1003209|monoisotopic m/z deviation=0.4904
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=2.142
 MS:1002357|PSM-level probability=0.9958
 
@@ -1552,7 +1550,6 @@ MS:1002357|PSM-level probability=0.9958
 1366.6586	196.4	y13-CO2-H2O/-0.0211,y13-HCONH2-NH3/0.0265
 
 <Spectrum=5>
-MS:1003062|library spectrum index=4
 MS:1003061|library spectrum name=LAQANGWGVM[Oxidation]VSHR/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=771.8763
 [1]MS:1000894|retention time=1584.1
@@ -1571,10 +1568,9 @@ MS:1003059|number of peaks=259
 MS:1003169|proforma peptidoform ion notation=LAQANGWGVM[Oxidation]VSHR/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=14
-MS:1003247|adduct ion mass=1542.7714
+MS:1003243|adduct ion mass=1542.7714
 MS:1003053|theoretical monoisotopic m/z=771.3857
 MS:1003054|theoretical average m/z=771.8813
-MS:1001471|peptide modification details=1/9,M,Oxidation
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
 [1]MS:1000885|protein accession=sp|P06733|ENOA_HUMAN
 [1]MS:1000886|protein description=Alpha-enolase
@@ -1587,7 +1583,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=12
 MS:1003288|number of unassigned peaks=142
 MS:1003080|top 20 peak unassigned intensity fraction=0.57
 MS:1003079|total unassigned intensity fraction=0.25
-MS:1003209|monoisotopic m/z deviation=0.4906 
+[1]MS:1003209|monoisotopic m/z deviation=0.4906
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=1.894
 MS:1002357|PSM-level probability=0.9846
 
@@ -1853,7 +1850,6 @@ MS:1002357|PSM-level probability=0.9846
 1365.6737	199.2	y13-H2O-HCONH2/0.0256,y13-HCOOH-NH3/0.0256
 
 <Spectrum=6>
-MS:1003062|library spectrum index=5
 MS:1003061|library spectrum name=LAQANGWGVM[Oxidation]VSHR/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=771.8767
 [1]MS:1000894|retention time=1620.7
@@ -1872,10 +1868,9 @@ MS:1003059|number of peaks=396
 MS:1003169|proforma peptidoform ion notation=LAQANGWGVM[Oxidation]VSHR/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=14
-MS:1003247|adduct ion mass=1542.7714
+MS:1003243|adduct ion mass=1542.7714
 MS:1003053|theoretical monoisotopic m/z=771.3857
 MS:1003054|theoretical average m/z=771.8813
-MS:1001471|peptide modification details=1/9,M,Oxidation
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
 [1]MS:1000885|protein accession=1/sp|P06733|ENOA_HUMAN
 [1]MS:1000886|protein description=Alpha-enolase
@@ -1888,7 +1883,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=11
 MS:1003288|number of unassigned peaks=252
 MS:1003080|top 20 peak unassigned intensity fraction=0.54
 MS:1003079|total unassigned intensity fraction=0.36
-MS:1003209|monoisotopic m/z deviation=0.4910 
+[1]MS:1003209|monoisotopic m/z deviation=0.4910
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=1.894
 MS:1002357|PSM-level probability=0.9925
 
@@ -2291,7 +2287,6 @@ MS:1002357|PSM-level probability=0.9925
 1441.5271	256.8	?
 
 <Spectrum=7>
-MS:1003062|library spectrum index=6
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3442
 [1]MS:1000894|retention time=4019.5
@@ -2310,7 +2305,7 @@ MS:1003059|number of peaks=188
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -2325,7 +2320,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=62
 MS:1003080|top 20 peak unassigned intensity fraction=0.17
 MS:1003079|total unassigned intensity fraction=0.09
-MS:1003209|monoisotopic m/z deviation=-0.0010 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0010
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.565
 MS:1002357|PSM-level probability=1.0
 
@@ -2520,7 +2516,6 @@ MS:1002357|PSM-level probability=1.0
 1844.7185	83.5	?
 
 <Spectrum=8>
-MS:1003062|library spectrum index=7
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3440
 [1]MS:1000894|retention time=4053.2
@@ -2539,7 +2534,7 @@ MS:1003059|number of peaks=249
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -2554,7 +2549,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=74
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.09
-MS:1003209|monoisotopic m/z deviation=-0.0012
+[1]MS:1003209|monoisotopic m/z deviation=-0.0012
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=3.692
 MS:1002357|PSM-level probability=1.0
 
@@ -2810,7 +2806,6 @@ MS:1002357|PSM-level probability=1.0
 1902.8043	56.8	?
 
 <Spectrum=9>
-MS:1003062|library spectrum index=8
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3436
 [1]MS:1000894|retention time=4084.0
@@ -2829,7 +2824,7 @@ MS:1003059|number of peaks=255
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -2844,7 +2839,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=77
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.09
-MS:1003209|monoisotopic m/z deviation=-0.0016 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0016
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.649
 MS:1002357|PSM-level probability=1.0
 
@@ -3106,7 +3102,6 @@ MS:1002357|PSM-level probability=1.0
 1860.3640	58.5	?
 
 <Spectrum=10>
-MS:1003062|library spectrum index=9
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3450
 [1]MS:1000894|retention time=4125.5
@@ -3125,7 +3120,7 @@ MS:1003059|number of peaks=212
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -3359,7 +3354,6 @@ MS:1002357|PSM-level probability=1.0
 1898.4814	90.2	?
 
 <Spectrum=11>
-MS:1003062|library spectrum index=10
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3445
 [1]MS:1000894|retention time=4192.9
@@ -3378,7 +3372,7 @@ MS:1003059|number of peaks=150
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -3393,7 +3387,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=51
 MS:1003080|top 20 peak unassigned intensity fraction=0.19
 MS:1003079|total unassigned intensity fraction=0.11
-MS:1003209|monoisotopic m/z deviation=-0.0007 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0007
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.654
 MS:1002357|PSM-level probability=1.0
 
@@ -3550,7 +3545,6 @@ MS:1002357|PSM-level probability=1.0
 1778.6812	146.4	?
 
 <Spectrum=12>
-MS:1003062|library spectrum index=11
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3440
 [1]MS:1000894|retention time=4244.3
@@ -3569,7 +3563,7 @@ MS:1003059|number of peaks=143
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -3584,7 +3578,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=70
 MS:1003080|top 20 peak unassigned intensity fraction=0.21
 MS:1003079|total unassigned intensity fraction=0.19
-MS:1003209|monoisotopic m/z deviation=-0.0012 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0012
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.195
 MS:1002357|PSM-level probability=1.0
 
@@ -3734,7 +3729,6 @@ MS:1002357|PSM-level probability=1.0
 1799.5745	277.4	?
 
 <Spectrum=13>
-MS:1003062|library spectrum index=12
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3448
 [1]MS:1000894|retention time=4281.0
@@ -3753,7 +3747,7 @@ MS:1003059|number of peaks=150
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -3768,7 +3762,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=2
 MS:1003288|number of unassigned peaks=74
 MS:1003080|top 20 peak unassigned intensity fraction=0.16
 MS:1003079|total unassigned intensity fraction=0.21
-MS:1003209|monoisotopic m/z deviation=-0.0004 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0004
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.217
 MS:1002357|PSM-level probability=1.0
 
@@ -3925,7 +3920,6 @@ MS:1002357|PSM-level probability=1.0
 1846.5477	273.0	?
 
 <Spectrum=14>
-MS:1003062|library spectrum index=13
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3439
 [1]MS:1000894|retention time=4580.7
@@ -3944,7 +3938,7 @@ MS:1003059|number of peaks=163
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -3959,7 +3953,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=3
 MS:1003288|number of unassigned peaks=78
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.19
-MS:1003209|monoisotopic m/z deviation=-0.0013 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0013
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=3.114
 MS:1002357|PSM-level probability=0.9999
 
@@ -4129,7 +4124,6 @@ MS:1002357|PSM-level probability=0.9999
 1718.8713	270.2	y16-CO2-HCOOH/-0.0704
 
 <Spectrum=15>
-MS:1003062|library spectrum index=14
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3450
 [1]MS:1000894|retention time=4672.8
@@ -4148,7 +4142,7 @@ MS:1003059|number of peaks=113
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -4163,7 +4157,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=2
 MS:1003288|number of unassigned peaks=54
 MS:1003080|top 20 peak unassigned intensity fraction=0.18
 MS:1003079|total unassigned intensity fraction=0.22
-MS:1003209|monoisotopic m/z deviation=-0.0002 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0002
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=2.583
 MS:1002357|PSM-level probability=0.9787
 
@@ -4283,7 +4278,6 @@ MS:1002357|PSM-level probability=0.9787
 1880.4967	374.4	?
 
 <Spectrum=16>
-MS:1003062|library spectrum index=15
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=641.3440
 [1]MS:1000894|retention time=4784.4
@@ -4302,7 +4296,7 @@ MS:1003059|number of peaks=96
 MS:1003169|proforma peptidoform ion notation=LPIFFFGTHETAFLGPK/3
 MS:1000041|charge state=3
 MS:1003043|number of residues=17
-MS:1003247|adduct ion mass=1924.0356
+MS:1003243|adduct ion mass=1924.0356
 MS:1003054|theoretical monoisotopic m/z=641.3452
 MS:1003054|theoretical average m/z=641.7597
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -4317,7 +4311,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=4
 MS:1003288|number of unassigned peaks=52
 MS:1003080|top 20 peak unassigned intensity fraction=0.22
 MS:1003079|total unassigned intensity fraction=0.34
-MS:1003209|monoisotopic m/z deviation=-0.0012 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0012
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=2.226
 MS:1002357|PSM-level probability=0.9798
 
@@ -4420,7 +4415,6 @@ MS:1002357|PSM-level probability=0.9798
 1935.8756	776.3	?
 
 <Spectrum=17>
-MS:1003062|library spectrum index=16
 MS:1003061|library spectrum name=NVTLPAVFK/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=494.7931
 [1]MS:1000894|retention time=2554.4
@@ -4439,7 +4433,7 @@ MS:1003059|number of peaks=211
 MS:1003169|proforma peptidoform ion notation=NVTLPAVFK/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=9
-MS:1003247|adduct ion mass=989.5899
+MS:1003243|adduct ion mass=989.5899
 MS:1003054|theoretical monoisotopic m/z=494.7949
 MS:1003054|theoretical average m/z=495.1049
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -4454,7 +4448,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=10
 MS:1003288|number of unassigned peaks=150
 MS:1003080|top 20 peak unassigned intensity fraction=0.53
 MS:1003079|total unassigned intensity fraction=0.3
-MS:1003209|monoisotopic m/z deviation=-0.0018 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0018
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=1.696
 MS:1002357|PSM-level probability=0.9734
 
@@ -4672,7 +4667,6 @@ MS:1002357|PSM-level probability=0.9734
 890.5112	105.8	?
 
 <Spectrum=18>
-MS:1003062|library spectrum index=17
 MS:1003061|library spectrum name=NVTLPAVFK/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=494.7939
 [1]MS:1000894|retention time=2583.1
@@ -4691,7 +4685,7 @@ MS:1003059|number of peaks=140
 MS:1003169|proforma peptidoform ion notation=NVTLPAVFK/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=9
-MS:1003247|adduct ion mass=989.5899
+MS:1003243|adduct ion mass=989.5899
 MS:1003054|theoretical monoisotopic m/z=494.7949
 MS:1003054|theoretical average m/z=495.1049
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -4706,7 +4700,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=10
 MS:1003288|number of unassigned peaks=84
 MS:1003080|top 20 peak unassigned intensity fraction=0.53
 MS:1003079|total unassigned intensity fraction=0.23
-MS:1003209|monoisotopic m/z deviation=-0.0010 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0010
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=1.678
 MS:1002357|PSM-level probability=0.9861
 
@@ -4853,7 +4848,6 @@ MS:1002357|PSM-level probability=0.9861
 985.9017	40.5	?
 
 <Spectrum=19>
-MS:1003062|library spectrum index=18
 MS:1003061|library spectrum name=NVTLPAVFK/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=494.7934
 [1]MS:1000894|retention time=2622.1
@@ -4872,7 +4866,7 @@ MS:1003059|number of peaks=135
 MS:1003169|proforma peptidoform ion notation=NVTLPAVFK/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=9
-MS:1003247|adduct ion mass=989.5899
+MS:1003243|adduct ion mass=989.5899
 MS:1003054|theoretical monoisotopic m/z=494.7949
 MS:1003054|theoretical average m/z=495.1049
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -4887,7 +4881,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=10
 MS:1003288|number of unassigned peaks=77
 MS:1003080|top 20 peak unassigned intensity fraction=0.53
 MS:1003079|total unassigned intensity fraction=0.23
-MS:1003209|monoisotopic m/z deviation=-0.0015 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0015
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=1.747
 MS:1002357|PSM-level probability=0.9953
 
@@ -5029,7 +5024,6 @@ MS:1002357|PSM-level probability=0.9953
 965.3955	38.6	?
 
 <Spectrum=20>
-MS:1003062|library spectrum index=19
 MS:1003061|library spectrum name=NVTLPAVFK/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=494.7939
 [1]MS:1000894|retention time=2667.9
@@ -5048,7 +5042,7 @@ MS:1003059|number of peaks=152
 MS:1003169|proforma peptidoform ion notation=NVTLPAVFK/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=9
-MS:1003247|adduct ion mass=989.5899
+MS:1003243|adduct ion mass=989.5899
 MS:1003054|theoretical monoisotopic m/z=494.7949
 MS:1003054|theoretical average m/z=495.1049
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -5063,7 +5057,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=13
 MS:1003288|number of unassigned peaks=112
 MS:1003080|top 20 peak unassigned intensity fraction=0.64
 MS:1003079|total unassigned intensity fraction=0.48
-MS:1003209|monoisotopic m/z deviation=-0.0010
+[1]MS:1003209|monoisotopic m/z deviation=-0.0010
+[1]UO:0000000|unit=MS:1000040|m/z
 MS:1002252|Comet:xcorr=1.516
 MS:1002357|PSM-level probability=0.9302
 
@@ -5222,7 +5217,6 @@ MS:1002357|PSM-level probability=0.9302
 884.5287	399.2	?
 
 <Spectrum=21>
-MS:1003062|library spectrum index=20
 MS:1003061|library spectrum name=NVTLPAVFK/2 (HCD)
 MS:1003208|experimental monoisotopic precursor m/z=494.7935
 [1]MS:1000894|retention time=3156.5
@@ -5241,7 +5235,7 @@ MS:1003059|number of peaks=86
 MS:1003169|proforma peptidoform ion notation=NVTLPAVFK/2
 MS:1000041|charge state=2
 MS:1003043|number of residues=9
-MS:1003247|adduct ion mass=989.5899
+MS:1003243|adduct ion mass=989.5899
 MS:1003054|theoretical monoisotopic m/z=494.7949
 MS:1003054|theoretical average m/z=495.1049
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
@@ -5256,7 +5250,8 @@ MS:1003290|number of unassigned peaks among top 20 peaks=13
 MS:1003288|number of unassigned peaks=60
 MS:1003080|top 20 peak unassigned intensity fraction=0.69
 MS:1003079|total unassigned intensity fraction=0.51
-MS:1003209|monoisotopic m/z deviation=-0.0014 
+[1]MS:1003209|monoisotopic m/z deviation=-0.0014
+[1]UO:0000000|unit=MS:1000040|m/z 
 MS:1002252|Comet:xcorr=1.455
 MS:1002357|PSM-level probability=0.9171
 

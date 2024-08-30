@@ -1,9 +1,10 @@
 <mzSpecLib 1.0>
+MS:1003186|library format version=1.0
 MS:1003187|library identifier=mzspec:PXL000001:fetal_brain_tiny_consensus_td
 MS:1003188|library name=fetal_brain_tiny_consensus_td
 MS:1003189|library description=A small example MS/MS consensus spectra library of 5 human fetal brain peptides, appended with 5 shuffle-and-reposition decoy spectra
 MS:1003190|library version=1.0
-MS:1001017|release date=2023-05-06
+MS:1001017|release date=2023-05-06T00:00:00
 [1]MS:1003207|library creation software=MS:1001477|SpectraST
 [1]MS:1003200|software version=6.0
 [1]MS:1003206|library creation log=COMPILE FROM /data/fetal_brain_tiny_consensus.splib"  [DECOY;c=TRUE;y=1;DPS=FALSE;I=]
@@ -43,7 +44,6 @@ MS:1001045|cleavage agent name=MS:1001251|Trypsin
 MS:1003048|number of enzymatic termini=2
 
 <Spectrum=1>
-MS:1003062|library spectrum index=0
 MS:1003061|library spectrum name=FAC[Carbamidomethyl]HSASLTVR/3 (HCD)
 [1]MS:1000894|retention time=1189.6
 [1]UO:0000000|unit=UO:0000010|second
@@ -63,7 +63,6 @@ MS:1003059|number of peaks=150
 <Analyte=1>
 MS:1003270|proforma peptidoform ion notation=FAC[Carbamidomethyl]HSASLTVR/3 
 MS:1000041|charge state=3
-MS:1001471|peptide modification details=1/2,C,Carbamidomethyl
 MS:1003043|number of residues=11
 MS:1003247|adduct ion mass=1250.6299
 MS:1003053|theoretical monoisotopic m/z=416.8766
@@ -236,7 +235,6 @@ MS:1002357|PSM-level probability=0.998
 871.4819	226.4	y8+i/0.0027
 
 <Spectrum=2>
-MS:1003062|library spectrum index=1
 MS:1003061|spectrum name=AVC[Carbamidomethyl]ASFSLTHR/3 (HCD)
 MS:1000505|base peak intensity=160000.0
 MS:1003085|previous MS1 scan precursor intensity=630000.0
@@ -259,7 +257,6 @@ MS:1003059|number of peaks=150
 <Analyte=1>
 MS:1003270|proforma peptidoform ion notation=AVC[Carbamidomethyl]ASFSLTHR/3
 MS:1000041|charge state=3
-MS:1001471|peptide modification details=1/2,C,Carbamidomethyl
 MS:1003043|number of residues=11
 MS:1003247|adduct ion mass=1250.6299
 MS:1003053|theoretical monoisotopic m/z=416.8766
@@ -431,7 +428,6 @@ MS:1002357|PSM-level probability=0.998
 919.4819	226.4	y8+i/0.0027
 
 <Spectrum=3>
-MS:1003062|library spectrum index=2
 MS:1003061|library spectrum name=NVTLPAVFK/2 (HCD)
 [1]MS:1000894|retention time=2622.1
 [1]UO:0000000|unit=UO:0000010|second
@@ -576,7 +572,6 @@ MS:1003079|total unassigned intensity fraction=0.26
 884.5254	514.4	?	0.800	0.0018	0.13
 
 <Spectrum=4>
-MS:1003062|library spectrum index=3
 MS:1003061|spectrum name=VLTFPVANK/2 (HCD)
 [1]MS:1000894|retention time=2622.1
 [1]UO:0000000|unit=UO:0000010|second
@@ -723,7 +718,6 @@ MS:1003079|total unassigned intensity fraction=0.26
 884.5254	514.4	?	0.800	0.0018	0.13
 
 <Spectrum=5>
-MS:1003062|library spectrum index=4
 MS:1003061|library spectrum name=LPIFFFGTHETAFLGPK/3 (HCD)
 [1]MS:1000894|retention time=4164.1
 [1]UO:0000000|unit=UO:0000010|second
@@ -860,7 +854,6 @@ MS:1003079|total unassigned intensity fraction=0.07
 1451.7214	386.0	y13/-0.0104	0.600	0.0155	0.10
 
 <Spectrum=6>
-MS:1003062|library spectrum index=5
 MS:1003061|library spectrum name=APFLLGEITFTGHFFPK/3 (HCD)
 [1]MS:1000894|retention time=4164.1
 [1]UO:0000000|unit=UO:0000010|second
@@ -1001,7 +994,6 @@ MS:1003079|total unassigned intensity fraction=0.07
 1493.7683	386.0	y13/-0.0104	0.600	0.0155	0.10
 
 <Spectrum=7>
-MS:1003062|library spectrum index=1
 MS:1003061|library spectrum name=LAQANGWGVM[Oxidation]VSHR/2 (HCD)
 [1]MS:1000894|retention time=1566.4
 [1]UO:0000000|unit=UO:0000010|second
@@ -1034,7 +1026,6 @@ MS:1003043|number of residues=14
 MS:1003247|adduct ion mass=1542.7714
 MS:1003053|theoretical monoisotopic m/z=771.3857
 MS:1003054|theoretical average m/z=771.8813
-MS:1001471|peptide modification details=1/9,M,Oxidation
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
 [1]MS:1000885|protein accession=sp|P06733|ENOA_HUMAN
 [1]MS:1000886|protein description=Alpha-enolase
@@ -1204,7 +1195,6 @@ MS:1003079|total unassigned intensity fraction=0.18
 1365.6695	240.7	y13-H2O-HCONH2/0.0215,y13-HCOOH-NH3/0.0215	1.000	0.0072	0.10
 
 <Spectrum=8>
-MS:1003062|library spectrum index=7
 MS:1003061|library spectrum name=NLASQVGWGM[Oxidation]VHAR/2 (HCD)
 [1]MS:1000894|retention time=1566.4
 [1]UO:0000000|unit=UO:0000010|second
@@ -1240,7 +1230,6 @@ MS:1003043|number of residues=14
 MS:1003247|adduct ion mass=1542.7714
 MS:1003053|theoretical monoisotopic m/z=771.3857
 MS:1003054|theoretical average m/z=771.8813
-MS:1001471|peptide modification details=1/9,M,Oxidation
 [1]MS:1003212|library attribute set name=HUMAN_TRYPTIC
 [1]MS:1000885|protein accession=DECOY_0_sp|P06733|ENOA_HUMAN
 [1]MS:1003044|number of missed cleavages=0
@@ -1409,7 +1398,6 @@ MS:1003079|total unassigned intensity fraction=0.18
 1364.7107	240.7	y13-H2O-HCONH2/0.0215	1.000	0.0072	0.10
 
 <Spectrum=9>
-MS:1003062|library spectrum index=8
 MS:1003061|library spectrum name=HTGPNSPDTANDGFVR/2 (HCD)
 [1]MS:1000894|retention time=1175.3
 [1]UO:0000000|unit=UO:0000010|second
@@ -1606,7 +1594,6 @@ MS:1002357|PSM-level probability=1.0
 1558.6853	283.1	?
 
 <Spectrum=10>
-MS:1003062|library spectrum index=9
 MS:1003061|library spectrum name=HFDPDGPGSTAVNNTR/2 (HCD)
 [1]MS:1000894|retention time=1175.3
 [1]UO:0000000|unit=UO:0000010|second
