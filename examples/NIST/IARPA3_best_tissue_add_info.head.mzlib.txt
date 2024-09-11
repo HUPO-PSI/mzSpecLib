@@ -1,4 +1,4 @@
-<mzSpecLib 1.0>
+<mzSpecLib>
 MS:1003186|library format version=1.0
 MS:1003188|library name=IARPA3_best_tissue_add_info
 MS:1003191|library URI=https://chemdata.nist.gov/dokuwiki/doku.php?id=peptidew:lib:human_skin_hair
