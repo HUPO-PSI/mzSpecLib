@@ -1,4 +1,5 @@
-<mzSpecLib 1.0>
+<mzSpecLib>
+MS:1003186|library format version=1.0
 MS:1003188|library name=spice
 MS:1003190|library version=1.0
 MS:1001017|release date=7/7/2023 7:06:42 PM

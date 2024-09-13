@@ -4,8 +4,7 @@
       {
         "accession": "MS:1001467",
         "name": "taxonomy: NCBI TaxID",
-        "value": "Homo sapiens",
-        "value_accession": "NCBITaxon:9606"
+        "value": 9606
       },
       {
         "accession": "MS:1001468",
@@ -38,6 +37,11 @@
       "value": "1.0"
     },
     {
+      "accession": "MS:1003190",
+      "name": "library version",
+      "value": "1.0"
+    },
+    {
       "accession": "MS:1003187",
       "name": "library identifier",
       "value": "mzspec:PXL000001:fetal_brain_tiny"
@@ -53,14 +57,9 @@
       "value": "A small example MS/MS raw spectral library of 5 human fetal brain peptides"
     },
     {
-      "accession": "MS:1003190",
-      "name": "library version",
-      "value": 1.0
-    },
-    {
       "accession": "MS:1001017",
       "name": "release date",
-      "value": "2023-05-04"
+      "value": "2023-05-04T00:00:00"
     },
     {
       "accession": "MS:1003207",
@@ -73,7 +72,7 @@
       "accession": "MS:1003200",
       "cv_param_group": "1",
       "name": "software version",
-      "value": 6.0
+      "value": "6.0"
     },
     {
       "accession": "MS:1003206",
@@ -93,7 +92,7 @@
       "value": "mzspec:PXD000561:Fetal_Brain_Gel_Velos_16_f16"
     },
     {
-      "accession": "MS:1003205",
+      "accession": "MS:1003204",
       "name": "constituent identification file",
       "value": "file://data/interact.pep.xml"
     }
@@ -119,17 +118,12 @@
               "value": 3
             },
             {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1/2,C,Carbamidomethyl"
-            },
-            {
               "accession": "MS:1003043",
               "name": "number of residues",
               "value": 11
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1250.6299
             },
@@ -157,7 +151,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "Non-POU domain-containing octamer-binding protein"
@@ -210,6 +204,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -251,10 +271,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -274,18 +300,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 416.8757
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 1189.6
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -297,7 +323,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 630000.0
         },
         {
@@ -317,27 +343,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 570
+          "value": "570"
         }
       ],
       "intensities": [
@@ -606,8 +632,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0009
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -1111,7 +1145,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "HTGPNSPDTANDGFVR/2"
             },
@@ -1126,7 +1160,7 @@
               "value": 16
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1685.7747
             },
@@ -1154,7 +1188,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "Heterogeneous nuclear ribonucleoprotein H"
@@ -1191,7 +1225,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "2",
               "name": "protein description",
               "value": "Heterogeneous nuclear ribonucleoprotein H2"
@@ -1238,6 +1272,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -1279,10 +1339,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -1302,18 +1368,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 842.8869
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 1175.3
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -1325,7 +1391,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 1700000.0
         },
         {
@@ -1345,27 +1411,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 7233
+          "value": "7233"
         }
       ],
       "intensities": [
@@ -1679,8 +1745,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0004
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -2274,7 +2348,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LAQANGWGVM[Oxidation]VSHR/2"
             },
@@ -2289,7 +2363,7 @@
               "value": 14
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1542.7714
             },
@@ -2302,11 +2376,6 @@
               "accession": "MS:1003054",
               "name": "theoretical average m/z",
               "value": 771.8813
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1/9,M,Oxidation"
             },
             {
               "accession": "MS:1003212",
@@ -2322,7 +2391,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "Alpha-enolase"
@@ -2369,6 +2438,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -2410,10 +2505,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -2433,18 +2534,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 771.3848
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 1501.0
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -2456,7 +2557,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 1700000.0
         },
         {
@@ -2476,27 +2577,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 15874
+          "value": "15874"
         }
       ],
       "intensities": [
@@ -2865,8 +2966,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0009
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -3570,7 +3679,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LAQANGWGVM[Oxidation]VSHR/2"
             },
@@ -3585,7 +3694,7 @@
               "value": 14
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1542.7714
             },
@@ -3598,11 +3707,6 @@
               "accession": "MS:1003054",
               "name": "theoretical average m/z",
               "value": 771.8813
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1/9,M,Oxidation"
             },
             {
               "accession": "MS:1003212",
@@ -3618,7 +3722,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "Alpha-enolase"
@@ -3665,6 +3769,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -3706,10 +3836,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -3729,18 +3865,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 771.8761
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 1548.7
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -3752,7 +3888,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 940000.0
         },
         {
@@ -3772,27 +3908,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 26311
+          "value": "26311"
         }
       ],
       "intensities": [
@@ -4305,8 +4441,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": 0.4904
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -5298,7 +5442,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LAQANGWGVM[Oxidation]VSHR/2"
             },
@@ -5313,7 +5457,7 @@
               "value": 14
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1542.7714
             },
@@ -5326,11 +5470,6 @@
               "accession": "MS:1003054",
               "name": "theoretical average m/z",
               "value": 771.8813
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1/9,M,Oxidation"
             },
             {
               "accession": "MS:1003212",
@@ -5346,7 +5485,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "Alpha-enolase"
@@ -5393,6 +5532,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -5434,10 +5599,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -5457,18 +5628,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 771.8763
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 1584.1
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -5480,7 +5651,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 1100000.0
         },
         {
@@ -5500,27 +5671,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 40626
+          "value": "40626"
         }
       ],
       "intensities": [
@@ -5809,8 +5980,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": 0.4906
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -6354,7 +6533,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LAQANGWGVM[Oxidation]VSHR/2"
             },
@@ -6369,7 +6548,7 @@
               "value": 14
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1542.7714
             },
@@ -6382,11 +6561,6 @@
               "accession": "MS:1003054",
               "name": "theoretical average m/z",
               "value": 771.8813
-            },
-            {
-              "accession": "MS:1001471",
-              "name": "peptide modification details",
-              "value": "1/9,M,Oxidation"
             },
             {
               "accession": "MS:1003212",
@@ -6402,7 +6576,7 @@
               "value_accession": "1/sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "Alpha-enolase"
@@ -6449,6 +6623,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -6490,10 +6690,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -6513,18 +6719,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 771.8767
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 1620.7
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -6536,7 +6742,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 530000.0
         },
         {
@@ -6556,27 +6762,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 48521
+          "value": "48521"
         }
       ],
       "intensities": [
@@ -7002,8 +7208,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": 0.491
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -7821,7 +8035,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -7836,12 +8050,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -7864,7 +8078,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -7911,6 +8125,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -7952,10 +8192,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -7975,18 +8221,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.3442
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4019.5
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -7998,7 +8244,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 510000.0
         },
         {
@@ -8018,27 +8264,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 59638
+          "value": "59638"
         }
       ],
       "intensities": [
@@ -8256,8 +8502,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.001
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -8659,7 +8913,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -8674,12 +8928,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -8702,7 +8956,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -8749,6 +9003,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -8790,10 +9070,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -8813,18 +9099,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.344
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4053.2
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -8836,7 +9122,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 720000.0
         },
         {
@@ -8856,27 +9142,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 65708
+          "value": "65708"
         }
       ],
       "intensities": [
@@ -9155,8 +9441,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0012
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -9680,7 +9974,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -9695,12 +9989,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -9723,7 +10017,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -9770,6 +10064,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -9811,10 +10131,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -9834,18 +10160,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.3436
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4084.0
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -9857,7 +10183,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 780000.0
         },
         {
@@ -9877,27 +10203,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 73593
+          "value": "73593"
         }
       ],
       "intensities": [
@@ -10182,8 +10508,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0016
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -10719,7 +11053,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -10734,12 +11068,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -10762,7 +11096,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -10809,6 +11143,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -10850,10 +11210,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -10873,18 +11239,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.345
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4125.5
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -10896,7 +11262,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 270000.0
         },
         {
@@ -10916,27 +11282,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 81683
+          "value": "81683"
         }
       ],
       "intensities": [
@@ -11177,9 +11543,17 @@
               "value": 0.1
             },
             {
-              "accession": "1003209",
+              "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0002
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -11629,7 +12003,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -11644,12 +12018,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -11672,7 +12046,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -11719,6 +12093,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -11760,10 +12160,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -11783,18 +12189,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.3445
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4192.9
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -11806,7 +12212,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 120000.0
         },
         {
@@ -11826,27 +12232,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 88294
+          "value": "88294"
         }
       ],
       "intensities": [
@@ -12026,8 +12432,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0007
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -12353,7 +12767,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -12368,12 +12782,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -12396,7 +12810,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -12443,6 +12857,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -12484,10 +12924,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -12507,18 +12953,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.344
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4244.3
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -12530,7 +12976,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 200000.0
         },
         {
@@ -12550,27 +12996,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 93176
+          "value": "93176"
         }
       ],
       "intensities": [
@@ -12743,8 +13189,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0012
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -13056,7 +13510,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -13071,12 +13525,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -13099,7 +13553,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -13146,6 +13600,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -13187,10 +13667,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -13210,18 +13696,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.3448
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4281.0
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -13233,7 +13719,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 120000.0
         },
         {
@@ -13253,27 +13739,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 97558
+          "value": "97558"
         }
       ],
       "intensities": [
@@ -13453,8 +13939,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0004
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -13780,7 +14274,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -13795,12 +14289,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -13823,7 +14317,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -13870,6 +14364,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -13911,10 +14431,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -13934,18 +14460,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.3439
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4580.7
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -13957,7 +14483,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 260000.0
         },
         {
@@ -13977,27 +14503,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 102082
+          "value": "102082"
         }
       ],
       "intensities": [
@@ -14190,8 +14716,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0013
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -14543,7 +15077,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -14558,12 +15092,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -14586,7 +15120,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -14633,6 +15167,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -14674,10 +15234,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -14697,18 +15263,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.345
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4672.8
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -14720,7 +15286,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 140000.0
         },
         {
@@ -14740,27 +15306,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 107054
+          "value": "107054"
         }
       ],
       "intensities": [
@@ -14903,8 +15469,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0002
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -15156,7 +15730,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "LPIFFFGTHETAFLGPK/3"
             },
@@ -15171,12 +15745,12 @@
               "value": 17
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 1924.0356
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 641.3452
             },
@@ -15199,7 +15773,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "PC4 and SFRS1-interacting protein"
@@ -15246,6 +15820,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -15287,10 +15887,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -15310,18 +15916,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 641.344
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 4784.4
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -15333,7 +15939,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 70000.0
         },
         {
@@ -15353,27 +15959,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 110669
+          "value": "110669"
         }
       ],
       "intensities": [
@@ -15499,8 +16105,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0012
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -15718,7 +16332,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "NVTLPAVFK/2"
             },
@@ -15733,12 +16347,12 @@
               "value": 9
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 989.5899
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 494.7949
             },
@@ -15761,7 +16375,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "60S ribosomal protein L4"
@@ -15808,6 +16422,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -15849,10 +16489,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -15872,18 +16518,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 494.7931
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 2554.4
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -15895,7 +16541,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 370000.0
         },
         {
@@ -15915,27 +16561,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 113782
+          "value": "113782"
         }
       ],
       "intensities": [
@@ -16176,8 +16822,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0018
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -16625,7 +17279,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "NVTLPAVFK/2"
             },
@@ -16640,12 +17294,12 @@
               "value": 9
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 989.5899
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 494.7949
             },
@@ -16668,7 +17322,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "60S ribosomal protein L4"
@@ -16715,6 +17369,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -16756,10 +17436,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -16779,18 +17465,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 494.7939
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 2583.1
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -16802,7 +17488,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 5400000.0
         },
         {
@@ -16822,27 +17508,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 119226
+          "value": "119226"
         }
       ],
       "intensities": [
@@ -17012,8 +17698,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.001
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -17319,7 +18013,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "NVTLPAVFK/2"
             },
@@ -17334,12 +18028,12 @@
               "value": 9
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 989.5899
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 494.7949
             },
@@ -17362,7 +18056,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "60S ribosomal protein L4"
@@ -17409,6 +18103,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -17450,10 +18170,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -17473,18 +18199,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 494.7934
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 2622.1
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -17496,7 +18222,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 1200000.0
         },
         {
@@ -17516,27 +18242,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 123251
+          "value": "123251"
         }
       ],
       "intensities": [
@@ -17701,8 +18427,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0015
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -17998,7 +18732,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "NVTLPAVFK/2"
             },
@@ -18013,12 +18747,12 @@
               "value": 9
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 989.5899
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 494.7949
             },
@@ -18041,7 +18775,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "60S ribosomal protein L4"
@@ -18088,6 +18822,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -18129,10 +18889,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -18152,18 +18918,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 494.7939
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 2667.9
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -18175,7 +18941,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 260000.0
         },
         {
@@ -18195,27 +18961,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 127201
+          "value": "127201"
         }
       ],
       "intensities": [
@@ -18397,8 +19163,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.001
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -18728,7 +19502,7 @@
         "1": {
           "attributes": [
             {
-              "accession": "MS:1003169",
+              "accession": "MS:1003270",
               "name": "proforma peptidoform ion notation",
               "value": "NVTLPAVFK/2"
             },
@@ -18743,12 +19517,12 @@
               "value": 9
             },
             {
-              "accession": "MS:1003247",
+              "accession": "MS:1003243",
               "name": "adduct ion mass",
               "value": 989.5899
             },
             {
-              "accession": "MS:1003054",
+              "accession": "MS:1003053",
               "name": "theoretical monoisotopic m/z",
               "value": 494.7949
             },
@@ -18771,7 +19545,7 @@
               "value_accession": "sp"
             },
             {
-              "accession": "MS:1000886",
+              "accession": "MS:1001088",
               "cv_param_group": "1",
               "name": "protein description",
               "value": "60S ribosomal protein L4"
@@ -18818,6 +19592,32 @@
           "value_accession": "UO:0000266"
         },
         {
+          "accession": "MS:1000045",
+          "cv_param_group": "2",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "2",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
+          "accession": "MS:1000045",
+          "cv_param_group": "3",
+          "name": "collision energy",
+          "value": 39.0
+        },
+        {
+          "accession": "UO:0000000",
+          "cv_param_group": "3",
+          "name": "unit",
+          "value": "electronvolt",
+          "value_accession": "UO:0000266"
+        },
+        {
           "accession": "MS:1000511",
           "name": "ms level",
           "value": 2
@@ -18859,10 +19659,16 @@
           "value_accession": "MS:1000130"
         },
         {
-          "accession": "MS:1000034",
+          "accession": "MS:1000043",
           "name": "intensity unit",
           "value": "percent of base peak times 100",
           "value_accession": "MS:1000905"
+        },
+        {
+          "accession": "MS:1003065",
+          "name": "spectrum aggregation type",
+          "value": "singleton spectrum",
+          "value_accession": "MS:1003066"
         },
         {
           "accession": "MS:1003072",
@@ -18882,18 +19688,18 @@
         },
         {
           "accession": "MS:1003208",
-          "name": "experimental monoisotopic precursor m/z",
+          "name": "experimental precursor monoisotopic m/z",
           "value": 494.7935
         },
         {
           "accession": "MS:1000894",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "retention time",
           "value": 3156.5
         },
         {
           "accession": "UO:0000000",
-          "cv_param_group": "1",
+          "cv_param_group": "4",
           "name": "unit",
           "value": "second",
           "value_accession": "UO:0000010"
@@ -18905,7 +19711,7 @@
         },
         {
           "accession": "MS:1003085",
-          "name": "previous MS1 scan precursor intensity",
+          "name": "previous MSn-1 scan precursor intensity",
           "value": 93000.0
         },
         {
@@ -18925,27 +19731,27 @@
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute name",
           "value": "Status"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "2",
+          "cv_param_group": "5",
           "name": "other attribute value",
           "value": "Normal"
         },
         {
           "accession": "MS:1003275",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute name",
           "value": "BinaryFileOffset"
         },
         {
           "accession": "MS:1003276",
-          "cv_param_group": "3",
+          "cv_param_group": "6",
           "name": "other attribute value",
-          "value": 131218
+          "value": "131218"
         }
       ],
       "intensities": [
@@ -19061,8 +19867,16 @@
             },
             {
               "accession": "MS:1003209",
+              "cv_param_group": "1",
               "name": "monoisotopic m/z deviation",
               "value": -0.0014
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "m/z",
+              "value_accession": "MS:1000040"
             },
             {
               "accession": "MS:1002252",
@@ -19300,10 +20114,16 @@
         "value_accession": "MS:1000130"
       },
       {
-        "accession": "MS:1000034",
+        "accession": "MS:1000043",
         "name": "intensity unit",
         "value": "percent of base peak times 100",
         "value_accession": "MS:1000905"
+      },
+      {
+        "accession": "MS:1003065",
+        "name": "spectrum aggregation type",
+        "value": "singleton spectrum",
+        "value_accession": "MS:1003066"
       },
       {
         "accession": "MS:1000045",
