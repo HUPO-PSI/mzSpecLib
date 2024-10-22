@@ -15,9 +15,11 @@ the developers of spectral library search tools and resources.
 
 ---
 
-- [Introduction](#introduction)
-- [Development](#development)
-- [Contributing](#contributing)
+- [mzSpecLib](#mzspeclib)
+  - [Introduction](#introduction)
+  - [Development](#development)
+  - [Reference implementation](#reference-implementation)
+  - [Contributing](#contributing)
 
 ---
 
@@ -53,12 +55,12 @@ is used as a central point of information regarding the format's development:
   formats, the spectral library controlled vocabulary, the spectral library
   specifications, examples and tools that export/validate and visualize those
   files.
-- Additionally, Google Docs are used to quickly and efficiently collaborate
-  on the specification documents. Links to these documents are listed here:
-  - [mzSpecLib main specification document](https://docs.google.com/document/d/1l87lIyKTy2ti5yU7aqsLr7uX5jIU1dO7gEzyqWD2uQA/edit?usp=sharing)
-  - [Metadata and CV term overview](https://drive.google.com/file/d/1rN5DJSowp2micxlwJQlPxlv39ZiaLEfv/edit?usp=sharing)
-  - [mzSpecLib peak interetation format](https://docs.google.com/document/d/1yEUNG4Ump6vnbMDs4iV4s3XISflmOkRAyqUuutcCG2w/edit?usp=sharing)
-  - [mzSpecLib general data model schematic](https://drive.google.com/file/d/1OVh5ATfKXA77pM4CYzRfdupeRGu3vt5c/view?usp=sharing)
+- The mzSpecLib specification is nearly complete and has been resubmitted to the PSI Document Process for final community review. It is hoped to be complete at the end of 2024.
+
+If you do experience problems with the files or have suggestions or comments, please open an [issue](https://github.com/HUPO-PSI/mzSpecLib/issues).
+
+- [mzSpecLib main specification document](https://github.com/HUPO-PSI/mzSpecLib/blob/master/specification/mzSpecLib_specification_v1.0_draft09.docx)
+- [mzPAF peak interetation format](https://psidev.info/mzPAF)
 
 
 ## Reference implementation
