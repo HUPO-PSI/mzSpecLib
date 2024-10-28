@@ -19,6 +19,16 @@
       "value": "https://chemdata.nist.gov/dokuwiki/doku.php?id=peptidew:lib:human_skin_hair"
     },
     {
+      "accession": "MS:1000879",
+      "name": "PubMed identifier",
+      "value": 31670846
+    },
+    {
+      "accession": "MS:1000589",
+      "name": "contact email",
+      "value": "massspec@nist.gov"
+    },
+    {
       "accession": "MS:1001017",
       "name": "release date",
       "value": "2021-10-01T00:00:00"
@@ -3386,32 +3396,9 @@
               "value": "AAAQWVR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 401.2219
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 0.4
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAAQWVR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAAQWVR/2"
             },
             {
               "accession": "MS:1001117",
@@ -3420,38 +3407,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "D"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "Q8NEX9|DR9C7_HUMAN",
               "value_accession": "sp"
@@ -3476,6 +3463,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 401.2219
         },
         {
           "accession": "MS:1000045",
@@ -3911,6 +3908,19 @@
         "1": {
           "attributes": [
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 0.4
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
               "value": 0.3572
@@ -4214,32 +4224,9 @@
               "value": "AAATGPSFWLGNETLK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 852.9332
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 0.1
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "[Acetyl]-AAATGPSFWLGNETLK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "[Acetyl]-AAATGPSFWLGNETLK/2"
             },
             {
               "accession": "MS:1001117",
@@ -4248,38 +4235,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "-"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "V"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P12955|PEPD_HUMAN",
               "value_accession": "sp"
@@ -4304,6 +4291,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 852.9332
         },
         {
           "accession": "MS:1000045",
@@ -4434,6 +4431,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 0.1
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -4956,32 +4966,9 @@
               "value": "AACTMSVCSSACSDSWR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 989.3815
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 0.7
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "[Acetyl]-AAC[Carbamidomethyl]TMSVC[Carbamidomethyl]SSAC[Carbamidomethyl]SDSWR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "[Acetyl]-AAC[Carbamidomethyl]TMSVC[Carbamidomethyl]SSAC[Carbamidomethyl]SDSWR/2"
             },
             {
               "accession": "MS:1001117",
@@ -4990,38 +4977,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "-"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "V"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P60370|KR105_HUMAN",
               "value_accession": "sp"
@@ -5046,6 +5033,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 989.3815
         },
         {
           "accession": "MS:1000045",
@@ -5268,6 +5265,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 0.7
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -6019,32 +6029,9 @@
               "value": "AACTMSVCSSACSDSWR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 997.379
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 1.3
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "[Acetyl]-AAC[Carbamidomethyl]TM[Oxidation]SVC[Carbamidomethyl]SSAC[Carbamidomethyl]SDSWR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "[Acetyl]-AAC[Carbamidomethyl]TM[Oxidation]SVC[Carbamidomethyl]SSAC[Carbamidomethyl]SDSWR/2"
             },
             {
               "accession": "MS:1001117",
@@ -6053,38 +6040,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "-"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "V"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P60370|KR105_HUMAN",
               "value_accession": "sp"
@@ -6109,6 +6096,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 997.379
         },
         {
           "accession": "MS:1000045",
@@ -6346,6 +6343,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 1.3
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -7001,32 +7011,9 @@
               "value": "AADAEAEVASLNR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 3
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 439.5529
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.2
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AADAEAEVASLNR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AADAEAEVASLNR/3"
             },
             {
               "accession": "MS:1001117",
@@ -7035,38 +7022,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "R"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P06753|TPM3_HUMAN",
               "value_accession": "sp"
@@ -7091,6 +7078,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 3
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 439.5529
         },
         {
           "accession": "MS:1000045",
@@ -7321,6 +7318,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.2
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -7694,32 +7704,9 @@
               "value": "AADDTWEPFASGK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 697.8148
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.3
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AADDTWEPFASGK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AADDTWEPFASGK/2"
             },
             {
               "accession": "MS:1001117",
@@ -7728,38 +7715,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "T"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P02766|TTHY_HUMAN",
               "value_accession": "sp"
@@ -7784,6 +7771,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 697.8148
         },
         {
           "accession": "MS:1000045",
@@ -7978,6 +7975,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.3
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -8240,32 +8250,9 @@
               "value": "AADTDGDGQVNYEEFVR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 943.4136
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 0.1
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AADTDGDGQVNYEEFVR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AADTDGDGQVNYEEFVR/2"
             },
             {
               "accession": "MS:1001117",
@@ -8274,38 +8261,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "R"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "V"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P27482|CALL3_HUMAN",
               "value_accession": "sp"
@@ -8330,6 +8317,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 943.4136
         },
         {
           "accession": "MS:1000045",
@@ -9807,6 +9804,19 @@
         "1": {
           "attributes": [
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 0.1
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
               "value": 0.1019
@@ -10274,32 +10284,9 @@
               "value": "AAELIANSLATAGDGLIELR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 999.5469
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 3.6
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAELIANSLATAGDGLIELR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAELIANSLATAGDGLIELR/2"
             },
             {
               "accession": "MS:1001117",
@@ -10308,38 +10295,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P35232|PHB_HUMAN",
               "value_accession": "sp"
@@ -10364,6 +10351,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 999.5469
         },
         {
           "accession": "MS:1000045",
@@ -10594,6 +10591,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 3.6
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -11310,32 +11320,9 @@
               "value": "AAELIANSLATAGDGLIELR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 3
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 666.7004
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 3.8
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAELIANSLATAGDGLIELR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAELIANSLATAGDGLIELR/3"
             },
             {
               "accession": "MS:1001117",
@@ -11344,38 +11331,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P35232|PHB_HUMAN",
               "value_accession": "sp"
@@ -11400,6 +11387,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 3
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 666.7004
         },
         {
           "accession": "MS:1000045",
@@ -11675,6 +11672,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 3.8
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -12114,32 +12124,9 @@
               "value": "AAELLAWADEQAR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 722.365
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 1.0
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAELLAWADEQAR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAELLAWADEQAR/2"
             },
             {
               "accession": "MS:1001117",
@@ -12148,38 +12135,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "R"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "G"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "Q9BQ50|TREX2_HUMAN",
               "value_accession": "sp"
@@ -12204,6 +12191,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 722.365
         },
         {
           "accession": "MS:1000045",
@@ -12340,6 +12337,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 1.0
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -12646,32 +12656,9 @@
               "value": "AAFDDAIAELDTLSEESYK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 1044.4864
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.3
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAFDDAIAELDTLSEESYK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAFDDAIAELDTLSEESYK/2"
             },
             {
               "accession": "MS:1001117",
@@ -12680,38 +12667,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "D"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P62258|1433E_HUMAN",
               "value_accession": "sp"
@@ -12736,6 +12723,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 1044.4864
         },
         {
           "accession": "MS:1000045",
@@ -12942,6 +12939,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.3
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -13393,32 +13403,9 @@
               "value": "AAFDDAIAELDTLSEESYK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 3
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 696.66
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 1.0
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAFDDAIAELDTLSEESYK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAFDDAIAELDTLSEESYK/3"
             },
             {
               "accession": "MS:1001117",
@@ -13427,38 +13414,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "D"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P62258|1433E_HUMAN",
               "value_accession": "sp"
@@ -13483,6 +13470,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 3
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 696.66
         },
         {
           "accession": "MS:1000045",
@@ -13714,6 +13711,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 1.0
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -14206,32 +14216,9 @@
               "value": "AAFGGSGGR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 390.1934
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.2
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAFGGSGGR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAFGGSGGR/2"
             },
             {
               "accession": "MS:1001117",
@@ -14240,38 +14227,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "G"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P35908|K22E_HUMAN",
               "value_accession": "sp"
@@ -14296,6 +14283,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 390.1934
         },
         {
           "accession": "MS:1000045",
@@ -15520,6 +15517,19 @@
         "1": {
           "attributes": [
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.2
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
               "value": 0.1452
@@ -15882,32 +15892,9 @@
               "value": "AAFQLGSPWR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 566.7985
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 1.2
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAFQLGSPWR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAFQLGSPWR/2"
             },
             {
               "accession": "MS:1001117",
@@ -15916,38 +15903,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "R"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "R"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P05091|ALDH2_HUMAN",
               "value_accession": "sp"
@@ -15972,6 +15959,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 566.7985
         },
         {
           "accession": "MS:1000045",
@@ -16215,6 +16212,19 @@
         "1": {
           "attributes": [
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 1.2
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
               "value": 0.2454
@@ -16456,32 +16466,9 @@
               "value": "AAFTECCQAADK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 686.287
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.9
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAFTEC[Carbamidomethyl]C[Carbamidomethyl]QAADK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAFTEC[Carbamidomethyl]C[Carbamidomethyl]QAADK/2"
             },
             {
               "accession": "MS:1001117",
@@ -16490,38 +16477,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "A"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P02768|ALBU_HUMAN",
               "value_accession": "sp"
@@ -16546,6 +16533,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 686.287
         },
         {
           "accession": "MS:1000045",
@@ -18276,6 +18273,19 @@
         "1": {
           "attributes": [
             {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.9
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
+            {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
               "value": 0.1553
@@ -18737,32 +18747,9 @@
               "value": "AAGCDFTNVVK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 591.2846
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": 1.9
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAGC[Carbamidomethyl]DFTNVVK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAGC[Carbamidomethyl]DFTNVVK/2"
             },
             {
               "accession": "MS:1001117",
@@ -18771,38 +18758,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "T"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P52758|RIDA_HUMAN",
               "value_accession": "sp"
@@ -18827,6 +18814,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 591.2846
         },
         {
           "accession": "MS:1000045",
@@ -19063,6 +19060,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": 1.9
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -19419,32 +19429,9 @@
               "value": "AAGTLYTYPENWR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 792.3781
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.4
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "[Acetyl]-AAGTLYTYPENWR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "[Acetyl]-AAGTLYTYPENWR/2"
             },
             {
               "accession": "MS:1001117",
@@ -19453,38 +19440,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "-"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "A"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P26641|EF1G_HUMAN",
               "value_accession": "sp"
@@ -19509,6 +19496,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 792.3781
         },
         {
           "accession": "MS:1000045",
@@ -19625,6 +19622,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.4
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -19993,32 +20003,9 @@
               "value": "AAGVNVEPFWPGLFAK"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 851.9512
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.3
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AAGVNVEPFWPGLFAK"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AAGVNVEPFWPGLFAK/2"
             },
             {
               "accession": "MS:1001117",
@@ -20027,38 +20014,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "A"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "P05386|RLA1_HUMAN",
               "value_accession": "sp"
@@ -20083,6 +20070,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 851.9512
         },
         {
           "accession": "MS:1000045",
@@ -20333,6 +20330,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.3
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -20667,32 +20677,9 @@
               "value": "AAIYGGVEGGGTR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 625.3122
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.3
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "[Acetyl]-AAIYGGVEGGGTR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "[Acetyl]-AAIYGGVEGGGTR/2"
             },
             {
               "accession": "MS:1001117",
@@ -20701,38 +20688,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "-"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "S"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "Q9UJ70|NAGK_HUMAN",
               "value_accession": "sp"
@@ -20757,6 +20744,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 625.3122
         },
         {
           "accession": "MS:1000045",
@@ -20883,6 +20880,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.3
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
@@ -21094,32 +21104,9 @@
               "value": "AALADVLR"
             },
             {
-              "accession": "MS:1000041",
-              "name": "charge state",
-              "value": 2
-            },
-            {
-              "accession": "MS:1000744",
-              "name": "selected ion m/z",
-              "value": 414.7505
-            },
-            {
-              "accession": "MS:1001975",
-              "cv_param_group": "1",
-              "name": "delta m/z",
-              "value": -0.3
-            },
-            {
-              "accession": "UO:0000000",
-              "cv_param_group": "1",
-              "name": "unit",
-              "value": "parts per million",
-              "value_accession": "UO:0000169"
-            },
-            {
-              "accession": "MS:1003169",
-              "name": "proforma peptidoform sequence",
-              "value": "AALADVLR"
+              "accession": "MS:1003270",
+              "name": "proforma peptidoform ion notation",
+              "value": "AALADVLR/2"
             },
             {
               "accession": "MS:1001117",
@@ -21128,38 +21115,38 @@
             },
             {
               "accession": "MS:1003048",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of enzymatic termini",
               "value": 2
             },
             {
               "accession": "MS:1001045",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "cleavage agent name",
               "value": "Trypsin",
               "value_accession": "MS:1001251"
             },
             {
               "accession": "MS:1001112",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "n-terminal flanking residue",
               "value": "K"
             },
             {
               "accession": "MS:1001113",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "c-terminal flanking residue",
               "value": "R"
             },
             {
               "accession": "MS:1003044",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "number of missed cleavages",
               "value": 0
             },
             {
               "accession": "MS:1000885",
-              "cv_param_group": "2",
+              "cv_param_group": "1",
               "name": "protein accession",
               "value": "Q9HC35|EMAL4_HUMAN",
               "value_accession": "sp"
@@ -21184,6 +21171,16 @@
           "name": "spectrum aggregation type",
           "value": "consensus spectrum",
           "value_accession": "MS:1003067"
+        },
+        {
+          "accession": "MS:1000041",
+          "name": "charge state",
+          "value": 2
+        },
+        {
+          "accession": "MS:1000744",
+          "name": "selected ion m/z",
+          "value": 414.7505
         },
         {
           "accession": "MS:1000045",
@@ -21360,6 +21357,19 @@
       "interpretations": {
         "1": {
           "attributes": [
+            {
+              "accession": "MS:1001975",
+              "cv_param_group": "1",
+              "name": "delta m/z",
+              "value": -0.3
+            },
+            {
+              "accession": "UO:0000000",
+              "cv_param_group": "1",
+              "name": "unit",
+              "value": "parts per million",
+              "value_accession": "UO:0000169"
+            },
             {
               "accession": "MS:1003079",
               "name": "total unassigned intensity fraction",
