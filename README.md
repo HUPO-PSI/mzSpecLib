@@ -19,6 +19,7 @@ the developers of spectral library search tools and resources.
   - [Introduction](#introduction)
   - [Development](#development)
   - [Reference implementation](#reference-implementation)
+  - [Guidelines](#guidelines)
   - [Contributing](#contributing)
 
 ---
@@ -69,6 +70,9 @@ A reference implementation of the mzSpecLib format is available in the form of a
 Check out the [mzspeclib-py](https://github.com/HUPO-PSI/mzspeclib-py) repository or the
 [Python package documentation](https://mzspeclib.readthedocs.io/) for more information.
 
+## Guidelines
+
+The mzSpecLib format is flexible, but we have examples showing how to use it in certain ways in
 
 ## Contributing
 
