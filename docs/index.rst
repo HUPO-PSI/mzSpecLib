@@ -10,3 +10,4 @@
    Home <self>
    specification/index
    contributing
+   guidelines/index

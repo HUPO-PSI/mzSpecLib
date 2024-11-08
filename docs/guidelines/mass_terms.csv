@@ -1,0 +1,4 @@
+Term,Intended Use
+``MS:1000224|molecular mass``,"Describes the neutral mass of the molecule being measured without the charge carriers"
+``MS:1003243|adduct ion mass``,"Describes the neutral mass of the molecule *plus* the mass of the charge carrier(s)"
+``MS:1001117|theoretical neutral mass``,"Describes the neutral mass of the molecule without the charge carriers calculated directly from the molecule identity"

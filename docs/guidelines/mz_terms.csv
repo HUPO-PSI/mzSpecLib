@@ -1,0 +1,4 @@
+Term,Intended Use
+``MS:1000744|selected ion m/z``,"The selected precursor ion as reported by the instrument for isolation. Should be used for a `Spectrum`"
+``MS:|experimentally determined monoisotopic m/z``,"The monoisotopic peak of the selected ion as determined by the implementation. Usually used for a `Spectrum`, but for chimeric or ambiguous spectra may also be used in an `Interpretation` or `InterpretationMember`"
+``MS:1003053|theoretical monoisotopic m/z``,"The theoretical m/z for an ion calculated by the implementation. Should be used for an `Analyte`"
