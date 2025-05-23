@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/master/specification/mzlib_json.schema.json",
+  "$id": "https://raw.githubusercontent.com/HUPO-PSI/mzSpecLib/master/specification/mzSpecLib_json.schema.json",
   "title": "HUPO-PSI mzSpecLib spectral library specification",
   "description": "Describe library, spectrum, and spectrum-component attributes",
   "required": ["attributes", "format_version"],
@@ -213,7 +213,19 @@
           "items": {
             "type": ["array", "null"],
             "items": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "A numerical representation for a peak aggregation statistic"
+                  },
+                  {
+                    "type": "string",
+                    "description": "A string representation for a peak aggregation statistic"
+                  }
+                ]
+              }
             }
           }
         }
