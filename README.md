@@ -73,7 +73,7 @@ Check out the [mzspeclib-py](https://github.com/HUPO-PSI/mzspeclib-py) repositor
 
 ### Demo Viewer
 
-We have a demo web application for viewing libraries: [https://mzspeclib-app-viewer-demo.streamlit.app/]
+We have a demo web application for viewing libraries: https://mzspeclib-app-viewer-demo.streamlit.app/
 
 ## Guidelines
 
