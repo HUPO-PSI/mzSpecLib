@@ -19,6 +19,7 @@ the developers of spectral library search tools and resources.
   - [Introduction](#introduction)
   - [Development](#development)
   - [Reference implementation](#reference-implementation)
+    - [Demo Viewer](#demo-viewer)
   - [Guidelines](#guidelines)
   - [Contributing](#contributing)
 
@@ -69,6 +70,10 @@ If you do experience problems with the files or have suggestions or comments, pl
 A reference implementation of the mzSpecLib format is available in the form of a Python package.
 Check out the [mzspeclib-py](https://github.com/HUPO-PSI/mzspeclib-py) repository or the
 [Python package documentation](https://mzspeclib.readthedocs.io/) for more information.
+
+### Demo Viewer
+
+We have a demo web application for viewing libraries: https://mzspeclib-app-viewer-demo.streamlit.app/
 
 ## Guidelines
 
