@@ -1,4 +1,7 @@
 Term,Intended Use
-``MS:1000744|selected ion m/z``,"The selected precursor ion as reported by the instrument for isolation. Should be used for a `Spectrum`"
-``MS:1003208|experimentally determined monoisotopic m/z``,"The monoisotopic peak of the selected ion as determined by the implementation. Usually used for a `Spectrum`, but for chimeric or ambiguous spectra may also be used in an `Interpretation` or `InterpretationMember`"
-``MS:1003053|theoretical monoisotopic m/z``,"The theoretical m/z for an ion calculated by the implementation. Should be used for an `Analyte`"
+``MS:1000744|selected ion m/z``,"The value copied from the same field in mzML file, meant to be the precursor monoisotopic m/z reported by the instrument, unmodified by the implementation. Should be used for a `Spectrum`."
+``MS:1002234|selected precursor m/z``,"Avoid using in ``mzSpecLib`` due to ambiguity."
+``MS:1003208|experimental precursor monoisotopic m/z``,"The monoisotopic m/z of the precursor ion as determined by the implementation. Recommended term to use. Usually used for a `Spectrum`, but for chimeric or ambiguous spectra may also be used in an `Interpretation` or `InterpretationMember`."
+``MS:1000827|isolation window target m/z``,"The reference m/z value around which the mass spectrometer targets for fragmentation, which is usually not the monoisotopic m/z of the analyte. Should be used for a `Spectrum`."
+``MS:1003053|theoretical monoisotopic m/z``,"The theoretical monoisotopic m/z for the precursor ion calculated from the molecular formula. Should be used for an `Analyte`."
+``MS:1003054|theoretical average m/z``,"The theoretical average m/z for the precursor ion calculated from the molecular formula. Should be used for an `Analyte`."
