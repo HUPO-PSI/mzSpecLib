@@ -1,4 +1,8 @@
 Term,Intended Use
-``MS:1000224|molecular mass``,"Describes the neutral mass of the molecule being measured without the charge carriers"
-``MS:1003243|adduct ion mass``,"Describes the neutral mass of the molecule *plus* the mass of the charge carrier(s)"
-``MS:1001117|theoretical neutral mass``,"Describes the neutral mass of the molecule without the charge carriers calculated directly from the molecule identity"
+``MS:1000224|molecular mass``,"Generic term for the mass of the molecule being measured. Avoid using in ``mzSpecLib`` due to ambiguity."
+``MS:1003243|adduct ion mass``,"The mass of the molecule plus the mass of the charge carrier(s), calculated from the molecular formula. For clarity, use ``adduct ion monoisotopic mass`` or ``adduct ion average mass`` instead."
+``MS:1003nnn|adduct ion monoisotopic mass``,"The monoisotopic mass of the molecule plus that of the charge carrier(s), calculated from the molecular formula. Should be used in the `Analyte` section."
+``MS:1003nnn|adduct ion average mass``,"The average mass of the molecule plus that of the charge carrier(s), calculated from the molecular formula. Should be used in the `Analyte` section."
+``MS:1001117|theoretical neutral mass``,"The mass of the neutral molecule without the charge carrier(s), calculated from the molecular formula. For clarity, use ``theoretical neutral monoisotopic mass`` or ``theoretical neutral average mass`` instead."
+``MS:1003nnn|theoretical neutral monoisotopic mass``,"The monoisotopic mass of the neutral molecule without the charge carrier(s), calculated from the molecular formula. Should be used in the `Analyte` section."
+``MS:1003nnn|theoretical neutral average mass``,"The average mass of the neutral molecule without the charge carrier(s), calculated from the molecular formula. Should be used in the `Analyte` section."
