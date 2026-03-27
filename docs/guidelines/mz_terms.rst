@@ -35,12 +35,12 @@ The :title-reference:`isolation window target m/z` term refers to the reference 
 This attribute should be listed in the `Spectrum` section.
 
 
-Theroetical Monoisotopic M/Z
+Theoretical Monoisotopic M/Z
 =============================
 
 The :title-reference:`theoretical monoisotopic m/z` term refers to the monoisotopic m/z calculated from dividing the theoretical monoisotopic mass of adduct ion (i.e. including the charge carrier(s)) by the charge state. As such, it is completely determined by the identity of the analyte. Therefore, this term should be used exclusively in the `Analyte` section.  
 
-Theroetical Average M/Z
+Theoretical Average M/Z
 =============================
 
 The :title-reference:`theoretical average m/z` term refers to the average m/z calculated from dividing the theoretical average mass of adduct ion (i.e. including the charge carrier(s)) by the charge state. The average mass refers to the weighted average based on the natural abundance of the isotopes of atoms that make up the analyte. As such, it is completely determined by the identity of the analyte. Therefore, this term should be used exclusively in the `Analyte` section.  
